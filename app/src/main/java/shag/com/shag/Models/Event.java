@@ -10,6 +10,7 @@ public class Event {
 
     //fields
     public String eventName;
+    public String description;
     public String location;
     public String genre;
     public String time;
@@ -31,6 +32,7 @@ public class Event {
     public ArrayList<String> getFriendsAtEvent() {
         return friendsAtEvent;
     }
+    public String getDescription() { return description; }
 
 
     //setters
@@ -56,5 +58,9 @@ public class Event {
 
     public void setEventName(String eventName) {
         this.eventName = eventName;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
