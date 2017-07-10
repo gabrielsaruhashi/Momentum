@@ -1,6 +1,9 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -21,6 +24,8 @@ import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
+
+import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 /**
  * Created by gabesaruhashi on 7/10/17.
@@ -92,7 +97,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     // creates ViewHolder class
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
         @BindView(R.id.tvEventName) TextView tvEventName;
@@ -104,6 +109,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            // sets click listener for events' details
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // gets item position
+            int position = getAdapterPosition();
+
+            if (position != RecyclerView.NO_POSITION) {
+                // get the event at the position
+                Event event = events.get(position);
+
+                showMoreDetails(event);
+            }
         }
     }
 
@@ -111,4 +132,69 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     private Context getContext() {
         return context;
     }
+
+    // get user
+
+    // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
+    private void showMoreDetails(final Event event) {
+        // inflate message_item.xml view
+        View messageView = LayoutInflater.from(context).
+                inflate(R.layout.fragment_event_details, null);
+        // Create alert dialog builder
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        // set message_item.xml to AlertDialog builder
+        alertDialogBuilder.setView(messageView);
+
+        // Create alert dialog
+        final AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                // set button colors
+                alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+                alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
+
+                // get views
+                TextView tvEventName = (TextView) alertDialog.findViewById(R.id.tvEventName);
+                TextView tvBody = (TextView) alertDialog.findViewById(R.id.tvBody);
+                TextView tvRelativeTime = (TextView) alertDialog.findViewById(R.id.tvRelativeTime);
+                ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
+
+                // populate views
+                tvEventName.setText('@' + event.eventOwner.getUsername());
+                tvBody.setText(event.getDescription());
+                tvRelativeTime.setText(event.getTime());
+
+                //TODO upload image of event owner
+                /*
+                Glide.with(context)
+                        .load(event.user.profileImageUrl)
+                        .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                        .into(ivProfileImage); */
+
+            }
+        });
+
+        // Configure dialog button (OK)
+        alertDialog.setButton(BUTTON_POSITIVE, "Join",
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //TODO action to join
+                    }
+                });
+
+        // Configure dialog button (Cancel)
+        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
+                });
+
+        // Display the dialog
+        alertDialog.show();
+    }
+
+
 }

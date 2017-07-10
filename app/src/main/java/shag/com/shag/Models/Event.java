@@ -15,6 +15,7 @@ public class Event {
     public String genre;
     public String time;
     public ArrayList<String> friendsAtEvent;
+    public User eventOwner;
 
     //getters
     public String getEventName() {

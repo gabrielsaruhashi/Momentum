@@ -11,6 +11,7 @@ public class User {
     public String username;
     public long userID;
     public long fbUserID;
+    public String phoneNumber;
 
 
     //getters
@@ -30,7 +31,7 @@ public class User {
         return fbUserID;
     }
 
-
+    public String getPhoneNumber() { return phoneNumber; }
 
     //setters
     public void setFbUserID(long fbUserID) {
@@ -49,5 +50,5 @@ public class User {
         this.name = name;
     }
 
-
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }
