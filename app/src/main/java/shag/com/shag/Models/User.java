@@ -3,7 +3,6 @@ package shag.com.shag.Models;
 /**
  * Created by samrabelachew on 7/10/17.
  */
-
 public class User {
 
     //fields
