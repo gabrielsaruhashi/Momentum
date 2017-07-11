@@ -8,16 +8,18 @@ import java.util.ArrayList;
 
 public class Event {
 
-    //fields
+    // fields
     public String eventName;
+    public long eventId;
     public String description;
     public String location;
     public String genre;
     public String time;
     public ArrayList<String> friendsAtEvent;
     public User eventOwner;
+    public ArrayList<Long> participantsIds;
 
-    //getters
+    // getters
     public String getEventName() {
         return eventName;
     }
@@ -36,7 +38,7 @@ public class Event {
     public String getDescription() { return description; }
 
 
-    //setters
+    // setters
     public void setFriendsAtEvent(ArrayList<String> friendsAtEvent) {
         this.friendsAtEvent = friendsAtEvent;
     }

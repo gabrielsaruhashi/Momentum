@@ -1,5 +1,7 @@
 package shag.com.shag.Models;
 
+import java.util.ArrayList;
+
 /**
  * Created by samrabelachew on 7/10/17.
  */
@@ -12,6 +14,7 @@ public class User {
     public long userID;
     public long fbUserID;
     public String phoneNumber;
+    public ArrayList<Long> currentInterestsIds;
 
 
     //getters

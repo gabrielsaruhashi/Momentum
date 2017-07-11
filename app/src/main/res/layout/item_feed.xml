@@ -33,6 +33,7 @@
         android:text="TextView"
         android:paddingBottom="24dp"/>
 
+
     <TextView
         android:id="@+id/tvRelativeTime"
         android:layout_width="wrap_content"
@@ -40,5 +41,16 @@
         android:layout_alignParentEnd="true"
         android:text="TextView" />
 
-    
+    <Button
+        android:id="@+id/btJoin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/tvRelativeTime"
+        android:layout_marginRight="12dp"
+        android:background="@color/burnt_orange"
+        android:textColor="@color/white"
+        android:text="Join" />
+
+
 </RelativeLayout>
