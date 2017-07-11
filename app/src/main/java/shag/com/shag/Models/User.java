@@ -9,6 +9,7 @@ public class User {
     //fields
     public String name;
     public String username;
+    public String imageUrl;
     public long userID;
     public long fbUserID;
 
@@ -30,7 +31,13 @@ public class User {
         return fbUserID;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     //setters
     public void setFbUserID(long fbUserID) {
