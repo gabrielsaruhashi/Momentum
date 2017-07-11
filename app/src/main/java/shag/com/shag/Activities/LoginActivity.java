@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
             LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                 @Override
                 public void onSuccess(LoginResult loginResult) {
-                    loginToken.setText("Login Success: " + loginResult.getAccessToken());
+                    //loginToken.setText("Login Success: " + loginResult.getAccessToken());
                     onLoginSuccess();
                 }
 
@@ -52,13 +52,10 @@ public class LoginActivity extends AppCompatActivity {
                 @Override
                 public void onError(FacebookException error) {
                     Toast.makeText(context, "Error when logging in", Toast.LENGTH_SHORT).show();
-                    Log.e("LoginActivity", "Error when loggin in");
+                    Log.e("LoginActivity", error.toString());
                 }
             });
         }
-
-        //TODO: find an appropriate place to ask for this permission
-        //LoginManager.getInstance().logInWithReadPermissions(LoginActivity.this, Arrays.asList("user_friends"));
     }
 
     @Override

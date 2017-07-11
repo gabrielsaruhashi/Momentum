@@ -4,12 +4,23 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
+
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.ButterKnife;
 import shag.com.shag.Adapters.FeedAdapter;
+import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -21,12 +32,30 @@ public class FeedActivity extends AppCompatActivity {
     RecyclerView rvEvents;
     // the adapter wired to the new view
     FeedAdapter adapter;
+    FacebookClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         setContentView(R.layout.activity_feed);
+
+
+        //TODO: find an appropriate place to ask for this permission
+        LoginManager.getInstance().logInWithReadPermissions(FeedActivity.this, Arrays.asList("user_friends"));
+        client = new FacebookClient(this);
+        client.getFriendsUsingApp(new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            JSONArray users = response.getJSONObject().getJSONArray("data");
+                            User u = User.fromJson(users.getJSONObject(0));
+                            Toast.makeText(getApplicationContext(), "User: " + u.getName(), Toast.LENGTH_LONG).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
 
         // initialize the list of tweets
         events = new ArrayList<>();

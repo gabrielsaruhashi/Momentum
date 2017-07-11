@@ -2,6 +2,9 @@ package shag.com.shag.Clients;
 
 import android.content.Context;
 
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.HttpMethod;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -29,4 +32,9 @@ public class FacebookClient {
 
     //get user JSON: REST_URL + "/me" or REST_URL + "/id"
     //http://graph.facebook.com/" + facebookId + "/picture?type=square for profile pic
+
+    public void getFriendsUsingApp(GraphRequest.Callback callback) {
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", null, HttpMethod.GET,
+                callback).executeAsync();
+    }
 }
