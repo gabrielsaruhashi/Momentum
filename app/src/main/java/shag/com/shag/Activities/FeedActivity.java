@@ -1,11 +1,9 @@
 package shag.com.shag.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -35,7 +33,7 @@ public class FeedActivity extends AppCompatActivity {
 
         // initialize the list of tweets
         events = new ArrayList<>();
-        // construct the adater from the data source
+        // construct the adater from the data source\
         adapter = new FeedAdapter(events);
         // initialize recycler view
         rvEvents = (RecyclerView) findViewById(R.id.rvEvents);
@@ -79,24 +77,5 @@ public class FeedActivity extends AppCompatActivity {
         rvEvents.smoothScrollToPosition(0);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        return true;
-    }
-
-
-    public void onProfileView(MenuItem item){
-        //launch profile view
-        Intent i = new Intent(this, UserProfileActivity.class);
-        startActivity(i);
-    }
-
-    public void onSettingsView(MenuItem item){
-        //launch profile view
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
-    }
 }
