@@ -2,15 +2,19 @@ package shag.com.shag.Activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import shag.com.shag.Adapters.CategoriesListAdapter;
 import shag.com.shag.R;
@@ -20,19 +24,42 @@ public class CreateEventActivity extends AppCompatActivity {
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listHash;
-    @BindView(R.id.ivBanner) ImageView ivBanner;
+    private ImageView ivBanner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         setContentView(R.layout.activity_create_event);
-
+        // populates the category hash map
         initData();
-        listView = (ExpandableListView) findViewById(R.id.lvCategories);
 
+        // get views
+        listView = (ExpandableListView) findViewById(R.id.lvCategories);
+        ivBanner = (ImageView) findViewById(R.id.ivBanner);
+
+        // sets up the adapter
         listAdapter = new CategoriesListAdapter(this,listDataHeader, listHash);
         listView.setAdapter(listAdapter);
+
+        // populate banner view
+        Glide.with(CreateEventActivity.this)
+                .load("http://via.placeholder.com/300.png")
+                .into(ivBanner);
+
+
+        // create listener for item child click
+        listView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                /* You must make use of the View v, find the view by id and extract the text as below*/
+                TextView tvCategoryItem= (TextView) v.findViewById(R.id.lblListItem);
+                String data= tvCategoryItem.getText().toString();
+                Toast.makeText(CreateEventActivity.this, "Picked event: " + data, Toast.LENGTH_LONG).show();
+                return true;  // i missed this
+            }
+        });
 
     }
 
