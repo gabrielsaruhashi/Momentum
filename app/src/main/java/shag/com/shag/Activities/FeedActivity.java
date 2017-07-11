@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -49,11 +50,20 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     public void populateFeed() {
+        User gabriel = new User();
+        gabriel.username = "gabesaruhashi";
+        gabriel.name="Gabriel S.";
+        gabriel.phoneNumber="6505757751";
+        gabriel.currentInterestsIds = new ArrayList<Long>(0);
+
         Event fakeEvent = new Event();
+        fakeEvent.eventId = new Long(123);
         fakeEvent.eventName = "Party at Zuck's";
         fakeEvent.location = "Facebook Seattle";
         fakeEvent.genre = "Partay";
         fakeEvent.time = "4pm";
+        fakeEvent.eventOwner=gabriel;
+        fakeEvent.participantsIds= new ArrayList<Long>(0);
         ArrayList<String> friends = new ArrayList<String>(3);
         friends.add("Gabriel");
         friends.add("Samra");
