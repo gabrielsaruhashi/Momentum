@@ -8,14 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
-
-import org.json.JSONArray;
-import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,8 +20,6 @@ import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -49,6 +41,7 @@ public class FeedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_feed, container, false);
+
         // initialize the list of tweets
         events = new ArrayList<>();
         // construct the adater from the data source
@@ -66,23 +59,10 @@ public class FeedFragment extends Fragment {
                 DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvEvents.addItemDecoration(itemDecoration);
 
-        populateFeed();
-
-        //TODO: find an appropriate place to ask for this permission
+        //TODO: find the best place to ask for this permission
         LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
-        client = new FacebookClient(rvEvents.getContext());
-        client.getFriendsUsingApp(new GraphRequest.Callback() {
-                                      public void onCompleted(GraphResponse response) {
-                                          try {
-                                              JSONArray users = response.getJSONObject().getJSONArray("data");
-                                              User u = User.fromJson(users.getJSONObject(0));
-                                              Toast.makeText(getApplicationContext(), "User: " + u.getName(), Toast.LENGTH_LONG).show();
-                                          } catch (JSONException e) {
-                                              e.printStackTrace();
-                                          }
-                                      }
-                                  }
-        );
+
+        populateFeed();
 
         return v;
     }
@@ -90,8 +70,8 @@ public class FeedFragment extends Fragment {
     public void populateFeed() {
         User gabriel = new User();
         gabriel.username = "gabesaruhashi";
-        gabriel.name="Gabriel S.";
-        gabriel.phoneNumber="6505757751";
+        gabriel.name = "Gabriel S.";
+        gabriel.phoneNumber = "6505757751";
         gabriel.currentInterestsIds = new ArrayList<Long>(0);
 
         Event fakeEvent = new Event();
@@ -100,8 +80,8 @@ public class FeedFragment extends Fragment {
         fakeEvent.location = "Facebook Seattle";
         fakeEvent.genre = "Partay";
         fakeEvent.time = "4pm";
-        fakeEvent.eventOwner=gabriel;
-        fakeEvent.participantsIds= new ArrayList<Long>(0);
+        fakeEvent.eventOwner = gabriel;
+        fakeEvent.participantsIds = new ArrayList<Long>(0);
         ArrayList<String> friends = new ArrayList<String>(3);
         friends.add("Gabriel");
         friends.add("Samra");
@@ -111,6 +91,30 @@ public class FeedFragment extends Fragment {
         events.add(0, fakeEvent);
         adapter.notifyItemInserted(events.size() - 1);
         rvEvents.smoothScrollToPosition(0);
+
+        //TODO: replace with real populate:
+        /*
+        client = new FacebookClient(rvEvents.getContext());
+        client.getFriendsUsingApp(new GraphRequest.Callback() {
+                                      public void onCompleted(GraphResponse response) {
+                                          try {
+                                              JSONArray users = response.getJSONObject().getJSONArray("data");
+                                              //User u = User.fromJson(users.getJSONObject(0)); //this gets the first friend
+
+                                              //for user in users,
+                                              //convert fromJSON
+                                              //add to array of friends for logged in user?
+                                              //find recent posts (maybe all before a certain date?)
+                                              //add to list of posts to be displayed
+                                              //notify adapter
+                                              //make sure this list is sorted! not sure how
+                                          } catch (JSONException e) {
+                                              e.printStackTrace();
+                                          }
+                                      }
+                                  }
+        );
+         */
     }
 
 }

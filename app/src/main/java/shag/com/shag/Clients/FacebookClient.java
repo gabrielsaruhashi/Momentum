@@ -1,13 +1,12 @@
 package shag.com.shag.Clients;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 
 /**
  * Created by hanapearlman on 7/10/17.
@@ -21,20 +20,20 @@ public class FacebookClient {
         client = new AsyncHttpClient();
     }
 
-    //TODO: figure out whether this should return a boolean & whether this endpoint actually exists
-    //TODO: figure put if need to pass user token in the request url
-    //TODO: need to add api key?
-    public void friends(long userBId, AsyncHttpResponseHandler handler) {
-        String apiUrl = REST_URL + "/me/friends/" + userBId;
-        RequestParams params = new RequestParams();
-        client.get(apiUrl, params, handler);
-    }
-
     //get user JSON: REST_URL + "/me" or REST_URL + "/id"
     //http://graph.facebook.com/" + facebookId + "/picture?type=square for profile pic
 
     public void getFriendsUsingApp(GraphRequest.Callback callback) {
-        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", null, HttpMethod.GET,
+        Bundle params = new Bundle();
+        params.putString("fields", "id,name,picture");
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", params, HttpMethod.GET,
+                callback).executeAsync();
+    }
+
+    public void getMyInfo(GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        params.putString("fields", "id,name,picture");
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me", params, HttpMethod.GET,
                 callback).executeAsync();
     }
 }
