@@ -65,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
-        Intent i = new Intent(context, FeedActivity.class);
+        Intent i = new Intent(context, MainActivity.class);
         context.startActivity(i);
     }
 }
