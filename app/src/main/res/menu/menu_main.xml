@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".TimelineActivity">
+
+
+
+
+    <item
+        android:id="@+id/miProfile"
+        android:icon="@drawable/ic_person"
+        android:onClick="onProfileView"
+        android:title="Item"
+        app:showAsAction="always" />
+
+
+    <item
+        android:id="@+id/miSettings"
+        android:icon="@drawable/ic_settings"
+        android:onClick="onSettingsView"
+        android:title="Compose"
+        app:showAsAction="always" />
+
+
+</menu>
