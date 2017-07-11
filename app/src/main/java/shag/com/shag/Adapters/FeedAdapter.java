@@ -2,6 +2,7 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import shag.com.shag.Activities.CreateEventActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.R;
@@ -132,6 +134,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
             // set click listener for quick join shortcut
             btJoin.setOnClickListener(this);
+
+            tvEventName.setOnClickListener(this);
         }
 
         @Override
@@ -153,7 +157,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                             joinEvent(gabriel, event, btJoin);
                         }
                         break;
-                    // if user presses viewholder, show more details of activiity
+                    case R.id.tvEventName:
+                        Intent i = new Intent(context, CreateEventActivity.class);
+                        context.startActivity(i);
+                        break;
+                    // if user presses viewholder, show more details of activity
                     default:
                         showMoreDetails(event, btJoin);
                         break;

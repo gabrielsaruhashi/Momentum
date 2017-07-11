@@ -20,7 +20,7 @@
         android:layout_alignParentTop="true"
         android:layout_alignStart="@+id/tvBody"
         android:text="TextView"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tvBody"
