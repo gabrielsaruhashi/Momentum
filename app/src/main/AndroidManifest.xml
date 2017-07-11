@@ -44,7 +44,6 @@
 
         <activity android:name=".Activities.MainActivity"></activity>
         <activity android:name=".Activities.CreateEventActivity" />
-        <activity android:name=".Activities.FeedActivity"></activity>
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity"></activity>
     </application>
