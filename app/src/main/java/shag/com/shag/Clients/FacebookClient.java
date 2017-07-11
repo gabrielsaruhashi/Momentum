@@ -52,7 +52,7 @@ public class FacebookClient {
 
     //response must be: "attending", "maybe", or "declined"
     public void sendEventResponse(long eventID, String response, GraphRequest.Callback callback) {
-        new GraphRequest(AccessToken.getCurrentAccessToken(), "/" + eventID + "/" + response, null, HttpMethod.GET,
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/" + eventID + "/" + response, null, HttpMethod.POST,
                 callback).executeAsync();
     }
 }
