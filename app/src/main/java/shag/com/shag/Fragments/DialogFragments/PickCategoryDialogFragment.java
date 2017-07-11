@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +21,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.CategoriesListAdapter;
+import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
  */
 
-public class PickCategoryDialogFragment extends DialogFragment {
+public class PickCategoryDialogFragment extends DialogFragment implements CreateDetailsDialogFragment.CreateDetailsDialogListener {
 
     ExpandableListView listView;
     private ExpandableListAdapter listAdapter;
     private List<String> listDataHeader;
     private HashMap<String, List<String>> listHash;
     private ImageView ivBanner;
+    private Event newEvent;
 
     public PickCategoryDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -92,13 +95,41 @@ public class PickCategoryDialogFragment extends DialogFragment {
 
     }
 
-    public void showCreateDetailsDialog(String category) {
-        FragmentManager fm = getFragmentManager();
-        CreateDetailsDialogFragment createDetailsDialogFragment = CreateDetailsDialogFragment.newInstance(category);
-        createDetailsDialogFragment.show(fm, "fragment_create_details");
-
+    // Defines the listener interface
+    public interface CategoryDialogListener {
+        void onFinishCategoryDialog(Event event);
     }
 
+    // Call this method to send the data back to the parent fragment
+    public void sendBackResult(Event event) {
+        // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
+        CategoryDialogListener listener = (CategoryDialogListener) getTargetFragment();
+        listener.onFinishCategoryDialog(event);
+        // dismiss current dialog, move back to feed fragment
+        dismiss();
+    }
+    // creates new dialog
+    public void showCreateDetailsDialog(String category) {
+        // launch create detail fragment activity
+        FragmentManager fm = getFragmentManager();
+        CreateDetailsDialogFragment createDetailsDialogFragment = CreateDetailsDialogFragment.newInstance(category);
+
+        // SETS the target fragment for use later when sending results
+        createDetailsDialogFragment.setTargetFragment(PickCategoryDialogFragment.this, 300);
+
+        // creates the create details fragment
+        createDetailsDialogFragment.show(fm, "fragment_create_details");
+    }
+
+    // This is called when the dialog is completed and the results have been passed
+    @Override
+    public void onFinishCreateDetailsDialog(Event createdEvent) {
+        Log.i("DEBUGPick", createdEvent.toString());
+        sendBackResult(createdEvent);
+    }
+
+
+    // populate the categories hash map
     public void initData() {
         listDataHeader = new ArrayList<>();
         listHash = new HashMap<>();

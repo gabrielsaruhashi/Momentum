@@ -21,7 +21,8 @@
         android:textColor="@color/white"
         android:layout_below="@+id/btTime"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="12dp"
+        android:onClick="postEvent"/>
 
     <ImageButton
         android:id="@+id/btCancel"

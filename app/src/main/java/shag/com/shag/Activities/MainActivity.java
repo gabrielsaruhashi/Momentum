@@ -2,20 +2,16 @@ package shag.com.shag.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
-import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +27,6 @@ public class MainActivity extends AppCompatActivity {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        // setups FAB to work
-        FloatingActionButton myFab = (FloatingActionButton) findViewById(R.id.myFAB);
-        myFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // creates the Create dialog fragment
-                showCreateDialog();
-            }
-        });
     }
 
     @Override
@@ -60,12 +48,6 @@ public class MainActivity extends AppCompatActivity {
         //launch profile view
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
-    }
-
-    private void showCreateDialog() {
-        FragmentManager fm = getSupportFragmentManager();
-        PickCategoryDialogFragment pickCategoryDialogFragment = new PickCategoryDialogFragment();
-        pickCategoryDialogFragment.show(fm, "fragment_create_pick_category");
     }
 
 }
