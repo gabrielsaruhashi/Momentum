@@ -22,8 +22,11 @@ public class FacebookClient {
     //TODO: figure put if need to pass user token in the request url
     //TODO: need to add api key?
     public void friends(long userBId, AsyncHttpResponseHandler handler) {
-        String apiUrl = REST_URL + "me/friends/" + userBId;
+        String apiUrl = REST_URL + "/me/friends/" + userBId;
         RequestParams params = new RequestParams();
         client.get(apiUrl, params, handler);
     }
+
+    //get user JSON: REST_URL + "/me" or REST_URL + "/id"
+    //http://graph.facebook.com/" + facebookId + "/picture?type=square for profile pic
 }

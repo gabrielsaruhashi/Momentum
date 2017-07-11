@@ -63,5 +63,11 @@ public class FeedActivity extends AppCompatActivity {
         events.add(0, fakeEvent);
         adapter.notifyItemInserted(events.size() - 1);
         rvEvents.smoothScrollToPosition(0);
+
+        //TODO: populate with real info
+        /*
+        for all friends who also use this app:
+            show most recent posts to everyone
+         */
     }
 }
