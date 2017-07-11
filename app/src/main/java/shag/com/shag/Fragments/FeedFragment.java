@@ -8,14 +8,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import shag.com.shag.Adapters.FeedAdapter;
+import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
+
+import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -29,6 +41,7 @@ public class FeedFragment extends Fragment {
     RecyclerView rvEvents;
     // the adapter wired to the new view
     FeedAdapter adapter;
+    FacebookClient client;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -54,6 +67,22 @@ public class FeedFragment extends Fragment {
         rvEvents.addItemDecoration(itemDecoration);
 
         populateFeed();
+
+        //TODO: find an appropriate place to ask for this permission
+        LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
+        client = new FacebookClient(rvEvents.getContext());
+        client.getFriendsUsingApp(new GraphRequest.Callback() {
+                                      public void onCompleted(GraphResponse response) {
+                                          try {
+                                              JSONArray users = response.getJSONObject().getJSONArray("data");
+                                              User u = User.fromJson(users.getJSONObject(0));
+                                              Toast.makeText(getApplicationContext(), "User: " + u.getName(), Toast.LENGTH_LONG).show();
+                                          } catch (JSONException e) {
+                                              e.printStackTrace();
+                                          }
+                                      }
+                                  }
+        );
 
         return v;
     }

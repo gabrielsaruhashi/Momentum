@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Shag</string>
+    <string name="facebook_app_id">450046772028420</string>
+    <string name="fb_login_protocol_scheme">fb450046772028420</string>
+    <string name="google_maps_api_key">AIzaSyDEyhCU1t5MUGnomJbZdgvVDQWbKzCgOGo</string>
 </resources>
