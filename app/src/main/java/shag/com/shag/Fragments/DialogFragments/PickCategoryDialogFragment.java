@@ -3,6 +3,7 @@ package shag.com.shag.Fragments.DialogFragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,12 +83,19 @@ public class PickCategoryDialogFragment extends DialogFragment {
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 /* You must make use of the View v, find the view by id and extract the text as below*/
                 TextView tvCategoryItem= (TextView) v.findViewById(R.id.lblListItem);
-                String data= tvCategoryItem.getText().toString();
-                Toast.makeText(listView.getContext(), "Picked event: " + data, Toast.LENGTH_LONG).show();
-
+                String category= tvCategoryItem.getText().toString();
+                Toast.makeText(listView.getContext(), "Picked event: " + category, Toast.LENGTH_LONG).show();
+                showCreateDetailsDialog(category);
                 return true;  // i missed this
             }
         });
+
+    }
+
+    public void showCreateDetailsDialog(String category) {
+        FragmentManager fm = getFragmentManager();
+        CreateDetailsDialogFragment createDetailsDialogFragment = CreateDetailsDialogFragment.newInstance(category);
+        createDetailsDialogFragment.show(fm, "fragment_create_details");
 
     }
 
