@@ -20,10 +20,10 @@ public class FacebookClient {
 
     //TODO: figure out whether this should return a boolean & whether this endpoint actually exists
     //TODO: figure put if need to pass user token in the request url
+    //TODO: need to add api key?
     public void friends(long userBId, AsyncHttpResponseHandler handler) {
         String apiUrl = REST_URL + "me/friends/" + userBId;
         RequestParams params = new RequestParams();
-        params.put("count", "25");
         client.get(apiUrl, params, handler);
     }
 }
