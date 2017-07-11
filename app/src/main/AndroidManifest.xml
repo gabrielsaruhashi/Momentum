@@ -18,6 +18,7 @@
         </activity>
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity"></activity>
+        <activity android:name=".Activities.CreateEventActivity"></activity>
     </application>
 
 </manifest>
