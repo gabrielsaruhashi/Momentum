@@ -25,8 +25,8 @@ public class User {
         try {
             u.setFbUserID(json.getLong("id"));
             u.setName(json.getString("name"));
-            //JSONObject picture = json.getObject("picture");
-            //u.setProfilePicture(picture.getString("url"); //this might be it's own endpoint??
+            JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
+            u.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
 
         } catch (JSONException e) {
             e.printStackTrace();
