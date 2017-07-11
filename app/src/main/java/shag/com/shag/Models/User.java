@@ -1,7 +1,9 @@
 package shag.com.shag.Models;
 
+
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.ArrayList;
 
 /**
  * Created by samrabelachew on 7/10/17.
@@ -11,8 +13,11 @@ public class User {
     //fields
     public String name;
     public String username;
+    public String imageUrl;
     public long userID;
     public long fbUserID;
+    public String phoneNumber;
+    public ArrayList<Long> currentInterestsIds;
 
     public static User fromJson(JSONObject json) {
         User u = new User();
@@ -47,7 +52,14 @@ public class User {
         return fbUserID;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    public String getPhoneNumber() { return phoneNumber; }
 
     //setters
     public void setFbUserID(long fbUserID) {
@@ -66,5 +78,5 @@ public class User {
         this.name = name;
     }
 
-
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }
