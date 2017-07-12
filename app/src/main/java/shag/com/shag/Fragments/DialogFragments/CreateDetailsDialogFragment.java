@@ -9,6 +9,12 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Date;
 
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
@@ -23,8 +29,10 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private Button btCancel;
     private Button btInvite;
     private Button btLocation;
-    private Button btTime;
+    private ImageButton btTime;
     private Event newEvent;
+    private LinearLayout llExpireOptions;
+    public final static int MILLISECONDS_IN_MINUTE = 60000;
 
     public CreateDetailsDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -62,6 +70,9 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         // get views
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btSend = (Button) view.findViewById(R.id.btSend);
+        llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
+        llExpireOptions.setVisibility(View.GONE);
+        btTime = (ImageButton) view.findViewById(R.id.btTime);
 
         // Fetch arguments from bundle and set title
         String category = getArguments().getString("category");
@@ -82,6 +93,35 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 sendBackResult(newEvent);
             }
         });
+
+        btTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (llExpireOptions.getVisibility() == View.GONE) {
+                    llExpireOptions.setVisibility(View.VISIBLE);
+                } else {
+                    llExpireOptions.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        TextView tv30 = (TextView) view.findViewById(R.id.tv30);
+        setListenerForTime(tv30, 30);
+
+        TextView tv1h = (TextView) view.findViewById(R.id.tv1h);
+        setListenerForTime(tv1h, 60);
+
+        TextView tv2h = (TextView) view.findViewById(R.id.tv2h);
+        setListenerForTime(tv2h, 120);
+
+        TextView tv3h = (TextView) view.findViewById(R.id.tv3h);
+        setListenerForTime(tv3h, 180);
+
+        TextView tv6h = (TextView) view.findViewById(R.id.tv6h);
+        setListenerForTime(tv6h, 360);
+
+        TextView tv12h = (TextView) view.findViewById(R.id.tv12h);
+        setListenerForTime(tv12h, 720);
     }
 
     // Call this method to send the data back to the parent fragment
@@ -93,4 +133,15 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         dismiss();
     }
 
+    public void setListenerForTime(TextView tv, final int minToDeadline) {
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date newDate = new Date();
+                newDate.setTime(newDate.getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
+                Toast.makeText(getContext(), "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
+                newEvent.setDeadline(newDate);
+            }
+        });
+    }
 }

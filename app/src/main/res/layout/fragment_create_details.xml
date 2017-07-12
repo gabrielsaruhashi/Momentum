@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/etDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textMultiLine"
-        android:hint="What are you up to?" />
+        android:hint="What are you up to?"
+        android:inputType="textMultiLine" />
 
     <Button
         android:id="@+id/btSend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Send"
-        android:background="@color/burnt_orange"
-        android:textColor="@color/white"
-        android:layout_below="@+id/btTime"
+        android:layout_below="@+id/llExpireOptions"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="12dp"
-        android:onClick="postEvent"/>
+        android:background="@color/burnt_orange"
+        android:onClick="postEvent"
+        android:text="Send"
+        android:textColor="@color/white" />
 
     <ImageButton
         android:id="@+id/btCancel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
-        android:layout_marginTop="19dp"
         android:layout_below="@+id/btSend"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="19dp"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
 
     <ImageButton
         android:id="@+id/btInvite"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/etDescription"
         android:layout_marginLeft="12dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginStart="12dp"
         app:srcCompat="@drawable/ic_person" />
 
     <ImageButton
@@ -48,20 +49,84 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignTop="@+id/btInvite"
-        android:layout_toEndOf="@+id/btInvite"
         android:layout_marginLeft="4dp"
+        android:layout_toEndOf="@+id/btInvite"
         app:srcCompat="@android:drawable/ic_menu_mylocation" />
 
     <ImageButton
         android:id="@+id/btTime"
         android:layout_width="50dp"
         android:layout_height="50dp"
+        android:layout_alignTop="@+id/btLocation"
         android:layout_below="@id/etDescription"
         android:layout_marginLeft="4dp"
-        android:layout_alignTop="@+id/btLocation"
         android:layout_toRightOf="@+id/btLocation"
 
         app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
 
+
+    <LinearLayout
+        android:id="@+id/llExpireOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/btInvite"
+        android:layout_alignStart="@+id/btInvite">
+
+        <TextView
+            android:id="@+id/tv30"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="30m"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv1h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="1h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv2h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="2h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv3h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="3h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tv6h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="6h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv12h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="12h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </RelativeLayout>

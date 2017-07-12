@@ -20,6 +20,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -122,10 +124,17 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                                     //TODO: check time of event and permissions
                                     //to determine if it should be shown to curr user
                                     events.add(userPosts.get(j));
-                                    adapter.notifyItemInserted(adapter.getItemCount() - 1);
                                 }
                             }
                             //TODO: sort events somehow
+                            events.sort(new Comparator<Event>() {
+                                @Override
+                                public int compare(Event event, Event t1) {
+                                    return event.deadline.compareTo(t1.deadline);
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+
                             //idea: make a TreeSet, add events to it so they compare by date
                             //then iterate through treeSet and add to events array then notify adapter
                             rvEvents.smoothScrollToPosition(0);
@@ -141,6 +150,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         fakeEvent.eventName = "Party at Zuck's";
         fakeEvent.location = "Facebook Seattle";
         fakeEvent.genre = "Partay";
+        fakeEvent.deadline = new Date();
+        fakeEvent.deadline.setTime(new Date().getTime() + 45*60000); //45 min from now
         fakeEvent.time = "4pm";
         fakeEvent.eventOwner=fakeGabriel;
         fakeEvent.participantsIds= new ArrayList<Long>();
@@ -154,9 +165,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         events.add(0, fakeEvent);
         adapter.notifyItemInserted(events.size() - 1);
         rvEvents.smoothScrollToPosition(0);
-
-        //TODO: replace with real populate:
-       
     }
 
     // create category dialog fragment
@@ -178,7 +186,14 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         createdEvent.time = "4pm";
 
         events.add(createdEvent);
-        adapter.notifyItemInserted(events.size() - 1);
+        //adapter.notifyItemInserted(events.size() - 1);
+        events.sort(new Comparator<Event>() {
+            @Override
+            public int compare(Event event, Event t1) {
+                return event.deadline.compareTo(t1.deadline);
+            }
+        });
+        adapter.notifyDataSetChanged();
         rvEvents.smoothScrollToPosition(0);
     }
 }
