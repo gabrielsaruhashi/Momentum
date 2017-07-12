@@ -97,20 +97,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
     // TODO correct this method
     public void populateFeed() {
-//        Event fakeEvent = new Event();
-//        fakeEvent.eventId = new Long(123);
-//        fakeEvent.eventName = "Party at Zuck's";
-//        fakeEvent.location = "Facebook Seattle";
-//        fakeEvent.genre = "Partay";
-//        fakeEvent.time = "4pm";
-//        fakeEvent.eventOwner = gabriel;
-//        fakeEvent.participantsIds = new ArrayList<Long>(0);
-//        ArrayList<String> friends = new ArrayList<String>(3);
-//        friends.add("Gabriel");
-//        friends.add("Samra");
-//        friends.add("Hana");
-//        fakeEvent.friendsAtEvent = friends;
-
         client = new FacebookClient(rvEvents.getContext());
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
@@ -187,6 +173,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
+        //TODO: account for case where event has no deadline OR force user to enter it OR set default deadline
         events.sort(new Comparator<Event>() {
             @Override
             public int compare(Event event, Event t1) {

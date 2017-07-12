@@ -128,7 +128,6 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     public void sendBackResult(Event event) {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
         CreateDetailsDialogListener listener = (CreateDetailsDialogListener) getTargetFragment();
-
         listener.onFinishCreateDetailsDialog(event);
         dismiss();
     }
