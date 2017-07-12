@@ -9,7 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,53 +73,45 @@ public class FeedFragment extends Fragment {
     }
 
     public void populateFeed() {
-        User gabriel = new User();
-        gabriel.username = "gabesaruhashi";
-        gabriel.name = "Gabriel S.";
-        gabriel.phoneNumber = "6505757751";
-        gabriel.currentInterestsIds = new ArrayList<Long>(0);
+//        Event fakeEvent = new Event();
+//        fakeEvent.eventId = new Long(123);
+//        fakeEvent.eventName = "Party at Zuck's";
+//        fakeEvent.location = "Facebook Seattle";
+//        fakeEvent.genre = "Partay";
+//        fakeEvent.time = "4pm";
+//        fakeEvent.eventOwner = gabriel;
+//        fakeEvent.participantsIds = new ArrayList<Long>(0);
+//        ArrayList<String> friends = new ArrayList<String>(3);
+//        friends.add("Gabriel");
+//        friends.add("Samra");
+//        friends.add("Hana");
+//        fakeEvent.friendsAtEvent = friends;
 
-        Event fakeEvent = new Event();
-        fakeEvent.eventId = new Long(123);
-        fakeEvent.eventName = "Party at Zuck's";
-        fakeEvent.location = "Facebook Seattle";
-        fakeEvent.genre = "Partay";
-        fakeEvent.time = "4pm";
-        fakeEvent.eventOwner = gabriel;
-        fakeEvent.participantsIds = new ArrayList<Long>(0);
-        ArrayList<String> friends = new ArrayList<String>(3);
-        friends.add("Gabriel");
-        friends.add("Samra");
-        friends.add("Hana");
-        fakeEvent.friendsAtEvent = friends;
-
-        events.add(0, fakeEvent);
-        adapter.notifyItemInserted(events.size() - 1);
-        rvEvents.smoothScrollToPosition(0);
-
-        //TODO: replace with real populate:
-        /*
         client = new FacebookClient(rvEvents.getContext());
-        client.getFriendsUsingApp(new GraphRequest.Callback() {
-                                      public void onCompleted(GraphResponse response) {
-                                          try {
-                                              JSONArray users = response.getJSONObject().getJSONArray("data");
-                                              //User u = User.fromJson(users.getJSONObject(0)); //this gets the first friend
-
-                                              //for user in users,
-                                              //convert fromJSON
-                                              //add to array of friends for logged in user?
-                                              //find recent posts (maybe all before a certain date?)
-                                              //add to list of posts to be displayed
-                                              //notify adapter
-                                              //make sure this list is sorted! not sure how
-                                          } catch (JSONException e) {
-                                              e.printStackTrace();
-                                          }
-                                      }
-                                  }
+        client.getFriendsUsingApp(
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            JSONArray users = response.getJSONObject().getJSONArray("data");
+                            for (int i = 0; i < users.length(); i++) {
+                                User u = User.fromJson(users.getJSONObject(i));
+                                ArrayList<Event> userPosts = u.events;
+                                for (int j = 0; j < userPosts.size(); j++) {
+                                    //TODO: check time of event and permissions
+                                    //to determine if it should be shown to curr user
+                                    events.add(userPosts.get(j));
+                                    adapter.notifyItemInserted(adapter.getItemCount() - 1);
+                                }
+                            }
+                            //TODO: sort events somehow
+                            //idea: make a TreeSet, add events to it so they compare by date
+                            //then iterate through treeSet and add to events array then notify adapter
+                            rvEvents.smoothScrollToPosition(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
         );
-         */
     }
-
 }
