@@ -12,6 +12,7 @@ import android.text.style.DynamicDrawableSpan;
 import android.text.style.ImageSpan;
 
 import shag.com.shag.Fragments.FeedFragment;
+import shag.com.shag.Fragments.MapFragment;
 import shag.com.shag.R;
 
 /**
@@ -23,6 +24,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     private String tabTitles[] = new String[] { "Feed", "Map", "Chats" };
     private Context context;
     private FeedFragment feedFragment;
+    private MapFragment mapFragment;
     Drawable myDrawable;
 
     public MainFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -32,7 +34,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 
     @Override
@@ -40,7 +42,13 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
         if  (position == 0) {
             feedFragment = getFeedInstance();
             return feedFragment;
-        } else {
+
+        }
+        else if (position ==1){
+            mapFragment = getMapInstance();
+            return mapFragment;
+        }
+        else {
             return null;
         }
     }
@@ -75,5 +83,12 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             feedFragment = new FeedFragment();
         }
         return feedFragment;
+    }
+
+    private MapFragment getMapInstance() {
+        if (mapFragment == null) {
+            mapFragment = new MapFragment();
+        }
+        return mapFragment;
     }
 }
