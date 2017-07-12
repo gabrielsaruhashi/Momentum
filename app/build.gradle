@@ -50,4 +50,10 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    // for parse
+    compile 'com.parse.bolts:bolts-android:1.4.0'
+    compile 'com.parse:parse-android:1.15.1'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0' // for logging API calls to LogCat
+    // facebook parse integration
+    compile 'com.parse:parsefacebookutils-v4-android:1.10.3@aar'
 }

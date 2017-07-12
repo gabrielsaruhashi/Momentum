@@ -11,10 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.facebook.login.LoginManager;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -66,7 +63,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         rvEvents.addItemDecoration(itemDecoration);
 
         //TODO: find the best place to ask for this permission
-        LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
+        // oginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
 
         populateFeed();
 
