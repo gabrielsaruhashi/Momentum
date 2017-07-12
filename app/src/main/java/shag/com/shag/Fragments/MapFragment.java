@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
 import static shag.com.shag.R.id.map;
@@ -66,6 +67,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     Location mLastLocation;
     Marker mCurrLocationMarker;
     Button btn;
+    Event firstEvent;
+    Marker marker1;
+    Marker marker2;
+    Event secondEvent;
     // inflation happens inside onCreateView
     @Nullable
     @Override
@@ -78,7 +83,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapFrag.getMapAsync(this);
 
 
-
+//        firstEvent = getArguments().getParcelable("first event");
+//        secondEvent = getArguments().getParcelable("second event");
 
         return v;
     }
@@ -162,8 +168,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+//        MarkerOptions markerOptions1 = new MarkerOptions();
+//        markerOptions1.position(firstEvent.latLng);
+//        markerOptions1.title("Zuck Position");
+//        markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//        marker1 = mGoogleMap.addMarker(markerOptions1);
+//
+//        MarkerOptions markerOptions2 = new MarkerOptions();
+//        markerOptions2.position(firstEvent.latLng);
+//        markerOptions2.title("Bill Position");
+//        markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//        marker2 = mGoogleMap.addMarker(markerOptions1);
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,13));
+
+
 
     }
 

@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.R;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,4 +49,18 @@ public class MainActivity extends AppCompatActivity  {
         startActivity(i);
     }
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }
