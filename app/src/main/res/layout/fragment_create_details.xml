@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/etDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:hint="What are you up to?" />
+
+    <Button
+        android:id="@+id/btSend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Send"
+        android:background="@color/burnt_orange"
+        android:textColor="@color/white"
+        android:layout_below="@+id/btTime"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"
+        android:onClick="postEvent"/>
+
+    <ImageButton
+        android:id="@+id/btCancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_marginTop="19dp"
+        android:layout_below="@+id/btSend"
+        android:layout_centerHorizontal="true" />
+
+    <ImageButton
+        android:id="@+id/btInvite"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="30dp"
+        app:srcCompat="@drawable/ic_person" />
+
+    <ImageButton
+        android:id="@+id/btLocation"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignTop="@+id/btInvite"
+        android:layout_toEndOf="@+id/btInvite"
+        android:layout_marginLeft="4dp"
+        app:srcCompat="@android:drawable/ic_menu_mylocation" />
+
+    <ImageButton
+        android:id="@+id/btTime"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/etDescription"
+        android:layout_marginLeft="4dp"
+        android:layout_alignTop="@+id/btLocation"
+        android:layout_toRightOf="@+id/btLocation"
+
+        app:srcCompat="@android:drawable/ic_lock_idle_alarm" />
+
+
+</RelativeLayout>
