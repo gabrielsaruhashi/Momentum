@@ -38,8 +38,10 @@
         android:id="@+id/tvRelativeTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:text="TextView" />
+        android:layout_alignEnd="@+id/btJoin"
+        android:layout_alignParentTop="true"
+        android:text="TextView"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/btJoin"
@@ -50,6 +52,7 @@
         android:layout_marginRight="12dp"
         android:background="@color/burnt_orange"
         android:textColor="@color/white"
+        android:layout_marginTop="5dp"
         android:text="Join" />
 
 
