@@ -33,7 +33,6 @@ public class LoginActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.bLogin);
         loginToken = (TextView) findViewById(R.id.tvLoginToken);
-
         if(Profile.getCurrentProfile() != null) {
             onLoginSuccess();
         } else {
@@ -67,5 +66,10 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         Intent i = new Intent(context, MainActivity.class);
         context.startActivity(i);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //do nothing
     }
 }

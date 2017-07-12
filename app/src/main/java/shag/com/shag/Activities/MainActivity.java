@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.R;
 
@@ -49,4 +51,14 @@ public class MainActivity extends AppCompatActivity  {
         startActivity(i);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LoginManager.getInstance().logOut();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
 }

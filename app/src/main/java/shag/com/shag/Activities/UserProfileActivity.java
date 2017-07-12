@@ -1,14 +1,19 @@
 package shag.com.shag.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.CallbackManager;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -25,6 +30,7 @@ public class UserProfileActivity extends AppCompatActivity {
     ImageView profileImage;
     Context context;
     User u;
+    CallbackManager callbackManager;
 
 
     @Override
@@ -64,5 +70,17 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+        callbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                LoginManager.getInstance().logOut();
+                Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
+                context.startActivity(intent);
+            }
+        });
+
     }
 }
