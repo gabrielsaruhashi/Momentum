@@ -143,4 +143,13 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public int compareTo(@NonNull Object o) {
         return this.deadline.compareTo(((Event) o).deadline);
     }
+
+    @Override
+    public String toString() {
+        return "Event details: name: " + eventName +
+                "\ndescription: " + description +
+                "\ndeadline: " + deadline.toString() +
+                "\nevent owner id: " + eventOwnerId +
+                "\nowner name : " + eventOwnerName;
+    }
 }

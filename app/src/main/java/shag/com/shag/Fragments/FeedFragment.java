@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +103,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
+                        Log.d("DEBUGRESPONSE", response.toString());
                         try {
                             JSONArray users = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < users.length(); i++) {

@@ -48,7 +48,11 @@ public class LoginActivity extends AppCompatActivity {
         // initiate client
         client = ParseApplication.getFacebookRestClient();
 
+        //LoginManager.getInstance().logOut();
+        //ParseUser.logOut();
+
         if (ParseUser.getCurrentUser() != null) {
+            //ParseUser.logOut();
             onLoginSuccess();
         } else {
             // login

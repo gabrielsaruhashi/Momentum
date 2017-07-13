@@ -96,16 +96,21 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             public void onClick(View v) {
                 // populate newEvent
                 newEvent.description = etDescription.getText().toString();
-                newEvent.eventOwnerId = Long.valueOf(ParseUser.getCurrentUser().getObjectId()).longValue();
-                newEvent.deadline = new Date();
+                newEvent.eventOwnerId = Long.parseLong(ParseUser.getCurrentUser().getObjectId(), 36);
+                //newEvent.eventOwnerId = Long.valueOf(ParseUser.getCurrentUser().getObjectId()).longValue();
+                if (newEvent.deadline == null) {
+                    newEvent.deadline = new Date();
+                }
                 newEvent.eventOwnerName = ParseUser.getCurrentUser().getString("name");
+                Log.d("DEBUGEVENT", newEvent.toString());
 
                 newEvent.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
                         if(e == null) {
-                            Toast.makeText(getActivity(), "Successfully created event on Parse",
-                                    Toast.LENGTH_SHORT).show();
+                            Log.d("DEBUG", "EI");
+                            //Toast.makeText(getContext(), "Successfully created event on Parse",
+                                    //Toast.LENGTH_SHORT).show();
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
