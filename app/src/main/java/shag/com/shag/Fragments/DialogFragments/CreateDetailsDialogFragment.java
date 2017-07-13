@@ -100,6 +100,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 //newEvent.eventOwnerId = Long.valueOf(ParseUser.getCurrentUser().getObjectId()).longValue();
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();
+                    newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE*60);
                 }
                 newEvent.eventOwnerName = ParseUser.getCurrentUser().getString("name");
                 Log.d("DEBUGEVENT", newEvent.toString());

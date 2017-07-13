@@ -108,6 +108,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                             JSONArray users = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < users.length(); i++) {
                                 User u = User.fromJson(users.getJSONObject(i));
+                                //TODO: get userID, query data
                                 ArrayList<Event> userPosts = u.events;
                                 for (int j = 0; j < userPosts.size(); j++) {
                                     //TODO: check time of event and permissions
