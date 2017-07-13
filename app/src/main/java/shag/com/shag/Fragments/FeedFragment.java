@@ -12,6 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -88,13 +101,49 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
     // TODO correct this method
     public void populateFeed() {
+        client = new FacebookClient(rvEvents.getContext());
+        client.getFriendsUsingApp(
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            JSONArray users = response.getJSONObject().getJSONArray("data");
+                            for (int i = 0; i < users.length(); i++) {
+                                User u = User.fromJson(users.getJSONObject(i));
+                                ArrayList<Event> userPosts = u.events;
+                                for (int j = 0; j < userPosts.size(); j++) {
+                                    //TODO: check time of event and permissions
+                                    //to determine if it should be shown to curr user
+                                    events.add(userPosts.get(j));
+                                }
+                            }
+                            //TODO: sort events somehow
+                            events.sort(new Comparator<Event>() {
+                                @Override
+                                public int compare(Event event, Event t1) {
+                                    return event.deadline.compareTo(t1.deadline);
+                                }
+                            });
+                            adapter.notifyDataSetChanged();
+
+                            //idea: make a TreeSet, add events to it so they compare by date
+                            //then iterate through treeSet and add to events array then notify adapter
+                            rvEvents.smoothScrollToPosition(0);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
 
         Event fakeEvent = new Event();
         fakeEvent.eventId = new Long(123);
         fakeEvent.eventName = "Party at Zuck's";
         fakeEvent.location = "Facebook Seattle";
         fakeEvent.genre = "Partay";
+        fakeEvent.deadline = new Date();
+        fakeEvent.deadline.setTime(new Date().getTime() + 45*60000); //45 min from now
         fakeEvent.time = "4pm";
+        fakeEvent.latLng = new LatLng(47.628883, -122.342606);
         fakeEvent.eventOwner=fakeGabriel;
         fakeEvent.participantsIds= new ArrayList<Long>();
 
@@ -108,8 +157,36 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         adapter.notifyItemInserted(events.size() - 1);
         rvEvents.smoothScrollToPosition(0);
 
+
+        Event fakeEvent2 = new Event();
+        fakeEvent2.eventId = new Long(198);
+        fakeEvent2.eventName = "Party at Bill's";
+        fakeEvent2.location = "Facebook Seattle";
+        fakeEvent2.genre = "Professional Gathering";
+        fakeEvent2.time = "4pm";
+        fakeEvent2.latLng = new LatLng(47.621397, -122.338092);
+        fakeEvent2.eventOwner=fakeGabriel;
+        fakeEvent2.participantsIds= new ArrayList<Long>();
+
+        ArrayList<String> friends2 = new ArrayList<String>(3);
+        friends2.add("Gabriel");
+        friends2.add("Samra");
+        friends2.add("Hana");
+        fakeEvent2.friendsAtEvent = friends2;
+
+        events.add(0, fakeEvent2);
+        adapter.notifyItemInserted(events.size() - 1);
+        rvEvents.smoothScrollToPosition(0);
+
+        MapFragment fragment = new MapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("first event",fakeEvent);
+        bundle.putParcelable("second event", fakeEvent2);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().commit();
         //TODO: replace with real populate:
        
+
     }
 
     // create category dialog fragment
@@ -131,8 +208,15 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         createdEvent.time = "4pm";
 
         events.add(createdEvent);
-        adapter.notifyItemInserted(events.size() - 1);
+        //adapter.notifyItemInserted(events.size() - 1);
+        //TODO: account for case where event has no deadline OR force user to enter it OR set default deadline
+        events.sort(new Comparator<Event>() {
+            @Override
+            public int compare(Event event, Event t1) {
+                return event.deadline.compareTo(t1.deadline);
+            }
+        });
+        adapter.notifyDataSetChanged();
         rvEvents.smoothScrollToPosition(0);
     }
-
 }
