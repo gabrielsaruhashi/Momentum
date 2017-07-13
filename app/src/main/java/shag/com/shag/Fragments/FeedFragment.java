@@ -34,9 +34,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     // the adapter wired to the new view
     FeedAdapter adapter;
     FacebookClient client;
-
     // TODO remove fake gabe
     User fakeGabriel;
+    FloatingActionButton myFab;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -67,14 +67,15 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         populateFeed();
 
+        /*
         // setups FAB to work
-        FloatingActionButton myFab = (FloatingActionButton) v.findViewById(R.id.myFAB);
+        myFab = (FloatingActionButton) v.findViewById(R.id.myFAB);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // creates the Create dialog fragment
                 showCreateDialog();
             }
-        });
+        }); */
 
         // TODO remove fake Gabe
         fakeGabriel = new User();

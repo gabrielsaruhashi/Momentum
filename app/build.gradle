@@ -23,8 +23,11 @@ android {
 
 repositories {
     mavenCentral()
+    // required to find the dbflow project's artifacts
+    maven { url "https://www.jitpack.io" }
 }
 
+def dbflow_version = "4.0.4"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -56,4 +59,13 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.6.0' // for logging API calls to LogCat
     // facebook parse integration
     compile 'com.parse:parsefacebookutils-v4-android:1.10.3@aar'
+
+    // DBFlow for simple persistence with an ORM
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    compile fileTree(dir: 'libs', include: '*.jar')
+
+    // for Oauth
+    compile 'com.codepath.libraries:android-oauth-handler:1.2.5'
 }
