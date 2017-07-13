@@ -1,8 +1,10 @@
 package shag.com.shag.Fragments.DialogFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.ArrayList;
 import java.util.Date;
 
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import static com.parse.ParseUser.getCurrentUser;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -28,11 +46,13 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private Button btSend;
     private Button btCancel;
     private Button btInvite;
-    private Button btLocation;
+    private ImageButton btLocation;
     private ImageButton btTime;
     private Event newEvent;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE=1;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
+    String category;
 
     public CreateDetailsDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -70,12 +90,13 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         // get views
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btSend = (Button) view.findViewById(R.id.btSend);
+        btLocation = (ImageButton) view.findViewById(R.id.btLocation);
         llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
         llExpireOptions.setVisibility(View.GONE);
         btTime = (ImageButton) view.findViewById(R.id.btTime);
 
         // Fetch arguments from bundle and set title
-        String category = getArguments().getString("category");
+        category = getArguments().getString("category");
         getDialog().setTitle(category);
         // Show soft keyboard automatically and request focus to field
         etDescription.requestFocus();
@@ -88,11 +109,48 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             @Override
             public void onClick(View v) {
                 // populate newEvent
-                newEvent.description = etDescription.getText().toString();
+                newEvent.setEventName("Party at Zuck's");
+                newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
+                newEvent.setDescription(etDescription.getText().toString());
+                /*newEvent.setLatLng(
+                        new LatLng(47.628883, -122.342606)
+                ); */
+                newEvent.setFriendsAtEvent(new ArrayList<Long>());
+                //newEvent.setLocation("Facebook Seattle");
+                newEvent.setParticipantsIds(new ArrayList<Long>());
+                newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+                if (newEvent.deadline == null) {
+                    newEvent.deadline = new Date();
+                }
+
+
+                newEvent.setCategory(category);
+                //Log.d("DEBUGEVENT", newEvent.toString());
+
+                newEvent.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null) {
+                            Log.d("DEBUG", "EI");
+                            //Toast.makeText(getContext(), "Successfully created event on Parse",
+                                    //Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Failed to save message", e);
+                        }
+                    }
+                });
                 // send back to pick category dialog
                 sendBackResult(newEvent);
             }
         });
+
+        btLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOpenSearch();
+            }
+        });
+
 
         btTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,6 +182,38 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         setListenerForTime(tv12h, 720);
     }
 
+    private void onOpenSearch() {
+        try {
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .build(getActivity());
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                newEvent.setLocation(place.getName().toString());
+                newEvent.setParseGeoPoint(new ParseGeoPoint(place.getLatLng().latitude, place.getLatLng().longitude));
+                //newEvent.setLatLng(place.getLatLng());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+
     // Call this method to send the data back to the parent fragment
     public void sendBackResult(Event event) {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
@@ -139,6 +229,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 Date newDate = new Date();
                 newDate.setTime(newDate.getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
                 Toast.makeText(getContext(), "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
+                //newEvent.deadline = newDate;
                 newEvent.setDeadline(newDate);
             }
         });

@@ -53,6 +53,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
 
+
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
@@ -98,9 +99,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
 
-
-//        firstEvent = getArguments().getParcelable("first event");
-//        secondEvent = getArguments().getParcelable("second event");
 
         return v;
     }

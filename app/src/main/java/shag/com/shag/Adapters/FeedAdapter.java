@@ -224,9 +224,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
 
                 // populate views
-                tvEventName.setText('@' + event.eventOwner.getUsername());
+                tvEventName.setText('@' + event.eventOwnerName);
                 tvBody.setText(event.getDescription());
-                tvRelativeTime.setText(event.getTime());
+                tvRelativeTime.setText(event.getDeadline().toString());
 
                 //TODO upload image of event owner
                 /*

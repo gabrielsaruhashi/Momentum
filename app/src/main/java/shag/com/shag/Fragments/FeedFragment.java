@@ -7,13 +7,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +21,6 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -104,6 +103,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
+                        Log.d("DEBUGRESPONSE", response.toString());
                         try {
                             JSONArray users = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < users.length(); i++) {
@@ -134,6 +134,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 }
         );
 
+        /*
         Event fakeEvent = new Event();
         //fakeEvent.eventId = new Long(123);
         fakeEvent.eventName = "Party at Zuck's";
@@ -183,7 +184,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         bundle.putParcelable("second event", fakeEvent2);
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().commit();*/
-        //TODO: replace with real populate:
+        //TODO: replace with real populate: *.
        
 
     }
@@ -203,8 +204,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     public void onFinishCategoryDialog(Event createdEvent) {
         //TODO remove fake gabriel
         //createdEvent.eventOwner = fakeGabriel;
-        createdEvent.eventName = "SHIT IS WORKING";
-        createdEvent.time = "4pm";
+        // createdEvent.eventName = "SHIT IS WORKING";
 
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
