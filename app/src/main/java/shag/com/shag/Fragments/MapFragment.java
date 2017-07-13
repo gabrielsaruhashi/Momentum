@@ -11,12 +11,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -32,6 +32,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
@@ -46,18 +49,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=2;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
-//    private GoogleMap googleMap;
-//    SupportMapFragment mapFragment;
-//    private GoogleApiClient mGoogleApiClient;
-//    LocationManager locationManager;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
-//    boolean mLocationPermissionGranted;
-//    Location mLastKnownLocation;
-//    LatLng mCurrentLocation;
-//    private GoogleMap mMap;
-//    GoogleApiClient mGoogleApiClient;
-//    CameraPosition mCameraPosition;
-//    LatLng mDefaultLocation = new LatLng(-33.852, 151.211);
 
 
     GoogleMap mGoogleMap;
@@ -66,7 +59,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
-    Button btn;
+    ToggleButton btn;
+    Button btn2;
+    Button btn3;
+    Button btn4;
+    Button btn5;
+    Button btn6;
     Event firstEvent;
     Marker marker1;
     Marker marker2;
@@ -77,10 +75,28 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        btn= (Button) v.findViewById(R.id.btn_Test);
-        btn.setMovementMethod(new ScrollingMovementMethod());
+        btn= (ToggleButton) v.findViewById(R.id.btn_Test);
+        btn2 = (Button) v.findViewById(R.id.btn_Test2);
+        btn3= (Button) v.findViewById(R.id.btn_Test3);
+        btn4 = (Button) v.findViewById(R.id.btn_Test4);
+        btn5= (Button) v.findViewById(R.id.btn_Test5);
+        btn6 = (Button) v.findViewById(R.id.btn_Test6);
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarkerOptions markerOptions1 = new MarkerOptions();
+                markerOptions1.position(new LatLng (47.621397, -122.338092));
+                markerOptions1.title("Bill Position");
+                markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                marker1 = mGoogleMap.addMarker(markerOptions1);
+            }
+        });
+
+
+
 
 
 //        firstEvent = getArguments().getParcelable("first event");
@@ -125,6 +141,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    //Takes all possible events tied to user and breaks down by categories (creates hashMap where key is button name and value is list)
+    public HashMap<String, ArrayList<Event>> taggingEvents(ArrayList<Event> events){
+        HashMap<String, ArrayList<Event>> eventCategories = new HashMap<>();
+        for (Event event: events){
+            //if event is private, add to private list, else add to public list
+            //also create a breakdown of tags, each with a unique list
+        }
+        return eventCategories;
+
+    }
+
+
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addConnectionCallbacks(this)
@@ -168,11 +196,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-//        MarkerOptions markerOptions1 = new MarkerOptions();
-//        markerOptions1.position(firstEvent.latLng);
-//        markerOptions1.title("Zuck Position");
-//        markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//        marker1 = mGoogleMap.addMarker(markerOptions1);
+
 //
 //        MarkerOptions markerOptions2 = new MarkerOptions();
 //        markerOptions2.position(firstEvent.latLng);
@@ -188,7 +212,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {

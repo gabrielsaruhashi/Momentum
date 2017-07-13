@@ -266,7 +266,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     public void joinEvent(User user, Event event, Button joinStatus) {
         event.participantsIds.add(user.getUserID());
-        user.currentInterestsIds.add(event.eventId);
+        //user.currentInterestsIds.add(event.eventId);
         Log.i("DEBUGAFTERJOIN", event.participantsIds.toString());
 
         joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
@@ -276,7 +276,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     public void removeEvent(User user, Event event, Button joinStatus) {
         event.participantsIds.remove(user.getUserID());
-        user.currentInterestsIds.remove(event.eventId);
+        //user.currentInterestsIds.remove(event.eventId);
         Log.i("DEBUGAFTERJOIN", event.participantsIds.toString());
 
         joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));

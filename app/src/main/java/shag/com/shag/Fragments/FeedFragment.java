@@ -135,7 +135,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         );
 
         Event fakeEvent = new Event();
-        fakeEvent.eventId = new Long(123);
+        //fakeEvent.eventId = new Long(123);
         fakeEvent.eventName = "Party at Zuck's";
         fakeEvent.location = "Facebook Seattle";
         fakeEvent.genre = "Partay";
