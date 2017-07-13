@@ -67,7 +67,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         populateFeed();
 
-        /*
+
         // setups FAB to work
         myFab = (FloatingActionButton) v.findViewById(R.id.myFAB);
         myFab.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +75,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 // creates the Create dialog fragment
                 showCreateDialog();
             }
-        }); */
+        });
 
         // TODO remove fake Gabe
         fakeGabriel = new User();
