@@ -2,9 +2,9 @@ package shag.com.shag.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
-import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,7 +19,6 @@ public class Event implements Parcelable, Comparable {
     // fields
     public LatLng latLng;
     public String eventName;
-    public long eventId;
     public String description;
     public String location;
     public String genre;
@@ -87,7 +86,6 @@ public class Event implements Parcelable, Comparable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(this.latLng, flags);
         dest.writeString(this.eventName);
-        dest.writeLong(this.eventId);
         dest.writeString(this.description);
         dest.writeString(this.location);
         dest.writeString(this.genre);
@@ -103,7 +101,6 @@ public class Event implements Parcelable, Comparable {
     protected Event(Parcel in) {
         this.latLng = in.readParcelable(LatLng.class.getClassLoader());
         this.eventName = in.readString();
-        this.eventId = in.readLong();
         this.description = in.readString();
         this.location = in.readString();
         this.genre = in.readString();
