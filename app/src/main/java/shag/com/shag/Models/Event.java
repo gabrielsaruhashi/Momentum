@@ -4,14 +4,17 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
+import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by samrabelachew on 7/10/17.
  */
 
-public class Event implements Parcelable {
+public class Event implements Parcelable, Comparable {
+
 
     // fields
     public LatLng latLng;
@@ -24,6 +27,8 @@ public class Event implements Parcelable {
     public ArrayList<String> friendsAtEvent;
     public User eventOwner;
     public ArrayList<Long> participantsIds;
+    public Date deadline;
+    public Date createdAt;
 
     // getters
     public String getEventName() {
@@ -120,4 +125,17 @@ public class Event implements Parcelable {
             return new Event[size];
         }
     };
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    //TODO: change time to Date object or add one so we can compare events
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return this.deadline.compareTo(((Event) o).deadline);
+    }
 }

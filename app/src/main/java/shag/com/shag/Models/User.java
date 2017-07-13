@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -13,6 +14,7 @@ import java.util.ArrayList;
  */
 
 public class User implements Parcelable {
+
 
     //fields
     public String name;
@@ -22,6 +24,8 @@ public class User implements Parcelable {
     public long fbUserID;
     public String phoneNumber;
     public ArrayList<Long> currentInterestsIds;
+    //TODO: make sure to set this value when a user creates an event
+    public ArrayList<Event> events;
 
     public static User fromJson(JSONObject json) {
         User u = new User();
@@ -31,6 +35,7 @@ public class User implements Parcelable {
             u.setName(json.getString("name"));
             JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
             u.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
+            u.events = new ArrayList<Event>();
 
         } catch (JSONException e) {
             e.printStackTrace();
