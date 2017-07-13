@@ -20,33 +20,29 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
 
     // fields
-    public LatLng latLng;
+    public String eventOwnerName;
     public String eventName;
+    public LatLng latLng;
     public String description;
     public String location;
     public String category;
-    public String time;
-    public ArrayList<String> friendsAtEvent;
+    public ArrayList<Long> friendsAtEvent;
     public long eventOwnerId;
-    public String eventOwnerName;
     public ArrayList<Long> participantsIds;
     public Date deadline;
-    public Date createdAt;
 
     // getters
     public String getEventName() {
         return eventName;
     }
 
-    public String getLocation() {
-        return location;
-    }
+    public String getLocation() { return location; }
 
     public String getCategory() {
         return category;
     }
 
-    public ArrayList<String> getFriendsAtEvent() {
+    public ArrayList<Long> getFriendsAtEvent() {
         return friendsAtEvent;
     }
 
@@ -56,33 +52,42 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         return deadline;
     }
 
-    // setters
-    public void setFriendsAtEvent(ArrayList<String> friendsAtEvent) {
-        this.friendsAtEvent = friendsAtEvent;
-    }
+    public String getEventOwnerName() { return eventOwnerName; }
 
-    public String getTime() {
-        return time;
-    }
+    public LatLng getLatLng() { return latLng; }
 
-    public void setTime(String time) {
-        this.time = time;
-    }
+    public ArrayList<Long> getParticipantsIds() { return participantsIds;}
+    public long getEventOwnerId() { return eventOwnerId; }
 
-    public void setGenre(String category) {
-        this.category = category;
-    }
+    // SETTERS
+    public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) { this.friendsAtEvent = friendsAtEvent; }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
+    public void setLocation(String location) { put("location", location); }
 
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
+    public void setEventName(String eventName) { put("event_name", eventName); }
 
     public void setDescription(String description) {
-        this.description = description;
+        put("description", description);
+    }
+
+    public void setDeadline(Date deadline) {
+        put("deadline", deadline);
+    }
+
+    public void setEventOwnerName(String eventOwnerName) { put("event_owner_name", eventOwnerName); }
+
+
+    public void setLatLng(LatLng latLng) { put("lat_lng", latLng); }
+
+    public void setCategory(String category) { put("category", category); }
+
+
+    public void setEventOwnerId(long eventOwnerId) { put("event_owner_id", eventOwnerId); }
+
+    public void setParticipantsIds(ArrayList<Long> participantsIds) { this.participantsIds = participantsIds; }
+
+    public static Creator<Event> getCREATOR() {
+        return CREATOR;
     }
 
     @Override
@@ -97,8 +102,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         dest.writeString(this.description);
         dest.writeString(this.location);
         dest.writeString(this.category);
-        dest.writeString(this.time);
-        dest.writeStringList(this.friendsAtEvent);
+        dest.writeList(this.friendsAtEvent);
         dest.writeLong(this.eventOwnerId);
         dest.writeList(this.participantsIds);
     }
@@ -112,8 +116,8 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.description = in.readString();
         this.location = in.readString();
         this.category = in.readString();
-        this.time = in.readString();
-        this.friendsAtEvent = in.createStringArrayList();
+        this.friendsAtEvent = new ArrayList<Long>();
+        in.readList(this.participantsIds, Long.class.getClassLoader());
         this.eventOwnerId = in.readLong();
         this.participantsIds = new ArrayList<Long>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
@@ -130,13 +134,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
             return new Event[size];
         }
     };
-    public void setDeadline(Date deadline) {
-        this.deadline = deadline;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
 
     //TODO: change time to Date object or add one so we can compare events
     @Override

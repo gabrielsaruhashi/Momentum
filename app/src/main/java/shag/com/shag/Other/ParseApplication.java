@@ -48,6 +48,9 @@ public class ParseApplication extends Application {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.networkInterceptors().add(httpLoggingInterceptor);
 
+        //  register event parse class
+        ParseObject.registerSubclass(Event.class);
+
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured
         // any network interceptors must be added with the Configuration Builder given this syntax
@@ -66,9 +69,6 @@ public class ParseApplication extends Application {
 
         // set context
         ParseApplication.context = this;
-
-        //  register event parse class
-        ParseObject.registerSubclass(Event.class);
 
 
     }

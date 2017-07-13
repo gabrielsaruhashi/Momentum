@@ -15,16 +15,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+import static com.parse.ParseUser.getCurrentUser;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -40,6 +43,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private Event newEvent;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
+    String category;
 
     public CreateDetailsDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -82,7 +86,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         btTime = (ImageButton) view.findViewById(R.id.btTime);
 
         // Fetch arguments from bundle and set title
-        String category = getArguments().getString("category");
+        category = getArguments().getString("category");
         getDialog().setTitle(category);
         // Show soft keyboard automatically and request focus to field
         etDescription.requestFocus();
@@ -95,13 +99,22 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             @Override
             public void onClick(View v) {
                 // populate newEvent
-                newEvent.description = etDescription.getText().toString();
-                newEvent.eventOwnerId = Long.parseLong(ParseUser.getCurrentUser().getObjectId(), 36);
-                //newEvent.eventOwnerId = Long.valueOf(ParseUser.getCurrentUser().getObjectId()).longValue();
+                newEvent.setEventName("Party at Zuck's");
+                newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
+                newEvent.setDescription(etDescription.getText().toString());
+                newEvent.setLatLng(
+                        new LatLng(0.0, 0.0)
+                );
+                newEvent.setFriendsAtEvent(new ArrayList<Long>());
+                newEvent.setLocation("Facebook Seattle");
+                newEvent.setParticipantsIds(new ArrayList<Long>());
+                newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
                 if (newEvent.deadline == null) {
-                    newEvent.deadline = new Date();
+                    newEvent.setDeadline(new Date());
                 }
-                newEvent.eventOwnerName = ParseUser.getCurrentUser().getString("name");
+
+
+                newEvent.setCategory(category);
                 Log.d("DEBUGEVENT", newEvent.toString());
 
                 newEvent.saveInBackground(new SaveCallback() {
