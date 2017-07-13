@@ -1,5 +1,9 @@
 package shag.com.shag.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.android.gms.maps.model.LatLng;
 import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -9,9 +13,11 @@ import java.util.Date;
  * Created by samrabelachew on 7/10/17.
  */
 
-public class Event implements Comparable {
+public class Event implements Parcelable, Comparable {
+
 
     // fields
+    public LatLng latLng;
     public String eventName;
     public long eventId;
     public String description;
@@ -72,6 +78,53 @@ public class Event implements Comparable {
         this.description = description;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(this.latLng, flags);
+        dest.writeString(this.eventName);
+        dest.writeLong(this.eventId);
+        dest.writeString(this.description);
+        dest.writeString(this.location);
+        dest.writeString(this.genre);
+        dest.writeString(this.time);
+        dest.writeStringList(this.friendsAtEvent);
+        dest.writeParcelable(this.eventOwner, flags);
+        dest.writeList(this.participantsIds);
+    }
+
+    public Event() {
+    }
+
+    protected Event(Parcel in) {
+        this.latLng = in.readParcelable(LatLng.class.getClassLoader());
+        this.eventName = in.readString();
+        this.eventId = in.readLong();
+        this.description = in.readString();
+        this.location = in.readString();
+        this.genre = in.readString();
+        this.time = in.readString();
+        this.friendsAtEvent = in.createStringArrayList();
+        this.eventOwner = in.readParcelable(User.class.getClassLoader());
+        this.participantsIds = new ArrayList<Long>();
+        in.readList(this.participantsIds, Long.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel source) {
+            return new Event(source);
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
     public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
