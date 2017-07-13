@@ -85,9 +85,6 @@ public class LoginActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
-
-
-
                              /*
                              user.put("name", name);
                              user.put("profile_image_url", profileImageUrl);

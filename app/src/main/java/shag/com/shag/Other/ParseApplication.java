@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowLog;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -12,6 +13,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import shag.com.shag.Clients.FacebookClient;
+import shag.com.shag.Models.Event;
 
 /**
  * Created by gabesaruhashi on 7/12/17.
@@ -64,6 +66,10 @@ public class ParseApplication extends Application {
 
         // set context
         ParseApplication.context = this;
+
+        //  register event parse class
+        ParseObject.registerSubclass(Event.class);
+
 
     }
 

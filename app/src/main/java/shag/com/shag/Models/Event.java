@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.ParseClassName;
+import com.parse.ParseObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,7 +15,8 @@ import java.util.Date;
  * Created by samrabelachew on 7/10/17.
  */
 
-public class Event implements Parcelable, Comparable {
+@ParseClassName("Event")
+public class Event extends ParseObject implements Parcelable, Comparable {
 
 
     // fields
@@ -21,10 +24,11 @@ public class Event implements Parcelable, Comparable {
     public String eventName;
     public String description;
     public String location;
-    public String genre;
+    public String category;
     public String time;
     public ArrayList<String> friendsAtEvent;
-    public User eventOwner;
+    public long eventOwnerId;
+    public String eventOwnerName;
     public ArrayList<Long> participantsIds;
     public Date deadline;
     public Date createdAt;
@@ -38,15 +42,19 @@ public class Event implements Parcelable, Comparable {
         return location;
     }
 
-    public String getGenre() {
-        return genre;
+    public String getCategory() {
+        return category;
     }
 
     public ArrayList<String> getFriendsAtEvent() {
         return friendsAtEvent;
     }
+
     public String getDescription() { return description; }
 
+    public Date getDeadline() {
+        return deadline;
+    }
 
     // setters
     public void setFriendsAtEvent(ArrayList<String> friendsAtEvent) {
@@ -61,8 +69,8 @@ public class Event implements Parcelable, Comparable {
         this.time = time;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setGenre(String category) {
+        this.category = category;
     }
 
     public void setLocation(String location) {
@@ -88,10 +96,10 @@ public class Event implements Parcelable, Comparable {
         dest.writeString(this.eventName);
         dest.writeString(this.description);
         dest.writeString(this.location);
-        dest.writeString(this.genre);
+        dest.writeString(this.category);
         dest.writeString(this.time);
         dest.writeStringList(this.friendsAtEvent);
-        dest.writeParcelable(this.eventOwner, flags);
+        dest.writeLong(this.eventOwnerId);
         dest.writeList(this.participantsIds);
     }
 
@@ -103,10 +111,10 @@ public class Event implements Parcelable, Comparable {
         this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
-        this.genre = in.readString();
+        this.category = in.readString();
         this.time = in.readString();
         this.friendsAtEvent = in.createStringArrayList();
-        this.eventOwner = in.readParcelable(User.class.getClassLoader());
+        this.eventOwnerId = in.readLong();
         this.participantsIds = new ArrayList<Long>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
     }

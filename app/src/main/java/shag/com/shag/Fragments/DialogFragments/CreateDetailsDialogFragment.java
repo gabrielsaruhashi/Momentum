@@ -3,6 +3,7 @@ package shag.com.shag.Fragments.DialogFragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +15,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 import java.util.Date;
 
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -89,6 +96,21 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             public void onClick(View v) {
                 // populate newEvent
                 newEvent.description = etDescription.getText().toString();
+                newEvent.eventOwnerId = Long.valueOf(ParseUser.getCurrentUser().getObjectId()).longValue();
+                newEvent.deadline = new Date();
+                newEvent.eventOwnerName = ParseUser.getCurrentUser().getString("name");
+
+                newEvent.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if(e == null) {
+                            Toast.makeText(getActivity(), "Successfully created event on Parse",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.e(TAG, "Failed to save message", e);
+                        }
+                    }
+                });
                 // send back to pick category dialog
                 sendBackResult(newEvent);
             }
