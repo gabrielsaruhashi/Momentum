@@ -156,7 +156,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         events.add(0, fakeEvent);
         adapter.notifyItemInserted(events.size() - 1);
         rvEvents.smoothScrollToPosition(0);
-
+        /*
 
         Event fakeEvent2 = new Event();
         fakeEvent2.eventId = new Long(198);
@@ -183,7 +183,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         bundle.putParcelable("first event",fakeEvent);
         bundle.putParcelable("second event", fakeEvent2);
         fragment.setArguments(bundle);
-        getActivity().getSupportFragmentManager().beginTransaction().commit();
+        getActivity().getSupportFragmentManager().beginTransaction().commit();*/
         //TODO: replace with real populate:
        
 

@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.facebook.login.LoginManager;
+
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.R;
 
@@ -37,19 +39,29 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
 
-    public void onProfileView(MenuItem item){
+    public void onProfileView(MenuItem item) {
         //launch profile view
         Intent i = new Intent(this, UserProfileActivity.class);
         startActivity(i);
     }
 
-    public void onSettingsView(MenuItem item){
+    public void onSettingsView(MenuItem item) {
         //launch profile view
         Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LoginManager.getInstance().logOut();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //do nothing
+    }
+
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
     }
