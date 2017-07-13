@@ -205,8 +205,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     public void onFinishCategoryDialog(Event createdEvent) {
         //TODO remove fake gabriel
         //createdEvent.eventOwner = fakeGabriel;
-        createdEvent.eventName = "SHIT IS WORKING";
-        createdEvent.time = "4pm";
+        // createdEvent.eventName = "SHIT IS WORKING";
 
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
