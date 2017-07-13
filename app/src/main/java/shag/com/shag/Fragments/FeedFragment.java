@@ -11,20 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
-import com.facebook.login.LoginManager;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -32,6 +29,7 @@ import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -101,7 +99,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
     // TODO correct this method
     public void populateFeed() {
-        client = new FacebookClient(rvEvents.getContext());
+        //client = new FacebookClient(rvEvents.getContext());
+        client = ParseApplication.getFacebookRestClient();
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
@@ -117,7 +116,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                                 }
                             }
                             //TODO: sort events somehow
-                            events.sort(new Comparator<Event>() {
+                            Collections.sort(events, new Comparator<Event>() {
                                 @Override
                                 public int compare(Event event, Event t1) {
                                     return event.deadline.compareTo(t1.deadline);
@@ -210,7 +209,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
         //TODO: account for case where event has no deadline OR force user to enter it OR set default deadline
-        events.sort(new Comparator<Event>() {
+        Collections.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event event, Event t1) {
                 return event.deadline.compareTo(t1.deadline);

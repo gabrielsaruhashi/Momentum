@@ -48,39 +48,42 @@ public class LoginActivity extends AppCompatActivity {
         // initiate client
         client = ParseApplication.getFacebookRestClient();
 
-        // login
-        ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
-            @Override
-            public void done(final ParseUser user, ParseException err) {
+        if (ParseUser.getCurrentUser() != null) {
+            onLoginSuccess();
+        } else {
+            // login
+            ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
+                @Override
+                public void done(final ParseUser user, ParseException err) {
 
-                if (user == null) {
-                    Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
-                }
-                // if user is registering
-                else if (user.isNew()) {
+                    if (user == null) {
+                        Log.d("MyApp", "Uh oh. The user cancelled the Facebook login.");
+                    }
+                    // if user is registering
+                    else if (user.isNew()) {
 
-                    // get user info
-                    client.getMyInfo(new GraphRequest.Callback() {
-                         @Override
-                         public void onCompleted(GraphResponse response) {
-                             JSONObject userJSON = response.getJSONObject();
-                             // initialize properties for new user
-                             try {
+                        // get user info
+                        client.getMyInfo(new GraphRequest.Callback() {
+                            @Override
+                            public void onCompleted(GraphResponse response) {
+                                JSONObject userJSON = response.getJSONObject();
+                                // initialize properties for new user
+                                try {
 
-                                 name = userJSON.getString("name");
-                                 fbUid = userJSON.getLong("id");
-                                 profileImageUrl = userJSON.getJSONObject("picture")
-                                         .getJSONObject("data")
-                                         .getString("url");
+                                    name = userJSON.getString("name");
+                                    fbUid = userJSON.getLong("id");
+                                    profileImageUrl = userJSON.getJSONObject("picture")
+                                            .getJSONObject("data")
+                                            .getString("url");
 
-                                 CustomUser newCustomUser = new CustomUser(user);
-                                 newCustomUser.setSomeString("name", name);
-                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
+                                    CustomUser newCustomUser = new CustomUser(user);
+                                    newCustomUser.setSomeString("name", name);
+                                    newCustomUser.setSomeString("profile_image_url", profileImageUrl);
 
 
-                             } catch (JSONException e) {
-                                 e.printStackTrace();
-                             }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
 
 
 
@@ -100,21 +103,22 @@ public class LoginActivity extends AppCompatActivity {
                                      }
                                  }
                              }); */
-                         }
-                     });
-                    Log.d("MyApp", "User signed up and logged in through Facebook!");
+                            }
+                        });
+                        Log.d("MyApp", "User signed up and logged in through Facebook!");
 
-                    onLoginSuccess();
-                } else {
+                        onLoginSuccess();
+                    } else {
 
-                    Log.d("MyApp", "User logged in through Facebook!");
-                    Log.d("MyApp", user.getUsername());
-                    Log.d("MyApp", user.getCreatedAt().toString());
-                    Log.d("MyApp", user.getObjectId());
-                    onLoginSuccess();
+                        Log.d("MyApp", "User logged in through Facebook!");
+                        Log.d("MyApp", user.getUsername());
+                        Log.d("MyApp", user.getCreatedAt().toString());
+                        Log.d("MyApp", user.getObjectId());
+                        onLoginSuccess();
+                    }
                 }
-            }
-        });
+            });
+        }
 
     }
 
