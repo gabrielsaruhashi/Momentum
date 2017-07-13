@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
+
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -45,9 +47,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     // the adapter wired to the new view
     FeedAdapter adapter;
     FacebookClient client;
-
     // TODO remove fake gabe
     User fakeGabriel;
+    FloatingActionButton myFab;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -74,12 +76,13 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         rvEvents.addItemDecoration(itemDecoration);
 
         //TODO: find the best place to ask for this permission
-        LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
+        // oginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("user_friends"));
 
         populateFeed();
 
+
         // setups FAB to work
-        FloatingActionButton myFab = (FloatingActionButton) v.findViewById(R.id.myFAB);
+        myFab = (FloatingActionButton) v.findViewById(R.id.myFAB);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // creates the Create dialog fragment
