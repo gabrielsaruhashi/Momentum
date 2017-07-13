@@ -20,7 +20,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     // fields
     public String eventOwnerName;
-    public String eventName;
     // public LatLng latLng;
     public String description;
     public String location;
@@ -30,10 +29,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public ArrayList<Long> participantsIds;
     public Date deadline;
 
-    // getters
-    public String getEventName() {
-        return eventName;
-    }
+    // GETTERS
 
     public String getLocation() { return location; }
 
@@ -67,10 +63,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public void setLocation(String location) {
         this.location=location;
         put("location", location); }
-
-    public void setEventName(String eventName) {
-        this.eventName=eventName;
-        put("event_name", eventName); }
 
     public void setDescription(String description) {
         this.description=description;
@@ -114,7 +106,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         // dest.writeParcelable(this.latLng, flags);
-        dest.writeString(this.eventName);
         dest.writeString(this.description);
         dest.writeString(this.location);
         dest.writeString(this.category);
@@ -128,7 +119,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     protected Event(Parcel in) {
         // this.latLng = in.readParcelable(LatLng.class.getClassLoader());
-        this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
         this.category = in.readString();
@@ -159,7 +149,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     @Override
     public String toString() {
-        return "Event details: name: " + eventName +
+        return "Event details: " +
                 "\ndescription: " + description +
                 "\ndeadline: " + deadline.toString() +
                 "\nevent owner id: " + eventOwnerId +
