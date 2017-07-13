@@ -14,6 +14,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,6 +78,7 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 LoginManager.getInstance().logOut();
+                ParseUser.logOut();
                 Intent intent = new Intent(UserProfileActivity.this, LoginActivity.class);
                 context.startActivity(intent);
             }
