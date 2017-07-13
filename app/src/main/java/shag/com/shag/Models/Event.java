@@ -1,12 +1,15 @@
 package shag.com.shag.Models;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Created by samrabelachew on 7/10/17.
  */
 
-public class Event {
+public class Event implements Comparable {
 
     // fields
     public String eventName;
@@ -18,6 +21,8 @@ public class Event {
     public ArrayList<String> friendsAtEvent;
     public User eventOwner;
     public ArrayList<Long> participantsIds;
+    public Date deadline;
+    public Date createdAt;
 
     // getters
     public String getEventName() {
@@ -65,5 +70,19 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    //TODO: change time to Date object or add one so we can compare events
+    @Override
+    public int compareTo(@NonNull Object o) {
+        return this.deadline.compareTo(((Event) o).deadline);
     }
 }

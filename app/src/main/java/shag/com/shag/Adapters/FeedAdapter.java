@@ -20,7 +20,9 @@ import com.bumptech.glide.Glide;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -83,7 +85,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Event event = events.get(position);
         holder.tvEventName.setText(event.getEventName());
         holder.tvBody.setText(event.getDescription());
-        holder.tvRelativeTime.setText(event.getTime());
+        holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
 
         // load user profile image using glide
         Glide.with(context)
@@ -109,9 +111,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             long dateMillis = sf.parse(rawJsonDate).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
                     System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+
+            relativeDate = relativeDate.replace(" seconds", "s");
+            relativeDate = relativeDate.replace(" second", "s");
+            relativeDate = relativeDate.replace(" minutes", "m");
+            relativeDate = relativeDate.replace(" minute", "m");
+            relativeDate = relativeDate.replace(" hours", "h");
+            relativeDate = relativeDate.replace(" hour", "h");
+            relativeDate = relativeDate.replace(" ago", "");
         } catch (ParseException e) {
             e.printStackTrace();
         }
+
         return relativeDate;
     }
 
@@ -278,6 +289,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             return true;
         }
         return false;
+    }
+
+    public String getTimeRemaining(Date date) {
+        String timeRemaining = "";
+        int difference = (int) (TimeUnit.MILLISECONDS.toMinutes(date.getTime() - (new Date()).getTime()));
+        int hours = difference / 60;
+        if (hours > 0) {
+            timeRemaining += hours + "h ";
+        }
+        int minutes = difference - 60 * hours;
+        timeRemaining += minutes + "m";
+        return timeRemaining;
     }
 
 }
