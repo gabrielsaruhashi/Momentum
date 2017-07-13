@@ -65,7 +65,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     // if user is registering
                     else if (user.isNew()) {
-
+                        user.getCurrentUser();
+                        user.saveInBackground();
                         // get user info
                         client.getMyInfo(new GraphRequest.Callback() {
                             @Override
@@ -89,28 +90,15 @@ public class LoginActivity extends AppCompatActivity {
                                     e.printStackTrace();
                                 }
 
-                             /*
-                             user.put("name", name);
-                             user.put("profile_image_url", profileImageUrl);
-                             user.put("fbuid", fbUid);
-                             user.saveInBackground(new SaveCallback() {
-                                 @Override
-                                 public void done(ParseException e) {
-                                     if (e == null) {
-                                         Toast.makeText(LoginActivity.this, "Successfully created message on Parse",
-                                                 Toast.LENGTH_SHORT).show();
-                                     } else {
-                                         Log.e("Sad", "Failed to save message", e);
-                                     }
-                                 }
-                             }); */
+
                             }
                         });
                         Log.d("MyApp", "User signed up and logged in through Facebook!");
 
                         onLoginSuccess();
                     } else {
-
+                        user.getCurrentUser();
+                        user.saveInBackground();
                         Log.d("MyApp", "User logged in through Facebook!");
                         Log.d("MyApp", user.getUsername());
                         Log.d("MyApp", user.getCreatedAt().toString());

@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
@@ -22,7 +21,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     // fields
     public String eventOwnerName;
     public String eventName;
-    public LatLng latLng;
+    // public LatLng latLng;
     public String description;
     public String location;
     public String category;
@@ -54,37 +53,54 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     public String getEventOwnerName() { return eventOwnerName; }
 
-    public LatLng getLatLng() { return latLng; }
+    // public LatLng getLatLng() { return latLng; }
 
     public ArrayList<Long> getParticipantsIds() { return participantsIds;}
     public long getEventOwnerId() { return eventOwnerId; }
 
     // SETTERS
-    public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) { this.friendsAtEvent = friendsAtEvent; }
+    public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
+        this.friendsAtEvent = friendsAtEvent;
+        put("friendsAtEvent", friendsAtEvent);
+    }
 
-    public void setLocation(String location) { put("location", location); }
+    public void setLocation(String location) {
+        this.location=location;
+        put("location", location); }
 
-    public void setEventName(String eventName) { put("event_name", eventName); }
+    public void setEventName(String eventName) {
+        this.eventName=eventName;
+        put("event_name", eventName); }
 
     public void setDescription(String description) {
+        this.description=description;
         put("description", description);
     }
 
     public void setDeadline(Date deadline) {
+        this.deadline = deadline;
         put("deadline", deadline);
     }
 
-    public void setEventOwnerName(String eventOwnerName) { put("event_owner_name", eventOwnerName); }
+    public void setEventOwnerName(String eventOwnerName) {
+        this.eventOwnerName = eventOwnerName;
+        put("event_owner_name", eventOwnerName); }
 
 
-    public void setLatLng(LatLng latLng) { put("lat_lng", latLng); }
+    /*public void setLatLng(LatLng latLng) { put("lat_lng", latLng); } */
 
-    public void setCategory(String category) { put("category", category); }
+    public void setCategory(String category) {
+        this.category=category;
+        put("category", category); }
 
 
-    public void setEventOwnerId(long eventOwnerId) { put("event_owner_id", eventOwnerId); }
+    public void setEventOwnerId(long eventOwnerId) {
+        this.eventOwnerId=eventOwnerId;
+        put("event_owner_id", eventOwnerId); }
 
-    public void setParticipantsIds(ArrayList<Long> participantsIds) { this.participantsIds = participantsIds; }
+    public void setParticipantsIds(ArrayList<Long> participantsIds) {
+        this.participantsIds=participantsIds;
+        this.participantsIds = participantsIds; }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;
@@ -97,7 +113,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(this.latLng, flags);
+        // dest.writeParcelable(this.latLng, flags);
         dest.writeString(this.eventName);
         dest.writeString(this.description);
         dest.writeString(this.location);
@@ -111,7 +127,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     }
 
     protected Event(Parcel in) {
-        this.latLng = in.readParcelable(LatLng.class.getClassLoader());
+        // this.latLng = in.readParcelable(LatLng.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
