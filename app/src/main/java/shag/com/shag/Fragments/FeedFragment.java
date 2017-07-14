@@ -95,8 +95,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // TODO remove fake Gabe
         fakeGabriel = new User();
         fakeGabriel.username = "gabesaruhashi";
-        fakeGabriel.name="Gabriel S.";
-        fakeGabriel.phoneNumber="6505757751";
+        fakeGabriel.name = "Gabriel S.";
+        fakeGabriel.phoneNumber = "6505757751";
 
         return v;
     }
@@ -187,7 +187,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         fragment.setArguments(bundle);
         getActivity().getSupportFragmentManager().beginTransaction().commit();*/
         //TODO: replace with real populate: *.
-       
+
 
     }
 
@@ -240,14 +240,14 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             @Override
             public void done(List<ParseObject> itemList, ParseException e) {
                 if (e == null) {
-                    if (itemList.size()>0) {
-                        ParseObject firstObject = itemList.get(0);
-                        Event event = Event.fromParseObject(firstObject);
+                    for (ParseObject item : itemList) {
+                        Event event = Event.fromParseObject(item);
                         friendsEvents.add(event);
                         Log.i("FeedFragment", "parsed an event!!!");
                         events.add(event);
-                        adapter.notifyDataSetChanged();
+
                     }
+                    adapter.notifyDataSetChanged();
                 } else {
                     Log.d("item", "Error: " + e.getMessage());
                 }
