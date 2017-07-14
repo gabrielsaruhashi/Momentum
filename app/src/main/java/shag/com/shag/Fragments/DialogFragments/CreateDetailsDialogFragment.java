@@ -130,7 +130,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 ); */
                 newEvent.setFriendsAtEvent(new ArrayList<Long>());
                 //newEvent.setLocation("Facebook Seattle");
-                newEvent.setParticipantsIds(new ArrayList<Long>());
+                newEvent.setParticipantsIds(new ArrayList<String>());
                 newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
 
                 if (newEvent.deadline == null) {
