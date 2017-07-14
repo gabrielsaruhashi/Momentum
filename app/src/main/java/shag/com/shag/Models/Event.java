@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     // fields
     public String eventOwnerName;
     public String eventName;
-    // public LatLng latLng;
+    public LatLng latLng;
     public String description;
     public String location;
     public String category;
@@ -30,6 +32,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public long eventOwnerFbId;
     public ArrayList<Long> participantsIds;
     public Date deadline;
+    public ParseGeoPoint parseGeoPoint;
 
     // getters
     public String getEventName() {
@@ -54,7 +57,8 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     public String getEventOwnerName() { return eventOwnerName; }
 
-    // public LatLng getLatLng() { return latLng; }
+    public LatLng getLatLng() { return latLng; }
+    public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
     public ArrayList<Long> getParticipantsIds() { return participantsIds;}
     public long getEventOwnerId() { return eventOwnerId; }
@@ -91,7 +95,16 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.eventOwnerFbId = eventOwnerFbId;
         put("event_owner_fb_id", eventOwnerFbId);
     }
+
     /*public void setLatLng(LatLng latLng) { put("lat_lng", latLng); } */
+    public void  setParseGeoPoint(ParseGeoPoint parseGeoPoint){
+        this.parseGeoPoint=parseGeoPoint;
+        put("parse_geo_point", parseGeoPoint);
+    }
+
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+        put("lat_lng", latLng); }
 
     public void setCategory(String category) {
         this.category=category;
@@ -117,7 +130,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        // dest.writeParcelable(this.latLng, flags);
+        dest.writeParcelable(this.latLng, flags);
         dest.writeString(this.eventName);
         dest.writeString(this.description);
         dest.writeString(this.location);
@@ -131,7 +144,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     }
 
     protected Event(Parcel in) {
-        // this.latLng = in.readParcelable(LatLng.class.getClassLoader());
+        this.latLng = in.readParcelable(LatLng.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
@@ -173,7 +186,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public static Event fromParseObject(ParseObject object) {
         Event event = new Event();
         Object obj = object.get("state");
-        //ParseObject object = obj.getParseObject("state");
         event.deadline = object.getDate("deadline");
         event.eventOwnerName = object.getString("event_owner_name");
         event.eventName = object.getString("event_name");

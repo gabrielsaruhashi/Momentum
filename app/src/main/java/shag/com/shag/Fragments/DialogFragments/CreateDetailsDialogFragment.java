@@ -1,5 +1,6 @@
 package shag.com.shag.Fragments.DialogFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -17,7 +18,13 @@ import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -31,6 +38,8 @@ import shag.com.shag.Models.Event;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 import static com.parse.ParseUser.getCurrentUser;
 
@@ -43,9 +52,10 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private Button btSend;
     private Button btCancel;
     private Button btInvite;
-    private Button btLocation;
+    private ImageButton btLocation;
     private ImageButton btTime;
     private Event newEvent;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE=1;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     String category;
@@ -86,6 +96,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         // get views
         etDescription = (EditText) view.findViewById(R.id.etDescription);
         btSend = (Button) view.findViewById(R.id.btSend);
+        btLocation = (ImageButton) view.findViewById(R.id.btLocation);
         llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
         llExpireOptions.setVisibility(View.GONE);
         btTime = (ImageButton) view.findViewById(R.id.btTime);
@@ -111,20 +122,9 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                         new LatLng(47.628883, -122.342606)
                 ); */
                 newEvent.setFriendsAtEvent(new ArrayList<Long>());
-                newEvent.setLocation("Facebook Seattle");
+                //newEvent.setLocation("Facebook Seattle");
                 newEvent.setParticipantsIds(new ArrayList<Long>());
                 newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
-                /*
-                ParseUser user = ParseUser.getCurrentUser();
-                /*
-                try {
-                    JSONObject estimatedData = user.getJSONObject("estimatedData");
-                    JSONObject authData = estimatedData.getJSONObject("authData");
-                    JSONObject fbInfo = authData.getJSONObject("facebook");
-                    newEvent.setEventOwnerFbId(Long.parseLong(fbInfo.getString("id")));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
 
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();
@@ -133,7 +133,6 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
-                //Log.d("DEBUGEVENT", newEvent.toString());
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {
@@ -167,6 +166,14 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             }
         });
 
+        btLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onOpenSearch();
+            }
+        });
+
+
         btTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -196,6 +203,38 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         TextView tv12h = (TextView) view.findViewById(R.id.tv12h);
         setListenerForTime(tv12h, 720);
     }
+
+    private void onOpenSearch() {
+        try {
+            Intent intent =
+                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                            .build(getActivity());
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(getActivity(), data);
+                newEvent.setLocation(place.getName().toString());
+                newEvent.setParseGeoPoint(new ParseGeoPoint(place.getLatLng().latitude, place.getLatLng().longitude));
+                //newEvent.setLatLng(place.getLatLng());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getActivity(), data);
+                // TODO: Handle the error.
+
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
 
     // Call this method to send the data back to the parent fragment
     public void sendBackResult(Event event) {
