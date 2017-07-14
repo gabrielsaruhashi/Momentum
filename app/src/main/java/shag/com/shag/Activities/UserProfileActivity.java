@@ -46,6 +46,7 @@ public class UserProfileActivity extends AppCompatActivity {
         friends = (TextView) findViewById(R.id.tvFriends);
 
 
+
         FacebookClient client = new FacebookClient(this);
         client.getMyInfo(new GraphRequest.Callback() {
             @Override

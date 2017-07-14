@@ -18,6 +18,12 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -32,12 +38,18 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import shag.com.shag.Clients.JamBaseClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static shag.com.shag.R.id.map;
 
 
@@ -50,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-
+    private RequestQueue mRequestQueue;
 
 
 
@@ -76,6 +88,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+        mRequestQueue = JamBaseClient.getInstance(this.getContext()).
+                getRequestQueue();
+
+
         btn= (ToggleButton) v.findViewById(R.id.btn_Test);
         btn2 = (Button) v.findViewById(R.id.btn_Test2);
         btn3= (Button) v.findViewById(R.id.btn_Test3);
@@ -97,7 +114,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
 
 
-
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStartRequest("98101","20");
+            }
+        });
 
 
         return v;
@@ -279,5 +301,67 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+
+    private void onStartRequest(String zipcode, String radius) {
+        JamBaseClient.getInstance(getApplicationContext()).addToRequestQueue(getRequest(zipcode,radius));
+    }
+
+    public JsonObjectRequest getRequest(String zipcode, String radius){
+        // Pass second argument as "null" for GET requests
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, "http://api.jambase.com/events?zipCode="+zipcode+
+                "&radius="+radius+"&startDate=+2017-07-15T00%3A00%3A00&endDate=+2017-07-16T23%3A59%3A59&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        JSONArray eventArray = null;
+                        try {
+                            eventArray = response.getJSONArray("Events");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        for (int i = 0; i < eventArray.length(); i++) {
+                            try {
+                                Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                JSONArray getArtistArray = null;
+                                try {
+                                    getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
+                                    String artist = getArtistArray.getJSONObject(0).getString("Name");
+                                    LatLng musicLatLng = new LatLng(lat, lng);
+
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions.position(musicLatLng);
+                                    markerOptions.title(artist);
+                                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                                    mGoogleMap.addMarker(markerOptions);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }                                //Event event = new Event();
+                                //event.setDeadline(eventArray.getJSONObject(i).getInt("Date") + "");
+                                // event.setLatLng(new LatLng(eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude"),
+                                //         eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude")));
+                                //event.setCategory("Music");
+                                //event.setLocation(eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name"));
+                                // Log.d("lookie here", name + new LatLng(lat, lng) + "");
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+        return req;
     }
 }
