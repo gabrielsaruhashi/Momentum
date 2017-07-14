@@ -3,6 +3,8 @@ package shag.com.shag.Fragments;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,13 +13,20 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -32,9 +41,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+
+import shag.com.shag.Clients.JamBaseClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
+import static com.facebook.FacebookSdk.getApplicationContext;
 import static shag.com.shag.R.id.map;
 
 
@@ -46,6 +70,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=2;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+    private RequestQueue mRequestQueue;
 
 
 
@@ -55,10 +81,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
-    Button btn;
+    ToggleButton btn;
+    Button btn2;
+    Button btn3;
+    Button btn4;
+    Button btn5;
+    Button btn6;
     Event firstEvent;
     Marker marker1;
     Marker marker2;
+    Geocoder geocoder;
+    List<Address> addresses;
     Event secondEvent;
     // inflation happens inside onCreateView
     @Nullable
@@ -66,10 +99,48 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        btn= (Button) v.findViewById(R.id.btn_Test);
-        btn.setMovementMethod(new ScrollingMovementMethod());
+
+        mRequestQueue = JamBaseClient.getInstance(this.getContext()).
+                getRequestQueue();
+
+
+        btn= (ToggleButton) v.findViewById(R.id.btn_Test);
+        btn2 = (Button) v.findViewById(R.id.btn_Test2);
+        btn3= (Button) v.findViewById(R.id.btn_Test3);
+        btn4 = (Button) v.findViewById(R.id.btn_Test4);
+        btn5= (Button) v.findViewById(R.id.btn_Test5);
+        btn6 = (Button) v.findViewById(R.id.btn_Test6);
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MarkerOptions markerOptions1 = new MarkerOptions();
+                markerOptions1.position(new LatLng (47.621397, -122.338092));
+                markerOptions1.title("Bill Position");
+                markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                marker1 = mGoogleMap.addMarker(markerOptions1);
+            }
+        });
+
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    addresses = new ArrayList<>();
+                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+                    String postalCode = addresses.get(0).getPostalCode();
+                    onStartRequest(postalCode,"20");
+                    Log.d("address", postalCode);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
 
 
         return v;
@@ -110,6 +181,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             mGoogleMap.setMyLocationEnabled(true);
         }
     }
+
+    //Takes all possible events tied to user and breaks down by categories (creates hashMap where key is button name and value is list)
+    public HashMap<String, ArrayList<Event>> taggingEvents(ArrayList<Event> events){
+        HashMap<String, ArrayList<Event>> eventCategories = new HashMap<>();
+        for (Event event: events){
+            //if event is private, add to private list, else add to public list
+            //also create a breakdown of tags, each with a unique list
+        }
+        return eventCategories;
+
+    }
+
 
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -154,11 +237,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-//        MarkerOptions markerOptions1 = new MarkerOptions();
-//        markerOptions1.position(firstEvent.latLng);
-//        markerOptions1.title("Zuck Position");
-//        markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//        marker1 = mGoogleMap.addMarker(markerOptions1);
+
 //
 //        MarkerOptions markerOptions2 = new MarkerOptions();
 //        markerOptions2.position(firstEvent.latLng);
@@ -174,7 +253,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -244,5 +322,92 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+
+    private void onStartRequest(String zipcode, String radius) {
+        JamBaseClient.getInstance(getApplicationContext()).addToRequestQueue(getRequest(zipcode,radius));
+    }
+
+    public JsonObjectRequest getRequest(String zipcode, String radius){
+        // Pass second argument as "null" for GET requests
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String year = cal.get(Calendar.YEAR) + "";
+
+        //Todo: take into account days under 10 (do they have a 0 before it for example Aug 3 = 03 or 3)?
+        String day = cal.get(Calendar.DAY_OF_MONTH) + "";
+        int endDay =  (cal.get(Calendar.DAY_OF_MONTH) + 1);
+        String finalDay = endDay + "";
+
+        int month = cal.get(Calendar.MONTH) + 1;
+        String formattedMonth;
+        if (month > 9) {
+             formattedMonth = "1" + month;
+        }
+        else {
+             formattedMonth = "0" + month;
+
+        }
+        SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+        String time = localDateFormat.format(date.getTime());
+
+
+        String jamBaseUrl = "http://api.jambase.com/events?";
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode+
+                "&radius="+radius+"&startDate=+"+year+"-" + formattedMonth + "-"+day+"T"+time.substring(0,2)+"%3A"+time.substring(3,5)+"%3A"+time.substring(6)
+                +"&endDate=+"+year+"-"+ formattedMonth +"-"+finalDay+"T23%3A59%3A59&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+
+                        JSONArray eventArray = null;
+                        try {
+                            eventArray = response.getJSONArray("Events");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        for (int i = 0; i < eventArray.length(); i++) {
+                            try {
+                                Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                JSONArray getArtistArray = null;
+                                try {
+                                    getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
+                                    String artist = getArtistArray.getJSONObject(0).getString("Name");
+                                    LatLng musicLatLng = new LatLng(lat, lng);
+
+                                    MarkerOptions markerOptions = new MarkerOptions();
+                                    markerOptions.position(musicLatLng);
+                                    markerOptions.title(artist);
+                                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                                    mGoogleMap.addMarker(markerOptions);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }                                //Event event = new Event();
+                                //event.setDeadline(eventArray.getJSONObject(i).getInt("Date") + "");
+                                // event.setLatLng(new LatLng(eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude"),
+                                //         eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude")));
+                                //event.setCategory("Music");
+                                //event.setLocation(eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name"));
+                                // Log.d("lookie here", name + new LatLng(lat, lng) + "");
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+        return req;
     }
 }

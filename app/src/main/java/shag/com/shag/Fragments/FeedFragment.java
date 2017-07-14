@@ -119,6 +119,61 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     }
                 }
         );
+
+        /*
+        Event fakeEvent = new Event();
+        //fakeEvent.eventId = new Long(123);
+        fakeEvent.eventName = "Party at Zuck's";
+        fakeEvent.location = "Facebook Seattle";
+        fakeEvent.genre = "Partay";
+        fakeEvent.deadline = new Date();
+        fakeEvent.deadline.setTime(new Date().getTime() + 45*60000); //45 min from now
+        fakeEvent.time = "4pm";
+        fakeEvent.latLng = new LatLng(47.628883, -122.342606);
+        fakeEvent.eventOwner=fakeGabriel;
+        fakeEvent.participantsIds= new ArrayList<Long>();
+
+        ArrayList<String> friends = new ArrayList<String>(3);
+        friends.add("Gabriel");
+        friends.add("Samra");
+        friends.add("Hana");
+        fakeEvent.friendsAtEvent = friends;
+
+        events.add(0, fakeEvent);
+        adapter.notifyItemInserted(events.size() - 1);
+        rvEvents.smoothScrollToPosition(0);
+        /*
+
+        Event fakeEvent2 = new Event();
+        fakeEvent2.eventId = new Long(198);
+        fakeEvent2.eventName = "Party at Bill's";
+        fakeEvent2.location = "Facebook Seattle";
+        fakeEvent2.genre = "Professional Gathering";
+        fakeEvent2.time = "4pm";
+        fakeEvent2.latLng = new LatLng(47.621397, -122.338092);
+        fakeEvent2.eventOwner=fakeGabriel;
+        fakeEvent2.participantsIds= new ArrayList<Long>();
+
+        ArrayList<String> friends2 = new ArrayList<String>(3);
+        friends2.add("Gabriel");
+        friends2.add("Samra");
+        friends2.add("Hana");
+        fakeEvent2.friendsAtEvent = friends2;
+
+        events.add(0, fakeEvent2);
+        adapter.notifyItemInserted(events.size() - 1);
+        rvEvents.smoothScrollToPosition(0);
+
+        MapFragment fragment = new MapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("first event",fakeEvent);
+        bundle.putParcelable("second event", fakeEvent2);
+        fragment.setArguments(bundle);
+        getActivity().getSupportFragmentManager().beginTransaction().commit();*/
+        //TODO: replace with real populate: *.
+       
+
+
     }
 
     // create category dialog fragment
