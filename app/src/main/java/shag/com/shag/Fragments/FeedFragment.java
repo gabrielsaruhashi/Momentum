@@ -14,6 +14,10 @@ import android.view.ViewGroup;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +25,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -105,16 +110,12 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     public void onCompleted(GraphResponse response) {
                         Log.d("DEBUGRESPONSE", response.toString());
                         try {
-                            JSONArray users = response.getJSONObject().getJSONArray("data");
-                            for (int i = 0; i < users.length(); i++) {
-                                User u = User.fromJson(users.getJSONObject(i));
-                                //TODO: get userID, query data
-                                ArrayList<Event> userPosts = u.events;
-                                for (int j = 0; j < userPosts.size(); j++) {
-                                    //TODO: check time of event and permissions
-                                    //to determine if it should be shown to curr user
-                                    events.add(userPosts.get(j));
-                                }
+                            JSONArray friends = response.getJSONObject().getJSONArray("data");
+                            for (int i = 0; i < friends.length(); i++) {
+                                User friend = User.fromJson(friends.getJSONObject(i));
+                                getFriendsEvents(friend.fbUserID);
+                                //ArrayList<Event> friendsEvents = getFriendsEvents(friend.fbUserID);
+                                //events.addAll(friendsEvents);
                             }
                             //TODO: sort events somehow
                             Collections.sort(events, new Comparator<Event>() {
@@ -209,7 +210,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
-        //TODO: account for case where event has no deadline OR force user to enter it OR set default deadline
         Collections.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event event, Event t1) {
@@ -218,5 +218,41 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         });
         adapter.notifyDataSetChanged();
         rvEvents.smoothScrollToPosition(0);
+    }
+
+    public ArrayList<Event> getFriendsEvents(final long friendFbId) {
+        final ArrayList<Event> friendsEvents = new ArrayList<>();
+        // Specify which class to query
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+        // Specify the object id
+        query.whereEqualTo("event_owner_fb_id", friendFbId);
+        // Execute the find asynchronously
+        /*try {
+            List<Event> itemList = query.find();
+            Event firstEvent = itemList.get(0);
+            //friendsEvents.addAll(itemList);
+            friendsEvents.add(firstEvent);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> itemList, ParseException e) {
+                if (e == null) {
+                    if (itemList.size()>0) {
+                        ParseObject firstObject = itemList.get(0);
+                        Event event = Event.fromParseObject(firstObject);
+                        friendsEvents.add(event);
+                        Log.i("FeedFragment", "parsed an event!!!");
+                        events.add(event);
+                        adapter.notifyDataSetChanged();
+                    }
+                } else {
+                    Log.d("item", "Error: " + e.getMessage());
+                }
+            }
+        });
+        return friendsEvents;
     }
 }

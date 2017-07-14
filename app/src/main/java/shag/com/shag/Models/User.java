@@ -24,18 +24,19 @@ public class User implements Parcelable {
     public long fbUserID;
     public String phoneNumber;
     public ArrayList<Long> currentInterestsIds;
+    public ArrayList<Long> ownedEventsIds;
     //TODO: make sure to set this value when a user creates an event
     public ArrayList<Event> events;
 
     public static User fromJson(JSONObject json) {
         User u = new User();
-        //i think you could only get here if you had your user id already, so you wouldn't be getting it from the JSON?
         try {
             u.setFbUserID(json.getLong("id"));
             u.setName(json.getString("name"));
             JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
             u.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
             u.events = new ArrayList<Event>();
+            u.ownedEventsIds = new ArrayList<>();
 
         } catch (JSONException e) {
             e.printStackTrace();
