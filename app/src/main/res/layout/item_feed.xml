@@ -14,7 +14,7 @@
         app:srcCompat="@android:color/black" />
 
     <TextView
-        android:id="@+id/tvEventName"
+        android:id="@+id/tvEventOwnerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="all"
-        android:layout_below="@+id/tvEventName"
+        android:layout_below="@+id/tvEventOwnerName"
         android:layout_marginLeft="8dp"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:text="TextView"

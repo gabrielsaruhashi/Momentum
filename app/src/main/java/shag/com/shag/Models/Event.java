@@ -29,14 +29,12 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public String category;
     public ArrayList<Long> friendsAtEvent;
     public long eventOwnerId;
+    public long eventOwnerFbId;
     public ArrayList<Long> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
 
-    // getters
-    public String getEventName() {
-        return eventName;
-    }
+    // GETTERS
 
     public String getLocation() { return location; }
 
@@ -72,10 +70,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.location=location;
         put("location", location); }
 
-    public void setEventName(String eventName) {
-        this.eventName=eventName;
-        put("event_name", eventName); }
-
     public void setDescription(String description) {
         this.description=description;
         put("description", description);
@@ -90,6 +84,12 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.eventOwnerName = eventOwnerName;
         put("event_owner_name", eventOwnerName); }
 
+    public void setEventOwnerFbId(long eventOwnerFbId) {
+        this.eventOwnerFbId = eventOwnerFbId;
+        put("event_owner_fb_id", eventOwnerFbId);
+    }
+
+    /*public void setLatLng(LatLng latLng) { put("lat_lng", latLng); } */
     public void  setParseGeoPoint(ParseGeoPoint parseGeoPoint){
         this.parseGeoPoint=parseGeoPoint;
         put("parse_geo_point", parseGeoPoint);
@@ -123,6 +123,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+
         dest.writeParcelable(this.latLng, flags);
         dest.writeString(this.eventName);
         dest.writeString(this.description);
@@ -137,6 +138,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     }
 
     protected Event(Parcel in) {
+
         this.latLng = in.readParcelable(LatLng.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
@@ -166,13 +168,27 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public int compareTo(@NonNull Object o) {
         return this.deadline.compareTo(((Event) o).deadline);
     }
-
+    /*
     @Override
     public String toString() {
-        return "Event details: name: " + eventName +
+        return "Event details: " +
                 "\ndescription: " + description +
                 "\ndeadline: " + deadline.toString() +
                 "\nevent owner id: " + eventOwnerId +
                 "\nowner name : " + eventOwnerName;
+    }*/
+
+    public static Event fromParseObject(ParseObject object) {
+        Event event = new Event();
+        Object obj = object.get("state");
+        event.deadline = object.getDate("deadline");
+        event.eventOwnerName = object.getString("event_owner_name");
+        event.eventName = object.getString("event_name");
+        event.description = object.getString("description");
+        event.location = object.getString("location");
+        event.category = object.getString("category");
+        event.eventOwnerId = object.getLong("event_owner_id");
+        event.eventOwnerFbId = object.getLong("event_owner_fb_id");
+        return event;
     }
 }

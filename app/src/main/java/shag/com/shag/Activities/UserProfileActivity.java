@@ -22,6 +22,7 @@ import org.json.JSONObject;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.User;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 public class UserProfileActivity extends AppCompatActivity {
@@ -47,7 +48,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
 
-        FacebookClient client = new FacebookClient(this);
+        FacebookClient client = ParseApplication.getFacebookRestClient();
         client.getMyInfo(new GraphRequest.Callback() {
             @Override
             public void onCompleted(GraphResponse response) {

@@ -11,9 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +26,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -90,43 +96,23 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // TODO remove fake Gabe
         fakeGabriel = new User();
         fakeGabriel.username = "gabesaruhashi";
-        fakeGabriel.name="Gabriel S.";
-        fakeGabriel.phoneNumber="6505757751";
+        fakeGabriel.name = "Gabriel S.";
+        fakeGabriel.phoneNumber = "6505757751";
 
         return v;
     }
 
-    // TODO correct this method
     public void populateFeed() {
-        //client = new FacebookClient(rvEvents.getContext());
         client = ParseApplication.getFacebookRestClient();
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        Log.d("DEBUGRESPONSE", response.toString());
                         try {
-                            JSONArray users = response.getJSONObject().getJSONArray("data");
-                            for (int i = 0; i < users.length(); i++) {
-                                User u = User.fromJson(users.getJSONObject(i));
-                                ArrayList<Event> userPosts = u.events;
-                                for (int j = 0; j < userPosts.size(); j++) {
-                                    //TODO: check time of event and permissions
-                                    //to determine if it should be shown to curr user
-                                    events.add(userPosts.get(j));
-                                }
+                            JSONArray friends = response.getJSONObject().getJSONArray("data");
+                            for (int i = 0; i < friends.length(); i++) {
+                                User friend = User.fromJson(friends.getJSONObject(i));
+                                getFriendsEvents(friend.fbUserID);
                             }
-                            //TODO: sort events somehow
-                            Collections.sort(events, new Comparator<Event>() {
-                                @Override
-                                public int compare(Event event, Event t1) {
-                                    return event.deadline.compareTo(t1.deadline);
-                                }
-                            });
-                            adapter.notifyDataSetChanged();
-
-                            //idea: make a TreeSet, add events to it so they compare by date
-                            //then iterate through treeSet and add to events array then notify adapter
-                            rvEvents.smoothScrollToPosition(0);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -187,6 +173,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         //TODO: replace with real populate: *.
        
 
+
     }
 
     // create category dialog fragment
@@ -200,15 +187,13 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     }
 
     // This is called when the creation dialog is completed and the results have been passed
+    //Body commented out because we need the method declaration
     @Override
     public void onFinishCategoryDialog(Event createdEvent) {
-        //TODO remove fake gabriel
-        //createdEvent.eventOwner = fakeGabriel;
-        // createdEvent.eventName = "SHIT IS WORKING";
-
+        Toast.makeText(getContext(), "Event created", Toast.LENGTH_SHORT).show();
+        /*
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
-        //TODO: account for case where event has no deadline OR force user to enter it OR set default deadline
         Collections.sort(events, new Comparator<Event>() {
             @Override
             public int compare(Event event, Event t1) {
@@ -216,6 +201,37 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
         adapter.notifyDataSetChanged();
-        rvEvents.smoothScrollToPosition(0);
+        rvEvents.smoothScrollToPosition(0);*/
+    }
+
+    //query to find events belonging to an owner with a specified Facebook ID
+    public void getFriendsEvents(final long friendFbId) {
+        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+        query.whereEqualTo("event_owner_fb_id", friendFbId);
+        query.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> itemList, ParseException e) {
+                if (e == null) {
+                    for (ParseObject item : itemList) {
+                        //Convert each item found to an event
+                        Event event = Event.fromParseObject(item);
+                        //add event to list to be displayed
+                        events.add(event);
+                    }
+
+                    //TODO: move this somewhere else, it is currently over-sorting
+                    //Sort the events shown to user in order of soonest deadline
+                    Collections.sort(events, new Comparator<Event>() {
+                        @Override
+                        public int compare(Event event, Event t1) {
+                            return event.deadline.compareTo(t1.deadline);
+                        }
+                    });
+                    adapter.notifyDataSetChanged();
+                } else {
+                    Log.d("feedfragment", "Error: " + e.getMessage());
+                }
+            }
+        });
     }
 }
