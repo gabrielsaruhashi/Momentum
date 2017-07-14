@@ -9,7 +9,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -52,7 +51,7 @@ public class ChatActivity extends AppCompatActivity {
                 message.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
-                        if(e == null) {
+                        if (e == null) {
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
                         } else {
@@ -65,4 +64,5 @@ public class ChatActivity extends AppCompatActivity {
         });
 
     }
+}
 
