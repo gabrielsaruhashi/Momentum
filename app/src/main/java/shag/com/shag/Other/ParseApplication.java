@@ -14,6 +14,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 
 /**
  * Created by gabesaruhashi on 7/12/17.
@@ -48,8 +49,9 @@ public class ParseApplication extends Application {
         httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         builder.networkInterceptors().add(httpLoggingInterceptor);
 
-        //  register event parse class
+        //  register parse classes
         ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Message.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured
