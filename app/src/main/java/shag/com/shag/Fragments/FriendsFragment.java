@@ -38,6 +38,7 @@ public class FriendsFragment extends Fragment {
     FriendsAdapter adapter;
     FacebookClient client;
 
+
     // inflation happens inside onCreateView
     @Nullable
     @Override

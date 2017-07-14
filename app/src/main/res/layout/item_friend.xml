@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <ImageView
         android:id="@+id/ivProfileImage"
@@ -28,8 +28,16 @@
         android:layout_marginLeft="8dp"
         android:layout_below="@id/tvFriendName"
         android:layout_alignEnd="@id/ivProfileImage"
-        android:text="TextView"
         android:paddingBottom="24dp"/>
+
+    <CheckBox
+        android:id="@+id/checkBoxItemFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:text="CheckBox"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/tvFriendName" />
 
 
 </RelativeLayout>

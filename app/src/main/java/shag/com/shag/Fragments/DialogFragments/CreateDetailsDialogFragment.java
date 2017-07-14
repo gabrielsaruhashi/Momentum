@@ -49,6 +49,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private String category;
     FacebookClient facebookClient;
 
+
+
     public CreateDetailsDialogFragment() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor

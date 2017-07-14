@@ -68,4 +68,7 @@ dependencies {
 
     // for Oauth
     compile 'com.codepath.libraries:android-oauth-handler:1.2.5'
+
+    // multiselector for friends
+    compile 'com.bignerdranch.android:recyclerview-multiselect:+'
 }
