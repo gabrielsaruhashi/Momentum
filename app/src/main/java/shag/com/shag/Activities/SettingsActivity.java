@@ -1,33 +1,41 @@
 package shag.com.shag.Activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
+import shag.com.shag.Clients.JamBaseClient;
 import shag.com.shag.R;
 
 public class SettingsActivity extends AppCompatActivity {
     Button btn;
     TextView tv;
-    int PLACE_AUTOCOMPLETE_REQUEST_CODE;
+    JamBaseClient jamBaseClient;
+    private RequestQueue mRequestQueue;
+    String resp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        mRequestQueue = Volley.newRequestQueue(this);
+
 
         btn = (Button) findViewById(R.id.button2);
         tv = (TextView) findViewById(R.id.tv2);
 
-        PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,34 +47,29 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void openSearch() {
-
-        try {
-            Intent intent =
-                    new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
-                            .build(this);
-            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
-        } catch (GooglePlayServicesRepairableException e) {
-            // TODO: Handle the error.
-        } catch (GooglePlayServicesNotAvailableException e) {
-            // TODO: Handle the error.
-        }
-    }
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                tv.setText(place.getName()+ place.getLatLng().toString());
-            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-                Status status = PlaceAutocomplete.getStatus(this, data);
-                // TODO: Handle the error.
-
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
+        // Pass second argument as "null" for GET requests
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, "http://api.jambase.com/events?zipCode=75001&radius=50&startDate=2017-07-13T20%3A00%3A00&endDate=2017-07-14T20%3A00%3A00&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String result = response.toString();
+                        tv.setText(result);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
             }
-        }
+        });
+
+    /* Add your Requests to the RequestQueue to execute */
+        mRequestQueue.add(req);
+
+
     }
+
+
+
+
 
 }
