@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import shag.com.shag.Clients.FacebookClient;
+import shag.com.shag.Fragments.FriendsFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -51,14 +53,17 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private EditText etDescription;
     private Button btSend;
     private Button btCancel;
-    private Button btInvite;
+    private ImageButton btInvite;
     private ImageButton btLocation;
     private ImageButton btTime;
     private Event newEvent;
     int PLACE_AUTOCOMPLETE_REQUEST_CODE=1;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
-    String category;
+    private String category;
+    FacebookClient facebookClient;
+
+
 
     public CreateDetailsDialogFragment() {
         // Empty constructor is required for DialogFragment
@@ -79,6 +84,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // initialize client
+        facebookClient = ParseApplication.getFacebookRestClient();
         return inflater.inflate(R.layout.fragment_create_details, container);
     }
 
@@ -100,6 +107,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
         llExpireOptions.setVisibility(View.GONE);
         btTime = (ImageButton) view.findViewById(R.id.btTime);
+        btInvite = (ImageButton) view.findViewById(R.id.btInvite);
 
         // Fetch arguments from bundle and set title
         category = getArguments().getString("category");
@@ -115,7 +123,6 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             @Override
             public void onClick(View v) {
                 // populate newEvent
-                newEvent.setEventName("Party at Zuck's");
                 newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
                 newEvent.setDescription(etDescription.getText().toString());
                 /*newEvent.setLatLng(
@@ -173,7 +180,6 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             }
         });
 
-
         btTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -202,6 +208,23 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
 
         TextView tv12h = (TextView) view.findViewById(R.id.tv12h);
         setListenerForTime(tv12h, 720);
+
+        // invite friends listener
+        btInvite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Begin the transaction
+                FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+                // Replace the contents of the container with the new fragment
+                ft.replace(R.id.friends_list_container, new FriendsFragment());
+                // or ft.add(R.id.your_placeholder, new FooFragment());
+
+                // Complete the changes added above
+                ft.commit();
+
+            }
+        });
+
     }
 
     private void onOpenSearch() {

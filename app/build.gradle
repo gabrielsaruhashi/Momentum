@@ -35,8 +35,19 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     // If you want to use the GPU Filters
-    // butterknife + transformations
-    // for fragments
+
+
+
+    // for logging API calls to LogCat
+
+    
+
+    // DBFlow for simple persistence with an ORM
+    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
+    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
+    compile fileTree(dir: 'libs', include: '*.jar')
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -46,26 +57,23 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:11.0.1'
     compile 'com.google.android.gms:play-services-places:11.0.1'
     compile 'com.loopj.android:android-async-http:1.4.9'
+    // butterknife + transformations
     compile 'com.jakewharton:butterknife:8.4.0'
     compile 'jp.wasabeef:glide-transformations:2.0.2'
     compile 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
+    // for fragments
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    testCompile 'junit:junit:4.12'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     // for parse
     compile 'com.parse.bolts:bolts-android:1.4.0'
     compile 'com.parse:parse-android:1.15.1'
-    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0' // for logging API calls to LogCat
+    compile 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     // facebook parse integration
     compile 'com.parse:parsefacebookutils-v4-android:1.10.3@aar'
-
-    // DBFlow for simple persistence with an ORM
-    annotationProcessor "com.github.Raizlabs.DBFlow:dbflow-processor:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:${dbflow_version}"
-    compile "com.github.Raizlabs.DBFlow:dbflow:${dbflow_version}"
-    compile fileTree(dir: 'libs', include: '*.jar')
-
-    // for Oauth
+    // for oauth
     compile 'com.codepath.libraries:android-oauth-handler:1.2.5'
+    // multiselector for friends
+    compile 'com.bignerdranch.android:recyclerview-multiselect:+'
+    testCompile 'junit:junit:4.12'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
 }

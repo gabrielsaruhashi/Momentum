@@ -2,7 +2,6 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -27,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-import shag.com.shag.Activities.CreateEventActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.R;
@@ -83,9 +81,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         String imageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
         // populate the views
         Event event = events.get(position);
-        holder.tvEventName.setText(event.getEventName());
         holder.tvBody.setText(event.getDescription());
         holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
+        holder.tvEventOwnerName.setText(event.getEventOwnerName());
 
         // load user profile image using glide
         Glide.with(context)
@@ -130,7 +128,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
-        @BindView(R.id.tvEventName) TextView tvEventName;
+        @BindView(R.id.tvEventOwnerName) TextView tvEventOwnerName;
         @BindView(R.id.tvBody) TextView tvBody;
         @BindView(R.id.tvRelativeTime) TextView tvRelativeTime;
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
@@ -146,7 +144,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             // set click listener for quick join shortcut
             btJoin.setOnClickListener(this);
 
-            tvEventName.setOnClickListener(this);
         }
 
         @Override
@@ -167,10 +164,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         } else {
                             joinEvent(gabriel, event, btJoin);
                         }
-                        break;
-                    case R.id.tvEventName:
-                        Intent i = new Intent(context, CreateEventActivity.class);
-                        context.startActivity(i);
                         break;
                     // if user presses viewholder, show more details of activity
                     default:
@@ -218,13 +211,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
 
                 // get views
-                TextView tvEventName = (TextView) alertDialog.findViewById(R.id.tvEventName);
+                TextView tvEventOwnerName = (TextView) alertDialog.findViewById(R.id.tvEventOwnerName);
                 TextView tvBody = (TextView) alertDialog.findViewById(R.id.tvBody);
                 TextView tvRelativeTime = (TextView) alertDialog.findViewById(R.id.tvRelativeTime);
                 ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
 
                 // populate views
-                tvEventName.setText('@' + event.eventOwnerName);
+                tvEventOwnerName.setText('@' + event.getEventOwnerName());
                 tvBody.setText(event.getDescription());
                 tvRelativeTime.setText(event.getDeadline().toString());
 

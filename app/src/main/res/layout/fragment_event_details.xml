@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"/>
 
     <TextView
-        android:id="@+id/tvEventName"
+        android:id="@+id/tvEventOwnerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/ivProfileImage"
@@ -29,8 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:layout_below="@id/tvEventName"
-        android:layout_alignLeft="@id/tvEventName"/>
+        android:layout_below="@id/tvEventOwnerName"
+        android:layout_alignLeft="@id/tvEventOwnerName"/>
 
     <TextView
         android:id="@+id/tvBody"

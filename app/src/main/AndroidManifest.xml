@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -53,6 +52,7 @@
         <activity android:name=".Activities.CreateEventActivity" />
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity" />
+        <activity android:name=".Activities.ChatActivity"></activity>
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package shag.com.shag.Fragments;
+package shag.com.shag.Fragments.DialogFragments;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
