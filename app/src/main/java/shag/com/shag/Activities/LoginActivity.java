@@ -16,6 +16,7 @@ import com.parse.ParseUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // properties to be added to ParseUser
     String profileImageUrl;
+    String fbUsername;
     long fbUid;
     String name;
     String email;
@@ -80,10 +82,13 @@ public class LoginActivity extends AppCompatActivity {
                                     profileImageUrl = userJSON.getJSONObject("picture")
                                             .getJSONObject("data")
                                             .getString("url");
+                                    fbUsername = userJSON.getString("username");
 
                                     CustomUser newCustomUser = new CustomUser(user);
                                     newCustomUser.setSomeString("name", name);
                                     newCustomUser.setSomeString("profile_image_url", profileImageUrl);
+                                    newCustomUser.setSomeArray("owned_events_ids", new ArrayList<Long>());
+                                    newCustomUser.setSomeString("username", fbUsername);
 
 
                                 } catch (JSONException e) {

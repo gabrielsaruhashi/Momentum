@@ -46,18 +46,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=2;
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
-//    private GoogleMap googleMap;
-//    SupportMapFragment mapFragment;
-//    private GoogleApiClient mGoogleApiClient;
-//    LocationManager locationManager;
 
-//    boolean mLocationPermissionGranted;
-//    Location mLastKnownLocation;
-//    LatLng mCurrentLocation;
-//    private GoogleMap mMap;
-//    GoogleApiClient mGoogleApiClient;
-//    CameraPosition mCameraPosition;
-//    LatLng mDefaultLocation = new LatLng(-33.852, 151.211);
 
 
     GoogleMap mGoogleMap;
@@ -82,9 +71,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
 
-
-//        firstEvent = getArguments().getParcelable("first event");
-//        secondEvent = getArguments().getParcelable("second event");
 
         return v;
     }
