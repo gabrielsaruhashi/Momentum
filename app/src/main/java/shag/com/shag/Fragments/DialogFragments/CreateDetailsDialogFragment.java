@@ -16,6 +16,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
@@ -26,10 +28,14 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.Date;
 
+import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -119,28 +125,44 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 //newEvent.setLocation("Facebook Seattle");
                 newEvent.setParticipantsIds(new ArrayList<Long>());
                 newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();
+                    newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE*60);
+                    newEvent.setDeadline(newEvent.deadline);
                 }
 
-
                 newEvent.setCategory(category);
-                //Log.d("DEBUGEVENT", newEvent.toString());
 
-                newEvent.saveInBackground(new SaveCallback() {
+                FacebookClient client = ParseApplication.getFacebookRestClient();
+                client.getMyInfo(new GraphRequest.Callback() {
                     @Override
-                    public void done(ParseException e) {
-                        if(e == null) {
-                            Log.d("DEBUG", "EI");
-                            //Toast.makeText(getContext(), "Successfully created event on Parse",
-                                    //Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.e(TAG, "Failed to save message", e);
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            String id = response.getJSONObject().getString("id");
+                            newEvent.setEventOwnerFbId(Long.parseLong(id));
+                            Log.i("CreateDetails", newEvent.toString());
+
+                            newEvent.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if(e == null) {
+                                        Log.d("DEBUG", "EI");
+                                        //Toast.makeText(getContext(), "Successfully created event on Parse",
+                                        //Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.e(TAG, "Failed to save message", e);
+                                    }
+                                }
+                            });
+                            // send back to pick category dialog
+                            sendBackResult(newEvent);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
                     }
                 });
-                // send back to pick category dialog
-                sendBackResult(newEvent);
+
             }
         });
 
