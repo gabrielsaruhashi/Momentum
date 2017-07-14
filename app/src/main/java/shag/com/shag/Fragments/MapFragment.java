@@ -3,6 +3,8 @@ package shag.com.shag.Fragments;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +45,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import shag.com.shag.Clients.JamBaseClient;
 import shag.com.shag.Models.Event;
@@ -81,6 +90,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     Event firstEvent;
     Marker marker1;
     Marker marker2;
+    Geocoder geocoder;
+    List<Address> addresses;
     Event secondEvent;
     // inflation happens inside onCreateView
     @Nullable
@@ -117,7 +128,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         btn2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStartRequest("98101","20");
+                try {
+                    addresses = new ArrayList<>();
+                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+                    String postalCode = addresses.get(0).getPostalCode();
+                    onStartRequest(postalCode,"20");
+                    Log.d("address", postalCode);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -310,8 +331,33 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     public JsonObjectRequest getRequest(String zipcode, String radius){
         // Pass second argument as "null" for GET requests
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, "http://api.jambase.com/events?zipCode="+zipcode+
-                "&radius="+radius+"&startDate=+2017-07-15T00%3A00%3A00&endDate=+2017-07-16T23%3A59%3A59&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String year = cal.get(Calendar.YEAR) + "";
+
+        //Todo: take into account days under 10 (do they have a 0 before it for example Aug 3 = 03 or 3)?
+        String day = cal.get(Calendar.DAY_OF_MONTH) + "";
+        int endDay =  (cal.get(Calendar.DAY_OF_MONTH) + 1);
+        String finalDay = endDay + "";
+
+        int month = cal.get(Calendar.MONTH) + 1;
+        String formattedMonth;
+        if (month > 9) {
+             formattedMonth = "1" + month;
+        }
+        else {
+             formattedMonth = "0" + month;
+
+        }
+        SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
+        String time = localDateFormat.format(date.getTime());
+
+
+        String jamBaseUrl = "http://api.jambase.com/events?";
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode+
+                "&radius="+radius+"&startDate=+"+year+"-" + formattedMonth + "-"+day+"T"+time.substring(0,2)+"%3A"+time.substring(3,5)+"%3A"+time.substring(6)
+                +"&endDate=+"+year+"-"+ formattedMonth +"-"+finalDay+"T23%3A59%3A59&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
