@@ -17,6 +17,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
@@ -105,9 +106,26 @@ public class ChatListFragment extends Fragment {
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event, Chat chat) {
+        // set description
         chat.setDescription(event.getDescription());
-        chat.setChatTitle(event.getEventOwnerName() + (event.getParticipantsIds().size()));
-
+        // get event info
+        int participantsNumber = event.getParticipantsIds().size();
+        String eventOwnerName = event.eventOwnerName;
+        String currentUserName = (String) ParseUser.getCurrentUser().get("name");
+        // create chat title
+        if (Objects.equals(eventOwnerName, currentUserName)) {
+            if (participantsNumber > 1) {
+                chat.setChatTitle("Me" + " + " + (participantsNumber - 1));
+            } else {
+                chat.setChatTitle("Me");
+            }
+        } else { // apply same logic for other chat owners
+            if (participantsNumber > 0) {
+                chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 1));
+            } else {
+                chat.setChatTitle(eventOwnerName);
+            }
+        }
         return chat;
     }
 }
