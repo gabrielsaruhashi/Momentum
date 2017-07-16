@@ -30,6 +30,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     public ChatListAdapter(ArrayList<Chat> chats) { this.chats = chats; };
     // instantiate context
     Context context;
+
     @Override
     public ChatListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // get context and inflate view
@@ -39,9 +40,8 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         // create the view using the item_feed layout
         View feedView = inflater.inflate(R.layout.item_chat, parent, false);
 
-        // Return a new holder instance
+        // return a new holder instance
         ChatListAdapter.ViewHolder viewHolder = new ChatListAdapter.ViewHolder(feedView);
-
         return viewHolder;
 
     }
@@ -51,12 +51,17 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         // populate the views
         Chat chat = chats.get(position);
+        String iconImageUrl = chat.getChatIconUrl();
+        //TODO delete this later
+        if (iconImageUrl == null) {
+            iconImageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
+        }
         holder.tvBody.setText(chat.getDescription());
         holder.tvParticipants.setText(chat.getChatTitle());
 
         // load user profile image using glide
         Glide.with(context)
-                .load("https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg")
+                .load(iconImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                 .into(holder.ivChatIcon);
     }
@@ -92,6 +97,9 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
                 // start chat activity
                 Intent i = new Intent(context, ChatActivity.class);
+                // pass chat id in the intent
+                i.putExtra("event_id", chat.getEventId());
+                i.putExtra("participants_ids", chat.getChatParticipantsIds());
                 context.startActivity(i);
             }
         }

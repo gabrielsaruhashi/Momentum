@@ -26,6 +26,7 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -34,11 +35,9 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.UUID;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.FriendsFragment;
-import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -59,13 +58,12 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private ImageButton btLocation;
     private ImageButton btTime;
     private Event newEvent;
-    int PLACE_AUTOCOMPLETE_REQUEST_CODE=1;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     private String category;
     FacebookClient facebookClient;
     private String currentUserId;
-
 
 
     public CreateDetailsDialogFragment() {
@@ -137,7 +135,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 newEvent.setFriendsAtEvent(new ArrayList<Long>());
                 newEvent.setLocation("Facebook Seattle");
 
-                //  upon creating, save evento owner's id in participant list
+                //  upon creating, save event owner's id to participant list
                 ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUserId));
                 Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
                 newEvent.setParticipantsIds(initialParticipantsIds);
@@ -153,12 +151,17 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
+                // atta
+                ParseObject currentUser = ParseUser.getCurrentUser();
+                newEvent.put("User_event_owner", currentUser);
 
+                /* delete later - decided not to use chatId
                 // create chat and set 'unique' id
                 String chatId = UUID.randomUUID().toString();
                 Chat eventChat = new Chat();
                 eventChat.setChatId(chatId);
-                newEvent.setEventChat(eventChat);
+                //TODO make chat be a nested object. it is not working rn
+                // newEvent.setEventChat(eventChat); */
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {

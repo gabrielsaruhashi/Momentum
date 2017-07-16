@@ -32,7 +32,6 @@ public class Event extends ParseObject implements Parcelable {
     public ArrayList<String> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
-    public Chat eventChat;
 
     //CONSTRUCTORS
     public Event(){
@@ -73,7 +72,6 @@ public class Event extends ParseObject implements Parcelable {
 
     public long getEventOwnerFbId() { return eventOwnerFbId; }
 
-    public Chat getEventChat() { return eventChat; }
 
     // SETTERS
 
@@ -128,10 +126,6 @@ public class Event extends ParseObject implements Parcelable {
         this.participantsIds=participantsIds;
         put("participants_id", participantsIds);
       }
-
-    public void setEventChat(Chat eventChat) {
-        this.eventChat = eventChat;
-    }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;

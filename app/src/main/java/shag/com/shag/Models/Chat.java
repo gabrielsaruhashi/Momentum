@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 //TODO figure out what should be stored here
 public class Chat {
-    private String chatId;
     //TODO decide the properties of the chat class. Right now it is kind of redundant
     // TODO might be interesting to later invite ppl even if event expired in feed
+    private String eventId;
     private ArrayList<String> chatParticipantsIds;
 
     // trivial variables
@@ -20,9 +20,19 @@ public class Chat {
 
 
     // GETTERS & SETTERS
-    public String getChatId() { return chatId; }
 
-    public void setChatId(String chatId) { this.chatId = chatId; }
+
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public ArrayList<String> getChatParticipantsIds() { return chatParticipantsIds; }
+
+    public void setChatParticipantsIds(ArrayList<String> chatParticipantsIds) { this.chatParticipantsIds = chatParticipantsIds; }
 
     public String getChatTitle() {
         return chatTitle;

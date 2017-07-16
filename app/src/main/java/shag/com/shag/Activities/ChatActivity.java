@@ -36,10 +36,19 @@ public class ChatActivity extends AppCompatActivity {
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
 
+    // chat id
+    private String eventId;
+    private ArrayList<String> chatParticipantsIds;
+    private String currentUserId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        // unwrap intent and get current user id
+        eventId = getIntent().getStringExtra("event_id");
+        chatParticipantsIds = getIntent().getStringArrayListExtra("participants_ids");
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         setupMessagePosting();
 
@@ -53,8 +62,8 @@ public class ChatActivity extends AppCompatActivity {
         rvChat = (RecyclerView) findViewById(R.id.rvChat);
         mMessages = new ArrayList<>();
         mFirstLoad = true;
-        final String userId = ParseUser.getCurrentUser().getObjectId();
-        mAdapter = new MessagesAdapter(ChatActivity.this, userId, mMessages);
+
+        mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
 
         // associate the LayoutManager with the RecylcerView
@@ -69,8 +78,11 @@ public class ChatActivity extends AppCompatActivity {
 
                 // Using new `Message` Parse-backed model now
                 Message message = new Message();
+                // populate message
+                //TODO decide if it is better to pass entire event object
                 message.setBody(data);
-                message.setSenderId(ParseUser.getCurrentUser().getObjectId());
+                message.put("user_sender", ParseUser.getCurrentUser());
+                message.setEventId(eventId);
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
@@ -86,6 +98,9 @@ public class ChatActivity extends AppCompatActivity {
                 etMessage.setText(null);
             }
         });
+
+        // call refresh messages
+        refreshMessages();
 
     }
 

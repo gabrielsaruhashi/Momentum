@@ -10,21 +10,21 @@ import com.parse.ParseObject;
 @ParseClassName("Message")
 public class Message extends ParseObject {
     private String messageId;
-    private String chatId;
-    private String senderId;
+    private String eventId;
+    private User userSender;
     private String body;
 
     public String getMessageId() {
         return messageId;
     }
 
-    public String getChatId() {
-        return chatId;
+    public String getEventId() { return eventId; }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+        put("event_id", eventId);
     }
 
-    public String getSenderId() {
-        return senderId;
-    }
 
     public String getBody() {
         return body;
@@ -32,13 +32,15 @@ public class Message extends ParseObject {
 
     public void setBody(String body) {
         this.body = body;
+        put("message_body", body);
     }
 
-    public void setMessageId(String messageId) {
-        this.messageId = messageId;
+    public User getUserSender() {
+        return userSender;
     }
 
-    public void setSenderId(String senderId) {
-        this.senderId = senderId;
+    public void setUserSender(User userSender) {
+        this.userSender = userSender;
+        put("user_sender", userSender);
     }
 }

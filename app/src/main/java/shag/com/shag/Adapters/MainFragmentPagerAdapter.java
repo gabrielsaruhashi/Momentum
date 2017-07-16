@@ -42,7 +42,8 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             mapFragment = getMapInstance();
             return mapFragment;
         } else if (position == 2) {
-            return new ChatListFragment();
+            chatListFragment = getChatListInstance();
+            return chatListFragment;
         }
         else {
             return null;

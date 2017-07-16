@@ -83,14 +83,16 @@ public class ChatListFragment extends Fragment {
                     for (ParseObject item : itemList) {
                         // convert each item found to an event
                         Event event = Event.fromParseObject(item);
+
+                        /*
                         Chat eventChat = event.getEventChat();
                         // TODO delete this after we clear the database. rn some events dont have chats
                         if (eventChat == null) {
                             eventChat = new Chat();
-                        }
+                        } */
 
                         // get chat's info to later populate view
-                        getChatInfoFromEvent(event, eventChat);
+                        Chat eventChat = getChatInfoFromEvent(event);
 
                         //add event to list to be displayed
                         chats.add(eventChat);
@@ -105,9 +107,13 @@ public class ChatListFragment extends Fragment {
         });
     }
     // for each event, return the chat information
-    public Chat getChatInfoFromEvent(Event event, Chat chat) {
-        // set description
+    public Chat getChatInfoFromEvent(Event event) {
+        // create new local chat
+        Chat chat = new Chat();
+        // set chat info
         chat.setDescription(event.getDescription());
+        chat.setEventId(event.getEventId());
+        chat.setChatParticipantsIds(event.getParticipantsIds());
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
         String eventOwnerName = event.eventOwnerName;
@@ -119,8 +125,8 @@ public class ChatListFragment extends Fragment {
             } else {
                 chat.setChatTitle("Me");
             }
-        } else { // apply same logic for other chat owners
-            if (participantsNumber > 0) {
+        } else { // apply the same title logic for other chat owners
+            if (participantsNumber > 1) {
                 chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 1));
             } else {
                 chat.setChatTitle(eventOwnerName);
