@@ -206,6 +206,7 @@ public class Event extends ParseObject implements Parcelable {
         event.eventOwnerId = object.getString("event_owner_id");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         event.participantsIds = (ArrayList) object.getList("participants_id");
+
         return event;
     }
 }

@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.GetCallback;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -253,67 +254,60 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // Display the dialog
         alertDialog.show();
     }
-    //// TODO: 7/14/17 make sure user joins event and put in db
+
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
-        // Specify which class to query
-        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
-        // Specify the object id
-        query.getInBackground(event.getEventId(), new GetCallback<Event>() {
+       final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
+        updatedParticipantsIds.add(currentUserId);
 
-            @Override
-            public void done(Event eventDatabaseItem, com.parse.ParseException e) {
+        // specify which class to query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // return object with specific id
+        query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, com.parse.ParseException e) {
                 if (e == null) {
-                    // Access data using the `get` methods for the object
-                    ArrayList<String> updatedParticipantsDatabaseIds = eventDatabaseItem.getParticipantsIds();
-                    // update participants ids
-                    updatedParticipantsDatabaseIds.add(currentUserId);
-                    // set local event object to reflect the database
-                    event.setParticipantsIds(updatedParticipantsDatabaseIds);
-
+                    // update local object
+                    event.setParticipantsIds(updatedParticipantsIds);
                     // update database
-                    eventDatabaseItem.put("participants_id", updatedParticipantsDatabaseIds);
-                    eventDatabaseItem.saveInBackground();
-
+                    object.put("participants_id", updatedParticipantsIds);
+                    object.saveInBackground();
                     // update UI
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     joinStatus.setText("Joined");
+
                 } else {
-                    e.printStackTrace();
+                    e.getMessage();
                 }
             }
         });
     }
     //// TODO: 7/14/17 make sure user leaves event and put in db
     public void removeEvent(final String userId, final Event event, final Button joinStatus) {
-        // Specify which class to query
-        ParseQuery<Event> query = ParseQuery.getQuery(Event.class);
-        // Specify the object id
-        query.getInBackground(event.getEventId(), new GetCallback<Event>() {
+        // update participants id
+        final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
+        updatedParticipantsIds.remove(currentUserId);
 
-            @Override
-            public void done(Event eventDatabaseItem, com.parse.ParseException e) {
+        // specify which class to query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // return object with specific id
+        query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, com.parse.ParseException e) {
                 if (e == null) {
-                    // Access data using the `get` methods for the object
-                    ArrayList<String> updatedParticipantsDatabaseIds = eventDatabaseItem.getParticipantsIds();
-                    // update participants ids
-                    updatedParticipantsDatabaseIds.remove(currentUserId);
-                    // set local event object to reflect the database
-                    event.setParticipantsIds(updatedParticipantsDatabaseIds);
-
+                    // update local object
+                    event.setParticipantsIds(updatedParticipantsIds);
                     // update database
-                    eventDatabaseItem.put("participants_id", updatedParticipantsDatabaseIds);
-                    eventDatabaseItem.saveInBackground();
+                    object.put("participants_id", updatedParticipantsIds);
+                    object.saveInBackground();
 
-                    // change UI
+                    // update UI
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
                     joinStatus.setText("Join");
 
+
+
                 } else {
-                    e.printStackTrace();
+                    e.getMessage();
                 }
             }
-        //user.currentInterestsIds.remove(event.eventId);
-
         });
     }
 

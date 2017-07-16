@@ -120,13 +120,13 @@ public class ChatListFragment extends Fragment {
         String currentUserName = (String) ParseUser.getCurrentUser().get("name");
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
-            if (participantsNumber > 1) {
+            if (participantsNumber > 2) {
                 chat.setChatTitle("Me" + " + " + (participantsNumber - 1));
             } else {
                 chat.setChatTitle("Me");
             }
         } else { // apply the same title logic for other chat owners
-            if (participantsNumber > 1) {
+            if (participantsNumber > 2) {
                 chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 1));
             } else {
                 chat.setChatTitle(eventOwnerName);
