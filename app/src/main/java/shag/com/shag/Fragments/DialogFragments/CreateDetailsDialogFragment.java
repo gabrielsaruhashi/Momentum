@@ -32,6 +32,7 @@ import com.parse.SaveCallback;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import shag.com.shag.Clients.FacebookClient;
@@ -43,7 +44,6 @@ import shag.com.shag.R;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-import static com.parse.ParseUser.getCurrentUser;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -62,6 +62,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     private String category;
     FacebookClient facebookClient;
+    private String currentUserId;
 
 
 
@@ -86,6 +87,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                              Bundle savedInstanceState) {
         // initialize client
         facebookClient = ParseApplication.getFacebookRestClient();
+        // get current user id
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
         return inflater.inflate(R.layout.fragment_create_details, container);
     }
 
@@ -128,10 +131,18 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 /*newEvent.setLatLng(
                         new LatLng(47.628883, -122.342606)
                 ); */
+                //TODO what is this friends at event for
                 newEvent.setFriendsAtEvent(new ArrayList<Long>());
-                //newEvent.setLocation("Facebook Seattle");
-                newEvent.setParticipantsIds(new ArrayList<String>());
-                newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+                newEvent.setLocation("Facebook Seattle");
+
+                //  upon creating, save evento owner's id in participant list
+                ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUserId));
+                Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
+                newEvent.setParticipantsIds(initialParticipantsIds);
+
+
+                // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+                newEvent.setEventOwnerId(currentUserId);
 
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();
@@ -157,13 +168,15 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                                         Log.d("DEBUG", "EI");
                                         //Toast.makeText(getContext(), "Successfully created event on Parse",
                                         //Toast.LENGTH_SHORT).show();
+
+                                        // send back to pick category dialog after being saved
+                                        sendBackResult(newEvent);
                                     } else {
                                         Log.e(TAG, "Failed to save message", e);
                                     }
                                 }
                             });
-                            // send back to pick category dialog
-                            sendBackResult(newEvent);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

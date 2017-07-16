@@ -22,13 +22,13 @@ import shag.com.shag.R;
  * Created by gabesaruhashi on 7/14/17.
  */
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
+public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder>{
 
     private List<Message> mMessages;
     private Context mContext;
     private String mUserId;
 
-    public ChatAdapter(Context context, String userId, List<Message> messages) {
+    public MessagesAdapter(Context context, String userId, List<Message> messages) {
         mMessages = messages;
         this.mUserId = userId;
         mContext = context;
@@ -38,7 +38,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View contactView = inflater.inflate(R.layout.item_chat, parent, false);
+        View contactView = inflater.inflate(R.layout.item_message_chat, parent, false);
 
         ViewHolder viewHolder = new ViewHolder(contactView);
         return viewHolder;
@@ -47,7 +47,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Message message = mMessages.get(position);
-        final boolean isMe = message.getUserId() != null && message.getUserId().equals(mUserId);
+        final boolean isMe = message.getSenderId() != null && message.getSenderId().equals(mUserId);
 
         if (isMe) {
             holder.imageMe.setVisibility(View.VISIBLE);
@@ -60,7 +60,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder>{
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
-        Glide.with(mContext).load(getProfileUrl(message.getUserId())).into(profileView);
+        Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
         holder.body.setText(message.getBody());
     }
 

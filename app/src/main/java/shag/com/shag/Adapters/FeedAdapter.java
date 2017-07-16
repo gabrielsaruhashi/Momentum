@@ -30,7 +30,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
-import shag.com.shag.Models.User;
 import shag.com.shag.R;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -47,9 +46,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public FeedAdapter(ArrayList<Event> events) { this.events = events; };
     // initialize context
     Context context;
-
-    // TODO delete dummy data
-    User gabriel;
 
     // current user's info
     long currentUserFacebookId;
@@ -70,15 +66,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // instantiate id's
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-
-        // TODO delete dummy data
-        gabriel = new User();
-        gabriel.username = "gabesaruhashi";
-        gabriel.name="Gabriel S.";
-        gabriel.phoneNumber="6505757751";
-        gabriel.currentInterestsIds = new ArrayList<Long>(0);
-        long number = new Long(3105);
-        gabriel.userID= number;
 
         return viewHolder;
     }

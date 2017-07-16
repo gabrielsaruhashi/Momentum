@@ -19,7 +19,7 @@ import com.parse.SaveCallback;
 import java.util.ArrayList;
 import java.util.List;
 
-import shag.com.shag.Adapters.ChatAdapter;
+import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
@@ -32,7 +32,7 @@ public class ChatActivity extends AppCompatActivity {
 
     RecyclerView rvChat;
     ArrayList<Message> mMessages;
-    ChatAdapter mAdapter;
+    MessagesAdapter mAdapter;
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
 
@@ -54,7 +54,7 @@ public class ChatActivity extends AppCompatActivity {
         mMessages = new ArrayList<>();
         mFirstLoad = true;
         final String userId = ParseUser.getCurrentUser().getObjectId();
-        mAdapter = new ChatAdapter(ChatActivity.this, userId, mMessages);
+        mAdapter = new MessagesAdapter(ChatActivity.this, userId, mMessages);
         rvChat.setAdapter(mAdapter);
 
         // associate the LayoutManager with the RecylcerView
@@ -70,7 +70,7 @@ public class ChatActivity extends AppCompatActivity {
                 // Using new `Message` Parse-backed model now
                 Message message = new Message();
                 message.setBody(data);
-                message.setUserId(ParseUser.getCurrentUser().getObjectId());
+                message.setSenderId(ParseUser.getCurrentUser().getObjectId());
 
                 message.saveInBackground(new SaveCallback() {
                     @Override

@@ -26,4 +26,9 @@ public class CustomUser {
         user.saveInBackground();
     }
 
+    public void setSomeStringArray(String listName, List<String> list) {
+        user.put(listName, list);
+        user.saveInBackground();
+    }
+
 }

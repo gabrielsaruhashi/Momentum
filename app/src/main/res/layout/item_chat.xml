@@ -1,28 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <ImageView
-        android:id="@+id/ivProfileOther"
-        android:contentDescription="@string/profile_other"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher" />
+        android:id="@+id/ivChatIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@android:color/black" />
+
     <TextView
-        android:textSize="18sp"
+        android:id="@+id/tvParticipants"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/tvBody"
+        android:text="TextView"
+        android:textStyle="bold" />
+
+    <TextView
         android:id="@+id/tvBody"
-        android:padding="20dp"
-        android:lines="1"
-        android:ellipsize="end"
-        android:layout_marginEnd="64dp"
-        android:layout_width="match_parent"
-        android:layout_height="64dp">
-    </TextView>
-    <ImageView
-        android:id="@+id/ivProfileMe"
-        android:contentDescription="@string/profile_me"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher" />
-</LinearLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:autoLink="all"
+        android:layout_below="@+id/tvParticipants"
+        android:layout_marginLeft="8dp"
+        android:layout_toEndOf="@+id/ivChatIcon"
+        android:text="TextView"
+        android:paddingBottom="24dp"/>
+
+
+</RelativeLayout>

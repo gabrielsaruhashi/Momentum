@@ -2,7 +2,6 @@ package shag.com.shag.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseClassName;
@@ -15,13 +14,14 @@ import java.util.Date;
 /**
  * Created by samrabelachew on 7/10/17.
  */
-
 @ParseClassName("Event")
-public class Event extends ParseObject implements Parcelable, Comparable {
+public class Event extends ParseObject implements Parcelable {
 
 
     // fields
     public String eventId;
+    public String eventOwnerId;
+    public long eventOwnerFbId;
     public String eventOwnerName;
     public String eventName;
     public LatLng latLng;
@@ -29,16 +29,16 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public String location;
     public String category;
     public ArrayList<Long> friendsAtEvent;
-    public long eventOwnerId;
-    public long eventOwnerFbId;
     public ArrayList<String> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
+    public Chat eventChat;
 
     //CONSTRUCTORS
     public Event(){
         friendsAtEvent = new ArrayList<>();
         participantsIds = new ArrayList<>();
+        // eventChat = new Chat(eventId, participantsIds);
     }
     // GETTERS
 
@@ -68,8 +68,10 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
     public ArrayList<String> getParticipantsIds() { return participantsIds;}
-    public long getEventOwnerId() { return eventOwnerId; }
 
+    public String getEventOwnerId() { return eventOwnerId; }
+
+    public long getEventOwnerFbId() { return eventOwnerFbId; }
     // SETTERS
 
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
@@ -115,7 +117,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         put("category", category); }
 
 
-    public void setEventOwnerId(long eventOwnerId) {
+    public void setEventOwnerId(String eventOwnerId) {
         this.eventOwnerId=eventOwnerId;
         put("event_owner_id", eventOwnerId); }
 
@@ -142,7 +144,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         dest.writeString(this.location);
         dest.writeString(this.category);
         dest.writeList(this.friendsAtEvent);
-        dest.writeLong(this.eventOwnerId);
+        dest.writeString(this.eventOwnerId);
         dest.writeList(this.participantsIds);
     }
 
@@ -156,7 +158,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.category = in.readString();
         this.friendsAtEvent = new ArrayList<Long>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
-        this.eventOwnerId = in.readLong();
+        this.eventOwnerId = in.readString();
         this.participantsIds = new ArrayList<String>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
     }
@@ -173,11 +175,13 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         }
     };
 
-    //TODO: change time to Date object or add one so we can compare events
+
+    /*//TODO: change time to Date object or add one so we can compare events
     @Override
     public int compareTo(@NonNull Object o) {
         return this.deadline.compareTo(((Event) o).deadline);
     }
+
     /*
     @Override
     public String toString() {
@@ -198,7 +202,7 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         event.description = object.getString("description");
         event.location = object.getString("location");
         event.category = object.getString("category");
-        event.eventOwnerId = object.getLong("event_owner_id");
+        event.eventOwnerId = object.getString("event_owner_id");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         return event;
     }
