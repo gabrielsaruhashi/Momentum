@@ -2,11 +2,14 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -43,9 +46,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        /*
+
         Message message = mMessages.get(position);
-        final boolean isMe = message.getUserSender().getObjectId() != null && message.getSenderId().equals(mUserId);
+
+        // TODO alter this logic to use the sender's info pointer, not the id
+        final boolean isMe = message.getSenderId()!= null && message.getSenderId().equals(mUserId);
 
         if (isMe) {
             holder.imageMe.setVisibility(View.VISIBLE);
@@ -59,7 +64,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
         Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
-        holder.body.setText(message.getBody()); */
+
+        String messageBody = message.getBody();
+        holder.body.setText(messageBody);
     }
 
     // Create a gravatar image based on the hash value obtained from userId

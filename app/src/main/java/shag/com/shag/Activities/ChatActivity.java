@@ -68,6 +68,8 @@ public class ChatActivity extends AppCompatActivity {
 
         // associate the LayoutManager with the RecylcerView
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
+        // display the newest posts ordered from oldest to newest
+        linearLayoutManager.setReverseLayout(true);
         rvChat.setLayoutManager(linearLayoutManager);
 
         // When send button is clicked, create message object on Parse
@@ -83,6 +85,7 @@ public class ChatActivity extends AppCompatActivity {
                 message.setBody(data);
                 // save User pointer
                 message.put("User_sender", ParseUser.getCurrentUser());
+                message.setSenderId(currentUserId);
                 message.setEventId(eventId);
 
                 message.saveInBackground(new SaveCallback() {
@@ -107,8 +110,12 @@ public class ChatActivity extends AppCompatActivity {
 
     // Query messages from Parse so we can load them into the chat adapter
     void refreshMessages() {
-        // Construct query to execute
-        ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
+
+        // ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
+        // construct query to execute
+        ParseQuery<Message> query = createOrQueries(chatParticipantsIds);
+        // AND query for messages that are from this event
+        query.whereEqualTo("event_id", eventId);
         // Configure limit and sort order
         query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
 
@@ -134,6 +141,25 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    // function creates the main OR query to search for all user ids
+    public ParseQuery<Message>  createOrQueries(ArrayList<String> userIds) {
+        // queries
+        List<ParseQuery<Message>> queries = new ArrayList<ParseQuery<Message>>();
+
+        for (int i = 0; i < userIds.size(); i ++) {
+            ParseQuery myQuery = new ParseQuery("Message");
+            // auxiliary list
+            List list = new ArrayList();
+            list.add(userIds.get(i));
+            myQuery.whereContainedIn("sender_id", list);
+            // add query to the array of OR queries
+            queries.add(myQuery);
+        }
+
+        // return or query
+        return ParseQuery.or(queries);
     }
 
 }

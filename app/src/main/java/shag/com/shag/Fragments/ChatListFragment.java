@@ -114,19 +114,23 @@ public class ChatListFragment extends Fragment {
         chat.setDescription(event.getDescription());
         chat.setEventId(event.getEventId());
         chat.setChatParticipantsIds(event.getParticipantsIds());
+        // get icon url
+        // User eventOwner = User.fromJson(event.get)
+        // chat.setChatIconUrl();
+
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
         String eventOwnerName = event.eventOwnerName;
         String currentUserName = (String) ParseUser.getCurrentUser().get("name");
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
-            if (participantsNumber > 2) {
+            if (participantsNumber > 1) {
                 chat.setChatTitle("Me" + " + " + (participantsNumber - 1));
             } else {
                 chat.setChatTitle("Me");
             }
         } else { // apply the same title logic for other chat owners
-            if (participantsNumber > 2) {
+            if (participantsNumber > 1) {
                 chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 1));
             } else {
                 chat.setChatTitle(eventOwnerName);
