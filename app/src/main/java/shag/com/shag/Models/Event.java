@@ -72,6 +72,9 @@ public class Event extends ParseObject implements Parcelable {
     public String getEventOwnerId() { return eventOwnerId; }
 
     public long getEventOwnerFbId() { return eventOwnerFbId; }
+
+    public Chat getEventChat() { return eventChat; }
+
     // SETTERS
 
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
@@ -125,6 +128,10 @@ public class Event extends ParseObject implements Parcelable {
         this.participantsIds=participantsIds;
         put("participants_id", participantsIds);
       }
+
+    public void setEventChat(Chat eventChat) {
+        this.eventChat = eventChat;
+    }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;

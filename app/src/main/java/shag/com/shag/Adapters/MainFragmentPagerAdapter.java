@@ -5,15 +5,10 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.content.ContextCompat;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.DynamicDrawableSpan;
-import android.text.style.ImageSpan;
 
+import shag.com.shag.Fragments.ChatListFragment;
 import shag.com.shag.Fragments.FeedFragment;
 import shag.com.shag.Fragments.MapFragment;
-import shag.com.shag.R;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -25,6 +20,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     private Context context;
     private FeedFragment feedFragment;
     private MapFragment mapFragment;
+    private ChatListFragment chatListFragment;
     Drawable myDrawable;
 
     public MainFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -34,7 +30,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return PAGE_COUNT;
     }
 
     @Override
@@ -42,11 +38,11 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
         if  (position == 0) {
             feedFragment = getFeedInstance();
             return feedFragment;
-
-        }
-        else if (position ==1){
+        } else if (position == 1) {
             mapFragment = getMapInstance();
             return mapFragment;
+        } else if (position == 2) {
+            return new ChatListFragment();
         }
         else {
             return null;
@@ -55,6 +51,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
+        /*
         // generate title based on item postion
 
         switch (position) {
@@ -76,6 +73,8 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             // TODO: handle exception
         }
         return sb;
+        */
+        return tabTitles[position];
     }
 
     private FeedFragment getFeedInstance() {
@@ -90,5 +89,12 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             mapFragment = new MapFragment();
         }
         return mapFragment;
+    }
+
+    private ChatListFragment getChatListInstance() {
+        if (chatListFragment == null) {
+            chatListFragment = new ChatListFragment();
+        }
+        return chatListFragment;
     }
 }

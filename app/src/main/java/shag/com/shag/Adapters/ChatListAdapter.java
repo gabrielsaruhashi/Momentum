@@ -52,7 +52,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         // populate the views
         Chat chat = chats.get(position);
         holder.tvBody.setText(chat.getDescription());
-        holder.tvParticipants.setText("Dummy Gabe");
+        holder.tvParticipants.setText(chat.getChatTitle());
 
         // load user profile image using glide
         Glide.with(context)

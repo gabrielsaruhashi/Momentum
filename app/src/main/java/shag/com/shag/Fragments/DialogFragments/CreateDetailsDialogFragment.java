@@ -34,9 +34,11 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.UUID;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.FriendsFragment;
+import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -151,6 +153,11 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
+
+                // create chat and set 'unique' id
+                String chatId = UUID.randomUUID().toString();
+                Chat eventChat = new Chat();
+                eventChat.setChatId(chatId);
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {

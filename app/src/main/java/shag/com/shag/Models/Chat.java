@@ -6,44 +6,38 @@ import java.util.ArrayList;
  * Created by gabesaruhashi on 7/14/17.
  */
 
+//TODO figure out what should be stored here
 public class Chat {
     private String chatId;
-    private String eventId;
-    private String eventOwner;
-    private ArrayList<String> participantsIds;
-    private ArrayList<Message> messagesIds;
+    //TODO decide the properties of the chat class. Right now it is kind of redundant
+    // TODO might be interesting to later invite ppl even if event expired in feed
+    private ArrayList<String> chatParticipantsIds;
+
+    // trivial variables
+    private String chatTitle;
+    private String chatIconUrl;
     private String description;
 
-    /*
-    public Chat(String eventId, ArrayList<String> participantsIds) {
-        this.eventId = eventId;
-        this.participantsIds = participantsIds;
-    } */
 
     // GETTERS & SETTERS
+    public String getChatId() { return chatId; }
 
-    public String getChatId() {
-        return chatId;
+    public void setChatId(String chatId) { this.chatId = chatId; }
+
+    public String getChatTitle() {
+        return chatTitle;
     }
 
-    public String getEventId() {
-        return eventId;
+    public void setChatTitle(String chatTitle) {
+        this.chatTitle = chatTitle;
     }
 
-    public ArrayList<String> getParticipantsIds() {
-        return participantsIds;
+    public String getChatIconUrl() {
+        return chatIconUrl;
     }
 
-    public ArrayList<Message> getMessagesIds() {
-        return messagesIds;
-    }
-
-    public void setParticipantsIds(ArrayList<String> participantsIds) {
-        this.participantsIds = participantsIds;
-    }
-
-    public void setMessagesIds(ArrayList<Message> messagesIds) {
-        this.messagesIds = messagesIds;
+    public void setChatIconUrl(String chatIconUrl) {
+        this.chatIconUrl = chatIconUrl;
     }
 
     public String getDescription() {
