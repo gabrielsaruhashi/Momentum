@@ -154,6 +154,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 // atta
                 ParseObject currentUser = ParseUser.getCurrentUser();
                 newEvent.put("User_event_owner", currentUser);
+                Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 /* delete later - decided not to use chatId
                 // create chat and set 'unique' id

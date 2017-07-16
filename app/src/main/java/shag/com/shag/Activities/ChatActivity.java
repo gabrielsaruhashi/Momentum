@@ -81,7 +81,8 @@ public class ChatActivity extends AppCompatActivity {
                 // populate message
                 //TODO decide if it is better to pass entire event object
                 message.setBody(data);
-                message.put("user_sender", ParseUser.getCurrentUser());
+                // save User pointer
+                message.put("User_sender", ParseUser.getCurrentUser());
                 message.setEventId(eventId);
 
                 message.saveInBackground(new SaveCallback() {
@@ -111,6 +112,7 @@ public class ChatActivity extends AppCompatActivity {
         // Configure limit and sort order
         query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
 
+        //TODO query messages whose sender id corresponds to anyone in the array (OR queries)
         // get the latest 50 messages, order will show up newest to oldest of this group
         query.orderByDescending("createdAt");
         // Execute query to fetch all messages from Parse asynchronously

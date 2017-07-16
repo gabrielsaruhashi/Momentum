@@ -58,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             // login
             ParseFacebookUtils.logInWithReadPermissionsInBackground(this, permissions, new LogInCallback() {
+                // upon success, return user object
                 @Override
                 public void done(final ParseUser user, ParseException err) {
 
@@ -67,7 +68,8 @@ public class LoginActivity extends AppCompatActivity {
                     // if user is registering
                     else if (user.isNew()) {
                         user.getCurrentUser();
-                        user.saveInBackground();
+                        // user.saveInBackground();
+
                         // get user info
                         client.getMyInfo(new GraphRequest.Callback() {
                             @Override
@@ -75,23 +77,21 @@ public class LoginActivity extends AppCompatActivity {
                                 JSONObject userJSON = response.getJSONObject();
                                 // initialize properties for new user
                                 try {
-
                                     name = userJSON.getString("name");
-                                    fbUid = userJSON.getLong("id");
+                                    // fbUid = userJSON.getLong("id");
                                     profileImageUrl = userJSON.getJSONObject("picture")
                                             .getJSONObject("data")
                                             .getString("url");
-                                    fbUsername = userJSON.getString("username");
+
                                     //TODO check if names are being saved. Gabe's login didnt register his name
-                                    CustomUser newCustomUser = new CustomUser(user);
-                                    newCustomUser.setSomeString("name", name);
-                                    newCustomUser.setSomeString("profile_image_url", profileImageUrl);
-                                    newCustomUser.setSomeString("username", fbUsername);
 
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                CustomUser newCustomUser = new CustomUser(user);
+                                newCustomUser.setSomeString("name", name);
+                                newCustomUser.setSomeString("profile_image_url", profileImageUrl);
 
 
                             }
@@ -101,6 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         onLoginSuccess();
                     } else {
                         user.getCurrentUser();
+                        //TODO what is this line below for?
                         user.saveInBackground();
                         Log.d("MyApp", "User logged in through Facebook!");
                         Log.d("MyApp", user.getUsername());
