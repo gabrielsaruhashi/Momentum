@@ -158,6 +158,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 String chatId = UUID.randomUUID().toString();
                 Chat eventChat = new Chat();
                 eventChat.setChatId(chatId);
+                newEvent.setEventChat(eventChat);
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {

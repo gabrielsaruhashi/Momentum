@@ -37,7 +37,7 @@ public class Event extends ParseObject implements Parcelable {
     //CONSTRUCTORS
     public Event(){
         friendsAtEvent = new ArrayList<>();
-        participantsIds = new ArrayList<>();
+        // participantsIds = new ArrayList<>();
         // eventChat = new Chat(eventId, participantsIds);
     }
     // GETTERS
@@ -211,6 +211,7 @@ public class Event extends ParseObject implements Parcelable {
         event.category = object.getString("category");
         event.eventOwnerId = object.getString("event_owner_id");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
+        event.participantsIds = (ArrayList) object.getList("participants_id");
         return event;
     }
 }

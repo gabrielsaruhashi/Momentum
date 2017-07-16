@@ -89,7 +89,6 @@ public class ChatListFragment extends Fragment {
                         }
 
                         // get chat's info to later populate view
-
                         getChatInfoFromEvent(event, eventChat);
 
                         //add event to list to be displayed
@@ -107,7 +106,7 @@ public class ChatListFragment extends Fragment {
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event, Chat chat) {
         chat.setDescription(event.getDescription());
-        chat.setChatTitle(event.getEventOwnerName() + (event.getParticipantsIds().size() - 1));
+        chat.setChatTitle(event.getEventOwnerName() + (event.getParticipantsIds().size()));
 
         return chat;
     }
