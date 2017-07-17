@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "758443688939",
+    "firebase_url": "https://shagshag-c6e28.firebaseio.com",
+    "project_id": "shagshag-c6e28",
+    "storage_bucket": "shagshag-c6e28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:758443688939:android:abb624db921415fc",
+        "android_client_info": {
+          "package_name": "shag.com.shag"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "758443688939-p03eg9n8ithb6t9tnha3nab2uqdq8ui4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0PopBo5O8XvdKrppDa707ES1fl-pS19A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
