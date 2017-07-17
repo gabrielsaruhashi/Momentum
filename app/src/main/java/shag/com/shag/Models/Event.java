@@ -209,7 +209,6 @@ public class Event extends ParseObject implements Parcelable {
 
     public static Event fromParseObject(ParseObject object) {
         Event event = new Event();
-        Object obj = object.get("state");
         event.eventId = object.getObjectId();
         event.deadline = object.getDate("deadline");
         event.eventOwnerName = object.getString("event_owner_name");

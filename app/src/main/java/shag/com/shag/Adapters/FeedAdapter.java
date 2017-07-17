@@ -83,6 +83,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
         holder.tvEventOwnerName.setText(event.getEventOwnerName());
 
+        if (isAlreadyInterested(currentUserId, event)) {
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
+            holder.btJoin.setText("Joined");
+
+        } else {
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+            holder.btJoin.setText("Join");
+        }
+
         // load user profile image using glide
         Glide.with(context)
                 .load(imageUrl)
