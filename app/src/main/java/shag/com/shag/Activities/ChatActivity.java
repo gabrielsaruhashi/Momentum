@@ -102,6 +102,10 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 etMessage.setText(null);
+                // add message to arraylist
+                mMessages.add(0, message);
+                mAdapter.notifyItemInserted(0);
+                rvChat.smoothScrollToPosition(0);
             }
         });
 
