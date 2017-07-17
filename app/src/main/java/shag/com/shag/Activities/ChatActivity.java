@@ -88,6 +88,7 @@ public class ChatActivity extends AppCompatActivity {
                 message.put("User_sender", ParseUser.getCurrentUser());
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
+                message.setSenderProfileImageUrl(ParseUser.getCurrentUser().getString("profile_image_url"));
 
                 message.saveInBackground(new SaveCallback() {
                     @Override

@@ -63,7 +63,15 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
-        Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+        //Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+
+        if (message.getSenderProfileImageUrl() == null) {
+            // generate a unique, random gravatar
+            Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+        } else {
+            Glide.with(mContext).load(message.getSenderProfileImageUrl()).into(profileView);
+        }
+
 
         String messageBody = message.getBody();
         holder.body.setText(messageBody);

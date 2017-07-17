@@ -88,6 +88,7 @@ public class ChatListFragment extends Fragment {
                         try {
                             // fetch event owner
                             ParseObject object = item.getParseObject("User_event_owner").fetch();
+
                             // user found! Convert it to a user model
                             User eventOwner = User.fromParseObject(object);
                             event.setEventOwner(eventOwner); // setting event owner
@@ -104,33 +105,8 @@ public class ChatListFragment extends Fragment {
                             e1.printStackTrace();
                         }
 
-                        // query for the event owner
-                        /*
-                        item.getParseObject("User_event_owner").fetchInBackground(new GetCallback<ParseObject>() {
-
-                            @Override
-                            public void done(ParseObject object, ParseException e) {
-
-                                if (e == null) {
-                                    // user found! Convert it to a user model
-                                    User eventOwner = User.fromParseObject(object);
-                                    event.setEventOwner(eventOwner); // setting event owner
-
-                                    // get chat's info to later populate view
-                                    Chat eventChat = getChatInfoFromEvent(event);
-
-                                    //add event to list to be displayed
-                                    chats.add(eventChat);
-                                    adapter.notifyItemInserted(chats.size() - 1);
-                                    rvChats.smoothScrollToPosition(0);
-                                } else {
-                                    e.getMessage();
-                                }
-                            }
-                        }); */
-
                     }
-                } else {
+                } else { // if there is an error
                     e.printStackTrace();
                 }
             }
@@ -148,6 +124,7 @@ public class ChatListFragment extends Fragment {
         // get icon url
         if (event.getEventOwner() != null) {
             User eventOwner = event.getEventOwner();
+            // set chat icon to be the owner's image
             chat.setChatIconUrl(eventOwner.getImageUrl());
         }
 

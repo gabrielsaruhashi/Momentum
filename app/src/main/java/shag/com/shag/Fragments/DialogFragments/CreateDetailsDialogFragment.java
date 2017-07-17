@@ -141,9 +141,6 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
                 newEvent.setParticipantsIds(initialParticipantsIds);
 
-                //TODO remove owner id
-                // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
-                newEvent.setEventOwnerId(currentUserId);
 
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();

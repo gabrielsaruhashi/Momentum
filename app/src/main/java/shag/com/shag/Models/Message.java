@@ -13,6 +13,7 @@ public class Message extends ParseObject {
     // database variables
     private User userSender;
     private String body;
+    private String senderProfileImageUrl;
 
     // local variables
     private String senderId;
@@ -40,7 +41,6 @@ public class Message extends ParseObject {
     }
 
     public User getUserSender() {
-
         return userSender;
     }
 
@@ -51,5 +51,14 @@ public class Message extends ParseObject {
     public void setSenderId(String senderId) {
         this.senderId = senderId;
         put("sender_id", senderId);
+    }
+
+    public String getSenderProfileImageUrl() {
+        return getString("sender_profile_image_url");
+    }
+
+    public void setSenderProfileImageUrl(String senderProfileImageUrl) {
+        this.senderProfileImageUrl = senderProfileImageUrl;
+        put("sender_profile_image_url", senderProfileImageUrl);
     }
 }
