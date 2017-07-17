@@ -8,6 +8,8 @@ import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -32,6 +34,7 @@ public class Event extends ParseObject implements Parcelable {
     public ArrayList<String> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
+    private User eventOwner;
 
     //CONSTRUCTORS
     public Event(){
@@ -72,8 +75,19 @@ public class Event extends ParseObject implements Parcelable {
 
     public long getEventOwnerFbId() { return eventOwnerFbId; }
 
+    public User getEventOwner() {
+        JSONObject json = getJSONObject("user_sender");
+        User eventOwner = User.fromJson(json);
+        return eventOwner;
+    }
 
     // SETTERS
+
+
+    public void setEventOwner(User eventOwner) {
+        this.eventOwner = eventOwner;
+        put("event_owner", eventOwner);
+    }
 
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
         this.friendsAtEvent = friendsAtEvent;

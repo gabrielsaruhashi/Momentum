@@ -54,7 +54,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         String iconImageUrl = chat.getChatIconUrl();
         //TODO delete this later
         if (iconImageUrl == null) {
-            iconImageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
+            iconImageUrl = "https://yt3.ggpht.com/-QQ6nz0pWCk0/AAAAAAAAAAI/AAAAAAAAAAA/3NXhoHLM_LQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg";
         }
         holder.tvBody.setText(chat.getDescription());
         holder.tvParticipants.setText(chat.getChatTitle());

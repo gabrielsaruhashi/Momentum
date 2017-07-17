@@ -115,8 +115,12 @@ public class ChatListFragment extends Fragment {
         chat.setEventId(event.getEventId());
         chat.setChatParticipantsIds(event.getParticipantsIds());
         // get icon url
-        // User eventOwner = User.fromJson(event.get)
-        // chat.setChatIconUrl();
+        //TODO replace eventowner
+        /* if (event.getEventOwner() != null) {
+            User eventOwner = event.getEventOwner();
+            chat.setChatIconUrl(eventOwner.getImageUrl());
+        } */
+
 
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
