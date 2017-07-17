@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -36,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import shag.com.shag.Activities.MainActivity;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.FriendsFragment;
 import shag.com.shag.Models.Event;
@@ -89,7 +89,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         facebookClient = ParseApplication.getFacebookRestClient();
         // get current user id
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-        return inflater.inflate(R.layout.fragment_create_details, container);
+
+        return inflater.inflate(R.layout.fragment_create_details, container, false);
     }
 
     // 1) defines the listener interface with a method passing back data result.
@@ -114,11 +115,11 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
 
         // Fetch arguments from bundle and set title
         category = getArguments().getString("category");
-        getDialog().setTitle(category);
+        //getDialog().setTitle(category);
         // Show soft keyboard automatically and request focus to field
         etDescription.requestFocus();
-        getDialog().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        //getDialog().getWindow().setSoftInputMode(
+                //WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
 
         // Setup a callback when the "submit" button is pressed
         btSend.setOnClickListener(new View.OnClickListener() {
@@ -196,6 +197,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 });
 
             }
+
         });
 
         btLocation.setOnClickListener(new View.OnClickListener() {
@@ -287,9 +289,11 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     // Call this method to send the data back to the parent fragment
     public void sendBackResult(Event event) {
         // Notice the use of `getTargetFragment` which will be set when the dialog is displayed
-        CreateDetailsDialogListener listener = (CreateDetailsDialogListener) getTargetFragment();
-        listener.onFinishCreateDetailsDialog(event);
-        dismiss();
+        //CreateDetailsDialogListener listener = (CreateDetailsDialogListener) getTargetFragment();
+        //listener.onFinishCreateDetailsDialog(event);
+        //dismiss();
+        Intent i = new Intent(getContext(), MainActivity.class);
+        getContext().startActivity(i);
     }
 
     public void setListenerForTime(TextView tv, final int minToDeadline) {
