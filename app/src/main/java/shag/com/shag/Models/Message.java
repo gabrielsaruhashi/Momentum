@@ -3,8 +3,6 @@ package shag.com.shag.Models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
-import org.json.JSONObject;
-
 /**
  * Created by gabesaruhashi on 7/14/17.
  */
@@ -12,11 +10,13 @@ import org.json.JSONObject;
 @ParseClassName("Message")
 public class Message extends ParseObject {
     private String messageId;
-    private String eventId;
+    // database variables
     private User userSender;
-    //TODO temporary variable
-    private String senderId;
     private String body;
+
+    // local variables
+    private String senderId;
+    private String eventId;
 
     public String getMessageId() {
         return getObjectId();
@@ -40,14 +40,8 @@ public class Message extends ParseObject {
     }
 
     public User getUserSender() {
-        JSONObject json = getJSONObject("user_sender");
-        User userSender = User.fromJson(json);
-        return userSender;
-    }
 
-    public void setUserSender(User userSender) {
-        this.userSender = userSender;
-        put("user_sender", userSender);
+        return userSender;
     }
 
     public String getSenderId() {

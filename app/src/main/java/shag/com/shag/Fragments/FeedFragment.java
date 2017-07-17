@@ -52,8 +52,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     // the adapter wired to the new view
     FeedAdapter adapter;
     FacebookClient client;
-    // TODO remove fake gabe
-    User fakeGabriel;
+
     FloatingActionButton myFab;
 
     // inflation happens inside onCreateView
@@ -95,12 +94,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 getContext().startActivity(i);
             }
         });
-
-        // TODO remove fake Gabe
-        fakeGabriel = new User();
-        fakeGabriel.username = "gabesaruhashi";
-        fakeGabriel.name = "Gabriel S.";
-        fakeGabriel.phoneNumber = "6505757751";
 
         return v;
     }
