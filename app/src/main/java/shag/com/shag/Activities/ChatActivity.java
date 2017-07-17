@@ -140,7 +140,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     // Scroll to the bottom of the list on initial load
                     if (mFirstLoad) {
-                        rvChat.scrollToPosition(0);
+                        rvChat.smoothScrollToPosition(0);
                         mFirstLoad = false;
                     }
                 } else {
