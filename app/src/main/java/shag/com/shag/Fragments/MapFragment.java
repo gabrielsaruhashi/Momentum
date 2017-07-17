@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -53,9 +54,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
-import shag.com.shag.Clients.JamBaseClient;
-import shag.com.shag.Models.Event;
+import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.R;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -67,9 +68,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=2;
-    private static final String KEY_CAMERA_POSITION = "camera_position";
-    private static final String KEY_LOCATION = "location";
+//    final static int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION=2;
+//    private static final String KEY_CAMERA_POSITION = "camera_position";
+//    private static final String KEY_LOCATION = "location";
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private RequestQueue mRequestQueue;
 
@@ -87,12 +88,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     Button btn4;
     Button btn5;
     Button btn6;
-    Event firstEvent;
     Marker marker1;
-    Marker marker2;
     Geocoder geocoder;
     List<Address> addresses;
-    Event secondEvent;
+
+
     // inflation happens inside onCreateView
     @Nullable
     @Override
@@ -100,7 +100,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
-        mRequestQueue = JamBaseClient.getInstance(this.getContext()).
+        mRequestQueue = VolleyRequest.getInstance(this.getContext()).
                 getRequestQueue();
 
 
@@ -133,11 +133,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     geocoder = new Geocoder(getContext(), Locale.getDefault());
                     addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
                     String postalCode = addresses.get(0).getPostalCode();
-                    onStartRequest(postalCode,"20");
-                    Log.d("address", postalCode);
+                    onStartMusicRequest(postalCode,"20");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
 
             }
         });
@@ -147,16 +154,20 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-    @Override
-    public void onPause() {
-        super.onPause();
 
-        //stop location updates when Activity is no longer active
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
-        }
+
+
+    //CREATING CLIENT
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        mGoogleApiClient.connect();
     }
 
+    //INITIAL MAP
     @Override
     public void onMapReady(GoogleMap googleMap)
     {
@@ -182,27 +193,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    //Takes all possible events tied to user and breaks down by categories (creates hashMap where key is button name and value is list)
-    public HashMap<String, ArrayList<Event>> taggingEvents(ArrayList<Event> events){
-        HashMap<String, ArrayList<Event>> eventCategories = new HashMap<>();
-        for (Event event: events){
-            //if event is private, add to private list, else add to public list
-            //also create a breakdown of tags, each with a unique list
-        }
-        return eventCategories;
-
-    }
-
-
-    protected synchronized void buildGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        mGoogleApiClient.connect();
-    }
-
+    //DIFFERENT STATES OF MAP
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
@@ -221,6 +212,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {}
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        //stop location updates when Activity is no longer active
+        if (mGoogleApiClient != null) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+        }
+    }
+
 
     public void onLocationChanged(Location location)
     {
@@ -251,8 +253,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     }
 
-
-
+    //GETTING PERMISSIONS
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -325,11 +326,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-    private void onStartRequest(String zipcode, String radius) {
-        JamBaseClient.getInstance(getApplicationContext()).addToRequestQueue(getRequest(zipcode,radius));
+    //JAMBASE API
+    private void onStartMusicRequest(String zipcode, String radius) {
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getMusicRequest(zipcode,radius));
     }
 
-    public JsonObjectRequest getRequest(String zipcode, String radius){
+    public JsonObjectRequest getMusicRequest(String zipcode, String radius){
         // Pass second argument as "null" for GET requests
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
@@ -410,4 +412,60 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         });
         return req;
     }
+
+    //ZOMATO API
+    private void onStartFoodRequest(String lat, String lng) {
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(lat,lng));
+    }
+
+    public JsonObjectRequest getFoodRequest(String lat, String lng){
+        // Pass second argument as "null" for GET requests
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, "https://developers.zomato.com/api/v2.1/geocode?lat="+lat+"&lon="+lng, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("response", "aww yeah");
+                        try {
+                            JSONArray restaurantArray = response.getJSONArray("nearby_restaurants");
+                            for (int i = 0; i < restaurantArray.length(); i++) {
+                                JSONObject restaurant = restaurantArray.getJSONObject(i).getJSONObject("restaurant");
+
+                                String restaurantName = restaurant.getString("name");
+                                Double restaurantLat = restaurant.getJSONObject("location").getDouble("latitude");
+                                Double restaurantLng = restaurant.getJSONObject("location").getDouble("longitude");
+                                LatLng restaurantLatLng = new LatLng(restaurantLat, restaurantLng);
+
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions.position(restaurantLatLng);
+                                markerOptions.title(restaurantName);
+                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+                                mGoogleMap.addMarker(markerOptions);
+                            }
+                            //tv.setText(restaurantArray.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //error occur
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Accept", "application/json");
+                params.put("user-key", "09e67b4492d86e45473c0af26442ab3d");
+                return params;
+            }
+        };
+        return req;
+    }
+
 }

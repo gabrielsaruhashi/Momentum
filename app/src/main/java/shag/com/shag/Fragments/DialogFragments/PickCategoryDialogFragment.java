@@ -56,6 +56,7 @@ public class PickCategoryDialogFragment extends DialogFragment implements Create
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_create_pick_category, container);
     }
 
@@ -92,6 +93,7 @@ public class PickCategoryDialogFragment extends DialogFragment implements Create
                 return true;  // i missed this
             }
         });
+
 
     }
 

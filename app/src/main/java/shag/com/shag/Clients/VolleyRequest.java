@@ -11,20 +11,20 @@ import com.android.volley.toolbox.Volley;
  */
 
 
-public class JamBaseClient {
-    private static JamBaseClient mInstance;
+public class VolleyRequest {
+    private static VolleyRequest mInstance;
     private RequestQueue mRequestQueue;
     private static Context mCtx;
 
-    private JamBaseClient(Context context) {
+    private VolleyRequest(Context context) {
         mCtx = context;
         mRequestQueue = getRequestQueue();
 
     }
 
-    public static synchronized JamBaseClient getInstance(Context context) {
+    public static synchronized VolleyRequest getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new JamBaseClient(context);
+            mInstance = new VolleyRequest(context);
         }
         return mInstance;
     }
