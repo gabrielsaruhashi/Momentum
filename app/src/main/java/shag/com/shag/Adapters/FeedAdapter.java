@@ -256,7 +256,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // Display the dialog
         alertDialog.show();
     }
-
+    //// TODO: 7/14/17 make sure user joins event and put in db
     public void joinEvent(User user, Event event, Button joinStatus) {
         event.participantsIds.add(user.getUserID());
         //user.currentInterestsIds.add(event.eventId);
@@ -266,7 +266,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         joinStatus.setText("Joined");
 
     }
-
+    //// TODO: 7/14/17 make sure user leaves event and put in db
     public void removeEvent(User user, Event event, Button joinStatus) {
         event.participantsIds.remove(user.getUserID());
         //user.currentInterestsIds.remove(event.eventId);

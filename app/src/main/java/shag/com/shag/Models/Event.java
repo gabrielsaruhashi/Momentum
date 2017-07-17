@@ -34,6 +34,11 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
 
+    //CONSTRUCTORS
+    public Event(){
+        friendsAtEvent = new ArrayList<>();
+        participantsIds = new ArrayList<>();
+    }
     // GETTERS
 
     public String getLocation() { return location; }
@@ -110,7 +115,8 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     public void setParticipantsIds(ArrayList<Long> participantsIds) {
         this.participantsIds=participantsIds;
-        this.participantsIds = participantsIds; }
+        put("participants_id", participantsIds);
+      }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;
@@ -134,8 +140,6 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         dest.writeList(this.participantsIds);
     }
 
-    public Event() {
-    }
 
     protected Event(Parcel in) {
 

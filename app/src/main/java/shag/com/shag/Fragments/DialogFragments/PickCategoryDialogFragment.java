@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class PickCategoryDialogFragment extends DialogFragment implements Create
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        return inflater.inflate(R.layout.fragment_create_pick_category, container);
+        return inflater.inflate(R.layout.fragment_create_pick_category, container, false);
     }
 
     @Override
@@ -117,10 +118,20 @@ public class PickCategoryDialogFragment extends DialogFragment implements Create
         CreateDetailsDialogFragment createDetailsDialogFragment = CreateDetailsDialogFragment.newInstance(category);
 
         // SETS the target fragment for use later when sending results
-        createDetailsDialogFragment.setTargetFragment(PickCategoryDialogFragment.this, 300);
+        //createDetailsDialogFragment.setTargetFragment(PickCategoryDialogFragment.this, 300);
+
+        // Begin the transaction
+        FragmentTransaction ft = fm.beginTransaction();
+        // Replace the contents of the container with the new fragment
+        ft.replace(R.id.selectCategoryContainer, createDetailsDialogFragment);
+        // or ft.add(R.id.your_placeholder, new FooFragment());
+
+        // Complete the changes added above
+        ft.commit();
 
         // creates the create details fragment
-        createDetailsDialogFragment.show(fm, "fragment_create_details");
+        //createDetailsDialogFragment.show(fm, "fragment_create_details");
+
     }
 
     // This is called when the dialog is completed and the results have been passed
