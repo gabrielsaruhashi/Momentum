@@ -2,12 +2,13 @@ package shag.com.shag.Models;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.parse.ParseClassName;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,12 +16,14 @@ import java.util.Date;
 /**
  * Created by samrabelachew on 7/10/17.
  */
-
 @ParseClassName("Event")
-public class Event extends ParseObject implements Parcelable, Comparable {
+public class Event extends ParseObject implements Parcelable {
 
 
     // fields
+    public String eventId;
+    public String eventOwnerId;
+    public long eventOwnerFbId;
     public String eventOwnerName;
     public String eventName;
     public LatLng latLng;
@@ -28,18 +31,22 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public String location;
     public String category;
     public ArrayList<Long> friendsAtEvent;
-    public long eventOwnerId;
-    public long eventOwnerFbId;
-    public ArrayList<Long> participantsIds;
+    public ArrayList<String> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
+    private User eventOwner;
 
     //CONSTRUCTORS
     public Event(){
         friendsAtEvent = new ArrayList<>();
-        participantsIds = new ArrayList<>();
+        // participantsIds = new ArrayList<>();
+        // eventChat = new Chat(eventId, participantsIds);
     }
     // GETTERS
+
+    public String getEventId() {
+        return eventId;
+    }
 
     public String getLocation() { return location; }
 
@@ -62,10 +69,26 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public LatLng getLatLng() { return latLng; }
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
-    public ArrayList<Long> getParticipantsIds() { return participantsIds;}
-    public long getEventOwnerId() { return eventOwnerId; }
+    public ArrayList<String> getParticipantsIds() { return participantsIds;}
+
+    public String getEventOwnerId() { return eventOwnerId; }
+
+    public long getEventOwnerFbId() { return eventOwnerFbId; }
+
+    public User getEventOwner() {
+        JSONObject json = getJSONObject("user_sender");
+        User eventOwner = User.fromJson(json);
+        return eventOwner;
+    }
 
     // SETTERS
+
+
+    public void setEventOwner(User eventOwner) {
+        this.eventOwner = eventOwner;
+        put("event_owner", eventOwner);
+    }
+
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
         this.friendsAtEvent = friendsAtEvent;
         put("friendsAtEvent", friendsAtEvent);
@@ -109,11 +132,11 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         put("category", category); }
 
 
-    public void setEventOwnerId(long eventOwnerId) {
+    public void setEventOwnerId(String eventOwnerId) {
         this.eventOwnerId=eventOwnerId;
         put("event_owner_id", eventOwnerId); }
 
-    public void setParticipantsIds(ArrayList<Long> participantsIds) {
+    public void setParticipantsIds(ArrayList<String> participantsIds) {
         this.participantsIds=participantsIds;
         put("participants_id", participantsIds);
       }
@@ -129,20 +152,20 @@ public class Event extends ParseObject implements Parcelable, Comparable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(this.eventId);
         dest.writeParcelable(this.latLng, flags);
         dest.writeString(this.eventName);
         dest.writeString(this.description);
         dest.writeString(this.location);
         dest.writeString(this.category);
         dest.writeList(this.friendsAtEvent);
-        dest.writeLong(this.eventOwnerId);
+        dest.writeString(this.eventOwnerId);
         dest.writeList(this.participantsIds);
     }
 
 
     protected Event(Parcel in) {
-
+        this.eventId = in.readString();
         this.latLng = in.readParcelable(LatLng.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
@@ -150,8 +173,8 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         this.category = in.readString();
         this.friendsAtEvent = new ArrayList<Long>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
-        this.eventOwnerId = in.readLong();
-        this.participantsIds = new ArrayList<Long>();
+        this.eventOwnerId = in.readString();
+        this.participantsIds = new ArrayList<String>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
     }
 
@@ -167,11 +190,13 @@ public class Event extends ParseObject implements Parcelable, Comparable {
         }
     };
 
-    //TODO: change time to Date object or add one so we can compare events
+
+    /*//TODO: change time to Date object or add one so we can compare events
     @Override
     public int compareTo(@NonNull Object o) {
         return this.deadline.compareTo(((Event) o).deadline);
     }
+
     /*
     @Override
     public String toString() {
@@ -185,14 +210,17 @@ public class Event extends ParseObject implements Parcelable, Comparable {
     public static Event fromParseObject(ParseObject object) {
         Event event = new Event();
         Object obj = object.get("state");
+        event.eventId = object.getObjectId();
         event.deadline = object.getDate("deadline");
         event.eventOwnerName = object.getString("event_owner_name");
         event.eventName = object.getString("event_name");
         event.description = object.getString("description");
         event.location = object.getString("location");
         event.category = object.getString("category");
-        event.eventOwnerId = object.getLong("event_owner_id");
+        event.eventOwnerId = object.getString("event_owner_id");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
+        event.participantsIds = (ArrayList) object.getList("participants_id");
+
         return event;
     }
 }

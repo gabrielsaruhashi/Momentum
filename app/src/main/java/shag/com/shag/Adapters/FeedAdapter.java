@@ -15,6 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.parse.GetCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,7 +31,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
-import shag.com.shag.Models.User;
 import shag.com.shag.R;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -45,8 +48,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     // initialize context
     Context context;
 
-    // TODO delete dummy data
-    User gabriel;
+    // current user's info
+    long currentUserFacebookId;
+    String currentUserId;
 
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
@@ -61,14 +65,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // Return a new holder instance
         FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
-        // TODO delete dummy data
-        gabriel = new User();
-        gabriel.username = "gabesaruhashi";
-        gabriel.name="Gabriel S.";
-        gabriel.phoneNumber="6505757751";
-        gabriel.currentInterestsIds = new ArrayList<Long>(0);
-        long number = new Long(3105);
-        gabriel.userID= number;
+        // instantiate id's
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         return viewHolder;
     }
@@ -159,10 +157,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 switch (v.getId()) {
                     case R.id.btJoin:
                         //TODO replace gabriel
-                        if (isAlreadyInterested(gabriel.getUserID(), event)) {
-                            removeEvent(gabriel, event, btJoin);
+                        if (isAlreadyInterested(currentUserId, event)) {
+                            removeEvent(currentUserId, event, btJoin);
                         } else {
-                            joinEvent(gabriel, event, btJoin);
+                            joinEvent(currentUserId, event, btJoin);
                         }
                         break;
                     // if user presses viewholder, show more details of activity
@@ -200,7 +198,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             @Override
             public void onShow(DialogInterface dialog) {
                 // check if user already joined the event
-                if (isAlreadyInterested(gabriel.getUserID(), event)) {
+                if (isAlreadyInterested(currentUserId, event)) {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
@@ -239,10 +237,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     public void onClick(DialogInterface dialog, int which) {
                        //TODO get current user
                         // if user is already interested, remove; else, join
-                        if (isAlreadyInterested(gabriel.getUserID(), event)) {
-                            removeEvent(gabriel, event, joinStatus);
+                        if (isAlreadyInterested(currentUserId, event)) {
+                            removeEvent(currentUserId, event, joinStatus);
                         } else {
-                            joinEvent(gabriel, event, joinStatus);
+                            joinEvent(currentUserId, event, joinStatus);
                         }
                     }
                 });
@@ -256,28 +254,64 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // Display the dialog
         alertDialog.show();
     }
-    //// TODO: 7/14/17 make sure user joins event and put in db
-    public void joinEvent(User user, Event event, Button joinStatus) {
-        event.participantsIds.add(user.getUserID());
-        //user.currentInterestsIds.add(event.eventId);
-        Log.i("DEBUGAFTERJOIN", event.participantsIds.toString());
 
-        joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
-        joinStatus.setText("Joined");
+    public void joinEvent(final String userId, final Event event, final Button joinStatus) {
+       final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
+        updatedParticipantsIds.add(currentUserId);
 
+        // specify which class to query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // return object with specific id
+        query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, com.parse.ParseException e) {
+                if (e == null) {
+                    // update local object
+                    event.setParticipantsIds(updatedParticipantsIds);
+                    // update database
+                    object.put("participants_id", updatedParticipantsIds);
+                    object.saveInBackground();
+                    // update UI
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
+                    joinStatus.setText("Joined");
+
+                } else {
+                    e.getMessage();
+                }
+            }
+        });
     }
     //// TODO: 7/14/17 make sure user leaves event and put in db
-    public void removeEvent(User user, Event event, Button joinStatus) {
-        event.participantsIds.remove(user.getUserID());
-        //user.currentInterestsIds.remove(event.eventId);
-        Log.i("DEBUGAFTERJOIN", event.participantsIds.toString());
+    public void removeEvent(final String userId, final Event event, final Button joinStatus) {
+        // update participants id
+        final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
+        updatedParticipantsIds.remove(currentUserId);
 
-        joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
-        joinStatus.setText("Join");
+        // specify which class to query
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // return object with specific id
+        query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject object, com.parse.ParseException e) {
+                if (e == null) {
+                    // update local object
+                    event.setParticipantsIds(updatedParticipantsIds);
+                    // update database
+                    object.put("participants_id", updatedParticipantsIds);
+                    object.saveInBackground();
 
+                    // update UI
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+                    joinStatus.setText("Join");
+
+
+
+                } else {
+                    e.getMessage();
+                }
+            }
+        });
     }
 
-    public boolean isAlreadyInterested(long userId, Event event) {
+    public boolean isAlreadyInterested(String userId, Event event) {
         if (event.participantsIds.contains(userId)) {
             return true;
         }

@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class User implements Parcelable {
 
-
     //fields
     public String name;
     public String username;
@@ -23,8 +22,8 @@ public class User implements Parcelable {
     public long userID;
     public long fbUserID;
     public String phoneNumber;
-    public ArrayList<Long> currentInterestsIds;
-    public ArrayList<Long> ownedEventsIds;
+    // public ArrayList<String> currentJoinedEventsIds;
+    // public ArrayList<String> ownedEventsIds;
     //TODO: make sure to set this value when a user creates an event
     public ArrayList<Event> events;
 
@@ -36,7 +35,9 @@ public class User implements Parcelable {
             JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
             u.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
             u.events = new ArrayList<Event>();
-            u.ownedEventsIds = new ArrayList<>();
+            // empty arrays to be populated later
+            //u.ownedEventsIds = new ArrayList<>();
+            //u.currentJoinedEventsIds = new ArrayList<>();
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -103,7 +104,6 @@ public class User implements Parcelable {
         dest.writeLong(this.userID);
         dest.writeLong(this.fbUserID);
         dest.writeString(this.phoneNumber);
-        dest.writeList(this.currentInterestsIds);
     }
 
     public User() {
@@ -116,8 +116,7 @@ public class User implements Parcelable {
         this.userID = in.readLong();
         this.fbUserID = in.readLong();
         this.phoneNumber = in.readString();
-        this.currentInterestsIds = new ArrayList<Long>();
-        in.readList(this.currentInterestsIds, Long.class.getClassLoader());
+
     }
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
@@ -131,4 +130,5 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
 }

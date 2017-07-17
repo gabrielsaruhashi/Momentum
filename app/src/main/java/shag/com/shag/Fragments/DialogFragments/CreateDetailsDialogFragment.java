@@ -25,12 +25,14 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import shag.com.shag.Activities.MainActivity;
@@ -43,7 +45,6 @@ import shag.com.shag.R;
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
-import static com.parse.ParseUser.getCurrentUser;
 
 /**
  * Created by gabesaruhashi on 7/11/17.
@@ -57,12 +58,12 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     private ImageButton btLocation;
     private ImageButton btTime;
     private Event newEvent;
-    int PLACE_AUTOCOMPLETE_REQUEST_CODE=1;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private LinearLayout llExpireOptions;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     private String category;
     FacebookClient facebookClient;
-
+    private String currentUserId;
 
 
     public CreateDetailsDialogFragment() {
@@ -86,6 +87,9 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                              Bundle savedInstanceState) {
         // initialize client
         facebookClient = ParseApplication.getFacebookRestClient();
+        // get current user id
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
+
         return inflater.inflate(R.layout.fragment_create_details, container, false);
     }
 
@@ -128,10 +132,18 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 /*newEvent.setLatLng(
                         new LatLng(47.628883, -122.342606)
                 ); */
+                //TODO what is this friends at event for
                 newEvent.setFriendsAtEvent(new ArrayList<Long>());
-                //newEvent.setLocation("Facebook Seattle");
-                newEvent.setParticipantsIds(new ArrayList<Long>());
-                newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+                newEvent.setLocation("Facebook Seattle");
+
+                //  upon creating, save event owner's id to participant list
+                ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUserId));
+                Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
+                newEvent.setParticipantsIds(initialParticipantsIds);
+
+
+                // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
+                newEvent.setEventOwnerId(currentUserId);
 
                 if (newEvent.deadline == null) {
                     newEvent.deadline = new Date();
@@ -140,6 +152,18 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
+                // atta
+                ParseObject currentUser = ParseUser.getCurrentUser();
+                newEvent.put("User_event_owner", currentUser);
+                Log.i("DEBUG_CREATE", currentUser.getObjectId());
+
+                /* delete later - decided not to use chatId
+                // create chat and set 'unique' id
+                String chatId = UUID.randomUUID().toString();
+                Chat eventChat = new Chat();
+                eventChat.setChatId(chatId);
+                //TODO make chat be a nested object. it is not working rn
+                // newEvent.setEventChat(eventChat); */
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {
@@ -157,13 +181,15 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                                         Log.d("DEBUG", "EI");
                                         //Toast.makeText(getContext(), "Successfully created event on Parse",
                                         //Toast.LENGTH_SHORT).show();
+
+                                        // send back to pick category dialog after being saved
+                                        sendBackResult(newEvent);
                                     } else {
                                         Log.e(TAG, "Failed to save message", e);
                                     }
                                 }
                             });
-                            // send back to pick category dialog
-                            sendBackResult(newEvent);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
