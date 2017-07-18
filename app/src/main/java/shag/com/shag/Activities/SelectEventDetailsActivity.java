@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+
 import java.util.Date;
 
 import shag.com.shag.R;
@@ -19,15 +21,18 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     Date newDate = new Date(new Date().getTime()+MILLISECONDS_IN_MINUTE*60);
     EditText etDescription;
     String category;
+    PlaceAutocompleteFragment autocompleteFragment;
+    EditText etLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_details);
 
-       category = getIntent().getStringExtra("Category");
+        category = getIntent().getStringExtra("Category");
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
+        etLocation = (EditText) findViewById(R.id.etLocation);
 
         TextView tv30 = (TextView) findViewById(R.id.tv30);
         setListenerForTime(tv30, 30);
@@ -47,6 +52,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         TextView tv12h = (TextView) findViewById(R.id.tv12h);
         setListenerForTime(tv12h, 720);
 
+//        autocompleteFragment = (PlaceAutocompleteFragment)
+//                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        if (getIntent().getStringExtra("Location") != null) {
+            etLocation.setText(getIntent().getStringExtra("Location"));
+        }
         nextButton = (Button) findViewById(R.id.btNext);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +69,21 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+
+//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                // TODO: Get info about the selected place.
+//                Log.i("SelectEventDetails", "Place: " + place.getName());
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//                // TODO: Handle the error.
+//                Log.i("SelectEventDetails", "An error occurred: " + status);
+//            }
+//        });
+
     }
 
 

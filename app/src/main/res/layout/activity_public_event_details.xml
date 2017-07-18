@@ -70,4 +70,22 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:text="Create Event" />
+
+    <TextView
+        android:id="@+id/tvCategoryTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvLocationTitle"
+        android:layout_below="@+id/tvLocationTitle"
+        android:layout_marginTop="53dp"
+        android:text="Category:  " />
+
+    <TextView
+        android:id="@+id/tvCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvCategoryTitle"
+        android:layout_toEndOf="@+id/tvCategoryTitle"
+        android:text="TextView" />
+
 </RelativeLayout>

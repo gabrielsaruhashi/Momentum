@@ -119,4 +119,38 @@
             android:textStyle="bold" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvLocationCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/llExpireOptions"
+        android:layout_below="@+id/llExpireOptions"
+        android:layout_marginTop="15dp"
+        android:text="Location:"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+    <EditText
+        android:id="@+id/etLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:text="TBD"
+        android:maxLines="10"
+        android:layout_below="@+id/tvLocationCategory"
+        android:layout_alignStart="@+id/tvLocationCategory" />
+
+    <!--<fragment-->
+        <!--android:id="@+id/place_autocomplete_fragment"-->
+        <!--android:layout_width="368dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"-->
+        <!--tools:layout_editor_absoluteY="0dp"-->
+        <!--tools:layout_editor_absoluteX="8dp"-->
+        <!--android:layout_below="@+id/tvLocationCategory"-->
+        <!--android:layout_alignStart="@+id/tvLocationCategory"-->
+        <!--/>-->
+
+
+
 </RelativeLayout>

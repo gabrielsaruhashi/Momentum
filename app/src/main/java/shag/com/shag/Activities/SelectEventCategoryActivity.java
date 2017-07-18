@@ -64,6 +64,9 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(SelectEventCategoryActivity.this, SelectEventDetailsActivity.class);
                 i.putExtra("Category", pickedCategory);
+                if (getIntent().getStringExtra("Location") != null){
+                    i.putExtra("Location", getIntent().getStringExtra("Location"));
+                }
                 startActivity(i);
             }
         });

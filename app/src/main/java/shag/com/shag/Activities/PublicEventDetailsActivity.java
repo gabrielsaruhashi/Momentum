@@ -15,6 +15,7 @@ public class PublicEventDetailsActivity extends AppCompatActivity {
     TextView name;
     TextView location;
     TextView description;
+    TextView category;
     Button makeEvent;
 
     @Override
@@ -25,6 +26,7 @@ public class PublicEventDetailsActivity extends AppCompatActivity {
         name = (TextView) findViewById(R.id.tvEventName);
         location = (TextView) findViewById(R.id.tvLocation);
         description = (TextView) findViewById(R.id.tvDescription);
+        category = (TextView) findViewById(R.id.tvCategory);
 
         makeEvent = (Button) findViewById(R.id.btnCreateEvent);
 
@@ -35,12 +37,14 @@ public class PublicEventDetailsActivity extends AppCompatActivity {
         name.setText(dataMap.get("Name"));
         location.setText(dataMap.get("Location"));
         description.setText(dataMap.get("Description"));
+        category.setText(dataMap.get("Category"));
 
         makeEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(PublicEventDetailsActivity.this, CreateEventActivity.class);
+                Intent i = new Intent(PublicEventDetailsActivity.this, SelectEventDetailsActivity.class);
                 i.putExtra("Location", dataMap.get("Location"));
+                i.putExtra("Category", dataMap.get("Category"));
                 startActivity(i);
             }
         });
