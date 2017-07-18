@@ -19,7 +19,7 @@
         android:layout_toRightOf="@id/ivProfileOther"
         android:layout_marginTop="4dp"
         android:layout_marginLeft="4dp"
-        android:text="Dale" />
+        android:text="ShaggyNoName" />
 
     <ImageView
         android:id="@+id/ivProfileMe"
