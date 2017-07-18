@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import shag.com.shag.Activities.MemoryDetailsActivity;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
@@ -58,7 +60,7 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
     }
 
     // creates ViewHolder class
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
         final View rootView;
@@ -70,6 +72,23 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             rootView = itemView;
+
+            // set click listener for memory
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            // gets item position
+            int position = getAdapterPosition();
+
+            if (position != RecyclerView.NO_POSITION) {
+                // get the memory at the position
+                Memory memory = memories.get(position);
+                // set up intent
+                Intent i = new Intent(context, MemoryDetailsActivity.class);
+                i.putExtra(Memory.class.getSimpleName(), memory);
+            }
 
         }
     }
