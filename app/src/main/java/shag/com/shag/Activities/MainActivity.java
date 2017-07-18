@@ -51,6 +51,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         startActivity(i);
     }
 
+    public void onMemoriesView(MenuItem item) {
+        //launch profile view
+        Intent i = new Intent(this, MemoriesActivity.class);
+        startActivity(i);
+    }
+
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

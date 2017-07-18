@@ -17,10 +17,9 @@ import java.util.Date;
 @ParseClassName("Event")
 public class Event extends ParseObject implements Parcelable {
 
-
     // fields
-    public String eventId;
     public String eventOwnerId;
+    public String eventId;
     public long eventOwnerFbId;
     public String eventOwnerName;
     public String eventName;
@@ -68,13 +67,16 @@ public class Event extends ParseObject implements Parcelable {
 
     public ArrayList<String> getParticipantsIds() { return participantsIds;}
 
-    public String getEventOwnerId() { return eventOwnerId; }
-
     public long getEventOwnerFbId() { return eventOwnerFbId; }
 
     public User getEventOwner() {
         return eventOwner;
     }
+
+    public String getEventOwnerId() {
+        return eventOwnerId;
+    }
+
     // SETTERS
 
 
@@ -126,15 +128,15 @@ public class Event extends ParseObject implements Parcelable {
         this.category=category;
         put("category", category); }
 
-
-    public void setEventOwnerId(String eventOwnerId) {
-        this.eventOwnerId=eventOwnerId;
-        put("event_owner_id", eventOwnerId); }
-
     public void setParticipantsIds(ArrayList<String> participantsIds) {
         this.participantsIds=participantsIds;
         put("participants_id", participantsIds);
       }
+
+    public void setEventOwnerId(String eventOwnerId) {
+        this.eventOwnerId = eventOwnerId;
+        put("event_owner_id", eventOwnerId);
+    }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;
@@ -154,7 +156,6 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeString(this.location);
         dest.writeString(this.category);
         dest.writeList(this.friendsAtEvent);
-        dest.writeString(this.eventOwnerId);
         dest.writeList(this.participantsIds);
     }
 
@@ -168,7 +169,6 @@ public class Event extends ParseObject implements Parcelable {
         this.category = in.readString();
         this.friendsAtEvent = new ArrayList<Long>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
-        this.eventOwnerId = in.readString();
         this.participantsIds = new ArrayList<String>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
     }
@@ -211,7 +211,6 @@ public class Event extends ParseObject implements Parcelable {
         event.description = object.getString("description");
         event.location = object.getString("location");
         event.category = object.getString("category");
-        event.eventOwnerId = object.getString("event_owner_id");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         event.participantsIds = (ArrayList) object.getList("participants_id");
 

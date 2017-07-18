@@ -18,5 +18,12 @@
         android:title="Compose"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/miMemories"
+        android:icon="@drawable/ic_movie_roll_tape"
+        android:onClick="onMemoriesView"
+        android:title="Memories"
+        app:showAsAction="always" />
+
 
 </menu>

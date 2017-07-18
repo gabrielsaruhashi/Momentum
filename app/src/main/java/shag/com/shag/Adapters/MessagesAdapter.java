@@ -2,6 +2,7 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
@@ -56,14 +58,32 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.imageMe.setVisibility(View.VISIBLE);
             holder.imageOther.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.tvOtherName.setVisibility(View.GONE);
         } else {
             holder.imageOther.setVisibility(View.VISIBLE);
             holder.imageMe.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            holder.tvOtherName.setVisibility(View.VISIBLE);
+            if (message.getSenderName() != null) {
+                holder.tvOtherName.setText(message.getSenderName());
+                Log.i("DEBUG_NAME", message.getSenderName());
+            }
+
+
+
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
-        Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+        //Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+
+        if (message.getSenderProfileImageUrl() == null) {
+            // generate a unique, random gravatar
+            Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
+                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
+        } else {
+            Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
+                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
+        }
 
         String messageBody = message.getBody();
         holder.body.setText(messageBody);
@@ -92,12 +112,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         ImageView imageOther;
         ImageView imageMe;
         TextView body;
+        TextView tvOtherName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageOther = (ImageView)itemView.findViewById(R.id.ivProfileOther);
             imageMe = (ImageView)itemView.findViewById(R.id.ivProfileMe);
             body = (TextView)itemView.findViewById(R.id.tvBody);
+            tvOtherName = (TextView) itemView.findViewById(R.id.tvOtherName);
         }
     }
 }

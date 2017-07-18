@@ -13,10 +13,12 @@ public class Message extends ParseObject {
     // database variables
     private User userSender;
     private String body;
-
+    private String senderProfileImageUrl;
+    //TODO delete them
     // local variables
     private String senderId;
     private String eventId;
+    private String senderName;
 
     public String getMessageId() {
         return getObjectId();
@@ -39,11 +41,6 @@ public class Message extends ParseObject {
         put("message_body", body);
     }
 
-    public User getUserSender() {
-
-        return userSender;
-    }
-
     public String getSenderId() {
         return getString("sender_id");
     }
@@ -51,5 +48,33 @@ public class Message extends ParseObject {
     public void setSenderId(String senderId) {
         this.senderId = senderId;
         put("sender_id", senderId);
+    }
+
+    public String getSenderProfileImageUrl() {
+        return getString("sender_profile_image_url");
+    }
+
+    public void setSenderProfileImageUrl(String senderProfileImageUrl) {
+        this.senderProfileImageUrl = senderProfileImageUrl;
+        put("sender_profile_image_url", senderProfileImageUrl);
+    }
+
+    public void setUserSender(User userSender) {
+        this.userSender = userSender;
+        put("User_sender", userSender);
+    }
+
+    public ParseObject getUserSender() {
+        return getParseObject("User_sender");
+    }
+
+    public String getSenderName() {
+        return getString("sender_name");
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+        put("sender_name", senderName);
+
     }
 }

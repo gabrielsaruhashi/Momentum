@@ -16,9 +16,11 @@ import com.google.android.gms.iid.InstanceID;
 import com.parse.FindCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.SubscriptionHandling;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +61,41 @@ public class ChatActivity extends AppCompatActivity {
 
         setupMessagePosting();
 
+        // Make sure the Parse server is setup to configured for live queries
+        // URL for server is determined by Parse.initialize() call.
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+
+        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+        // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
+        // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
+
+        // Connect to Parse server
+        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
+        // Listen for CREATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
+            SubscriptionHandling.HandleEventCallback<Message>() {
+                @Override
+                public void onEvent(ParseQuery<Message> query, Message object) {
+                    String senderId = object.getSenderId();
+
+                    if (!senderId.equals(currentUserId)) {
+                        mMessages.add(0, object);
+                    }
+
+                    // RecyclerView updates need to be run on the UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mAdapter.notifyDataSetChanged();
+                            rvChat.scrollToPosition(0);
+                        }
+                    });
+                }
+        });
+
     }
+
 
     // setup button event handler which posts the entered message to Parse
     void setupMessagePosting() {
@@ -89,12 +125,14 @@ public class ChatActivity extends AppCompatActivity {
                 // using new `Message` Parse-backed model now
                 Message message = new Message();
                 // populate message
-                //TODO decide if it is better to pass entire event object
+                //TODO pass the entire event object
                 message.setBody(data);
                 // save User pointer
                 message.put("User_sender", ParseUser.getCurrentUser());
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
+                message.setSenderProfileImageUrl(ParseUser.getCurrentUser().getString("profile_image_url"));
+                message.setSenderName(ParseUser.getCurrentUser().getString("name"));
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
@@ -138,6 +176,10 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 });
                 etMessage.setText(null);
+                // add message to arraylist
+                mMessages.add(0, message);
+                mAdapter.notifyItemInserted(0);
+                rvChat.smoothScrollToPosition(0);
             }
         });
 
@@ -172,7 +214,7 @@ public class ChatActivity extends AppCompatActivity {
 
                     // Scroll to the bottom of the list on initial load
                     if (mFirstLoad) {
-                        rvChat.scrollToPosition(0);
+                        rvChat.smoothScrollToPosition(0);
                         mFirstLoad = false;
                     }
                 } else {

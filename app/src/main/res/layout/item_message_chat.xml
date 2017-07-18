@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:layout_margin="8dp">
+
     <ImageView
         android:id="@+id/ivProfileOther"
         android:contentDescription="@string/profile_other"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tvOtherName"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="4dp"
+        android:text="ShaggyNoName" />
+
+    <ImageView
+        android:id="@+id/ivProfileMe"
+        android:contentDescription="@string/profile_me"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:src="@mipmap/ic_launcher"
+        android:layout_alignParentRight="true"/>
+
     <TextView
         android:textSize="18sp"
         android:id="@+id/tvBody"
@@ -17,12 +37,11 @@
         android:ellipsize="end"
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="64dp">
-    </TextView>
-    <ImageView
-        android:id="@+id/ivProfileMe"
-        android:contentDescription="@string/profile_me"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher" />
-</LinearLayout>
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:layout_toLeftOf="@id/ivProfileMe"
+        android:layout_below="@id/tvOtherName"
+        android:layout_height="64dp"/>
+
+
+
+</RelativeLayout>
