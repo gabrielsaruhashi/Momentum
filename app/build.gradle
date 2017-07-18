@@ -83,6 +83,8 @@ dependencies {
 
     compile 'org.parceler:parceler-api:1.1.6'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+
+    compile "com.google.android.gms:play-services-gcm:11.0.1"
 }
 
 // for GMS notifications
