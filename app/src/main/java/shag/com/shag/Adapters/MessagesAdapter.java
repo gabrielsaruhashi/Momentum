@@ -2,6 +2,7 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,10 +57,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.imageMe.setVisibility(View.VISIBLE);
             holder.imageOther.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.tvOtherName.setVisibility(View.GONE);
         } else {
             holder.imageOther.setVisibility(View.VISIBLE);
             holder.imageMe.setVisibility(View.GONE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            holder.tvOtherName.setVisibility(View.VISIBLE);
+            if (message.getSenderName() != null) {
+                holder.tvOtherName.setText(message.getSenderName());
+                Log.i("DEBUG_NAME", message.getSenderName());
+            }
+
+
+
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
@@ -71,7 +81,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         } else {
             Glide.with(mContext).load(message.getSenderProfileImageUrl()).into(profileView);
         }
-
 
         String messageBody = message.getBody();
         holder.body.setText(messageBody);
@@ -100,12 +109,14 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         ImageView imageOther;
         ImageView imageMe;
         TextView body;
+        TextView tvOtherName;
 
         public ViewHolder(View itemView) {
             super(itemView);
             imageOther = (ImageView)itemView.findViewById(R.id.ivProfileOther);
             imageMe = (ImageView)itemView.findViewById(R.id.ivProfileMe);
             body = (TextView)itemView.findViewById(R.id.tvBody);
+            tvOtherName = (TextView) itemView.findViewById(R.id.tvOtherName);
         }
     }
 }

@@ -82,13 +82,14 @@ public class ChatActivity extends AppCompatActivity {
                 // using new `Message` Parse-backed model now
                 Message message = new Message();
                 // populate message
-                //TODO decide if it is better to pass entire event object
+                //TODO pass the entire event object
                 message.setBody(data);
                 // save User pointer
                 message.put("User_sender", ParseUser.getCurrentUser());
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
                 message.setSenderProfileImageUrl(ParseUser.getCurrentUser().getString("profile_image_url"));
+                message.setSenderName(ParseUser.getCurrentUser().getString("name"));
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
