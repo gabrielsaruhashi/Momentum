@@ -13,4 +13,6 @@
     <string name="message_send">Send</string>
     <string name="profile_me">My Profile Pic</string>
     <string name="profile_other">Other profile pic</string>
+
+    <string name="gcm_sender_id">id:934693841533</string>
 </resources>

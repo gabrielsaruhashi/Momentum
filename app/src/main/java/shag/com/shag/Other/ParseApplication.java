@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowLog;
@@ -72,7 +73,8 @@ public class ParseApplication extends Application {
         // set context
         ParseApplication.context = this;
 
-
+        // registering device for push notifications
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
 
     public static FacebookClient getFacebookRestClient() {

@@ -11,12 +11,14 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
@@ -92,6 +94,16 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
+                            HashMap<String, String> payload = new HashMap<>();
+                            payload.put("customData", "My message");
+                            ParseCloud.callFunctionInBackground("pushChannelTest", payload);
+                            /*
+                            ParsePush push = new ParsePush();
+                            push.setChannel(eventId);
+                            //TODO: get chat name?
+                            push.setMessage(ParseUser.getCurrentUser().getUsername() + " just messaged in your chat.");
+                            push.sendInBackground();*/
+
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
                         } else {
