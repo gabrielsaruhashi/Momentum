@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shag.com.shag.Activities.PublicEventDetailsActivity">
+
+    <TextView
+        android:id="@+id/tvEventNameTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="56dp"
+        android:text="Name:  "
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="39dp" />
+
+    <TextView
+        android:id="@+id/tvEventName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tvEventNameTitle"
+        android:layout_alignBottom="@+id/tvEventNameTitle"
+        android:layout_toEndOf="@+id/tvEventNameTitle"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="56dp"
+        tools:layout_editor_absoluteY="39dp" />
+
+    <TextView
+        android:id="@+id/tvDescriptionTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvEventNameTitle"
+        android:layout_below="@+id/tvEventNameTitle"
+        android:layout_marginTop="57dp"
+        android:text="Description:  " />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvDescriptionTitle"
+        android:layout_toEndOf="@+id/tvDescriptionTitle"
+        android:text="TextView" />
+
+    <TextView
+        android:id="@+id/tvLocationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvDescriptionTitle"
+        android:layout_below="@+id/tvDescriptionTitle"
+        android:layout_marginTop="60dp"
+        android:text="Location:  " />
+
+    <TextView
+        android:id="@+id/tvLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvLocationTitle"
+        android:layout_toEndOf="@+id/tvLocationTitle"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/btnCreateEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:text="Create Event" />
+</RelativeLayout>

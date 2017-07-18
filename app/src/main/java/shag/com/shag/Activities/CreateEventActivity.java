@@ -27,6 +27,7 @@ public class CreateEventActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ButterKnife.bind(this);
         setContentView(R.layout.activity_create_event);
+
         // populates the category hash map
 
         // Begin the transaction

@@ -52,7 +52,8 @@
         <activity android:name=".Activities.CreateEventActivity" />
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity" />
-        <activity android:name=".Activities.ChatActivity"></activity>
+        <activity android:name=".Activities.ChatActivity" />
+        <activity android:name=".Activities.PublicEventDetailsActivity"></activity>
     </application>
 
 </manifest>
