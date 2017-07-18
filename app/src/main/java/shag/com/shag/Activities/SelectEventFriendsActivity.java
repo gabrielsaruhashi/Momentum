@@ -11,8 +11,11 @@ import android.widget.Button;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -148,6 +151,19 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                 //Toast.LENGTH_SHORT).show();
 
                                 // send back to pick category dialog after being saved
+                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                    query.whereEqualTo("event_owner_id",ParseUser.getCurrentUser().getObjectId());
+                                    query.orderByDescending("createdAt");
+                                    query.setLimit(1);
+                                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                                        @Override
+                                        public void done(ParseObject object, ParseException e) {
+                                            if (object != null) {
+                                                ParsePush.subscribeInBackground(object.getObjectId());
+                                            }
+                                        }
+                                    });
+
                                 //sendBackResult(newEvent);
                                 Intent intent = new Intent(SelectEventFriendsActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -162,6 +178,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                 }
             }
         });
+
 
 
     }
