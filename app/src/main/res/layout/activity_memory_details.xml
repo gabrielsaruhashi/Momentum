@@ -10,6 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <Button
+            android:id="@+id/btAddPicture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Share" />
+
         <ImageView
             android:id="@+id/ivMemoryBannerPicture"
             android:layout_width="match_parent"
@@ -46,6 +52,7 @@
             android:stretchMode="columnWidth"
             android:gravity="center"
             />
+
     </LinearLayout>
 
 </RelativeLayout>
