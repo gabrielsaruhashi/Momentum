@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
@@ -77,9 +78,11 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         if (message.getSenderProfileImageUrl() == null) {
             // generate a unique, random gravatar
-            Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
+            Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
+                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
         } else {
-            Glide.with(mContext).load(message.getSenderProfileImageUrl()).into(profileView);
+            Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
+                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
         }
 
         String messageBody = message.getBody();
