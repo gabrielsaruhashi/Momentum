@@ -102,8 +102,10 @@ public class ChatActivity extends AppCompatActivity {
                         if (e == null) {
                             String token = "";
                             try {
+                                //TODO: find a way to get the instance ID and filter out poster from receivers
                                 token = InstanceID.getInstance(context)
                                         .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                                Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
                             } catch (IOException ex) {
                                 ex.printStackTrace();
                             }
