@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "479873125586",
+    "project_id": "firebase-shag"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:479873125586:android:0c817ae297838b74",
+        "android_client_info": {
+          "package_name": "shag.com.shag"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "479873125586-qj8reprubo3d19p8u6vggridbkj8o7km.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRl5HlbG3ZFLCbC1W64sqRv3CqFDalChE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

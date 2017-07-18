@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -283,6 +284,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     joinStatus.setText("Joined");
 
+                    // subscribes user to this "channel" for notifications
+                    ParsePush.subscribeInBackground(event.eventId);
+
                 } else {
                     e.getMessage();
                 }
@@ -311,8 +315,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
                     joinStatus.setText("Join");
 
-
-
+                    // unsubscribes user from this "channel" so they no longer receive notifications
+                    ParsePush.unsubscribeInBackground(event.eventId);
                 } else {
                     e.getMessage();
                 }
