@@ -61,15 +61,16 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    // Setup button event handler which posts the entered message to Parse
+    // setup button event handler which posts the entered message to Parse
     void setupMessagePosting() {
-        // Find the text field and button
+        // find the text field and button
         etMessage = (EditText) findViewById(R.id.etMessage);
         btSend = (Button) findViewById(R.id.btSend);
         rvChat = (RecyclerView) findViewById(R.id.rvChat);
         mMessages = new ArrayList<>();
         mFirstLoad = true;
 
+        // set adapter
         mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
 
@@ -79,13 +80,13 @@ public class ChatActivity extends AppCompatActivity {
         linearLayoutManager.setReverseLayout(true);
         rvChat.setLayoutManager(linearLayoutManager);
 
-        // When send button is clicked, create message object on Parse
+        // when send button is clicked, create message object on Parse
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String data = etMessage.getText().toString();
 
-                // Using new `Message` Parse-backed model now
+                // using new `Message` Parse-backed model now
                 Message message = new Message();
                 // populate message
                 //TODO decide if it is better to pass entire event object
@@ -146,25 +147,27 @@ public class ChatActivity extends AppCompatActivity {
     // Query messages from Parse so we can load them into the chat adapter
     void refreshMessages() {
 
-        // ParseQuery<Message> query = ParseQuery.getQuery(Message.class);
-        // construct query to execute
+        // construct OR query to execute
         ParseQuery<Message> query = createOrQueries(chatParticipantsIds);
+
         // AND query for messages that are from this event
         query.whereEqualTo("event_id", eventId);
+
         // Configure limit and sort order
         query.setLimit(MAX_CHAT_MESSAGES_TO_SHOW);
 
-        //TODO query messages whose sender id corresponds to anyone in the array (OR queries)
         // get the latest 50 messages, order will show up newest to oldest of this group
         query.orderByDescending("createdAt");
+
         // Execute query to fetch all messages from Parse asynchronously
-        // This is equivalent to a SELECT query with SQL
+        // this is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Message>() {
             public void done(List<Message> messages, ParseException e) {
                 if (e == null) {
                     mMessages.clear();
                     mMessages.addAll(messages);
                     mAdapter.notifyDataSetChanged(); // update adapter
+
                     // Scroll to the bottom of the list on initial load
                     if (mFirstLoad) {
                         rvChat.scrollToPosition(0);
@@ -180,15 +183,19 @@ public class ChatActivity extends AppCompatActivity {
 
     // function creates the main OR query to search for all user ids
     public ParseQuery<Message>  createOrQueries(ArrayList<String> userIds) {
-        // queries
+        // OR queries array
         List<ParseQuery<Message>> queries = new ArrayList<ParseQuery<Message>>();
 
+        // for each id in the participants list, create a query and add to the OR arraylist
         for (int i = 0; i < userIds.size(); i ++) {
             ParseQuery myQuery = new ParseQuery("Message");
             // auxiliary list
             List list = new ArrayList();
             list.add(userIds.get(i));
+
+            // create the query condition
             myQuery.whereContainedIn("sender_id", list);
+
             // add query to the array of OR queries
             queries.add(myQuery);
         }

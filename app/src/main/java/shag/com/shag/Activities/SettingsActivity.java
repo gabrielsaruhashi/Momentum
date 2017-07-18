@@ -14,6 +14,10 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,11 +33,14 @@ public class SettingsActivity extends AppCompatActivity {
     Button btn;
     TextView tv;
     private RequestQueue mRequestQueue;
+    PlaceAutocompleteFragment autocompleteFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
         //mRequestQueue = Volley.newRequestQueue(this);
         mRequestQueue = VolleyRequest.getInstance(this.getApplicationContext()).
                 getRequestQueue();
@@ -44,10 +51,23 @@ public class SettingsActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onStartFoodRequest("47.668692","-122.387006");
+                //onStartFoodRequest("47.668692","-122.387006");
             }
         });
 
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.i("SettingsActivity", "Place: " + place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("SettingsActivity", "An error occurred: " + status);
+            }
+        });
 
     }
 

@@ -26,15 +26,6 @@
         android:textColor="@color/white" />
 
     <ImageButton
-        android:id="@+id/btCancel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btSend"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="19dp"
-        app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
-
-    <ImageButton
         android:id="@+id/btInvite"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -133,7 +124,25 @@
         android:id="@+id/friends_list_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btCancel">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
     </FrameLayout>
+
+
+    <TextView
+        android:id="@+id/tvLocationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Location:"
+        android:layout_below="@+id/btSend"
+        android:layout_toStartOf="@+id/btLocation" />
+
+    <EditText
+        android:id="@+id/locationInput"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_below="@id/tvLocationTitle"
+        android:inputType="text"/>
 
 </RelativeLayout>

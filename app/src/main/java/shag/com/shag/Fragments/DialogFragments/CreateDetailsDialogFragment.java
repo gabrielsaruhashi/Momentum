@@ -52,6 +52,7 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class CreateDetailsDialogFragment extends DialogFragment  {
     private EditText etDescription;
+    private EditText etLocation;
     private Button btSend;
     private Button btCancel;
     private ImageButton btInvite;
@@ -106,6 +107,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
 
         // get views
         etDescription = (EditText) view.findViewById(R.id.etDescription);
+        etLocation = (EditText) view.findViewById(R.id.locationInput);
+
         btSend = (Button) view.findViewById(R.id.btSend);
         btLocation = (ImageButton) view.findViewById(R.id.btLocation);
         llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
@@ -120,6 +123,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         etDescription.requestFocus();
         //getDialog().getWindow().setSoftInputMode(
                 //WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
 
         // Setup a callback when the "submit" button is pressed
         btSend.setOnClickListener(new View.OnClickListener() {
@@ -141,7 +145,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
                 newEvent.setParticipantsIds(initialParticipantsIds);
 
-
+                //TODO remove owner id
                 // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
                 newEvent.setEventOwnerId(currentUserId);
 
@@ -152,18 +156,10 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
-                // atta
+                // save current user as the event owner
                 ParseObject currentUser = ParseUser.getCurrentUser();
                 newEvent.put("User_event_owner", currentUser);
                 Log.i("DEBUG_CREATE", currentUser.getObjectId());
-
-                /* delete later - decided not to use chatId
-                // create chat and set 'unique' id
-                String chatId = UUID.randomUUID().toString();
-                Chat eventChat = new Chat();
-                eventChat.setChatId(chatId);
-                //TODO make chat be a nested object. it is not working rn
-                // newEvent.setEventChat(eventChat); */
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();
                 client.getMyInfo(new GraphRequest.Callback() {
@@ -178,9 +174,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                                 @Override
                                 public void done(ParseException e) {
                                     if(e == null) {
-                                        Log.d("DEBUG", "EI");
-                                        //Toast.makeText(getContext(), "Successfully created event on Parse",
-                                        //Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getContext(), "Successfully created event!", Toast.LENGTH_SHORT).show();
 
                                         // send back to pick category dialog after being saved
                                         sendBackResult(newEvent);

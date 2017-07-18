@@ -22,6 +22,7 @@ import java.util.Objects;
 import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -82,22 +83,51 @@ public class ChatListFragment extends Fragment {
                 if (e == null) {
                     for (ParseObject item : itemList) {
                         // convert each item found to an event
-                        Event event = Event.fromParseObject(item);
+                        final Event event = Event.fromParseObject(item);
 
+                        try {
+                            // fetch event owner
+                            ParseObject object = item.getParseObject("User_event_owner").fetch();
+                            // user found! Convert it to a user model
+                            User eventOwner = User.fromParseObject(object);
+                            event.setEventOwner(eventOwner); // setting event owner
+
+                            // get chat's info to later populate view
+                            Chat eventChat = getChatInfoFromEvent(event);
+
+                            //add event to list to be displayed
+                            chats.add(eventChat);
+                            adapter.notifyItemInserted(chats.size() - 1);
+                            rvChats.smoothScrollToPosition(0);
+
+                        } catch (ParseException e1) {
+                            e1.printStackTrace();
+                        }
+
+                        // query for the event owner
                         /*
-                        Chat eventChat = event.getEventChat();
-                        // TODO delete this after we clear the database. rn some events dont have chats
-                        if (eventChat == null) {
-                            eventChat = new Chat();
-                        } */
+                        item.getParseObject("User_event_owner").fetchInBackground(new GetCallback<ParseObject>() {
 
-                        // get chat's info to later populate view
-                        Chat eventChat = getChatInfoFromEvent(event);
+                            @Override
+                            public void done(ParseObject object, ParseException e) {
 
-                        //add event to list to be displayed
-                        chats.add(eventChat);
-                        adapter.notifyItemInserted(chats.size() - 1);
-                        rvChats.smoothScrollToPosition(0);
+                                if (e == null) {
+                                    // user found! Convert it to a user model
+                                    User eventOwner = User.fromParseObject(object);
+                                    event.setEventOwner(eventOwner); // setting event owner
+
+                                    // get chat's info to later populate view
+                                    Chat eventChat = getChatInfoFromEvent(event);
+
+                                    //add event to list to be displayed
+                                    chats.add(eventChat);
+                                    adapter.notifyItemInserted(chats.size() - 1);
+                                    rvChats.smoothScrollToPosition(0);
+                                } else {
+                                    e.getMessage();
+                                }
+                            }
+                        }); */
 
                     }
                 } else {
@@ -114,18 +144,18 @@ public class ChatListFragment extends Fragment {
         chat.setDescription(event.getDescription());
         chat.setEventId(event.getEventId());
         chat.setChatParticipantsIds(event.getParticipantsIds());
+
         // get icon url
-        //TODO replace eventowner
-        /* if (event.getEventOwner() != null) {
+        if (event.getEventOwner() != null) {
             User eventOwner = event.getEventOwner();
             chat.setChatIconUrl(eventOwner.getImageUrl());
-        } */
-
+        }
 
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
-        String eventOwnerName = event.eventOwnerName;
+        String eventOwnerName = event.getEventOwnerName();
         String currentUserName = (String) ParseUser.getCurrentUser().get("name");
+
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
             if (participantsNumber > 1) {

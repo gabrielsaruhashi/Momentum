@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shag.com.shag.Activities.SelectEventDetailsActivity">
+
+    <TextView
+        android:id="@+id/tvDeadline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvDescriptionInput"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Deadline To Join Event:"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="133dp" />
+
+    <TextView
+        android:id="@+id/tvDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="31dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"/>
+
+    <Button
+        android:id="@+id/btNext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Next"
+        android:elevation="2dp"
+        tools:layout_editor_absoluteY="460dp"
+        tools:layout_editor_absoluteX="280dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:id="@+id/tvDescriptionInput"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvDescription"
+        android:layout_below="@+id/tvDescription"
+        android:hint="Required 5 characters"
+        android:inputType="textMultiLine"
+        android:textAppearance="@android:style/TextAppearance.Small"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="53dp" />
+
+    <LinearLayout
+        android:id="@+id/llExpireOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:layout_below="@+id/tvDeadline"
+        android:layout_alignStart="@+id/tvDeadline">
+
+        <TextView
+            android:id="@+id/tv30"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="30m"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv1h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="1h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv2h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="2h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv3h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="3h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/tv6h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="6h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv12h"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="12h"
+            android:textAlignment="center"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvLocationCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/llExpireOptions"
+        android:layout_below="@+id/llExpireOptions"
+        android:layout_marginTop="15dp"
+        android:text="Location:"
+        android:textAppearance="@android:style/TextAppearance.Medium" />
+
+    <EditText
+        android:id="@+id/etLocation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:text="TBD"
+        android:maxLines="10"
+        android:layout_below="@+id/tvLocationCategory"
+        android:layout_alignStart="@+id/tvLocationCategory" />
+
+    <!--<fragment-->
+        <!--android:id="@+id/place_autocomplete_fragment"-->
+        <!--android:layout_width="368dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"-->
+        <!--tools:layout_editor_absoluteY="0dp"-->
+        <!--tools:layout_editor_absoluteX="8dp"-->
+        <!--android:layout_below="@+id/tvLocationCategory"-->
+        <!--android:layout_alignStart="@+id/tvLocationCategory"-->
+        <!--/>-->
+
+
+
+</RelativeLayout>

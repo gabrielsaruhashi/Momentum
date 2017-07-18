@@ -4,10 +4,10 @@ package shag.com.shag.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 /**
  * Created by samrabelachew on 7/10/17.
@@ -17,33 +17,35 @@ public class User implements Parcelable {
 
     //fields
     public String name;
-    public String username;
     public String imageUrl;
-    public long userID;
+    public String userID;
     public long fbUserID;
-    public String phoneNumber;
-    // public ArrayList<String> currentJoinedEventsIds;
-    // public ArrayList<String> ownedEventsIds;
-    //TODO: make sure to set this value when a user creates an event
-    public ArrayList<Event> events;
+    public String phoneNumber; //TODO get phone number
 
+    // for retrieving facebook data
     public static User fromJson(JSONObject json) {
-        User u = new User();
+        User user = new User();
         try {
-            u.setFbUserID(json.getLong("id"));
-            u.setName(json.getString("name"));
+            user.setFbUserID(json.getLong("id"));
+            user.setName(json.getString("name"));
             JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
-            u.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
-            u.events = new ArrayList<Event>();
-            // empty arrays to be populated later
-            //u.ownedEventsIds = new ArrayList<>();
-            //u.currentJoinedEventsIds = new ArrayList<>();
+            user.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        return user;
+    }
 
-        return u;
+    // for creating user when retrieving data from database
+    public static User fromParseObject(ParseObject object) {
+        User user = new User();
+        // populate user info
+        user.setUserID(object.getObjectId());
+        user.setName(object.getString("name"));
+        user.setImageUrl(object.getString("profile_image_url"));
+
+        return user;
     }
 
     //getters
@@ -51,11 +53,7 @@ public class User implements Parcelable {
         return name;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public long getUserID() {
+    public String getUserID() {
         return userID;
     }
 
@@ -77,12 +75,8 @@ public class User implements Parcelable {
         this.fbUserID = fbUserID;
     }
 
-    public void setUserID(long userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public void setName(String name) {
@@ -99,9 +93,8 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.name);
-        dest.writeString(this.username);
         dest.writeString(this.imageUrl);
-        dest.writeLong(this.userID);
+        dest.writeString(this.userID);
         dest.writeLong(this.fbUserID);
         dest.writeString(this.phoneNumber);
     }
@@ -111,9 +104,8 @@ public class User implements Parcelable {
 
     protected User(Parcel in) {
         this.name = in.readString();
-        this.username = in.readString();
         this.imageUrl = in.readString();
-        this.userID = in.readLong();
+        this.userID = in.readString();
         this.fbUserID = in.readLong();
         this.phoneNumber = in.readString();
 

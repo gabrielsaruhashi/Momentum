@@ -2,6 +2,7 @@ package shag.com.shag.Fragments;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -47,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +58,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import shag.com.shag.Activities.PublicEventDetailsActivity;
 import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.R;
 
@@ -374,17 +377,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             try {
                                 Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
                                 Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
+                                String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
+                                String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
+                                String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
+
+
+                                final String locationAddress=streetName+" "+city+", "+state+ ", "+ zipcode;
+
                                 JSONArray getArtistArray = null;
                                 try {
                                     getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
                                     String artist = getArtistArray.getJSONObject(0).getString("Name");
                                     LatLng musicLatLng = new LatLng(lat, lng);
 
+                                    final HashMap<String,String> publicEventData = new HashMap<>();
+                                    publicEventData.put("Name", artist);
+                                    publicEventData.put("Description", "concert??");
+                                    publicEventData.put("Location", locationAddress);
+                                    publicEventData.put("Category", "Music");
+
+
                                     MarkerOptions markerOptions = new MarkerOptions();
                                     markerOptions.position(musicLatLng);
                                     markerOptions.title(artist);
                                     markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
-                                    mGoogleMap.addMarker(markerOptions);
+                                    mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
+
+
+                                    mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                        @Override
+                                        public void onInfoWindowClick(Marker marker) {
+                                            Intent i = new Intent(getContext(), PublicEventDetailsActivity.class);
+                                            i.putExtra("Data", (Serializable) marker.getTag());
+//
+                                            startActivity(i);
+                                        }
+
+                                    });
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -429,20 +459,47 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         try {
                             JSONArray restaurantArray = response.getJSONArray("nearby_restaurants");
                             for (int i = 0; i < restaurantArray.length(); i++) {
-                                JSONObject restaurant = restaurantArray.getJSONObject(i).getJSONObject("restaurant");
 
-                                String restaurantName = restaurant.getString("name");
+                                JSONObject restaurant = restaurantArray.getJSONObject(i).getJSONObject("restaurant");
+                                final String restaurantName = restaurant.getString("name");
                                 Double restaurantLat = restaurant.getJSONObject("location").getDouble("latitude");
                                 Double restaurantLng = restaurant.getJSONObject("location").getDouble("longitude");
                                 LatLng restaurantLatLng = new LatLng(restaurantLat, restaurantLng);
 
-                                MarkerOptions markerOptions = new MarkerOptions();
+                                String streetName = restaurant.getJSONObject("location").getString("address");
+                                //String city = restaurant.getJSONObject("location").getString("city");
+                                //String zipcode = restaurant.getJSONObject("location").getString("zipcode");
+                                final String locationAddress=streetName;
+
+                                final String genre = restaurant.getString("cuisines");
+
+                                final HashMap<String,String> publicEventData = new HashMap<>();
+                                publicEventData.put("Name", restaurantName);
+                                publicEventData.put("Description", genre);
+                                publicEventData.put("Location", locationAddress);
+                                publicEventData.put("Category", "Food");
+
+
+                                final MarkerOptions markerOptions = new MarkerOptions();
                                 markerOptions.position(restaurantLatLng);
                                 markerOptions.title(restaurantName);
                                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                mGoogleMap.addMarker(markerOptions);
+                                mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
+
+
+
+
+                                mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                    @Override
+                                    public void onInfoWindowClick(Marker marker) {
+                                        Intent i = new Intent(getContext(), PublicEventDetailsActivity.class);
+                                        i.putExtra("Data", (Serializable) marker.getTag());
+//
+                                        startActivity(i);
+                                    }
+
+                                });
                             }
-                            //tv.setText(restaurantArray.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

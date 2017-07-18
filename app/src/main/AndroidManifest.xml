@@ -62,8 +62,10 @@
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity" />
         <activity android:name=".Activities.ChatActivity"></activity>
-
-
+        <activity android:name=".Activities.PublicEventDetailsActivity" />
+        <activity android:name=".Activities.SelectEventCategoryActivity" />
+        <activity android:name=".Activities.SelectEventDetailsActivity" />
+        <activity android:name=".Activities.SelectEventFriendsActivity"></activity>
         <meta-data android:name="com.parse.push.gcm_sender_id"
             android:value="@string/gcm_sender_id"/>
         <receiver android:name="com.parse.GcmBroadcastReceiver"
