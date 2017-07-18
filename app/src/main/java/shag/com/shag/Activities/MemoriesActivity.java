@@ -27,7 +27,8 @@ public class MemoriesActivity extends AppCompatActivity {
 
         rvMemories = (RecyclerView) findViewById(R.id.rvMemories);
 
-        // set adapter
+        // instantiate memories and set adapter
+        memories = new ArrayList<Memory>();
         mAdapter = new MemoriesAdapter(memories);
         rvMemories.setAdapter(mAdapter);
 
