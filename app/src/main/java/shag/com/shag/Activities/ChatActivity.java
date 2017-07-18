@@ -1,5 +1,6 @@
 package shag.com.shag.Activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,7 +11,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.parse.FindCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
 import com.parse.ParseQuery;
@@ -18,7 +22,9 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SubscriptionHandling;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
@@ -28,7 +34,7 @@ import shag.com.shag.R;
 public class ChatActivity extends AppCompatActivity {
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
-
+    Context context;
     EditText etMessage;
     Button btSend;
 
@@ -47,6 +53,7 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+        context = this;
         // unwrap intent and get current user id
         eventId = getIntent().getStringExtra("event_id");
         chatParticipantsIds = getIntent().getStringArrayListExtra("participants_ids");
@@ -70,7 +77,11 @@ public class ChatActivity extends AppCompatActivity {
             SubscriptionHandling.HandleEventCallback<Message>() {
                 @Override
                 public void onEvent(ParseQuery<Message> query, Message object) {
-                    mMessages.add(0, object);
+                    String senderId = object.getSenderId();
+
+                    if (!senderId.equals(currentUserId)) {
+                        mMessages.add(0, object);
+                    }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -109,7 +120,7 @@ public class ChatActivity extends AppCompatActivity {
         btSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String data = etMessage.getText().toString();
+                final String data = etMessage.getText().toString();
 
                 // using new `Message` Parse-backed model now
                 Message message = new Message();
@@ -127,6 +138,36 @@ public class ChatActivity extends AppCompatActivity {
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
+                            String token = "";
+                            try {
+                                //TODO: find a way to get the instance ID and filter out poster from receivers
+                                token = InstanceID.getInstance(context)
+                                        .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                                Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
+                            } catch (IOException ex) {
+                                ex.printStackTrace();
+                            }
+                            HashMap<String, String> payload = new HashMap<>();
+                            payload.put("customData", data);
+                            payload.put("title", "New message in channel");
+                            payload.put("channelID", eventId);
+                            payload.put("senderID", currentUserId);
+                            payload.put("token", token);
+
+                            //TODO: this would probably be a better way to notify if there's time later
+                            /*InstanceID instanceID = InstanceID.getInstance(this);
+                            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
+                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);*/
+
+                            ParseCloud.callFunctionInBackground("pushChannelTest", payload);
+
+                            /*
+                            ParsePush push = new ParsePush();
+                            push.setChannel(eventId);
+                            //TODO: get chat name?
+                            push.setMessage(ParseUser.getCurrentUser().getUsername() + " just messaged in your chat.");
+                            push.sendInBackground();*/
+
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
                         } else {

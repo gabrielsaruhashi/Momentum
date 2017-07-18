@@ -18,6 +18,7 @@ import java.util.Date;
 public class Event extends ParseObject implements Parcelable {
 
     // fields
+    public String eventOwnerId;
     public String eventId;
     public long eventOwnerFbId;
     public String eventOwnerName;
@@ -71,6 +72,11 @@ public class Event extends ParseObject implements Parcelable {
     public User getEventOwner() {
         return eventOwner;
     }
+
+    public String getEventOwnerId() {
+        return eventOwnerId;
+    }
+
     // SETTERS
 
 
@@ -126,6 +132,11 @@ public class Event extends ParseObject implements Parcelable {
         this.participantsIds=participantsIds;
         put("participants_id", participantsIds);
       }
+
+    public void setEventOwnerId(String eventOwnerId) {
+        this.eventOwnerId = eventOwnerId;
+        put("event_owner_id", eventOwnerId);
+    }
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;

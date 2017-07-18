@@ -52,6 +52,7 @@ import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class CreateDetailsDialogFragment extends DialogFragment  {
     private EditText etDescription;
+    private EditText etLocation;
     private Button btSend;
     private Button btCancel;
     private ImageButton btInvite;
@@ -106,6 +107,8 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
 
         // get views
         etDescription = (EditText) view.findViewById(R.id.etDescription);
+        etLocation = (EditText) view.findViewById(R.id.locationInput);
+
         btSend = (Button) view.findViewById(R.id.btSend);
         btLocation = (ImageButton) view.findViewById(R.id.btLocation);
         llExpireOptions = (LinearLayout) view.findViewById(R.id.llExpireOptions);
@@ -120,6 +123,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         etDescription.requestFocus();
         //getDialog().getWindow().setSoftInputMode(
                 //WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+
 
         // Setup a callback when the "submit" button is pressed
         btSend.setOnClickListener(new View.OnClickListener() {

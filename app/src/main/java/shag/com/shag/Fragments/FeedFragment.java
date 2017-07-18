@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import shag.com.shag.Activities.CreateEventActivity;
+import shag.com.shag.Activities.SelectEventCategoryActivity;
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
@@ -90,7 +90,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // creates the Create dialog fragment
-                Intent i = new Intent(getContext(), CreateEventActivity.class);
+                Intent i = new Intent(getContext(), SelectEventCategoryActivity.class);
                 getContext().startActivity(i);
             }
         });
