@@ -9,10 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.MemoryDetailsActivity;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
@@ -32,12 +35,13 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
     public MemoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        // memories = new ArrayList<Memory>();
         // get context and inflate view
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // create the view using the item_feed layout
-        View memoriesView = inflater.inflate(R.layout.item_feed, parent, false);
+        View memoriesView = inflater.inflate(R.layout.item_memory, parent, false);
 
         // Return a new holder instance
         MemoriesAdapter.ViewHolder viewHolder = new MemoriesAdapter.ViewHolder(memoriesView);
@@ -52,6 +56,11 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
         holder.tvMemoryName.setText(memory.getMemoryName());
 
         // TODO add banner picture
+        // load user profile image using glide
+        Glide.with(context)
+                .load("http://theinspirationgrid.com/wp-content/uploads/2015/05/photo-nick-venton-02.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                .into(holder.ivMemoryBannerPicture);
     }
 
     @Override

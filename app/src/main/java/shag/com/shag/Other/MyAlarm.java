@@ -42,7 +42,7 @@ public class MyAlarm extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(longStartTime);
-        time.add(Calendar.SECOND, 20); //TODO hard code reminder for 24 hours later
+        time.add(Calendar.SECOND, 1); //TODO hard code reminder for 24 hours later
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
                 pendingIntent);
     }
@@ -65,8 +65,9 @@ public class MyAlarm extends BroadcastReceiver {
             public void done(ParseObject object, ParseException e) {
                 if (e == null) {
                     Event event = Event.fromParseObject(object);
+                    // TODO only save if more than two participants (owner and Shaggy)
                     ArrayList<String> participantIds = event.getParticipantsIds();
-                    new Memory(extras.getString("eventName"), participantIds, extras.getString("eventId"));
+                    new Memory(extras.getString("eventDescription"), participantIds, extras.getString("eventId"));
                 } else {
                     Log.e("MyAlarm error", "Error Loading Messages" + e);
                 }

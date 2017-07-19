@@ -6,7 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -32,6 +37,7 @@ public class MemoriesActivity extends AppCompatActivity {
 
         // instantiate memories and set adapter
         memories = new ArrayList<Memory>();
+        // set adapter
         mAdapter = new MemoriesAdapter(memories);
         rvMemories.setAdapter(mAdapter);
 
@@ -45,8 +51,30 @@ public class MemoriesActivity extends AppCompatActivity {
         populateMemories();
     }
 
-    //TODO create method to populate memories
     private void populateMemories() {
+        ArrayList<ParseObject> memoriesList = (ArrayList) currentUser.getList("Memories_list");
+        //for (ParseObject memory : memoriesList) {
+        for (int i = 0; i < memoriesList.size(); i++) {
+            try {
+                ParseObject memoryObject = memoriesList.get(i).fetchIfNeeded();
+                Memory memory = Memory.fromParseObject(memoryObject);
+                memories.add(0, memory);
+                mAdapter.notifyItemInserted(memories.size() - 1);
+                rvMemories.smoothScrollToPosition(0);
+            } catch (ParseException e) {
+                e.getMessage();
+            }
 
+            /*
+            memoriesList.get(i).getParseObject("Memory").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+                @Override
+                public void done(ParseObject object, ParseException e) {
+                    Memory memory = Memory.fromParseObject(object);
+                    memories.add(0, memory);
+                    mAdapter.notifyItemInserted(memories.size() - 1);
+                    rvMemories.smoothScrollToPosition(0);
+                }
+            });*/
+        }
     }
 }

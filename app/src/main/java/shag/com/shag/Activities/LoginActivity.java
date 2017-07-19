@@ -11,6 +11,7 @@ import com.facebook.GraphResponse;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import org.json.JSONException;
@@ -90,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                 newCustomUser.setSomeString("name", name);
                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                                 newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
+                                newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
                             }
                         });
                         Log.d("MyApp", "User signed up and logged in through Facebook!");

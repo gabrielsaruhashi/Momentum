@@ -1,22 +1,17 @@
 package shag.com.shag.Models;
 
-import com.parse.ParseClassName;<<<<<<< HEAD
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.parse.ParseClassName;
-import com.parse.ParseFile;
-=======
 import android.util.Log;
 
 import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
->>>>>>> master
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,76 +29,76 @@ public class Memory extends ParseObject implements Parcelable {
     private String memoryName;
     private ArrayList<ParseFile> picturesParseFiles;
     private ArrayList<String> participantsIds;
+    private String eventId; //id of the corresponding event
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
 
     }
 
-    // GETTERS & SETTERS
-    public String getMemoryName() {
-        return memoryName;
+    //
+    public static Memory fromParseObject(ParseObject object) {
+        Memory memory = new Memory();
+        memory.setMemoryName(object.getString("memory_name"));
+        // memory.picturesParseFiles = getList("pictures_parse_files");
+        memory.setEventId(object.getString("event_id"));
+        memory.setParticipantsIds((ArrayList) object.getList("participants_ids"));
+        memory.setPicturesParseFiles((ArrayList) object.getList("pictures_parse_files"));
+
+        return memory;
     }
 
-    public void setMemoryName(String memoryName) {
-        this.memoryName = memoryName;
-        put("memoryName", memoryName);
-    }
+    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId) {
+        // set values
+        setMemoryName(eventDescription);
+        setParticipantsIds(participantsIds);
 
-    public ArrayList<ParseFile> getPicturesParseFiles() {
-        return picturesParseFiles;
-    }
+        setEventId(eventId);
 
-    public void setPicturesParseFiles(ArrayList<ParseFile> picturesParseFiles) {
-        this.picturesParseFiles = picturesParseFiles;
-
-    }
-
-    public ArrayList<String> getParticipantsIds() {
-        return participantsIds;
-    }
-
-    public void setParticipantsIds(ArrayList<String> participantsIds) {
-        this.participantsIds = participantsIds;
-        put("participantsIds", participantsIds);
-    }
-
-    public Memory(String eventName, final ArrayList<String> participantsIds, String id) {
-        this.memoryName = "";
-        if (eventName != null) {
-            setMemoryName(eventName);
-        }
-
-        this.participantsIds = new ArrayList<String>();
-        if (participantsIds != null) {
-            setParticipantsIds(participantsIds);
-        }
+        picturesParseFiles = new ArrayList<ParseFile>();
+        setPicturesParseFiles(picturesParseFiles);
 
 
-        saveInBackground(new SaveCallback() {
+        // save to memories database
+        this.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    log.i("Memory", "MEMORY CREATED");
-
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                    query.orderByDescending("createdAt");
-                    query.setLimit(1);
+                    query.whereEqualTo("event_id", eventId); //get the event that just finished
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
-                        public void done(ParseObject object, ParseException e) {
-                            if (object != null) {
-                                final String id = object.getObjectId();
+                        public void done(final ParseObject memoryObject, ParseException e) {
+                            if (memoryObject != null) {
+                                // create memory using event's info
+                                final String id = memoryObject.getObjectId();
+                                // for every participant, add memory to their memories
                                 for (String participantId: participantsIds) {
                                     ParseQuery<ParseUser> query = ParseUser.getQuery();
                                     query.getInBackground(participantId, new GetCallback<ParseUser>() {
                                         @Override
                                         public void done(ParseUser user, ParseException e) {
                                             if (e == null) {
-                                                List<String> memoriesIds = user.getList("memories_ids");
-                                                memoriesIds.add(id);
-                                                user.put("memories_ids", memoriesIds);
-                                                user.saveInBackground();
+                                                List<ParseObject> memories;
+                                                // TODO clean this once we fix the database
+                                                if (user.getList("Memories_list") == null) {
+                                                    memories = new ArrayList<ParseObject>();
+                                                } else {
+                                                    memories = user.getList("Memories_list");
+                                                }
+
+                                                memories.add(memoryObject);
+                                                user.put("Memories_list", memories);
+                                                user.saveInBackground(new SaveCallback() {
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        if (e == null) {
+                                                            Log.i("SUCCESS", "SUCCESS");
+                                                        } else {
+                                                            Log.i("Nope", e.getMessage());
+                                                        }
+                                                    }
+                                                });
                                             } else {
                                                 Log.e("Memory error", "Error saving memory" + e);
                                             }
@@ -118,6 +113,44 @@ public class Memory extends ParseObject implements Parcelable {
                 }
             }
         });
+    }
+
+    // GETTERS & SETTERS
+    public String getMemoryName() {
+        return memoryName;
+    }
+
+    public void setMemoryName(String memoryName) {
+        this.memoryName = memoryName;
+        put("memory_name", memoryName);
+    }
+
+    public ArrayList<ParseFile> getPicturesParseFiles() {
+        return picturesParseFiles;
+    }
+
+    public void setPicturesParseFiles(ArrayList<ParseFile> picturesParseFiles) {
+        this.picturesParseFiles = picturesParseFiles;
+        put("pictures_parse_files", picturesParseFiles);
+
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+        put("event_id", eventId);
+    }
+
+    public String getEventId() {
+        return this.eventId;
+    }
+
+    public ArrayList<String> getParticipantsIds() {
+        return participantsIds;
+    }
+
+    public void setParticipantsIds(ArrayList<String> participantsIds) {
+        this.participantsIds = participantsIds;
+        put("participants_ids", participantsIds);
     }
 
 
