@@ -49,6 +49,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
     String description;
     Long deadline;
     String currentUserId;
+
     public final static int MILLISECONDS_IN_MINUTE = 60000;
 
     @Override
@@ -110,7 +111,6 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
         newEvent.setParticipantsIds(initialParticipantsIds);
 
-
         // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
         newEvent.setEventOwnerId(currentUserId);
 
@@ -133,6 +133,11 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                 eventChat.setChatId(chatId);
                 //TODO make chat be a nested object. it is not working rn
                 // newEvent.setEventChat(eventChat); */
+
+
+
+
+
 
         FacebookClient client = ParseApplication.getFacebookRestClient();
         client.getMyInfo(new GraphRequest.Callback() {
