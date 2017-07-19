@@ -86,5 +86,7 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name="shag.com.shag.Other.MyAlarm" />
     </application>
 </manifest>

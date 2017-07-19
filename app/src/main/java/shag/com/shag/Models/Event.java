@@ -31,6 +31,7 @@ public class Event extends ParseObject implements Parcelable {
     public ArrayList<String> participantsIds;
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
+    public Date timeOfEvent;
     private User eventOwner;
 
     //CONSTRUCTORS
@@ -76,6 +77,8 @@ public class Event extends ParseObject implements Parcelable {
     public String getEventOwnerId() {
         return eventOwnerId;
     }
+
+    public Date getTimeOfEvent() {return timeOfEvent; }
 
     // SETTERS
 
@@ -138,6 +141,12 @@ public class Event extends ParseObject implements Parcelable {
         put("event_owner_id", eventOwnerId);
     }
 
+    //TODO: when this is called, update alarm to 24 hours after timeOfEvent
+    public void setTimeOfEvent(Date timeOfEvent) {
+        this.timeOfEvent = timeOfEvent;
+        put("event_time", timeOfEvent);
+    }
+
     public static Creator<Event> getCREATOR() {
         return CREATOR;
     }
@@ -186,21 +195,7 @@ public class Event extends ParseObject implements Parcelable {
     };
 
 
-    /*//TODO: change time to Date object or add one so we can compare events
-    @Override
-    public int compareTo(@NonNull Object o) {
-        return this.deadline.compareTo(((Event) o).deadline);
-    }
-
-    /*
-    @Override
-    public String toString() {
-        return "Event details: " +
-                "\ndescription: " + description +
-                "\ndeadline: " + deadline.toString() +
-                "\nevent owner id: " + eventOwnerId +
-                "\nowner name : " + eventOwnerName;
-    }*/
+    /*//TODO: make sure timeOfEvent isn't causing any errors*/
 
     public static Event fromParseObject(ParseObject object) {
         Event event = new Event();
@@ -213,6 +208,7 @@ public class Event extends ParseObject implements Parcelable {
         event.category = object.getString("category");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         event.participantsIds = (ArrayList) object.getList("participants_id");
+        //todo: include time of event?
 
         return event;
     }
