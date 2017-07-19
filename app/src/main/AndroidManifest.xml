@@ -98,6 +98,7 @@
         </receiver>
 
         <activity android:name=".Activities.MemoryDetailsActivity"></activity>
+        <receiver android:name="shag.com.shag.Other.MyAlarm" />
     </application>
 
 </manifest>

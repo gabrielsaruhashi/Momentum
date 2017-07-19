@@ -31,6 +31,7 @@ import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
@@ -120,7 +121,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         }
 
         newEvent.setCategory(category);
-        // atta
+        newEvent.setTimeOfEvent(new Date()); //TODO: PUT REAL INFO IN HERE AT SOME POINT
         ParseObject currentUser = ParseUser.getCurrentUser();
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
@@ -160,6 +161,17 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                         public void done(ParseObject object, ParseException e) {
                                             if (object != null) {
                                                 ParsePush.subscribeInBackground(object.getObjectId());
+
+                                                //do not set a reminder if there is only 1 person at the event
+                                                //TODO: add back in this check for >1
+                                                //TODO: move this to another place
+                                                //if (participantsIds.size() > 1) {
+                                                //Set alarm reminder
+                                                Bundle bundle = new Bundle();
+                                                bundle.putString("eventId", object.getObjectId());
+                                                bundle.putString("eventName", newEvent.eventName);
+                                                new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
+                                                // }
                                             }
                                         }
                                     });

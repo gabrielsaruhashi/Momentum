@@ -16,6 +16,7 @@ import com.parse.ParseUser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -82,18 +83,13 @@ public class LoginActivity extends AppCompatActivity {
                                     profileImageUrl = userJSON.getJSONObject("picture")
                                             .getJSONObject("data")
                                             .getString("url");
-
-                                    //TODO check if names are being saved. Gabe's login didnt register his name
-
-
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
                                 CustomUser newCustomUser = new CustomUser(user);
                                 newCustomUser.setSomeString("name", name);
                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
-
-
+                                newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
                             }
                         });
                         Log.d("MyApp", "User signed up and logged in through Facebook!");
