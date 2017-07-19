@@ -30,6 +30,7 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
     public MemoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        memories = new ArrayList<Memory>();
         // get context and inflate view
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);

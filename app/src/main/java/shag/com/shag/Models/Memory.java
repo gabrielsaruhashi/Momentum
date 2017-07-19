@@ -23,6 +23,7 @@ public class Memory extends ParseObject {
     private String memoryName;
     private ArrayList<String> picturesUrls;
     private ArrayList<String> participantsIds;
+    private String eventId; //id of the corresponding event
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -48,6 +49,15 @@ public class Memory extends ParseObject {
         //TODO: put these in db?
     }
 
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+        put("event_id", eventId);
+    }
+
+    public String getEventId() {
+        return this.eventId;
+    }
+
     public ArrayList<String> getParticipantsIds() {
         return participantsIds;
     }
@@ -57,7 +67,7 @@ public class Memory extends ParseObject {
         put("participantsIds", participantsIds);
     }
 
-    public Memory(String eventName, final ArrayList<String> participantsIds, String id) {
+    public Memory(String eventName, final ArrayList<String> participantsIds, final String eventId) {
         this.memoryName = "";
         if (eventName != null) {
             setMemoryName(eventName);
@@ -66,6 +76,11 @@ public class Memory extends ParseObject {
         this.participantsIds = new ArrayList<String>();
         if (participantsIds != null) {
             setParticipantsIds(participantsIds);
+        }
+
+        this.eventId = "";
+        if (eventId != null) {
+            setEventId(eventId);
         }
 
         picturesUrls = new ArrayList<String>();
@@ -77,8 +92,7 @@ public class Memory extends ParseObject {
                     log.i("Memory", "MEMORY CREATED");
 
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                    query.orderByDescending("createdAt");
-                    query.setLimit(1);
+                    query.whereEqualTo("event_id", eventId); //get the event we just created
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
                         @Override
                         public void done(ParseObject object, ParseException e) {
