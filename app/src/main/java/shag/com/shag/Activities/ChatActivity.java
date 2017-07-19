@@ -161,13 +161,6 @@ public class ChatActivity extends AppCompatActivity {
 
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
 
-                            /*
-                            ParsePush push = new ParsePush();
-                            push.setChannel(eventId);
-                            //TODO: get chat name?
-                            push.setMessage(ParseUser.getCurrentUser().getUsername() + " just messaged in your chat.");
-                            push.sendInBackground();*/
-
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
                         } else {

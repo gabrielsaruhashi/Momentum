@@ -15,6 +15,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Memory;
 import shag.com.shag.Models.Message;
 
 /**
@@ -53,6 +54,7 @@ public class ParseApplication extends Application {
         //  register parse classes
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Message.class);
+        ParseObject.registerSubclass(Memory.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured
