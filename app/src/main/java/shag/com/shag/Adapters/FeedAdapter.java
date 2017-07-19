@@ -75,9 +75,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     // associates an inflated view to a new item / binds the values based on the position of the element
     @Override
     public void onBindViewHolder(FeedAdapter.ViewHolder holder, int position) {
-
-        // user image
-        String imageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
         // populate the views
         Event event = events.get(position);
         holder.tvBody.setText(event.getDescription());
@@ -95,7 +92,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // load user profile image using glide
         Glide.with(context)
-                .load(imageUrl)
+                .load(event.getEventOwner().imageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                 .into(holder.ivProfileImage);
 

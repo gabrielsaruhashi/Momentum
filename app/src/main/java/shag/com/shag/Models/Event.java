@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 
@@ -198,7 +200,7 @@ public class Event extends ParseObject implements Parcelable {
     /*//TODO: make sure timeOfEvent isn't causing any errors*/
 
     public static Event fromParseObject(ParseObject object) {
-        Event event = new Event();
+        final Event event = new Event();
         event.eventId = object.getObjectId();
         event.deadline = object.getDate("deadline");
         event.eventOwnerName = object.getString("event_owner_name");
@@ -209,6 +211,15 @@ public class Event extends ParseObject implements Parcelable {
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         event.participantsIds = (ArrayList) object.getList("participants_id");
         //todo: include time of event?
+        // Retrieve location using objectId
+        object.getParseObject("User_event_owner").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+            @Override
+            public void done(ParseObject object, ParseException e) {
+                if (e == null) {
+                    event.eventOwner = User.fromParseObject(object);
+                }
+            }
+        });
 
         return event;
     }
