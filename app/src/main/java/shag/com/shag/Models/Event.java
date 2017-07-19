@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -212,14 +211,17 @@ public class Event extends ParseObject implements Parcelable {
         event.participantsIds = (ArrayList) object.getList("participants_id");
         //todo: include time of event?
         // Retrieve location using objectId
-        object.getParseObject("User_event_owner").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
-            @Override
-            public void done(ParseObject object, ParseException e) {
-                if (e == null) {
-                    event.eventOwner = User.fromParseObject(object);
-                }
-            }
-        });
+
+        // fetch event owner
+        //TODO this runs slowly, try to figure out how to make it faster (this is also why chats take so long)
+        try {
+            ParseObject user = object.getParseObject("User_event_owner").fetch();
+            // user found! Convert it to a user model
+            User eventOwner = User.fromParseObject(user);
+            event.setEventOwner(eventOwner); // setting event owner
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         return event;
     }

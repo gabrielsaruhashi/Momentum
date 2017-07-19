@@ -90,9 +90,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.btJoin.setText("Join");
         }
 
+        // get icon url
+        String url = "";
+        if (event.getEventOwner() != null) {
+            url = event.getEventOwner().getImageUrl();
+        }
         // load user profile image using glide
         Glide.with(context)
-                .load(event.getEventOwner().imageUrl)
+                .load(url)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                 .into(holder.ivProfileImage);
 
