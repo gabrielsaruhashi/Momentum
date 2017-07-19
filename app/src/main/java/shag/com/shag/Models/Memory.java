@@ -3,15 +3,19 @@ package shag.com.shag.Models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.parse.ParseClassName;
+import com.parse.ParseFile;
+
 import java.util.ArrayList;
 
 /**
  * Created by gabesaruhashi on 7/18/17.
  */
 
+@ParseClassName("Memory")
 public class Memory implements Parcelable {
     private String memoryName;
-    private ArrayList<String> picturesUrls;
+    private ArrayList<ParseFile> picturesParseFiles;
     private ArrayList<String> participantsIds;
 
     // GETTERS & SETTERS
@@ -23,12 +27,12 @@ public class Memory implements Parcelable {
         this.memoryName = memoryName;
     }
 
-    public ArrayList<String> getPicturesUrls() {
-        return picturesUrls;
+    public ArrayList<ParseFile> getPicturesParseFiles() {
+        return picturesParseFiles;
     }
 
-    public void setPicturesUrls(ArrayList<String> picturesUrls) {
-        this.picturesUrls = picturesUrls;
+    public void setPicturesParseFiles(ArrayList<ParseFile> picturesParseFiles) {
+        this.picturesParseFiles = picturesParseFiles;
     }
 
     public ArrayList<String> getParticipantsIds() {
@@ -48,7 +52,6 @@ public class Memory implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.memoryName);
-        dest.writeStringList(this.picturesUrls);
         dest.writeStringList(this.participantsIds);
     }
 
@@ -57,7 +60,6 @@ public class Memory implements Parcelable {
 
     protected Memory(Parcel in) {
         this.memoryName = in.readString();
-        this.picturesUrls = in.createStringArrayList();
         this.participantsIds = in.createStringArrayList();
     }
 

@@ -1,15 +1,20 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
+import com.parse.ParseException;
+import com.parse.ParseFile;
 
 import java.util.ArrayList;
+
+import shag.com.shag.R;
 
 /**
  * Created by gabesaruhashi on 7/18/17.
@@ -17,9 +22,9 @@ import java.util.ArrayList;
 
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
-    private ArrayList<String> memoryPictures;
+    private ArrayList<ParseFile> memoryPictures;
 
-    public ImageAdapter(Context c, ArrayList<String> memoryPictures) {
+    public ImageAdapter(Context c, ArrayList<ParseFile> memoryPictures) {
         mContext = c;
         this.memoryPictures = memoryPictures;
     }
@@ -48,14 +53,31 @@ public class ImageAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
+        // convert parse file to bitmap
+        Bitmap bm = bitmapConverterFromParseFile(memoryPictures.get(position));
 
-        Glide.with(mContext)
-                .load(memoryPictures.get(position))
-                .centerCrop()
-                .into(imageView);
-        //imageView.setImageResource(memoryPictures.get(position));
+        if (bm != null) {
+            imageView.setImageBitmap(bm);
+        } else {
+            // if image was not converted correctly, set it with an error icon
+            imageView.setImageResource(R.drawable.ic_error_outline);
+        }
+
+        // imageView.setImageResource(memoryPictures.get(position));
 
         return imageView;
+    }
+
+    private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
+        // instantiate bitmapa data from parsefile
+        try {
+            byte[] bitmapdata = parseFile.getData();
+            Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+            return bm;
+        } catch (ParseException e) {
+            e.getMessage();
+        }
+        return null;
     }
     /*
     // references to our images
