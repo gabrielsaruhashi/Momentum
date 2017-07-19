@@ -162,15 +162,20 @@ public class Memory extends ParseObject implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.memoryName);
+        dest.writeList(this.picturesParseFiles);
         dest.writeStringList(this.participantsIds);
+        dest.writeString(this.eventId);
     }
 
     protected Memory(Parcel in) {
         this.memoryName = in.readString();
+        this.picturesParseFiles = new ArrayList<ParseFile>();
+        in.readList(this.picturesParseFiles, ParseFile.class.getClassLoader());
         this.participantsIds = in.createStringArrayList();
+        this.eventId = in.readString();
     }
 
-    public static final Parcelable.Creator<Memory> CREATOR = new Parcelable.Creator<Memory>() {
+    public static final Creator<Memory> CREATOR = new Creator<Memory>() {
         @Override
         public Memory createFromParcel(Parcel source) {
             return new Memory(source);

@@ -97,6 +97,7 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                 // set up intent
                 Intent i = new Intent(context, MemoryDetailsActivity.class);
                 i.putExtra(Memory.class.getSimpleName(), memory);
+                context.startActivity(i);
             }
 
         }
