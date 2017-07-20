@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -56,6 +57,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     FacebookClient client;
     FloatingActionButton myFab;
     private static ArrayList<Long> facebookFriendsIds;
+    private SwipeRefreshLayout swipeContainer;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -81,6 +83,26 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvEvents.addItemDecoration(itemDecoration);
 
+        //swipe refresh
+        swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                fetchTimelineAsync(0);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
+
+
+
         // initialize facebook friendsIds
         facebookFriendsIds = new ArrayList<Long>();
 
@@ -100,12 +122,26 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         return v;
     }
 
+    public void fetchTimelineAsync(int page) {
+        // Send the network request to fetch the updated data
+        // `client` here is an instance of Android Async HTTP
+        // getHomeTimeline is an example endpoint.
+
+        adapter.clear();
+        populateFeed();
+        swipeContainer.setRefreshing(false);
+
+
+    }
+
+
     public void getFacebookFriends() {
         client = ParseApplication.getFacebookRestClient();
         client.getFriendsUsingApp(
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                         // gets friends ids
+
                         try {
                             JSONObject obj = response.getJSONObject();
                             //obj should never be null but occassionally is-- need to log in again
