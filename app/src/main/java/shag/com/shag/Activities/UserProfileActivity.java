@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,8 +18,6 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.widget.LoginButton;
 import com.parse.ParseUser;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import shag.com.shag.Clients.FacebookClient;
@@ -28,12 +28,18 @@ import shag.com.shag.R;
 public class UserProfileActivity extends AppCompatActivity {
     //instance fields
     TextView name;
-    TextView friends;
+    //TextView friends;
     ImageView profileImage;
     Context context;
     User u;
     CallbackManager callbackManager;
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_profile, menu);
+        return true;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +50,7 @@ public class UserProfileActivity extends AppCompatActivity {
         //resolve view objects
         name = (TextView) findViewById(R.id.tvName);
         profileImage = (ImageView) findViewById(R.id.ivProfileImage);
-        friends = (TextView) findViewById(R.id.tvFriends);
+        //friends = (TextView) findViewById(R.id.tvFriends);
 
 
 
@@ -59,6 +65,7 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+        /*
         client.getFriendsUsingApp(new GraphRequest.Callback() {
             @Override
             public void onCompleted(GraphResponse response) {
@@ -72,7 +79,7 @@ public class UserProfileActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-        });
+        });*/
 
         callbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -86,5 +93,10 @@ public class UserProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void onFeedView(MenuItem menuItem) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
     }
 }
