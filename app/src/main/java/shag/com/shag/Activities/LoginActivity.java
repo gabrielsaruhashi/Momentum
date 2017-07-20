@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
-import shag.com.shag.Fragments.ChatListFragment;
 import shag.com.shag.Models.CustomUser;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -124,12 +123,12 @@ public class LoginActivity extends AppCompatActivity {
             Intent i = new Intent(context, MainActivity.class);
             context.startActivity(i);
         } else {
-            Intent i = new Intent(context, MainActivity.class);
-            //TODO: figure out what is wrong with intent passed from MyBroadCastReceiver & why the data is wrong
-            //Intent i = new Intent(context, ChatActivity.class);
-            //i.putExtra("event_id", intent.getStringExtra("event_id"));
-            //i.putStringArrayListExtra("participants_ids", intent.getStringArrayListExtra("participants_ids"));
-            context.startActivity(i);
+            String eventId = intent.getStringExtra("event_id");
+            if (eventId != null) {
+                Intent i = new Intent(context, ChatActivity.class);
+                i.putExtras(intent.getExtras());
+                context.startActivity(i);
+            }
         }
     }
 

@@ -18,6 +18,7 @@ import com.parse.FindCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
+import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
@@ -59,6 +61,15 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        if (chatParticipantsIds == null) {
+            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+            try {
+                Event event = Event.fromParseObject(query.get(eventId));
+                chatParticipantsIds = event.participantsIds;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         setupMessagePosting();
@@ -243,5 +254,11 @@ public class ChatActivity extends AppCompatActivity {
         return ParseQuery.or(queries);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("viewpager_position", 2);
+        context.startActivity(intent);
+    }
 }
 
