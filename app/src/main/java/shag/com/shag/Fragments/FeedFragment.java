@@ -23,12 +23,14 @@ import com.parse.ParseQuery;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import shag.com.shag.Activities.LoginActivity;
 import shag.com.shag.Activities.SelectEventCategoryActivity;
 import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -105,13 +107,20 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     public void onCompleted(GraphResponse response) {
                         // gets friends ids
                         try {
-                            JSONArray friends = response.getJSONObject().getJSONArray("data");
-                            for (int i = 0; i < friends.length(); i++) {
-                                User friend = User.fromJson(friends.getJSONObject(i));
-                                facebookFriendsIds.add(friend.fbUserID);
+                            JSONObject obj = response.getJSONObject();
+                            //obj should never be null but occassionally is-- need to log in again
+                            if (obj == null) {
+                                Intent intent = new Intent(getContext(), LoginActivity.class); //sometimes this doesn't work
+                                getContext().startActivity(intent);
+                            } else {
+                                JSONArray friends = obj.getJSONArray("data");
+                                for (int i = 0; i < friends.length(); i++) {
+                                    User friend = User.fromJson(friends.getJSONObject(i));
+                                    facebookFriendsIds.add(friend.fbUserID);
+                                }
+                                // populates initial feed
+                                populateFeed();
                             }
-                            // populates initial feed
-                            populateFeed();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -133,6 +142,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                             Event event = Event.fromParseObject(item);
                             //add event to list to be displayed
                             events.add(event);
+                            adapter.notifyDataSetChanged();
                         }
 
                         //TODO: move this somewhere else, it is currently over-sorting

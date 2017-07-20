@@ -1,6 +1,7 @@
 package shag.com.shag.Activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -59,8 +60,9 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         context = this;
         // unwrap intent and get current user id
-        eventId = getIntent().getStringExtra("event_id");
-        chatParticipantsIds = getIntent().getStringArrayListExtra("participants_ids");
+        Intent intent = getIntent();
+        eventId = intent.getStringExtra("event_id");
+        chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
         currentUserId = ParseUser.getCurrentUser().getObjectId();
         chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
@@ -295,5 +297,11 @@ public class ChatActivity extends AppCompatActivity {
         return ParseQuery.or(queries);
     }
 
+    /*@Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("viewpager_position", 2);
+        context.startActivity(intent);
+    }*/
 }
 
