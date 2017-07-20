@@ -174,7 +174,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                                 //Set alarm reminder
                                                 Bundle bundle = new Bundle();
                                                 bundle.putString("eventId", object.getObjectId());
-                                                bundle.putString("eventName", newEvent.eventName);
+                                                bundle.putString("eventDescription", newEvent.description);
                                                 new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
                                                 // }
                                             }

@@ -1,5 +1,6 @@
 package shag.com.shag.Models;
 
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.List;
@@ -28,6 +29,11 @@ public class CustomUser {
 
     public void setSomeStringArray(String listName, List<String> list) {
         user.put(listName, list);
+        user.saveInBackground();
+    }
+
+    public void setSomeEmptyList(String listName, List<ParseObject> parseObjectList) {
+        user.put(listName, parseObjectList);
         user.saveInBackground();
     }
 

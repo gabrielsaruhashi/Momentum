@@ -11,10 +11,13 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
-    <!-- ${packageName} is substituted for the package name declared above.  -->
-    <permission android:protectionLevel="signature" android:name="${packageName}.permission.C2D_MESSAGE" />
-    <uses-permission android:name="${packageName}.permission.C2D_MESSAGE" />
+    <!-- ${packageName} is substituted for the package name declared above. -->
+    <permission
+        android:name="${packageName}.permission.C2D_MESSAGE"
+        android:protectionLevel="signature" />
 
+    <uses-permission android:name="${packageName}.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Other.ParseApplication"
@@ -62,23 +65,31 @@
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity" />
         <activity android:name=".Activities.ChatActivity" />
-        <activity android:name=".Activities.MemoriesActivity"></activity>
+        <activity android:name=".Activities.MemoriesActivity" />
         <activity android:name=".Activities.PublicEventDetailsActivity" />
         <activity android:name=".Activities.SelectEventCategoryActivity" />
         <activity android:name=".Activities.SelectEventDetailsActivity" />
-        <activity android:name=".Activities.SelectEventFriendsActivity"></activity>
-        <meta-data android:name="com.parse.push.gcm_sender_id"
-            android:value="@string/gcm_sender_id"/>
-        <receiver android:name="com.parse.GcmBroadcastReceiver"
+        <activity android:name=".Activities.SelectEventFriendsActivity" />
+
+        <meta-data
+            android:name="com.parse.push.gcm_sender_id"
+            android:value="@string/gcm_sender_id" />
+
+        <receiver
+            android:name="com.parse.GcmBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND">
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
                 <category android:name="${packageName}" />
             </intent-filter>
         </receiver>
+
         <service android:name="com.parse.PushService" />
-        <receiver android:name="com.parse.ParsePushBroadcastReceiver"
+
+        <receiver
+            android:name="com.parse.ParsePushBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.parse.push.intent.RECEIVE" />
@@ -87,6 +98,8 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".Activities.MemoryDetailsActivity"></activity>
         <receiver android:name="shag.com.shag.Other.MyAlarm" />
     </application>
+
 </manifest>

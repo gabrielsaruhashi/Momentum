@@ -9,8 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -24,18 +25,24 @@ public class MemoriesActivity extends AppCompatActivity {
     RecyclerView rvMemories;
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
+    ParseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memories);
         context = this;
-
+        // get reference to xml recyclerview
         rvMemories = (RecyclerView) findViewById(R.id.rvMemories);
+
+        // instantiate memories and set adapter
         memories = new ArrayList<Memory>();
         // set adapter
         mAdapter = new MemoriesAdapter(memories);
         rvMemories.setAdapter(mAdapter);
+
+        // instantiate current user
+        currentUser = ParseUser.getCurrentUser();
 
         // associate the LayoutManager with the RecylcerView
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
@@ -45,24 +52,29 @@ public class MemoriesActivity extends AppCompatActivity {
     }
 
     private void populateMemories() {
-        ParseUser user = ParseUser.getCurrentUser();
-        ArrayList<String> memories_ids = (ArrayList) user.getList("memories_ids");
-        for (String memory_id : memories_ids) {
-            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Memory");
-            query.getInBackground(memory_id, new GetCallback<ParseObject>() {
+        ArrayList<ParseObject> memoriesList = (ArrayList) currentUser.getList("Memories_list");
+        //for (ParseObject memory : memoriesList) {
+        for (int i = 0; i < memoriesList.size(); i++) {
+            try {
+                ParseObject memoryObject = memoriesList.get(i).fetchIfNeeded();
+                Memory memory = Memory.fromParseObject(memoryObject);
+                memories.add(0, memory);
+                mAdapter.notifyItemInserted(memories.size() - 1);
+                rvMemories.smoothScrollToPosition(0);
+            } catch (ParseException e) {
+                e.getMessage();
+            }
+
+            /*
+            memoriesList.get(i).getParseObject("Memory").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
                 @Override
                 public void done(ParseObject object, ParseException e) {
-                    if (e == null) {
-                        ArrayList<String> participantsIds = (ArrayList) object.getList("participantsIds");
-                        if (participantsIds != null && participantsIds.size() > 1) {
-                            // TODO: display all pictures from memory in some order
-                        }
-                    } else {
-                        e.printStackTrace();
-                    }
+                    Memory memory = Memory.fromParseObject(object);
+                    memories.add(0, memory);
+                    mAdapter.notifyItemInserted(memories.size() - 1);
+                    rvMemories.smoothScrollToPosition(0);
                 }
-            });
-
+            });*/
         }
     }
 }
