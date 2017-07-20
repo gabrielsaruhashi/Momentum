@@ -65,11 +65,19 @@ public class ImageAdapter extends BaseAdapter {
 
         // imageView.setImageResource(memoryPictures.get(position));
 
+        /* imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        }); */
+
         return imageView;
     }
 
+    // creates a bitmap from parsefile data
     private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
-        // instantiate bitmapa data from parsefile
+
         try {
             byte[] bitmapdata = parseFile.getData();
             Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);

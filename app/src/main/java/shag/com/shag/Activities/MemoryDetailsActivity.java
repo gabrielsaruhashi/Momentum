@@ -109,7 +109,6 @@ public class MemoryDetailsActivity extends AppCompatActivity {
 
                         // update database
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                        String memoryId = memory.getMemoryId();
                         query.getInBackground(memoryId, new GetCallback<ParseObject>() {
                              @Override
                              public void done(ParseObject updatedMemory, ParseException e) {

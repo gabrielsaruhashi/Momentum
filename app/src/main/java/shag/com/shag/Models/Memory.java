@@ -118,7 +118,7 @@ public class Memory extends ParseObject implements Parcelable {
 
     // GETTERS & SETTERS
     public String getMemoryName() {
-        return memoryName;
+        return getString("memory_name");
     }
 
     public void setMemoryName(String memoryName) {
@@ -160,7 +160,7 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     public String getMemoryId() {
-        return memoryId;
+        return getObjectId();
     }
 
     @Override
