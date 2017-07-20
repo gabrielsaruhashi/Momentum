@@ -78,8 +78,9 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onEvent(ParseQuery<Message> query, Message object) {
                     String senderId = object.getSenderId();
+                    String newEventId = object.getEventId();
 
-                    if (!senderId.equals(currentUserId)) {
+                    if (!senderId.equals(currentUserId) && newEventId.equals(eventId) ) {
                         mMessages.add(0, object);
                     }
 
