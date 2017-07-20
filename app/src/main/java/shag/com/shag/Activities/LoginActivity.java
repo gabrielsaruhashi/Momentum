@@ -91,6 +91,7 @@ public class LoginActivity extends AppCompatActivity {
                                 newCustomUser.setSomeString("name", name);
                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                                 newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
+                                //TOD add memories list not working
                                 newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
                             }
                         });
