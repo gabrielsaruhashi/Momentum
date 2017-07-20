@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //add ability to open a specific fragment with intent data
         int position = 0;
         Bundle extras = getIntent().getExtras();
         if(extras != null) {

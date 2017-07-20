@@ -86,12 +86,6 @@
                 <action android:name="com.parse.push.intent.OPEN" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".Other.MyBroadcastReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.parse.push.intent.OPEN" />
-            </intent-filter>
-        </receiver>
 
         <receiver android:name="shag.com.shag.Other.MyAlarm" />
     </application>

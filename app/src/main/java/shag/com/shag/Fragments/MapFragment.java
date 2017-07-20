@@ -222,7 +222,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         //stop location updates when Activity is no longer active
         if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, (com.google.android.gms.location.LocationListener) this);
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,  this);
         }
     }
 

@@ -119,16 +119,22 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
-        if (intent.getAction() != null) {
+        //currently this if statement is never used
+        //if we override onPushOpen  we will eventually need this
+        if (intent.getAction() == null) {
             Intent i = new Intent(context, MainActivity.class);
             context.startActivity(i);
-        } else {
+            /*
             String eventId = intent.getStringExtra("event_id");
             if (eventId != null) {
                 Intent i = new Intent(context, ChatActivity.class);
                 i.putExtras(intent.getExtras());
                 context.startActivity(i);
-            }
+            }*/
+        } else {
+            Intent i = new Intent(context, MainActivity.class);
+            context.startActivity(i);
+
         }
     }
 

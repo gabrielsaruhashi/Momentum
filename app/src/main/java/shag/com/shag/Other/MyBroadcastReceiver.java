@@ -1,24 +1,11 @@
 package shag.com.shag.Other;
 
-import android.content.Context;
-import android.content.Intent;
-
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import shag.com.shag.Activities.LoginActivity;
-import shag.com.shag.Models.Event;
-
 /**
  * Created by hanapearlman on 7/19/17.
  */
 
 public class MyBroadcastReceiver extends com.parse.ParsePushBroadcastReceiver {
-    @Override
+   /* @Override
     protected void onPushOpen(Context context, Intent intent) {
         JSONObject pushData;
         String eventId = "";
@@ -40,4 +27,5 @@ public class MyBroadcastReceiver extends com.parse.ParsePushBroadcastReceiver {
             e.printStackTrace();
         }
     }
+    */
 }
