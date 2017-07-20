@@ -79,7 +79,7 @@ public class MemoryDetailsActivity extends AppCompatActivity {
                   Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(MemoryDetailsActivity.this.getContentResolver(), data.getData());
                   // Convert it to byte
                   ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                  selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                  selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
                   byte[] image = stream.toByteArray();
 
                   // save uploaded picture to the cloud as a parsefile
@@ -88,7 +88,7 @@ public class MemoryDetailsActivity extends AppCompatActivity {
 
                   // current pictures
                   ArrayList<ParseFile> currentPictures = memory.getPicturesParseFiles();
-                  currentPictures.add(file);
+                  // currentPictures.add(file);
 
                   ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
                   //TODO query for memory, update row
