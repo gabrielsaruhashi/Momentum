@@ -12,15 +12,23 @@ public class Chat {
     // TODO might be interesting to later invite ppl even if event expired in feed
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
+    private Event event;
 
     // trivial variables
     private String chatTitle;
     private String chatIconUrl;
     private String description;
 
-
     // GETTERS & SETTERS
 
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
 
     public String getEventId() {
         return eventId;
@@ -33,6 +41,10 @@ public class Chat {
     public ArrayList<String> getChatParticipantsIds() { return chatParticipantsIds; }
 
     public void setChatParticipantsIds(ArrayList<String> chatParticipantsIds) { this.chatParticipantsIds = chatParticipantsIds; }
+
+    public void addChatParticipantsIds(String newChatParticipant) {
+        getChatParticipantsIds().add(newChatParticipant);
+       }
 
     public String getChatTitle() {
         return chatTitle;

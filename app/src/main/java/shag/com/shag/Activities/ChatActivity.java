@@ -15,9 +15,11 @@ import android.widget.Toast;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -29,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
+import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
@@ -49,6 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
+    private Event chatEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class ChatActivity extends AppCompatActivity {
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-
+        chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
 
         // Make sure the Parse server is setup to configured for live queries
@@ -80,8 +84,9 @@ public class ChatActivity extends AppCompatActivity {
                 @Override
                 public void onEvent(ParseQuery<Message> query, Message object) {
                     String senderId = object.getSenderId();
+                    String newEventId = object.getEventId();
 
-                    if (!senderId.equals(currentUserId)) {
+                    if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
                         mMessages.add(0, object);
                     }
 
@@ -91,12 +96,14 @@ public class ChatActivity extends AppCompatActivity {
                         public void run() {
                             mAdapter.notifyDataSetChanged();
                             rvChat.scrollToPosition(0);
+
                         }
                     });
                 }
-        });
-
+            });
     }
+
+
 
 
     // setup button event handler which posts the entered message to Parse
@@ -142,7 +149,7 @@ public class ChatActivity extends AppCompatActivity {
                         if (e == null) {
                             String token = "";
                             try {
-                                //TODO: find a way to get the instance ID and filter out poster from receivers
+                                //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
                                 token = InstanceID.getInstance(context)
                                         .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                                 Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
@@ -165,6 +172,8 @@ public class ChatActivity extends AppCompatActivity {
 
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
+
+
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
@@ -175,6 +184,51 @@ public class ChatActivity extends AppCompatActivity {
                 mMessages.add(0, message);
                 mAdapter.notifyItemInserted(0);
                 rvChat.smoothScrollToPosition(0);
+
+
+                if (data.equals("hi Shaggy")){
+                    Message m = new Message();
+                    m.setSenderId("InuSHuTqkn");
+                    m.setBody("Hi! My name is Shaggy");
+                    m.setEventId(eventId);
+                    m.setSenderName("Shaggy");
+                    try {
+                        m.save();
+                        mAdapter.notifyItemInserted(0);
+                        rvChat.smoothScrollToPosition(0);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else if (data.length()>15 && data.substring(0,14).equals("set location @")){
+                    Message m = new Message();
+                    m.setSenderId("InuSHuTqkn");
+                    m.setBody("Okay! Event location @" + data.substring(14));
+                    m.setEventId(eventId);
+                    m.setSenderName("Shaggy");
+
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+
+                    // Retrieve the object by id
+                    query.getInBackground(eventId, new GetCallback<ParseObject>() {  //retrieve serverID instead of object from parse
+                        public void done(ParseObject event, ParseException e) {
+                            if (e == null) {
+
+                                event.put("location", data.substring(14));
+                                event.saveInBackground();
+                            }
+                        }
+                    });
+
+                    try {
+                        m.save();
+                        mAdapter.notifyItemInserted(0);
+                        rvChat.smoothScrollToPosition(0);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
