@@ -6,12 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
-
-import org.json.JSONException;
 
 import java.util.ArrayList;
 
@@ -26,6 +23,7 @@ public class MemoriesActivity extends AppCompatActivity {
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

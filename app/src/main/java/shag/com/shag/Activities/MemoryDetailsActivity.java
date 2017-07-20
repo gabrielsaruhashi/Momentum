@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -36,10 +38,11 @@ public class MemoryDetailsActivity extends AppCompatActivity {
 
     ImageAdapter imageAdapter;
     ArrayList<ParseFile> pictures;
-    // create constant for startactivityh
+    // create constant for start activity
     final static int SELECT_IMAGE = 16;
 
     private Memory memory;
+    private String memoryId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +50,16 @@ public class MemoryDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_memory_details);
         ButterKnife.bind(this);
         // unwrap memory
-        memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
+        // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
+        memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
+        try {
+            ParseObject object = query.get(memoryId);
+            memory = Memory.fromParseObject(object);
+        } catch (ParseException e) {
+            e.getMessage();
+        }
 
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
@@ -92,21 +104,28 @@ public class MemoryDetailsActivity extends AppCompatActivity {
                         byte[] image = stream.toByteArray();
 
                         // save uploaded picture to the cloud as a parsefile
-                        ParseFile file = new ParseFile("image.JPEG", image);
+                        final ParseFile file = new ParseFile("image.JPEG", image);
                         file.saveInBackground();
 
-                        // current pictures
-                        ArrayList<ParseFile> currentPictures = memory.getPicturesParseFiles();
-                        // currentPictures.add(file);
-
+                        // update database
                         ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                        //TODO query for memory, update row
-                        // query.getInBackground(memory.)
-                        // memory.setPicturesParseFiles(currentPictures);
+                        String memoryId = memory.getMemoryId();
+                        query.getInBackground(memoryId, new GetCallback<ParseObject>() {
+                             @Override
+                             public void done(ParseObject updatedMemory, ParseException e) {
+                                 if (e == null) {
+                                     // update pictures
+                                     // update local array
+                                     pictures.add(file);
+                                     imageAdapter.notifyDataSetChanged();
+                                     updatedMemory.put("pictures_parse_files", pictures);
+                                     updatedMemory.saveInBackground();
+                                 } else {
+                                     e.getMessage();
+                                 }
+                             }
+                         });
 
-                        // TODO Update local array
-                        pictures.add(file);
-                        imageAdapter.notifyDataSetChanged();
 
                     } catch (IOException e) {
                         e.getMessage();
