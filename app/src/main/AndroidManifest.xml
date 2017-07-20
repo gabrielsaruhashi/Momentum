@@ -17,6 +17,7 @@
         android:protectionLevel="signature" />
 
     <uses-permission android:name="${packageName}.permission.C2D_MESSAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".Other.ParseApplication"
