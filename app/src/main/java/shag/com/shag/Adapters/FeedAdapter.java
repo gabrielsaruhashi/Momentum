@@ -99,6 +99,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Glide.with(context)
                 .load(url)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                .placeholder(R.drawable.ic_person)
                 .into(holder.ivProfileImage);
 
     }

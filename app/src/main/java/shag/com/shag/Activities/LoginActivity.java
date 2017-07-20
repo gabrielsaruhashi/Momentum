@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
+import shag.com.shag.Fragments.ChatListFragment;
 import shag.com.shag.Models.CustomUser;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -36,13 +37,14 @@ public class LoginActivity extends AppCompatActivity {
     long fbUid;
     String name;
     String email;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = this;
-
+        intent = getIntent();
 
         // create permissions
         permissions = Arrays.asList("user_friends");
@@ -118,8 +120,17 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
-        Intent i = new Intent(context, MainActivity.class);
-        context.startActivity(i);
+        if (intent.getAction() != null) {
+            Intent i = new Intent(context, MainActivity.class);
+            context.startActivity(i);
+        } else {
+            Intent i = new Intent(context, MainActivity.class);
+            //TODO: figure out what is wrong with intent passed from MyBroadCastReceiver & why the data is wrong
+            //Intent i = new Intent(context, ChatActivity.class);
+            //i.putExtra("event_id", intent.getStringExtra("event_id"));
+            //i.putStringArrayListExtra("participants_ids", intent.getStringArrayListExtra("participants_ids"));
+            context.startActivity(i);
+        }
     }
 
     @Override

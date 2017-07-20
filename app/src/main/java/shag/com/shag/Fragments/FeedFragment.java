@@ -105,6 +105,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     public void onCompleted(GraphResponse response) {
                         // gets friends ids
                         try {
+                            Log.i("LOOKHEREHANA", response.toString());
                             JSONArray friends = response.getJSONObject().getJSONArray("data");
                             for (int i = 0; i < friends.length(); i++) {
                                 User friend = User.fromJson(friends.getJSONObject(i));
@@ -133,6 +134,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                             Event event = Event.fromParseObject(item);
                             //add event to list to be displayed
                             events.add(event);
+                            adapter.notifyDataSetChanged();
                         }
 
                         //TODO: move this somewhere else, it is currently over-sorting
