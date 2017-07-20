@@ -1,11 +1,10 @@
 package shag.com.shag.Activities;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -80,13 +79,13 @@ public class MemoryDetailsActivity extends AppCompatActivity {
         // When an Image is picked
         if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK  && data != null) {
             // retrieve a collection of selected images
-            ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            //ArrayList<Parcelable> list = data.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+            ClipData clipData = data.getClipData();
             // iterate over these images
-            if (list != null ) {
-                for (Parcelable parcel : list) {
-                    Uri uri = (Uri) parcel;
+            if (clipData != null ) {
+                for (int i = 0; i < clipData.getItemCount(); i++) {
                     try {
-                        Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(MemoryDetailsActivity.this.getContentResolver(), uri);
+                        Bitmap selectedImageBitmap = MediaStore.Images.Media.getBitmap(MemoryDetailsActivity.this.getContentResolver(), clipData.getItemAt(i).getUri());
                         // Convert it to byte
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
