@@ -47,7 +47,7 @@ public class ChatListFragment extends Fragment {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_chat_list, container, false);
 
-        // initialize the list of tweets
+        // initialize the list of chats
         chats = new ArrayList<>();
         // construct the adater from the data source
         adapter = new ChatListAdapter(chats);
@@ -114,13 +114,15 @@ public class ChatListFragment extends Fragment {
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event) {
+
         // create new local chat
         Chat chat = new Chat();
         // set chat info
+        chat.setEvent(event);
         chat.setDescription(event.getDescription());
         chat.setEventId(event.getEventId());
         chat.setChatParticipantsIds(event.getParticipantsIds());
-
+        chat.addChatParticipantsIds("InuSHuTqkn");
         // get icon url
         if (event.getEventOwner() != null) {
             User eventOwner = event.getEventOwner();
@@ -147,6 +149,7 @@ public class ChatListFragment extends Fragment {
                 chat.setChatTitle(eventOwnerName);
             }
         }
+
         return chat;
     }
 }

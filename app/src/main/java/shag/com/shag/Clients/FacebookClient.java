@@ -56,4 +56,11 @@ public class FacebookClient {
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/" + eventID + "/" + response, null, HttpMethod.POST,
                 callback).executeAsync();
     }
+
+    //response must be: "attending", "maybe", or "declined"
+    public void getLinkingAccessToken(GraphRequest.Callback callback, String page_id) {
+        /* make the API call */
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/" +page_id, null, HttpMethod.GET,
+                callback).executeAsync();
+    }
 }
