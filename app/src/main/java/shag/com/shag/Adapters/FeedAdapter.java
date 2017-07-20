@@ -191,7 +191,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         return context;
     }
 
-
+    public void clear() {
+        events.clear();
+        notifyDataSetChanged();
+    }
     // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
     private void showMoreDetails(final Event event, final Button joinStatus) {
         // inflate message_item.xml view
