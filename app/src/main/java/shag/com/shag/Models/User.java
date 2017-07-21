@@ -42,6 +42,13 @@ public class User implements Parcelable {
         User user = new User();
         // populate user info
         user.setUserID(object.getObjectId());
+        //TODO decide if we need this and find out if it works (haven't tested)
+        /*
+        try {
+            user.setFbUserID(object.getJSONObject("auth_data_facebook").getLong("id"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }*/
         user.setName(object.getString("name"));
         user.setImageUrl(object.getString("profile_image_url"));
 
@@ -122,5 +129,4 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
-
 }

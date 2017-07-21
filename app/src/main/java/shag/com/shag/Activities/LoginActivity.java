@@ -37,13 +37,14 @@ public class LoginActivity extends AppCompatActivity {
     long fbUid;
     String name;
     String email;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = this;
-
+        intent = getIntent();
 
         // create permissions
         permissions = Arrays.asList("user_friends");
@@ -121,8 +122,23 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
-        Intent i = new Intent(context, MainActivity.class);
-        context.startActivity(i);
+        //currently this if statement is never used
+        //if we override onPushOpen  we will eventually need this
+        if (intent.getAction() == null) {
+            Intent i = new Intent(context, MainActivity.class);
+            context.startActivity(i);
+            /*
+            String eventId = intent.getStringExtra("event_id");
+            if (eventId != null) {
+                Intent i = new Intent(context, ChatActivity.class);
+                i.putExtras(intent.getExtras());
+                context.startActivity(i);
+            }*/
+        } else {
+            Intent i = new Intent(context, MainActivity.class);
+            context.startActivity(i);
+
+        }
     }
 
     @Override
