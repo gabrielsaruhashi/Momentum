@@ -62,7 +62,7 @@ public class ChatListFragment extends Fragment {
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
-        rvChats.addItemDecoration(itemDecoration);
+        //rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 

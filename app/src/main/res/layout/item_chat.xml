@@ -1,36 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/ivChatIcon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        app:srcCompat="@android:color/black" />
-
-    <TextView
-        android:id="@+id/tvParticipants"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cvRoot"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/tvBody"
-        android:text="TextView"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autoLink="all"
-        android:layout_below="@+id/tvParticipants"
         android:layout_marginLeft="8dp"
-        android:layout_toEndOf="@+id/ivChatIcon"
-        android:text="TextView"
-        android:paddingBottom="24dp"/>
+        android:layout_marginRight="8dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        card_view:cardElevation="2dp"
+        card_view:cardUseCompatPadding="true">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="4dp">
 
+            <ImageView
+                android:id="@+id/ivChatIcon"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                app:srcCompat="@android:color/black" />
+
+            <TextView
+                android:id="@+id/tvParticipants"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/ivChatIcon"
+                android:layout_alignStart="@+id/tvBody"
+                android:text="TextView"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvParticipants"
+                android:layout_marginLeft="8dp"
+                android:layout_toEndOf="@+id/ivChatIcon"
+                android:autoLink="all"
+                android:paddingBottom="24dp"
+                android:text="TextView" />
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
 </RelativeLayout>
