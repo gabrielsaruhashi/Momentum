@@ -6,14 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.parse.GetCallback;
+import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import org.json.JSONException;
-
 import java.util.ArrayList;
+import java.util.List;
 
 import shag.com.shag.Adapters.MemoriesAdapter;
 import shag.com.shag.Models.Memory;
@@ -26,6 +25,7 @@ public class MemoriesActivity extends AppCompatActivity {
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +52,26 @@ public class MemoriesActivity extends AppCompatActivity {
     }
 
     private void populateMemories() {
+        ParseQuery<Memory> query = ParseQuery.getQuery("Memory");
+        // auxiliary list
+        List list = new ArrayList();
+        list.add(currentUser.getObjectId());
+
+        // create the query condition
+        query.whereContainedIn("participants_ids", list);
+
+        query.findInBackground(new FindCallback<Memory>() {
+            @Override
+            public void done(List<Memory> objects, ParseException e) {
+                if (e == null) {
+                    memories.clear();
+                    memories.addAll(objects);
+                    mAdapter.notifyDataSetChanged();
+                } else {
+                    e.getMessage();
+                }
+            };
+        /*
         ArrayList<ParseObject> memoriesList = (ArrayList) currentUser.getList("Memories_list");
         //for (ParseObject memory : memoriesList) {
         for (int i = 0; i < memoriesList.size(); i++) {
@@ -63,7 +83,7 @@ public class MemoriesActivity extends AppCompatActivity {
                 rvMemories.smoothScrollToPosition(0);
             } catch (ParseException e) {
                 e.getMessage();
-            }
+            } */
 
             /*
             memoriesList.get(i).getParseObject("Memory").fetchIfNeededInBackground(new GetCallback<ParseObject>() {
@@ -75,6 +95,6 @@ public class MemoriesActivity extends AppCompatActivity {
                     rvMemories.smoothScrollToPosition(0);
                 }
             });*/
-        }
+        });
     }
 }

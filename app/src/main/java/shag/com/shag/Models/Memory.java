@@ -25,7 +25,7 @@ import static com.loopj.android.http.AsyncHttpClient.log;
 
 @ParseClassName("Memory")
 public class Memory extends ParseObject implements Parcelable {
-
+    private String memoryId;
     private String memoryName;
     private ArrayList<ParseFile> picturesParseFiles;
     private ArrayList<String> participantsIds;
@@ -39,6 +39,7 @@ public class Memory extends ParseObject implements Parcelable {
     //
     public static Memory fromParseObject(ParseObject object) {
         Memory memory = new Memory();
+        memory.setMemoryId(object.getObjectId());
         memory.setMemoryName(object.getString("memory_name"));
         // memory.picturesParseFiles = getList("pictures_parse_files");
         memory.setEventId(object.getString("event_id"));
@@ -117,7 +118,7 @@ public class Memory extends ParseObject implements Parcelable {
 
     // GETTERS & SETTERS
     public String getMemoryName() {
-        return memoryName;
+        return getString("memory_name");
     }
 
     public void setMemoryName(String memoryName) {
@@ -154,6 +155,14 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
 
+    public void setMemoryId(String memoryId) {
+        this.memoryId = memoryId;
+    }
+
+    public String getMemoryId() {
+        return getObjectId();
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -165,6 +174,8 @@ public class Memory extends ParseObject implements Parcelable {
         dest.writeList(this.picturesParseFiles);
         dest.writeStringList(this.participantsIds);
         dest.writeString(this.eventId);
+        dest.writeString(this.memoryId);
+
     }
 
     protected Memory(Parcel in) {
@@ -172,7 +183,9 @@ public class Memory extends ParseObject implements Parcelable {
         this.picturesParseFiles = new ArrayList<ParseFile>();
         in.readList(this.picturesParseFiles, ParseFile.class.getClassLoader());
         this.participantsIds = in.createStringArrayList();
+        in.readList(this.participantsIds, String.class.getClassLoader());
         this.eventId = in.readString();
+        this.memoryId = in.readString();
     }
 
     public static final Creator<Memory> CREATOR = new Creator<Memory>() {
