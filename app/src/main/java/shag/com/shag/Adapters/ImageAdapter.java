@@ -23,6 +23,8 @@ import shag.com.shag.R;
 public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<ParseFile> memoryPictures;
+    private ImageZoomAdapterCallback callback;
+
 
     public ImageAdapter(Context c, ArrayList<ParseFile> memoryPictures) {
         mContext = c;
@@ -43,7 +45,7 @@ public class ImageAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
-        ImageView imageView;
+        final ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
@@ -54,7 +56,7 @@ public class ImageAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
         // convert parse file to bitmap
-        Bitmap bm = bitmapConverterFromParseFile(memoryPictures.get(position));
+        final Bitmap bm = bitmapConverterFromParseFile(memoryPictures.get(position));
 
         if (bm != null) {
             imageView.setImageBitmap(bm);
@@ -65,13 +67,16 @@ public class ImageAdapter extends BaseAdapter {
 
         // imageView.setImageResource(memoryPictures.get(position));
 
-        /* imageView.setOnClickListener(new View.OnClickListener() {
+        // upon click, initiate dialog fragment through interface
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (callback != null) {
+                    callback.initiateDialog(bm);
+                }
             }
-        }); */
-
+        });
+        // TODO return with glide
         return imageView;
     }
 
@@ -102,4 +107,14 @@ public class ImageAdapter extends BaseAdapter {
             R.drawable.sample_4, R.drawable.sample_5,
             R.drawable.sample_6, R.drawable.sample_7
     }; */
+
+    // create interface to pass Bitmap back to activity
+    public interface ImageZoomAdapterCallback {
+        void initiateDialog(Bitmap bitmap);
+    }
+
+    public void setCallback(ImageZoomAdapterCallback callback) {
+        this.callback = callback;
+    }
+
 }

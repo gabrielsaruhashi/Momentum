@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -27,10 +28,11 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import shag.com.shag.Adapters.ImageAdapter;
+import shag.com.shag.Fragments.DialogFragments.ImageZoomDialogFragment;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
-public class MemoryDetailsActivity extends AppCompatActivity {
+public class MemoryDetailsActivity extends AppCompatActivity implements ImageAdapter.ImageZoomAdapterCallback{
     @BindView(R.id.tvMemoryName) TextView tvMemoryName;
     @BindView(R.id.btAddPicture) Button btAddPicture;
     @BindView(R.id.ivMemoryBannerPicture) ImageView ivMemoryBannerPicture;
@@ -65,6 +67,9 @@ public class MemoryDetailsActivity extends AppCompatActivity {
         pictures = memory.getPicturesParseFiles();
         imageAdapter = new ImageAdapter(this, pictures);
         gridView = (GridView) findViewById(R.id.gridview);
+
+        // setup callback for image zoom
+        imageAdapter.setCallback(this);
 
         // pass the images to the imageAdapter
         gridView.setAdapter(imageAdapter);
@@ -169,4 +174,14 @@ public class MemoryDetailsActivity extends AppCompatActivity {
         }
     }
 
+    private void showImageZoomDialog(Bitmap bm) {
+        FragmentManager fm = getSupportFragmentManager();
+        ImageZoomDialogFragment imageZoomDialogFragment = ImageZoomDialogFragment.newInstance(bm);
+        imageZoomDialogFragment.show(fm, "fragment_picture_zoom");
+    }
+
+    @Override
+    public void initiateDialog(Bitmap bitmap) {
+        showImageZoomDialog(bitmap);
+    }
 }
