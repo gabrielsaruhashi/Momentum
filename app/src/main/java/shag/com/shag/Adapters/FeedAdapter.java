@@ -93,7 +93,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // get icon url
         String url = "";
         if (event.getEventOwner() != null) {
-            url = event.getEventOwner().getImageUrl();
+            url = event.getEventOwner().getImageUrl().replace("_normal", "");
         }
         // load user profile image using glide
         Glide.with(context)

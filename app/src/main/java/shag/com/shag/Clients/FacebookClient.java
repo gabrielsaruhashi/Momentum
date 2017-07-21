@@ -26,24 +26,26 @@ public class FacebookClient {
 
     public void getFriendsUsingApp(GraphRequest.Callback callback) {
         Bundle params = new Bundle();
-        params.putString("fields", "id,name,picture");
+        params.putString("fields", "id,name,picture.type(large)");
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", params, HttpMethod.GET,
                 callback).executeAsync();
     }
 
     public void getFriendsInfo(long friendFbId, GraphRequest.Callback callback) {
         Bundle params = new Bundle();
-        params.putString("fields", "id,name,picture");
+        params.putString("fields", "id,name,picture.type(large)");
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/" + friendFbId, params, HttpMethod.GET,
                 callback).executeAsync();
     }
 
     public void getMyInfo(GraphRequest.Callback callback) {
         Bundle params = new Bundle();
-        params.putString("fields", "id,name,picture");
+        params.putString("fields", "id,name,picture.type(large)");
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/me", params, HttpMethod.GET,
                 callback).executeAsync();
     }
+
+
 
     //returns event node (need to call getJSONObject() before parsing)
     public void getEventInfo(long eventID, GraphRequest.Callback callback) {

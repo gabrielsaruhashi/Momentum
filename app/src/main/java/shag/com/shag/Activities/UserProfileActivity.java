@@ -60,6 +60,7 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onCompleted(GraphResponse response) {
                 JSONObject userJSON = response.getJSONObject();
                 u = User.fromJson(userJSON);
+
                 name.setText(u.getName());
                 Glide.with(context).load(u.imageUrl).into(profileImage);
             }

@@ -3,10 +3,13 @@ package shag.com.shag.Activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -31,9 +34,14 @@ import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
+import shag.com.shag.Adapters.PollsAdapter;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Models.Poll;
+import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
+
+import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class ChatActivity extends AppCompatActivity {
     static final String TAG = "DEBUG_CHAT";
@@ -48,17 +56,58 @@ public class ChatActivity extends AppCompatActivity {
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
 
+    //polls
+    // list of tweets
+    ArrayList<Poll> polls;
+    // recycler view
+    RecyclerView rvPolls;
+    // the adapter wired to the new view
+    PollsAdapter pollAdapter;
+
+
     // chat id
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
     private Event chatEvent;
+    private DrawerLayout drawerLayout;
+    private ActionBarDrawerToggle actionBarDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close);
+
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         context = this;
+
+
+        // initialize the list of polls
+        polls = new ArrayList<>();
+        // construct the adater from the data source
+        pollAdapter = new PollsAdapter(polls);
+        // initialize recycler view
+        rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
+
+        // attach the adapter to the RecyclerView
+        rvPolls.setAdapter(pollAdapter);
+        // Set layout manager to position the items
+        rvPolls.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // add line divider decorator
+        RecyclerView.ItemDecoration itemDecoration = new
+                DividerItemDecorator(rvPolls.getContext(), DividerItemDecorator.VERTICAL_LIST);
+        rvPolls.addItemDecoration(itemDecoration);
+
+
+
         // unwrap intent and get current user id
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
@@ -104,7 +153,31 @@ public class ChatActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(actionBarDrawerToggle.onOptionsItemSelected(item)){
+//            // initialize the list of polls
+//            polls = new ArrayList<>();
+//            // construct the adater from the data source
+//            pollAdapter = new PollsAdapter(polls);
+//            // initialize recycler view
+//            rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
+//
+//            // attach the adapter to the RecyclerView
+//            rvPolls.setAdapter(pollAdapter);
+//            // Set layout manager to position the items
+//            rvPolls.setLayoutManager(new LinearLayoutManager(getContext()));
+//
+//            // add line divider decorator
+//            RecyclerView.ItemDecoration itemDecoration = new
+//                    DividerItemDecorator(rvPolls.getContext(), DividerItemDecorator.VERTICAL_LIST);
+//            rvPolls.addItemDecoration(itemDecoration);
 
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
     // setup button event handler which posts the entered message to Parse
     void setupMessagePosting() {
@@ -236,7 +309,11 @@ public class ChatActivity extends AppCompatActivity {
         refreshMessages();
 
     }
-
+    public void onCreatePollView(MenuItem item) {
+        //launch profile view
+        Intent i = new Intent(this, UserProfileActivity.class);
+        startActivity(i);
+    }
     // Query messages from Parse so we can load them into the chat adapter
     void refreshMessages() {
 
