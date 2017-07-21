@@ -10,17 +10,9 @@
         android:title="Item"
         app:showAsAction="always" />
 
-
-    <item
-        android:id="@+id/miSettings"
-        android:icon="@drawable/ic_settings"
-        android:onClick="onSettingsView"
-        android:title="Compose"
-        app:showAsAction="always" />
-
     <item
         android:id="@+id/miMemories"
-        android:icon="@drawable/ic_movie_roll_tape"
+        android:icon="@drawable/ic_camera"
         android:onClick="onMemoriesView"
         android:title="Memories"
         app:showAsAction="always" />
