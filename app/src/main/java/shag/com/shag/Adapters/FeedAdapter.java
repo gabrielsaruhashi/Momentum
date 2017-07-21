@@ -86,8 +86,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.btJoin.setText("Joined");
 
         } else {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
             holder.btJoin.setText("Join");
+        }
+
+        //TODO: change categories
+        if (event.getCategory().equals("Movie")) {
+            holder.ivCategory.setImageResource(R.drawable.ic_chill);
+        } else if (event.getCategory().equals("Basketball")) {
+            holder.ivCategory.setImageResource(R.drawable.ic_sports);
+        } else {
+            holder.ivCategory.setImageResource(R.drawable.ic_misc);
         }
 
         // get icon url
@@ -99,7 +108,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Glide.with(context)
                 .load(url)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                .placeholder(R.drawable.ic_person)
                 .into(holder.ivProfileImage);
 
     }
@@ -144,6 +152,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         @BindView(R.id.tvRelativeTime) TextView tvRelativeTime;
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
         @BindView(R.id.btJoin) Button btJoin;
+        @BindView(R.id.ivCategory) ImageView ivCategory;
 
 
         public ViewHolder(View itemView) {
@@ -219,7 +228,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
                 } else {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -318,7 +327,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.burnt_orange));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
