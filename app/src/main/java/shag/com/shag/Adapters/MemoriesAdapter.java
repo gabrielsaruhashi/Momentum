@@ -96,7 +96,8 @@ public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHo
                 Memory memory = memories.get(position);
                 // set up intent
                 Intent i = new Intent(context, MemoryDetailsActivity.class);
-                i.putExtra(Memory.class.getSimpleName(), memory);
+                //TODO pass entire object (NOT priority tho)
+                i.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
                 context.startActivity(i);
             }
 
