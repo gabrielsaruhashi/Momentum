@@ -327,7 +327,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
