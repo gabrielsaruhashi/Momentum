@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
@@ -174,14 +176,24 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         }
     }
 
-    private void showImageZoomDialog(Bitmap bm) {
+    private void showImageZoomDialog(Bitmap bm, int screenWidth, int screenHeight) {
         FragmentManager fm = getSupportFragmentManager();
-        ImageZoomDialogFragment imageZoomDialogFragment = ImageZoomDialogFragment.newInstance(bm);
+        ImageZoomDialogFragment imageZoomDialogFragment = ImageZoomDialogFragment.newInstance(bm, screenWidth, screenHeight);
         imageZoomDialogFragment.show(fm, "fragment_picture_zoom");
     }
 
     @Override
     public void initiateDialog(Bitmap bitmap) {
-        showImageZoomDialog(bitmap);
+        // Get screen size
+        Display display = this.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int screenWidth = size.x;
+        int screenHeight = size.y;
+
+
+        showImageZoomDialog(bitmap, screenWidth, screenHeight);
     }
+
+
 }
