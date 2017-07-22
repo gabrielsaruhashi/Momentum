@@ -1,26 +1,34 @@
 package shag.com.shag.Fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -48,7 +56,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,7 +65,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import shag.com.shag.Activities.PublicEventDetailsActivity;
+import shag.com.shag.Activities.SelectEventDetailsActivity;
 import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.R;
 
@@ -85,16 +92,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
-    ToggleButton btn;
     Button btn2;
     Button btn3;
-    Button btn4;
-    Button btn5;
-    Button btn6;
-    Marker marker1;
+    CardView cardView;
     Geocoder geocoder;
     List<Address> addresses;
-
+    TextView cardTitle;
+    TextView cardDescription;
+    TextView cardLocation;
+    ImageView cardExit;
+    FloatingActionButton fab;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -103,29 +110,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
+
         mRequestQueue = VolleyRequest.getInstance(this.getContext()).
                 getRequestQueue();
 
 
-        btn= (ToggleButton) v.findViewById(R.id.btn_Test);
         btn2 = (Button) v.findViewById(R.id.btn_Test2);
         btn3= (Button) v.findViewById(R.id.btn_Test3);
-        btn4 = (Button) v.findViewById(R.id.btn_Test4);
-        btn5= (Button) v.findViewById(R.id.btn_Test5);
-        btn6 = (Button) v.findViewById(R.id.btn_Test6);
+        cardView = (CardView) v.findViewById(R.id.cardView);
+        cardTitle = (TextView) v.findViewById(R.id.tvEventNameTitle);
+        cardDescription = (TextView) v.findViewById(R.id.tvDescription);
+        cardLocation = (TextView) v.findViewById(R.id.tvLocation);
+        cardExit = (ImageView) v.findViewById(R.id.ivClose);
+
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
 
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MarkerOptions markerOptions1 = new MarkerOptions();
-                markerOptions1.position(new LatLng (47.621397, -122.338092));
-                markerOptions1.title("Bill Position");
-                markerOptions1.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-                marker1 = mGoogleMap.addMarker(markerOptions1);
-            }
-        });
+        fab = (FloatingActionButton) v.findViewById(R.id.myFAB);
+
+
 
 
         btn2.setOnClickListener(new View.OnClickListener() {
@@ -149,6 +152,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public void onClick(View v) {
                 onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
 
+            }
+        });
+
+        cardExit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cardView.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -330,7 +340,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
     //JAMBASE API
-    private void onStartMusicRequest(String zipcode, String radius) {
+    public void onStartMusicRequest(String zipcode, String radius) {
         VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getMusicRequest(zipcode,radius));
     }
 
@@ -396,35 +406,45 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                     publicEventData.put("Description", "concert??");
                                     publicEventData.put("Location", locationAddress);
                                     publicEventData.put("Category", "Music");
-
+                                    Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
 
                                     MarkerOptions markerOptions = new MarkerOptions();
                                     markerOptions.position(musicLatLng);
                                     markerOptions.title(artist);
-                                    markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_VIOLET));
+                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
                                     mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
-
 
                                     mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                         @Override
                                         public void onInfoWindowClick(Marker marker) {
-                                            Intent i = new Intent(getContext(), PublicEventDetailsActivity.class);
-                                            i.putExtra("Data", (Serializable) marker.getTag());
-//
-                                            startActivity(i);
+
+                                            final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
+
+                                            cardTitle.setText(data.get("Name"));
+                                            cardDescription.setText(data.get("Description"));
+                                            cardLocation.setText(data.get("Location"));
+
+                                            cardView.setVisibility(View.VISIBLE);
+
+                                            fab.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+
+
+                                                    Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
+                                                    i.putExtra("Location", data.get("Location"));
+                                                    i.putExtra("Category", data.get("Category"));
+                                                    getContext().startActivity(i);
+                                                }
+                                            });
+
                                         }
 
                                     });
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
-                                }                                //Event event = new Event();
-                                //event.setDeadline(eventArray.getJSONObject(i).getInt("Date") + "");
-                                // event.setLatLng(new LatLng(eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude"),
-                                //         eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude")));
-                                //event.setCategory("Music");
-                                //event.setLocation(eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name"));
-                                // Log.d("lookie here", name + new LatLng(lat, lng) + "");
+                                }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -443,8 +463,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return req;
     }
 
+
+
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
+
+
     //ZOMATO API
-    private void onStartFoodRequest(String lat, String lng) {
+    public void onStartFoodRequest(String lat, String lng) {
         VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(lat,lng));
     }
 
@@ -479,23 +518,39 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 publicEventData.put("Location", locationAddress);
                                 publicEventData.put("Category", "Food");
 
+                                Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
 
                                 final MarkerOptions markerOptions = new MarkerOptions();
                                 markerOptions.position(restaurantLatLng);
                                 markerOptions.title(restaurantName);
-                                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                                mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
-
-
+                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                                mGoogleMap.addMarker(markerOptions)
+                                        .setTag(publicEventData);
 
 
                                 mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                                     @Override
                                     public void onInfoWindowClick(Marker marker) {
-                                        Intent i = new Intent(getContext(), PublicEventDetailsActivity.class);
-                                        i.putExtra("Data", (Serializable) marker.getTag());
-//
-                                        startActivity(i);
+
+                                        final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
+
+                                            cardTitle.setText(data.get("Name"));
+                                            cardDescription.setText(data.get("Description"));
+                                            cardLocation.setText(data.get("Location"));
+                                            cardView.setVisibility(View.VISIBLE);
+
+                                        fab.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+
+
+                                                Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
+                                                i.putExtra("Location", data.get("Location"));
+                                                i.putExtra("Category", data.get("Category"));
+                                                getContext().startActivity(i);
+                                            }
+                                        });
+
                                     }
 
                                 });
