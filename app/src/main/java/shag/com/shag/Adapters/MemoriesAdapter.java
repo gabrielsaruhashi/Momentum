@@ -48,9 +48,17 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
             // binding view parts to view holder
             viewHolder.ivMemoryBannerPicture = (ImageView) cell.findViewById(R.id.ivMemoryBannerPicture);
-            viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
-            viewHolder.ivTitle = (ImageView) cell.findViewById(R.id.ivTitle);
+            // viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
             viewHolder.btnAccessMemory = (Button) cell.findViewById(R.id.content_request_btn);
+
+            // title card
+            viewHolder.tvDescription = (TextView) cell.findViewById(R.id.tvDescription);
+            viewHolder.ivTitle = (ImageView) cell.findViewById(R.id.ivTitle);
+
+            //TODO dummy data
+            viewHolder.fakeFriend1 = (ImageView) cell.findViewById(R.id.fake_pic1);
+            viewHolder.fakeFriend2 = (ImageView) cell.findViewById(R.id.fake_pic2);
+            viewHolder.fakeFriend3 = (ImageView) cell.findViewById(R.id.fake_pic3);
 
             cell.setTag(viewHolder);
         } else {
@@ -63,19 +71,29 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             viewHolder = (ViewHolder) cell.getTag();
         }
 
-        // bind data from selected element to view through view holder
+        // viewHolder.tvMemoryName.setText(memory.getMemoryName());
+        viewHolder.tvDescription.setText(memory.getMemoryName());
 
+        //TODO use real data to populate views
         Glide.with(mContext)
-                .load("http://theinspirationgrid.com/wp-content/uploads/2015/05/photo-nick-venton-02.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
-                .into(viewHolder.ivMemoryBannerPicture);
-
-        viewHolder.tvMemoryName.setText(memory.getMemoryName());
-
-        Glide.with(mContext)
-                .load("http://www.designbolts.com/wp-content/uploads/2014/06/Cute-twitter-header-banner-design.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .load("http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
                 .into(viewHolder.ivTitle);
+
+
+        Glide.with(mContext)
+                .load("https://s3.amazonaws.com/classconnection/455/flashcards/8794455/jpg/belachew_samrawit_s01238564-155DC9A147C4F218FC9.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .into(viewHolder.fakeFriend1);
+
+        Glide.with(mContext)
+                .load("https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAnvAAAAJDVhNWUzYjMxLTA0OWYtNGU5Yy05MTM4LTQwY2QzZTFmMzkzYQ.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .into(viewHolder.fakeFriend2);
+
+        Glide.with(mContext)
+                .load("https://yt3.ggpht.com/-QQ6nz0pWCk0/AAAAAAAAAAI/AAAAAAAAAAA/3NXhoHLM_LQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .into(viewHolder.fakeFriend3);
 
         // viewHolder.btnAccessMemory.setOnClickListener(mContext);
 
@@ -114,6 +132,13 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         TextView vPalette;
         Button btnAccessMemory;
         ImageView ivTitle;
+        TextView tvDescription;
+
+        // dummy data
+        ImageView fakeFriend1;
+        ImageView fakeFriend2;
+        ImageView fakeFriend3;
+
 
     }
 

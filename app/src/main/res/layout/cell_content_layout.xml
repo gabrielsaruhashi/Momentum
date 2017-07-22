@@ -20,7 +20,7 @@
             android:layout_centerInParent="true"
             android:text="@string/mock_address"
             android:textColor="@android:color/white"
-            android:textSize="20sp" />
+            android:textSize="10sp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -28,42 +28,134 @@
             android:layout_alignParentEnd="true"
             android:text="@string/mock_date"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:textSize="10sp" />
 
 
     </RelativeLayout>
 
-    <LinearLayout
-        android:orientation="vertical"
+    <!-- content header image -->
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/ivMemoryBannerPicture"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/grid_profile_height2"
-            android:scaleType="centerCrop" />
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:src="@drawable/head_image" />
 
+        <TextView
+            android:id="@+id/head_image_left_text"
+            style="@style/ContentImageBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivMemoryBannerPicture"
+            android:layout_alignStart="@id/ivMemoryBannerPicture"
+            android:paddingBottom="10dp"
+            android:paddingStart="20dp"
+            android:text="3" />
+
+        <TextView
+            style="@style/ContentImageBadgeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/head_image_left_text"
+            android:layout_alignStart="@id/head_image_left_text"
+            android:paddingStart="20dp"
+            android:text="@string/participants_badge" />
+
+        <TextView
+            android:id="@+id/head_image_right_text"
+            style="@style/ContentImageBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivMemoryBannerPicture"
+            android:layout_alignEnd="@id/ivMemoryBannerPicture"
+            android:paddingBottom="10dp"
+            android:paddingEnd="20dp"
+            android:text="7" />
+
+        <TextView
+            style="@style/ContentImageBadgeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/head_image_right_text"
+            android:layout_alignStart="@id/head_image_right_text"
+            android:text="@string/share_badge" />
+
+        <TextView
+            android:id="@+id/head_image_center_text"
+            style="@style/ContentImageBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/ivMemoryBannerPicture"
+            android:layout_centerHorizontal="true"
+            android:paddingBottom="10dp"
+            android:text="53" />
+
+        <TextView
+            style="@style/ContentImageBadgeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/head_image_center_text"
+            android:layout_alignStart="@id/head_image_center_text"
+            android:text="@string/photos_badge" />
+
+
+    </RelativeLayout>
+
+
+    <!-- content body layout -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:paddingBottom="6dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="9dp">
+
+        <!-- avatar and name part -->
         <RelativeLayout
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/palette_height">
-
-            <View
-                android:id="@+id/vPalette"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/tvMemoryName"
+                android:id="@+id/content_avatar_title"
+                style="@style/ContentMainBadgeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textSize="@dimen/memory_name_text_size"
-                android:textColor="@android:color/black" />
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="5dp"
+                android:text="@string/gang_badge" />
+
+            <ImageView
+                android:id="@+id/fake_pic1"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/content_avatar_title"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/fake_pic2"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_below="@id/content_avatar_title"
+                android:layout_toRightOf="@id/fake_pic1"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/fake_pic3"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_toRightOf="@id/fake_pic2"
+                android:layout_below="@id/content_avatar_title"
+                android:scaleType="centerCrop" />
+
         </RelativeLayout>
-    <!--
+        <!--
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/cvRoot"
@@ -73,37 +165,8 @@
             card_view:cardCornerRadius="@dimen/card_corner_radius"
             card_view:cardElevation="@dimen/card_elevation"
             android:minHeight="500dp"
-            >
+            > -->
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:id="@+id/ivMemoryBannerPicture"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/grid_profile_height"
-                    android:scaleType="centerCrop" />
-
-                <RelativeLayout
-                    android:layout_alignParentBottom="true"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/palette_height">
-
-                    <View
-                        android:id="@+id/vPalette"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-
-                    <TextView
-                        android:id="@+id/tvMemoryName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:textSize="@dimen/memory_name_text_size"
-                        android:textColor="@android:color/black" />
-                </RelativeLayout> -->
 
                 <!-- request button -->
                 <Button
@@ -115,20 +178,17 @@
                     android:padding="10dp"
                     android:text="@string/request_btn_text"
                     android:textAlignment="center"
-                    android:textColor="@color/mainTextColor"
+                    android:textColor="@color/white"
                     android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/btn_annotation_mock"
+                    android:text="Beer is the answer, but I can't remember the question"
                     android:textAlignment="center"
                     android:textColor="@color/contentBadgeTitle"
                     android:textSize="12sp" />
-        <!--
-            </LinearLayout>
-        </android.support.v7.widget.CardView> -->
 
     </LinearLayout>
 </LinearLayout>
