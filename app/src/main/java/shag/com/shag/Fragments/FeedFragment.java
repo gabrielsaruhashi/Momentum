@@ -81,7 +81,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
-        rvEvents.addItemDecoration(itemDecoration);
+        //rvEvents.addItemDecoration(itemDecoration);
 
 
 

@@ -63,7 +63,6 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         Glide.with(context)
                 .load(iconImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                .placeholder(R.drawable.ic_person)
                 .into(holder.ivChatIcon);
     }
 
