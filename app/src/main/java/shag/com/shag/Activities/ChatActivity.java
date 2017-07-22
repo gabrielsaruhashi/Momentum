@@ -35,6 +35,7 @@ import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
+import shag.com.shag.Fragments.DialogFragments.CreatePollFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
@@ -43,7 +44,7 @@ import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class ChatActivity extends AppCompatActivity {
+public class ChatActivity extends AppCompatActivity implements CreatePollFragment.CreatePollFragmentListener{
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
     Context context;
@@ -72,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
     private Event chatEvent;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+    private Button submitVote;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +90,13 @@ public class ChatActivity extends AppCompatActivity {
 
         context = this;
 
-
+        submitVote = (Button) findViewById(R.id.btMakePoll);
+        submitVote.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialog();
+            }
+        });
         // initialize the list of polls
         polls = new ArrayList<>();
         // construct the adater from the data source
@@ -178,6 +186,8 @@ public class ChatActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     // setup button event handler which posts the entered message to Parse
     void setupMessagePosting() {
@@ -309,11 +319,21 @@ public class ChatActivity extends AppCompatActivity {
         refreshMessages();
 
     }
-    public void onCreatePollView(MenuItem item) {
-        //launch profile view
-        Intent i = new Intent(this, UserProfileActivity.class);
-        startActivity(i);
+
+
+    @Override
+    public void onFinishCreatePollFragment(Poll poll) {
+        polls.add(poll);
+        pollAdapter.notifyDataSetChanged();
+        rvPolls.scrollToPosition(0);
+        //Log.d("onReturnValue", "Got value " + poll.getQuestion() + " back from Dialog!");
     }
+
+    public void showDialog() {
+        CreatePollFragment newFragment = CreatePollFragment.newInstance();
+        newFragment.show(getSupportFragmentManager(), "dialog");
+    }
+
     // Query messages from Parse so we can load them into the chat adapter
     void refreshMessages() {
 
@@ -374,11 +394,5 @@ public class ChatActivity extends AppCompatActivity {
         return ParseQuery.or(queries);
     }
 
-    /*@Override
-    public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("viewpager_position", 2);
-        context.startActivity(intent);
-    }*/
 }
 

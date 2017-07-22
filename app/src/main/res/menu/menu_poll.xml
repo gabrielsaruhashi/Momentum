@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".ChatActivity"
     >
 
-    <item android:id="@+id/nav_account"
-        android:title="Polls">
+    <!--<item android:id="@+id/nav_account"-->
+        <!--android:title="Polls"-->
+        <!--android:onClick="onCreatePollView">-->
 
-    </item>
+    <!--</item>-->
 
 
 </menu>

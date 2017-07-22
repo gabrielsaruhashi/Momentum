@@ -51,8 +51,6 @@ dependencies {
     // for oauth
     // multiselector for friends
 
-    
-
     // butterknife + transformations
     // for parse
     // facebook parse integration
@@ -60,7 +58,6 @@ dependencies {
     // multi-selector for friends
     // butterknife
 
-    
     // for Parse Live Queries
     // for Card View
     // GCM
