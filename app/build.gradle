@@ -9,7 +9,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "android.support.chill_circle.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key",
                 (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
     }
@@ -31,9 +31,9 @@ def dbflow_version = "4.0.4"
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    //androidTestCompile('com.android.support.chill_circle.espresso:espresso-core:2.2.2', {
+      //  exclude group: 'com.android.support', module: 'support-annotations'
+    //})
     // If you want to use the GPU Filters
 
     // for logging API calls to LogCat

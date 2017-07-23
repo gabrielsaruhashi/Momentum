@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#e57373</color>
-    <color name="colorPrimaryDark">#ef5350</color>
-    <color name="colorAccent">#15a8a7</color>
+    <color name="colorPrimary">#bf988f</color>
+    <color name="colorPrimaryDark">#856a64</color>
+    <color name="colorAccent">#595775</color>
     <color name="burnt_orange">#ff4632</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="medium_gray">#ffaab8c2</color>
+    <color name="sports_color">#a3586d</color>
+    <color name="chill_color">#5c4872</color>
+    <color name="misc_color">#0abda0</color>
+    <color name="music_color">#c1403d</color>
+    <color name="food_color">#f46a4e</color>
+    <color name="party_color">#65734B</color>
 </resources>

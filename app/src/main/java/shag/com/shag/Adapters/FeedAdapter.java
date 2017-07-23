@@ -2,10 +2,10 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,11 +21,8 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -93,10 +90,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         //TODO: change categories
         if (event.getCategory().equals("Movie")) {
             holder.ivCategory.setImageResource(R.drawable.ic_chill);
+            holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
         } else if (event.getCategory().equals("Basketball")) {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
+            holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
+        } else if (event.getCategory().equals("Party")) {
+            holder.ivCategory.setImageResource(R.drawable.ic_party);
+            holder.ivCategory.setImageResource(R.drawable.party_circle);
+        } else if (event.getCategory().equals("Food")) {
+            holder.ivCategory.setImageResource(R.drawable.ic_food);
+            holder.ivCategory.setImageResource(R.drawable.food_circle);
+        } else if (event.getCategory().equals("Music")) {
+            holder.ivCategory.setImageResource(R.drawable.ic_music);
+            holder.ivCategory.setImageResource(R.drawable.music_circle);
         } else {
             holder.ivCategory.setImageResource(R.drawable.ic_misc);
+            holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
         }
 
         // get icon url
@@ -117,32 +126,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         return events.size();
     }
 
-    // getRelativeTimeAgo("Mon Apr 01 21:16:23 +0000 2014");
-    public String getRelativeTimeAgo(String rawJsonDate) {
-        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
-        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
-        sf.setLenient(true);
-
-        String relativeDate = "";
-        try {
-            long dateMillis = sf.parse(rawJsonDate).getTime();
-            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
-
-            relativeDate = relativeDate.replace(" seconds", "s");
-            relativeDate = relativeDate.replace(" second", "s");
-            relativeDate = relativeDate.replace(" minutes", "m");
-            relativeDate = relativeDate.replace(" minute", "m");
-            relativeDate = relativeDate.replace(" hours", "h");
-            relativeDate = relativeDate.replace(" hour", "h");
-            relativeDate = relativeDate.replace(" ago", "");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return relativeDate;
-    }
-
     // creates ViewHolder class
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
@@ -153,6 +136,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
         @BindView(R.id.btJoin) Button btJoin;
         @BindView(R.id.ivCategory) ImageView ivCategory;
+        Drawable backgroundCircle;
+
 
 
         public ViewHolder(View itemView) {
@@ -163,7 +148,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
             // set click listener for quick join shortcut
             btJoin.setOnClickListener(this);
-
+            backgroundCircle = ivCategory.getBackground();
         }
 
         @Override
