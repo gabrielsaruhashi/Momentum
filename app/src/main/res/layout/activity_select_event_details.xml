@@ -6,12 +6,43 @@
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.SelectEventDetailsActivity">
 
+    <RelativeLayout
+        android:id="@+id/descriptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Description"
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="31dp" />
+
+        <EditText
+            android:id="@+id/tvDescriptionInput"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/tvDescription"
+            android:layout_below="@+id/tvDescription"
+            android:hint="Required 5 characters"
+            android:inputType="textMultiLine"
+            android:textAppearance="@android:style/TextAppearance.Small"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="53dp" />
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/tvDeadline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/tvDescriptionInput"
+        android:layout_below="@+id/descriptions"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
         android:text="Deadline To Join Event:"
@@ -19,49 +50,26 @@
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="133dp" />
 
-    <TextView
-        android:id="@+id/tvDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:textAppearance="@android:style/TextAppearance.Medium"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="31dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"/>
 
     <Button
         android:id="@+id/btNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Next"
-        android:elevation="2dp"
-        tools:layout_editor_absoluteY="460dp"
-        tools:layout_editor_absoluteX="280dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:elevation="2dp"
+        android:text="Next"
+        tools:layout_editor_absoluteX="280dp"
+        tools:layout_editor_absoluteY="460dp" />
 
-    <EditText
-        android:id="@+id/tvDescriptionInput"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/tvDescription"
-        android:layout_below="@+id/tvDescription"
-        android:hint="Required 5 characters"
-        android:inputType="textMultiLine"
-        android:textAppearance="@android:style/TextAppearance.Small"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="53dp" />
 
     <LinearLayout
         android:id="@+id/llExpireOptions"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:orientation="horizontal"
+        android:layout_alignStart="@+id/tvDeadline"
         android:layout_below="@+id/tvDeadline"
-        android:layout_alignStart="@+id/tvDeadline">
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tv30"
@@ -119,38 +127,232 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/tvLocationCategory"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/llExpireOptions"
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btNext"
         android:layout_below="@+id/llExpireOptions"
-        android:layout_marginTop="15dp"
-        android:text="Location:"
-        android:textAppearance="@android:style/TextAppearance.Medium" />
+        android:orientation="vertical"
+        android:padding="5dp"
+        android:weightSum="3">
 
-    <EditText
-        android:id="@+id/etLocation"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPostalAddress"
-        android:text="TBD"
-        android:maxLines="10"
-        android:layout_below="@+id/tvLocationCategory"
-        android:layout_alignStart="@+id/tvLocationCategory" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:weightSum="2"
 
-    <!--<fragment-->
-        <!--android:id="@+id/place_autocomplete_fragment"-->
-        <!--android:layout_width="368dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"-->
-        <!--tools:layout_editor_absoluteY="0dp"-->
-        <!--tools:layout_editor_absoluteX="8dp"-->
-        <!--android:layout_below="@+id/tvLocationCategory"-->
-        <!--android:layout_alignStart="@+id/tvLocationCategory"-->
-        <!--/>-->
+            >
 
+            <android.support.v7.widget.CardView
+
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:textAlignment="center"
+                app:cardBackgroundColor="@color/sports_color"
+                app:cardElevation="4dp"
+                android:elevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tddsa2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|right"
+                        android:text="30 Mn"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                app:cardBackgroundColor="@color/chill_color"
+                app:cardElevation="4dp"
+                android:elevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tddsafsad2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical|right"
+                        android:text="1 Hr"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:paddingTop="5dp"
+            android:weightSum="2"
+
+            >
+
+            <android.support.v7.widget.CardView
+
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                app:cardBackgroundColor="@color/music_color"
+                app:cardElevation="4dp"
+                android:elevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tddfasd2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical|right"
+                        android:text="2 Hr"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                app:cardBackgroundColor="@color/misc_color"
+                app:cardElevation="4dp"
+                android:elevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/td2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical|right"
+                        android:text="3 Hr"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:weightSum="2">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:paddingRight="5dp"
+                app:cardBackgroundColor="@color/party_color"
+                android:elevation="4dp"
+                app:cardElevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/tds2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical|right"
+                        android:text="12 Hr"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                app:cardBackgroundColor="@color/food_color"
+                android:elevation="4dp"
+                app:cardElevation="4dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/ts2h"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="false"
+                        android:gravity="center_vertical|right"
+                        android:text="6 Hr"
+                        android:textAlignment="center"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 
 </RelativeLayout>

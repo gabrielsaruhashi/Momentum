@@ -3,6 +3,7 @@ package shag.com.shag.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +43,10 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     EditText etDescription;
     String category;
     PlaceAutocompleteFragment autocompleteFragment;
-    EditText etLocation;
+    CardView cd1;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         category = getIntent().getStringExtra("Category");
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
-        etLocation = (EditText) findViewById(R.id.etLocation);
 
         TextView tv30 = (TextView) findViewById(R.id.tv30);
         setListenerForTime(tv30, 30);
@@ -72,12 +75,9 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         TextView tv12h = (TextView) findViewById(R.id.tv12h);
         setListenerForTime(tv12h, 720);
 
-//        autocompleteFragment = (PlaceAutocompleteFragment)
-//                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        if (getIntent().getStringExtra("Location") != null) {
-            etLocation.setText(getIntent().getStringExtra("Location"));
-        }
+
+
         nextButton = (Button) findViewById(R.id.btNext);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

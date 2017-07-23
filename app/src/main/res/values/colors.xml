@@ -7,10 +7,12 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="medium_gray">#ffaab8c2</color>
+
     <color name="sports_color">#a3586d</color>
     <color name="chill_color">#5c4872</color>
     <color name="misc_color">#0abda0</color>
     <color name="music_color">#c1403d</color>
     <color name="food_color">#f46a4e</color>
     <color name="party_color">#65734B</color>
+
 </resources>
