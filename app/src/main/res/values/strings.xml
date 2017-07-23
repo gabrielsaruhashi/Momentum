@@ -22,11 +22,18 @@
     <!-- Memory strings -->
     <string name="btn_annotation_mock" translatable="false">X pictures were shared in this memory</string>
     <string name="request_btn_text" translatable="false">ACCESS MEMORY</string>
-    <string name="mock_address">Dexter Ave 1101</string>
     <string name="mock_date">August 10</string>
     <string name="participants_badge">FRIENDS</string>
     <string name="photos_badge">PHOTOS</string>
     <string name="share_badge">SHARES</string>
     <string name="gang_badge">GANG</string>
+    <string name="from_badge" translatable="false">FROM</string>
+    <string name="to_badge" translatable="false">TO</string>
+
+    <!-- Dummy Data -->
+    <string name="content_from1_mock">W 90th St</string>
+    <string name="content_from2_mock">New York, NY 10025</string>
+    <string name="content_to1_mock">46th Ave</string>
+    <string name="content_to2_mock">Woodside, NY 11101</string>
 
 </resources>

@@ -17,4 +17,6 @@
     <color name="bgTitleLeft">@color/colorPrimary</color>
     <color name="bgTitleRight">#ffffff</color>
     <color name="bgContent">@color/white</color>
+    <color name="contentDividerLine">#e0e0e0</color>
+
 </resources>

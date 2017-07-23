@@ -51,6 +51,8 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             // viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
             viewHolder.btnAccessMemory = (Button) cell.findViewById(R.id.content_request_btn);
 
+            // content card
+            viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
             // title card
             viewHolder.tvDescription = (TextView) cell.findViewById(R.id.tvDescription);
             viewHolder.ivTitle = (ImageView) cell.findViewById(R.id.ivTitle);
@@ -70,11 +72,13 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             }
             viewHolder = (ViewHolder) cell.getTag();
         }
+        /*
+        viewHolder.tvMemoryName.setText(memory.getMemoryName());
+        viewHolder.tvDescription.setText(memory.getMemoryName()); */
 
-        // viewHolder.tvMemoryName.setText(memory.getMemoryName());
-        viewHolder.tvDescription.setText(memory.getMemoryName());
 
         //TODO use real data to populate views
+
         Glide.with(mContext)
                 .load("http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
                 .into(viewHolder.ivTitle);
@@ -82,17 +86,17 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
         Glide.with(mContext)
                 .load("https://s3.amazonaws.com/classconnection/455/flashcards/8794455/jpg/belachew_samrawit_s01238564-155DC9A147C4F218FC9.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
                 .into(viewHolder.fakeFriend1);
 
         Glide.with(mContext)
                 .load("https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAnvAAAAJDVhNWUzYjMxLTA0OWYtNGU5Yy05MTM4LTQwY2QzZTFmMzkzYQ.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
                 .into(viewHolder.fakeFriend2);
 
         Glide.with(mContext)
                 .load("https://yt3.ggpht.com/-QQ6nz0pWCk0/AAAAAAAAAAI/AAAAAAAAAAA/3NXhoHLM_LQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
                 .into(viewHolder.fakeFriend3);
 
         // viewHolder.btnAccessMemory.setOnClickListener(mContext);

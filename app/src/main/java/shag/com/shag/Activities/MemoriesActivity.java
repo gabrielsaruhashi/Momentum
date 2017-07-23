@@ -64,6 +64,17 @@ public class MemoriesActivity extends AppCompatActivity {
 
         // populate memory
         populateMemories();
+
+        // set on click event listener to list view
+        lvMemories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                // toggle clicked cell state
+                ((FoldingCell) view).toggle(false);
+                // register in adapter that state for selected cell is toggled
+                mAdapter.registerToggle(pos);
+            }
+        });
     }
 
     private void populateMemories() {
@@ -83,16 +94,7 @@ public class MemoriesActivity extends AppCompatActivity {
                 memories.addAll(objects);
                 mAdapter.notifyDataSetChanged();
 
-                // set on click event listener to list view
-                lvMemories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                        // toggle clicked cell state
-                        ((FoldingCell) view).toggle(false);
-                        // register in adapter that state for selected cell is toggled
-                        mAdapter.registerToggle(pos);
-                    }
-                });
+
             } else {
                 e.getMessage();
             }

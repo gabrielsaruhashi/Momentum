@@ -19,12 +19,16 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.CustomUser;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
+
+import static com.raizlabs.android.dbflow.config.FlowLog.Level.D;
 
 public class LoginActivity extends AppCompatActivity {
     Context context;
@@ -92,8 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                                 newCustomUser.setSomeString("name", name);
                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                                 newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
-                                //TOD add memories list not working
                                 newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
+                                newCustomUser.setObject("categories_tracker", (Object) createCategoriesMap);
                             }
                         });
                         Log.d("MyApp", "User signed up and logged in through Facebook!");
@@ -144,5 +148,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //do nothing
+    }
+
+    public HashMap createCategoriesMap {
+        HashMap hm = new HashMap();
+
+        // Put elements to the map
+        hm.put("Chill", 0);
+        hm.put("Party", 0);
+        hm.put("Sports", 0);
+        hm.put("Misc", 0);
+        hm.put("Food", 0);
+        hm.put("Music", 0);
     }
 }

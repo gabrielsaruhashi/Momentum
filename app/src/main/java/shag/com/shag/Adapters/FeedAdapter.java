@@ -293,6 +293,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // subscribes user to this "channel" for notifications
                     ParsePush.subscribeInBackground(event.eventId);
 
+
                 } else {
                     e.getMessage();
                 }

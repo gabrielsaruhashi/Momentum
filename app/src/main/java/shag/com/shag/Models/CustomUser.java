@@ -37,4 +37,9 @@ public class CustomUser {
         user.saveInBackground();
     }
 
+    public void setObject(String objectName, Object object) {
+        user.put(objectName, object);
+        user.saveInBackground();
+    }
+
 }
