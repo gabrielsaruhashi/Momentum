@@ -11,6 +11,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.GetCallback;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -35,13 +38,18 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     RadioButton rb1;
     RadioButton rb2;
 
-    public PollsAdapter(ArrayList<Poll> polls) { this.polls = polls; };
+    public PollsAdapter(ArrayList<Poll> polls) {
+        this.polls = polls;
+    }
+
+    ;
 
     @Override
     public PollsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // get context and inflate view
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
+        ParseObject.registerSubclass(Poll.class);
 
         // create the view using the item_feed layout
         View feedView = inflater.inflate(R.layout.item_poll, parent, false);
@@ -52,25 +60,9 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
     }
 
-//    // creates ViewHolder class
-//    public class ViewHolder extends RecyclerView.ViewHolder{
-//        // Automatically finds each field by the specified ID
-//
-//
-//        @BindView(R.id.tvQuestion) TextView tvQuestion;
-//        @BindView(R.id.tvBody)
-//        TextView tvBody;
-//
-//        public ViewHolder(View itemView) {
-//            super(itemView);
-//            ButterKnife.bind(this, itemView);
-//        }
-//
-//    }
-
 
     // creates ViewHolder class
-    public class ViewHolder extends RecyclerView.ViewHolder  {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         // Automatically finds each field by the specified ID
         @BindView(R.id.tvQuestion)
@@ -88,36 +80,53 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         @BindView(R.id.radioChoice4)
         RadioButton radioButton4;
 
-
+        //Button btVote;
         @BindView(R.id.btVote)
         Button btVote;
-
-
 
         public ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             final int[] choice = {3};
-
             btVote.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        poll.updateScores(poll.getScores(), poll.getChoices().get(choice[0]));
-                        poll.updatePeopleVoted(poll.getPeopleVoted(), ParseUser.getCurrentUser().getObjectId());
 
-                        //radio.setEnabled(false);
-                        radioButton1.setText(poll.getChoices().get(0) + ": " + poll.getScores().get(poll.getChoices().get(0)));
-                        radioButton2.setText(poll.getChoices().get(1) + ": " + poll.getScores().get(poll.getChoices().get(1)));
-                        radioButton3.setText(poll.getChoices().get(2) + ": " + poll.getScores().get(poll.getChoices().get(2)));
-                        radioButton4.setText(poll.getChoices().get(3) + ": " + poll.getScores().get(poll.getChoices().get(3)));
 
-                        if (poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())){
-                            btVote.setText("Voted");
-                            btVote.setEnabled(false);
+                @Override
+                public void onClick(View v) {
+                    //final Poll poll = polls.get(getAdapterPosition());
+
+                    // specify which class to query
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Poll");
+                    // return object with specific id
+                    query.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
+                        public void done(ParseObject object, com.parse.ParseException e) {
+                            if (e == null) {
+                                //update local object
+                                poll.updateScores(poll.getScores(), poll.getChoices().get(choice[0]));
+                                poll.updatePeopleVoted(poll.getPeopleVoted(), ParseUser.getCurrentUser().getObjectId());
+                                radioButton1.setText(poll.getChoices().get(0) + ": " + poll.getScores().get(poll.getChoices().get(0)));
+                                radioButton2.setText(poll.getChoices().get(1) + ": " + poll.getScores().get(poll.getChoices().get(1)));
+                                radioButton3.setText(poll.getChoices().get(2) + ": " + poll.getScores().get(poll.getChoices().get(2)));
+                                radioButton4.setText(poll.getChoices().get(3) + ": " + poll.getScores().get(poll.getChoices().get(3)));
+
+                                if (poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())) {
+                                    btVote.setText("Voted");
+                                    btVote.setEnabled(false);
+                                }
+                                //update parse object
+                                object.put("people_voted", poll.getPeopleVoted());
+                                object.put("scores", poll.getScores());
+
+                                object.saveInBackground();
+
+                            } else {
+                                e.getMessage();
+                            }
                         }
+                    });
 
-                    }
-                });
+                }
+            });
 
 
             radio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -133,19 +142,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
                     switch (index) {
                         case 0: // first button
-                            choice[0] =0;
+                            choice[0] = 0;
                             Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 1: // second button
-                            choice[0] =1;
+                            choice[0] = 1;
                             Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 2: // third button
-                            choice[0] =2;
+                            choice[0] = 2;
                             Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 3: // fourth button
-                            choice[0] =3;
+                            choice[0] = 3;
                             Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                     }
@@ -164,27 +173,32 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
 
         holder.tvQuestion.setText(poll.getQuestion());
+        if (!poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())) {
+            holder.radioButton1.setText(poll.getChoices().get(0));
+            holder.radioButton2.setText(poll.getChoices().get(1));
+            holder.radioButton3.setVisibility(View.INVISIBLE);
+            holder.radioButton4.setVisibility(View.INVISIBLE);
 
-        holder.radioButton1.setText(poll.getChoices().get(0));
-        holder.radioButton2.setText(poll.getChoices().get(1));
-        holder.radioButton3.setVisibility(View.INVISIBLE);
-        holder.radioButton4.setVisibility(View.INVISIBLE);
-
-        if (poll.getChoices().size()==3) {
-            holder.radioButton3.setVisibility(View.VISIBLE);
-            holder.radioButton3.setText(poll.getChoices().get(2));
+            if (poll.getChoices().size() == 3) {
+                holder.radioButton3.setVisibility(View.VISIBLE);
+                holder.radioButton3.setText(poll.getChoices().get(2));
+            } else if (poll.getChoices().size() == 4) {
+                holder.radioButton3.setVisibility(View.VISIBLE);
+                holder.radioButton4.setVisibility(View.VISIBLE);
+                holder.radioButton3.setText(poll.getChoices().get(2));
+                holder.radioButton4.setText(poll.getChoices().get(3));
+            }
+        } else {
+            holder.radioButton1.setText(poll.getChoices().get(0) + ": " + poll.getScores().get(poll.getChoices().get(0)));
+            holder.radioButton2.setText(poll.getChoices().get(1) + ": " + poll.getScores().get(poll.getChoices().get(1)));
+            holder.radioButton3.setText(poll.getChoices().get(2) + ": " + poll.getScores().get(poll.getChoices().get(2)));
+            holder.radioButton4.setText(poll.getChoices().get(3) + ": " + poll.getScores().get(poll.getChoices().get(3)));
+            holder.btVote.setText("Voted");
+            holder.btVote.setEnabled(false);
         }
-        else if (poll.getChoices().size()==4) {
-            holder.radioButton3.setVisibility(View.VISIBLE);
-            holder.radioButton4.setVisibility(View.VISIBLE);
-            holder.radioButton3.setText(poll.getChoices().get(2));
-            holder.radioButton4.setText(poll.getChoices().get(3));
-        }
-
 
 
     }
-
 
 
     @Override

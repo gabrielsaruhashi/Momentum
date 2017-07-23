@@ -20,12 +20,12 @@ import shag.com.shag.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CreatePollFragment.OnFragmentInteractionListener} interface
+ * {@link CreatePollDialogFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CreatePollFragment#newInstance} factory method to
+ * Use the {@link CreatePollDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CreatePollFragment extends DialogFragment{
+public class CreatePollDialogFragment extends DialogFragment{
 
     public interface CreatePollFragmentListener {
         void onFinishCreatePollFragment(Poll poll);
@@ -42,13 +42,13 @@ public class CreatePollFragment extends DialogFragment{
 
     private OnFragmentInteractionListener mListener;
 
-    public CreatePollFragment() {
+    public CreatePollDialogFragment() {
         // Required empty public constructor
     }
 
 
-    public static CreatePollFragment newInstance() {
-        CreatePollFragment fragment = new CreatePollFragment();
+    public static CreatePollDialogFragment newInstance() {
+        CreatePollDialogFragment fragment = new CreatePollDialogFragment();
         //Bundle args = new Bundle();
         return fragment;
     }
