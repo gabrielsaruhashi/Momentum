@@ -3,7 +3,7 @@
     android:layout_width="match_parent" android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvQ"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -15,37 +15,69 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/tvQuestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"
+        android:layout_alignTop="@+id/tvQ"
+        android:layout_toEndOf="@+id/tvQ"
         android:text="Where are we going?"
         android:textColor="@color/black" />
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="8dp"
-        android:layout_below="@+id/textView3"
-        android:layout_alignEnd="@+id/textView3"
-        android:layout_alignStart="@+id/textView2"
+        android:layout_below="@+id/tvQ"
+        android:layout_alignEnd="@+id/tvQ"
+        android:layout_alignStart="@+id/tvQuestion"
         android:id="@+id/space" />
 
-    <RadioButton
-        android:id="@+id/rb1"
+    <RadioGroup
+        android:id="@+id/rgPoll"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/tvQuestion"
+        android:layout_toEndOf="@+id/space">
+    <RadioButton
+        android:id="@+id/radioChoice1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="A"
         android:layout_below="@+id/space"
-        android:layout_toEndOf="@+id/textView2"
-        android:text="Choice A" />
+        android:layout_alignStart="@+id/space" />
 
     <RadioButton
-        android:id="@+id/rb2"
+        android:id="@+id/radioChoice2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/rb1"
-        android:layout_below="@+id/rb1"
-        android:text="Choice B"
-        android:textColor="@color/black" />
+        android:checked="true"
+        android:text="B"
+        android:layout_below="@+id/radioChoice1"
+        android:layout_alignStart="@+id/radioChoice1" />
+    <RadioButton
+        android:id="@+id/radioChoice3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="C"
+        android:layout_below="@+id/radioChoice2"
+        android:layout_alignStart="@+id/radioChoice1" />
+    <RadioButton
+        android:id="@+id/radioChoice4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="D"
+        android:layout_below="@+id/radioChoice3"
+        android:layout_alignStart="@+id/radioChoice1" />
+    </RadioGroup>
+    <Button
+        android:id="@+id/btVote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Vote"
+        android:layout_below="@+id/rgPoll"
+        android:layout_alignParentEnd="true" />
+
 
 </RelativeLayout>

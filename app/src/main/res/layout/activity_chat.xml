@@ -1,73 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/white"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/drawerLayout">
+    android:background="@android:color/white">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvChat"
-        android:transcriptMode="alwaysScroll"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_above="@+id/rlSend"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvChat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rlSend"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:transcriptMode="alwaysScroll" />
 
-    <RelativeLayout
-        android:id="@+id/rlSend"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:paddingTop="5dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:layout_height="wrap_content" >
-        <EditText
-            android:id="@+id/etMessage"
-            android:layout_toLeftOf="@+id/btSend"
-            android:layout_alignBottom="@+id/btSend"
+        <RelativeLayout
+            android:id="@+id/rlSend"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top"
-            android:hint="@string/message_hint"
-            android:inputType="textShortMessage"
-            android:imeOptions="actionSend"
-            />
-        <Button
-            android:id="@+id/btSend"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:paddingRight="10dp"
-            android:layout_alignParentRight="true"
-            android:text="@string/message_send"
-            android:textSize="18sp" >
-        </Button>
-    </RelativeLayout>
+            android:layout_alignParentBottom="true"
+            android:paddingBottom="10dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp"
+            android:paddingTop="5dp">
+
+            <EditText
+                android:id="@+id/etMessage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/btSend"
+                android:layout_toLeftOf="@+id/btSend"
+                android:gravity="top"
+                android:hint="@string/message_hint"
+                android:imeOptions="actionSend"
+                android:inputType="textShortMessage" />
+
+            <Button
+                android:id="@+id/btSend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:paddingRight="10dp"
+                android:text="@string/message_send"
+                android:textSize="18sp"></Button>
+        </RelativeLayout>
 
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView
+
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        app:menu="@menu/menu_poll"
         android:layout_gravity="start"
-        app:headerLayout="@layout/poll_title">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvPolls"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true" />
+        app:headerLayout="@layout/poll_title"
+        app:menu="@menu/menu_poll">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/btMakePoll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Create Poll"
+                android:textSize="18sp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvPolls"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="23dp"
+                android:layout_below="@+id/btMakePoll"
+                android:layout_alignParentStart="true" />
+
+        </RelativeLayout>
+
     </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

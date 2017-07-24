@@ -1,6 +1,8 @@
 package shag.com.shag.Fragments;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +44,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -158,7 +161,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         cardExit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cardView.setVisibility(View.INVISIBLE);
+                cardView.animate()
+                        .translationX(cardView.getWidth())
+                        .alpha(0.0f)
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                            }
+                        });
+                //cardView.setVisibility(View.INVISIBLE);
+
             }
         });
 
@@ -176,6 +191,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
                 .build();
         mGoogleApiClient.connect();
     }
@@ -425,6 +442,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                             cardLocation.setText(data.get("Location"));
 
                                             cardView.setVisibility(View.VISIBLE);
+
 
                                             fab.setOnClickListener(new View.OnClickListener() {
                                                 @Override
