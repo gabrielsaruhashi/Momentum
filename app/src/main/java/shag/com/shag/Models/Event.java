@@ -43,43 +43,39 @@ public class Event extends ParseObject implements Parcelable {
     // GETTERS
 
     public String getEventId() {
-        return eventId;
+        return getObjectId();
     }
 
-    public String getLocation() { return location; }
+    public String getLocation() { return getString("location"); }
 
     public String getCategory() {
-        return category;
+        return getString("category");
     }
 
-    public ArrayList<Long> getFriendsAtEvent() {
-        return friendsAtEvent;
-    }
-
-    public String getDescription() { return description; }
+    public String getDescription() { return getString("description"); }
 
     public Date getDeadline() {
-        return deadline;
+        return getDate("deadline)");
     }
 
-    public String getEventOwnerName() { return eventOwnerName; }
+    public String getEventOwnerName() { return getString("event_owner_name"); }
 
     public LatLng getLatLng() { return latLng; }
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
-    public ArrayList<String> getParticipantsIds() { return participantsIds;}
+    // TODO fix this
+    public ArrayList<String> getParticipantsIds() {
+        ParseObject user = getParseObject("User_event_owner").fetch();
+        // user found! Convert it to a user model
+        User eventOwner = User.fromParseObject(user);
+    }
 
-    public long getEventOwnerFbId() { return eventOwnerFbId; }
-
+    // TODO Fix this
     public User getEventOwner() {
-        return eventOwner;
+        return User.fromParseObject(getParseObject("eventOwner"));
     }
 
-    public String getEventOwnerId() {
-        return eventOwnerId;
-    }
-
-    public Date getTimeOfEvent() {return timeOfEvent; }
+    public Date getTimeOfEvent() {return getDate("event_time"); }
 
     // SETTERS
 

@@ -79,7 +79,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // populate the views
         Event event = events.get(position);
         holder.tvBody.setText(event.getDescription());
-        holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
+        //holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
         holder.tvEventOwnerName.setText(event.getEventOwnerName());
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
@@ -359,11 +359,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     public boolean isAlreadyInterested(String userId, Event event) {
-        if (event.participantsIds.contains(userId)) {
+        ArrayList<String> participants = event.getParticipantsIds();
+        if (participants.contains(userId)) {
             return true;
         }
         return false;
     }
+
 
     public String getTimeRemaining(Date date) {
         String timeRemaining = "";
