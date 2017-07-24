@@ -98,7 +98,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                newDate.setTime(newDate.getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
+                newDate.setTime((new Date()).getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
                 Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
                 //newEvent.deadline = newDate;
 
