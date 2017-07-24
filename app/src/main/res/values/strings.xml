@@ -19,6 +19,9 @@
     <string name="open">open</string>
     <string name="close">close</string>
 
+    <!-- Shaggy Bot -->
+    <string name="shaggy_bot_id">InuSHuTqkn</string>
+
     <!-- Memory strings -->
     <string name="btn_annotation_mock" translatable="false">X pictures were shared in this memory</string>
     <string name="request_btn_text" translatable="false">ACCESS MEMORY</string>

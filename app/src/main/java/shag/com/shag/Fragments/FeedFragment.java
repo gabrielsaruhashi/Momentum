@@ -166,6 +166,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         for (int i = 0; i < facebookFriendsIds.size(); i++) {
             ParseQuery<Event> query = new ParseQuery("Event");
             query.whereEqualTo("event_owner_fb_id", facebookFriendsIds.get(i));
+            query.include("User_event_owner");
             query.findInBackground(new FindCallback<Event>() {
                 @Override
                 public void done(List<Event> eventsList, ParseException e) {

@@ -79,8 +79,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // populate the views
         Event event = events.get(position);
         holder.tvBody.setText(event.getDescription());
-        //holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
-        holder.tvEventOwnerName.setText(event.getEventOwnerName());
+        //TODO getDeadline is returning null
+        //holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
+        holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
@@ -94,7 +95,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // get icon url
         String url = "";
         if (event.getEventOwner() != null) {
-            url = event.getEventOwner().getImageUrl().replace("_normal", "");
+            url = event.getEventOwner().getString("profile_image_url").replace("_normal", "");
         }
         // load user profile image using glide
         Glide.with(context)
@@ -187,11 +188,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
     }
 
-    // Easy access to the context object in the recyclerview
+    // easy access to the context object in the recyclerview
     private Context getContext() {
         return context;
     }
 
+    // clear the adapter
     public void clear() {
         events.clear();
         notifyDataSetChanged();
@@ -315,7 +317,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             }
         });
     }
-    //// TODO: 7/14/17 make sure user leaves event and put in db
     public void removeEvent(final String userId, final Event event, final Button joinStatus) {
         // update participants id
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();

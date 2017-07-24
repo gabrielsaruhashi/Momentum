@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
@@ -22,7 +21,6 @@ import java.util.Objects;
 import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
-import shag.com.shag.Models.User;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -73,37 +71,24 @@ public class ChatListFragment extends Fragment {
 
     public void populateChatList(String userId) {
 
-        ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+        ParseQuery<Event> query = new ParseQuery("Event");
         List list = new ArrayList();
         list.add(userId);
         query.whereContainedIn("participants_id", list);
-        query.findInBackground(new FindCallback<ParseObject>() {
+        query.include("User_event_owner");
+        query.findInBackground(new FindCallback<Event>() {
             @Override
-            public void done(List<ParseObject> itemList, ParseException e) {
+            public void done(List<Event> eventsList, ParseException e) {
                 if (e == null) {
-                    for (ParseObject item : itemList) {
-                        // convert each item found to an event
-                        final Event event = Event.fromParseObject(item);
+                    for (Event event : eventsList) {
 
-                        try {
-                            // fetch event owner
-                            ParseObject object = item.getParseObject("User_event_owner").fetch();
+                        // get chat's info to later populate view
+                        Chat eventChat = getChatInfoFromEvent(event);
 
-                            // user found! Convert it to a user model
-                            User eventOwner = User.fromParseObject(object);
-                            event.setEventOwner(eventOwner); // setting event owner
-
-                            // get chat's info to later populate view
-                            Chat eventChat = getChatInfoFromEvent(event);
-
-                            //add event to list to be displayed
-                            chats.add(eventChat);
-                            adapter.notifyItemInserted(chats.size() - 1);
-                            rvChats.smoothScrollToPosition(0);
-
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
+                        //add event to list to be displayed
+                        chats.add(eventChat);
+                        adapter.notifyItemInserted(chats.size() - 1);
+                        rvChats.smoothScrollToPosition(0);
 
                     }
                 } else { // if there is an error
@@ -118,16 +103,19 @@ public class ChatListFragment extends Fragment {
         // create new local chat
         Chat chat = new Chat();
         // set chat info
-        chat.setEvent(event);
         chat.setDescription(event.getDescription());
         chat.setEventId(event.getEventId());
+        // get participants
         chat.setChatParticipantsIds(event.getParticipantsIds());
-        chat.addChatParticipantsIds("InuSHuTqkn");
+
+        // add shaggy bot
+        chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
+
         // get icon url
         if (event.getEventOwner() != null) {
-            User eventOwner = event.getEventOwner();
+            ParseUser eventOwner = event.getEventOwner();
             // set chat icon to be the owner's image
-            chat.setChatIconUrl(eventOwner.getImageUrl());
+            chat.setChatIconUrl(eventOwner.getString("profile_image_url"));
         }
 
         // get event info

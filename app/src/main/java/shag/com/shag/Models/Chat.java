@@ -1,5 +1,7 @@
 package shag.com.shag.Models;
 
+import com.parse.ParseObject;
+
 import java.util.ArrayList;
 
 /**
@@ -12,7 +14,7 @@ public class Chat {
     // TODO might be interesting to later invite ppl even if event expired in feed
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
-    private Event event;
+    private ParseObject event;
 
     // trivial variables
     private String chatTitle;
@@ -22,7 +24,7 @@ public class Chat {
     // GETTERS & SETTERS
 
 
-    public Event getEvent() {
+    public ParseObject getEvent() {
         return event;
     }
 

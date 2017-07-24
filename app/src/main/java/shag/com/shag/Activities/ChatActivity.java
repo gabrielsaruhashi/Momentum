@@ -35,7 +35,6 @@ import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
-import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.DividerItemDecorator;
@@ -69,7 +68,6 @@ public class ChatActivity extends AppCompatActivity {
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
-    private Event chatEvent;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -113,7 +111,6 @@ public class ChatActivity extends AppCompatActivity {
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-        chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
 
         // Make sure the Parse server is setup to configured for live queries

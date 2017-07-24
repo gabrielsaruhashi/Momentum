@@ -8,6 +8,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class Event extends ParseObject implements Parcelable {
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
     public Date timeOfEvent;
-    private User eventOwner;
+    private ParseObject eventOwner;
 
     //CONSTRUCTORS
     public Event(){
@@ -63,16 +64,12 @@ public class Event extends ParseObject implements Parcelable {
     public LatLng getLatLng() { return latLng; }
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
-    // TODO fix this
-    public ArrayList<String> getParticipantsIds() {
-        ParseObject user = getParseObject("User_event_owner").fetch();
-        // user found! Convert it to a user model
-        User eventOwner = User.fromParseObject(user);
-    }
+    public ArrayList<String> getParticipantsIds() { return (ArrayList) get("participants_id");}
 
     // TODO Fix this
-    public User getEventOwner() {
-        return User.fromParseObject(getParseObject("eventOwner"));
+    public ParseUser getEventOwner() {
+        //return User.fromParseObject(getParseObject("event_owner_name"));
+        return getParseUser("User_event_owner");
     }
 
     public Date getTimeOfEvent() {return getDate("event_time"); }
@@ -80,7 +77,7 @@ public class Event extends ParseObject implements Parcelable {
     // SETTERS
 
 
-    public void setEventOwner(User eventOwner) {
+    public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
         // TODO check if I need the line below
         // put("event_owner", eventOwner);
@@ -214,7 +211,6 @@ public class Event extends ParseObject implements Parcelable {
             ParseObject user = object.getParseObject("User_event_owner").fetch();
             // user found! Convert it to a user model
             User eventOwner = User.fromParseObject(user);
-            event.setEventOwner(eventOwner); // setting event owner
         } catch (ParseException e) {
             e.printStackTrace();
         }
