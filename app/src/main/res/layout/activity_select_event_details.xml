@@ -45,7 +45,7 @@
         android:layout_below="@+id/descriptions"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="16dp"
-        android:text="Deadline To Join Event:"
+        android:text="Deadline To Join Event: "
         android:textAppearance="@android:style/TextAppearance.Medium"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="133dp" />
