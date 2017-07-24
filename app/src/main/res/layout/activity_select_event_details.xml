@@ -63,76 +63,76 @@
         tools:layout_editor_absoluteY="460dp" />
 
 
-    <LinearLayout
-        android:id="@+id/llExpireOptions"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_alignStart="@+id/tvDeadline"
-        android:layout_below="@+id/tvDeadline"
-        android:orientation="horizontal">
+    <!--<LinearLayout-->
+        <!--android:id="@+id/llExpireOptions"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="40dp"-->
+        <!--android:layout_alignStart="@+id/tvDeadline"-->
+        <!--android:layout_below="@+id/tvDeadline"-->
+        <!--android:orientation="horizontal">-->
 
-        <TextView
-            android:id="@+id/tv30"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="30m"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv30"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="30m"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/tv1h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="1h"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv1h"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="1h"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/tv2h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="2h"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv2h"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="2h"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/tv3h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="3h"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv3h"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="3h"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
 
 
-        <TextView
-            android:id="@+id/tv6h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="6h"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <!--<TextView-->
+            <!--android:id="@+id/tv6h"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="6h"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
 
-        <TextView
-            android:id="@+id/tv12h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:text="12h"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+        <!--<TextView-->
+            <!--android:id="@+id/tv12h"-->
+            <!--android:layout_width="40dp"-->
+            <!--android:layout_height="40dp"-->
+            <!--android:text="12h"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textSize="18sp"-->
+            <!--android:textStyle="bold" />-->
+    <!--</LinearLayout>-->
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/btNext"
-        android:layout_below="@+id/llExpireOptions"
+        android:layout_below="@+id/tvDeadline"
         android:orientation="vertical"
         android:padding="5dp"
         android:weightSum="3">
@@ -151,17 +151,18 @@
             >
 
             <android.support.v7.widget.CardView
-
+                android:id="@+id/cv30m"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:elevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:textAlignment="center"
                 app:cardBackgroundColor="@color/sports_color"
                 app:cardElevation="4dp"
-                android:elevation="4dp">
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -181,15 +182,16 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-
+                android:id="@+id/cv1h"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:elevation="4dp"
                 android:textAlignment="center"
                 app:cardBackgroundColor="@color/chill_color"
                 app:cardElevation="4dp"
-                android:elevation="4dp">
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -218,7 +220,7 @@
             android:layout_weight="1"
             android:orientation="horizontal"
             android:paddingBottom="10dp"
-            android:paddingLeft="5dp"
+            android:paddingLeft="10dp"
             android:paddingRight="5dp"
             android:paddingTop="5dp"
             android:weightSum="2"
@@ -226,15 +228,16 @@
             >
 
             <android.support.v7.widget.CardView
-
+                android:id="@+id/cv2h"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:elevation="4dp"
                 android:textAlignment="center"
                 app:cardBackgroundColor="@color/music_color"
                 app:cardElevation="4dp"
-                android:elevation="4dp">
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -255,15 +258,16 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
-
+                android:id="@+id/cv3h"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:elevation="4dp"
                 android:textAlignment="center"
                 app:cardBackgroundColor="@color/misc_color"
                 app:cardElevation="4dp"
-                android:elevation="4dp">
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -295,15 +299,17 @@
             android:weightSum="2">
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cv6h"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:elevation="4dp"
                 android:paddingRight="5dp"
                 app:cardBackgroundColor="@color/party_color"
-                android:elevation="4dp"
-                app:cardElevation="4dp">
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -315,7 +321,7 @@
                         android:layout_height="match_parent"
                         android:clickable="false"
                         android:gravity="center_vertical|right"
-                        android:text="12 Hr"
+                        android:text="6 Hr"
                         android:textAlignment="center"
                         android:textSize="18sp"
                         android:textStyle="bold" />
@@ -323,13 +329,15 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/cv12h"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
-                app:cardBackgroundColor="@color/food_color"
                 android:elevation="4dp"
-                app:cardElevation="4dp">
+                app:cardBackgroundColor="@color/food_color"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -341,7 +349,7 @@
                         android:layout_height="match_parent"
                         android:clickable="false"
                         android:gravity="center_vertical|right"
-                        android:text="6 Hr"
+                        android:text="12 Hr"
                         android:textAlignment="center"
                         android:textSize="18sp"
                         android:textStyle="bold" />

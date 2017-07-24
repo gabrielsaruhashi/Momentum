@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.GraphRequest;
@@ -57,22 +56,22 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
-        TextView tv30 = (TextView) findViewById(R.id.tv30);
+        CardView tv30 = (CardView) findViewById(R.id.cv30m);
         setListenerForTime(tv30, 30);
 
-        TextView tv1h = (TextView) findViewById(R.id.tv1h);
+        CardView tv1h = (CardView) findViewById(R.id.cv1h);
         setListenerForTime(tv1h, 60);
 
-        TextView tv2h = (TextView) findViewById(R.id.tv2h);
+        CardView tv2h = (CardView) findViewById(R.id.cv2h);
         setListenerForTime(tv2h, 120);
 
-        TextView tv3h = (TextView) findViewById(R.id.tv3h);
+        CardView tv3h = (CardView) findViewById(R.id.cv3h);
         setListenerForTime(tv3h, 180);
 
-        TextView tv6h = (TextView) findViewById(R.id.tv6h);
+        CardView tv6h = (CardView) findViewById(R.id.cv6h);
         setListenerForTime(tv6h, 360);
 
-        TextView tv12h = (TextView) findViewById(R.id.tv12h);
+        CardView tv12h = (CardView) findViewById(R.id.cv12h);
         setListenerForTime(tv12h, 720);
 
 
@@ -94,7 +93,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     }
 
 
-    public void setListenerForTime(TextView tv, final int minToDeadline) {
+    public void setListenerForTime(CardView tv, final int minToDeadline) {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
