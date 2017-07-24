@@ -51,7 +51,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory_details);
         ButterKnife.bind(this);
-        // unwrap memory
+        // TODO pass entire memory instead
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
 

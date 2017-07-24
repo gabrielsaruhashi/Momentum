@@ -13,7 +13,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -123,7 +122,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         // get hashmap & category
         Map hm = (HashMap) currentUser.getMap("categories_tracker");
 
-        // update category counter
+        // update user's category counter
         int oldCounter = (int) hm.get(category);
         hm.put(category, oldCounter + 1);
         currentUser.put("categories_tracker", hm);
@@ -162,15 +161,15 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                 //Toast.LENGTH_SHORT).show();
 
                                 // send back to pick category dialog after being saved
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                ParseQuery<Event> query = ParseQuery.getQuery("Event");
                                     query.whereEqualTo("event_owner_id",ParseUser.getCurrentUser().getObjectId());
                                     query.orderByDescending("createdAt");
                                     query.setLimit(1);
-                                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                                    query.getFirstInBackground(new GetCallback<Event>() {
                                         @Override
-                                        public void done(ParseObject object, ParseException e) {
-                                            if (object != null) {
-                                                ParsePush.subscribeInBackground(object.getObjectId());
+                                        public void done(Event event, ParseException e) {
+                                            if (event != null) {
+                                                ParsePush.subscribeInBackground(event.getObjectId());
 
                                                 //do not set a reminder if there is only 1 person at the event
                                                 //TODO: add back in this check for >1
@@ -178,9 +177,9 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                                 //if (participantsIds.size() > 1) {
                                                 //Set alarm reminder
                                                 Bundle bundle = new Bundle();
-                                                bundle.putString("eventId", object.getObjectId());
-                                                bundle.putString("eventDescription", newEvent.description);
-                                                new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
+                                                bundle.putString("eventId", event.getObjectId());
+                                                bundle.putString("eventDescription", event.getDescription());
+                                                new MyAlarm(getContext(), bundle, event.getTimeOfEvent().getTime());
                                                 // }
                                             }
                                         }

@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import shag.com.shag.Activities.MemoryDetailsActivity;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
@@ -35,9 +37,9 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
         // get item for selected view
-        Memory memory = getItem(position);
+        final Memory memory = getItem(position);
         // if cell is exists - reuse it, if not - create the new one from resource
         FoldingCell cell = (FoldingCell) convertView;
         ViewHolder viewHolder;
@@ -50,6 +52,15 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             viewHolder.ivMemoryBannerPicture = (ImageView) cell.findViewById(R.id.ivMemoryBannerPicture);
             // viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
             viewHolder.btnAccessMemory = (Button) cell.findViewById(R.id.content_request_btn);
+            // set listener
+            viewHolder.btnAccessMemory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent memoryDetailIntent = new Intent(mContext, MemoryDetailsActivity.class);
+                    memoryDetailIntent.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
+                    mContext.startActivity(memoryDetailIntent);
+                }
+            });
 
             // content card
             viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);

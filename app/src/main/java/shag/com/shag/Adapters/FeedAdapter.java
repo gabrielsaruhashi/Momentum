@@ -80,7 +80,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Event event = events.get(position);
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
-        //holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
+        // holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
         holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
@@ -308,7 +308,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     joinStatus.setText("Joined");
 
                     // subscribes user to this "channel" for notifications
-                    ParsePush.subscribeInBackground(event.eventId);
+                    ParsePush.subscribeInBackground(event.getEventId());
 
 
                 } else {
