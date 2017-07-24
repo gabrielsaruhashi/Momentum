@@ -4,6 +4,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gabesaruhashi on 7/12/17.
@@ -37,8 +38,8 @@ public class CustomUser {
         user.saveInBackground();
     }
 
-    public void setObject(String objectName, Object object) {
-        user.put(objectName, object);
+    public void setMap(String objectName, Map map) {
+        user.put(objectName, map);
         user.saveInBackground();
     }
 

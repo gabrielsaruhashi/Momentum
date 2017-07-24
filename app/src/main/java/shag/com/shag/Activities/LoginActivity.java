@@ -28,8 +28,6 @@ import shag.com.shag.Models.CustomUser;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-import static com.raizlabs.android.dbflow.config.FlowLog.Level.D;
-
 public class LoginActivity extends AppCompatActivity {
     Context context;
     List<String> permissions;
@@ -97,7 +95,8 @@ public class LoginActivity extends AppCompatActivity {
                                 newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                                 newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
                                 newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
-                                newCustomUser.setObject("categories_tracker", (Object) createCategoriesMap);
+                                newCustomUser.setMap("categories_tracker", createCategoriesMap());
+                                newCustomUser.setSomeStringArray("recent_friends_ids", new ArrayList<String>());
                             }
                         });
                         Log.d("MyApp", "User signed up and logged in through Facebook!");
@@ -150,8 +149,8 @@ public class LoginActivity extends AppCompatActivity {
         //do nothing
     }
 
-    public HashMap createCategoriesMap {
-        HashMap hm = new HashMap();
+    public Map createCategoriesMap() {
+        Map hm = new HashMap();
 
         // Put elements to the map
         hm.put("Chill", 0);
@@ -160,5 +159,6 @@ public class LoginActivity extends AppCompatActivity {
         hm.put("Misc", 0);
         hm.put("Food", 0);
         hm.put("Music", 0);
+        return hm;
     }
 }

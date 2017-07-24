@@ -19,7 +19,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.parse.FindCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.json.JSONArray;
@@ -27,8 +26,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import shag.com.shag.Activities.LoginActivity;
@@ -167,29 +164,32 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     //TODO improve populate feed method
     public void populateFeed() {
         for (int i = 0; i < facebookFriendsIds.size(); i++) {
-            ParseQuery<ParseObject> query = new ParseQuery<ParseObject>("Event");
+            ParseQuery<Event> query = new ParseQuery<Event>("Event");
             query.whereEqualTo("event_owner_fb_id", facebookFriendsIds.get(i));
-            query.findInBackground(new FindCallback<ParseObject>() {
+            query.findInBackground(new FindCallback<Event>() {
                 @Override
-                public void done(List<ParseObject> itemList, ParseException e) {
+                public void done(List<Event> eventsList, ParseException e) {
                     if (e == null) {
+                        /*
                         for (ParseObject item : itemList) {
                             //Convert each item found to an event
                             Event event = Event.fromParseObject(item);
                             //add event to list to be displayed
                             events.add(event);
                             adapter.notifyDataSetChanged();
-                        }
+                        } */
+                        events.addAll(eventsList);
+                        adapter.notifyDataSetChanged();
 
                         //TODO: move this somewhere else, it is currently over-sorting
                         //Sort the events shown to user in order of soonest deadline
+                        /*
                         Collections.sort(events, new Comparator<Event>() {
                             @Override
                             public int compare(Event event, Event t1) {
                                 return event.deadline.compareTo(t1.deadline);
                             }
-                        });
-                        adapter.notifyDataSetChanged();
+                        }); */
                     } else {
                         Log.d("feedfragment", "Error: " + e.getMessage());
                     }

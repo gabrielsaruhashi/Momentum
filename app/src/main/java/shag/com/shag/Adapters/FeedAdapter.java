@@ -25,7 +25,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -50,8 +52,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     Context context;
 
     // current user's info
-    long currentUserFacebookId;
-    String currentUserId;
+    ParseUser currentUser;
 
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
@@ -67,7 +68,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
         // instantiate id's
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUser = ParseUser.getCurrentUser();
 
         return viewHolder;
     }
@@ -81,7 +82,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.tvRelativeTime.setText(getTimeRemaining(event.deadline));
         holder.tvEventOwnerName.setText(event.getEventOwnerName());
 
-        if (isAlreadyInterested(currentUserId, event)) {
+        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
             holder.btJoin.setText("Joined");
 
@@ -170,10 +171,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 switch (v.getId()) {
                     case R.id.btJoin:
                         //TODO replace gabriel
-                        if (isAlreadyInterested(currentUserId, event)) {
-                            removeEvent(currentUserId, event, btJoin);
+                        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
+                            removeEvent(currentUser.getObjectId(), event, btJoin);
                         } else {
-                            joinEvent(currentUserId, event, btJoin);
+                            joinEvent(currentUser.getObjectId(), event, btJoin);
                         }
                         break;
                     // if user presses viewholder, show more details of activity
@@ -214,7 +215,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             @Override
             public void onShow(DialogInterface dialog) {
                 // check if user already joined the event
-                if (isAlreadyInterested(currentUserId, event)) {
+                if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
@@ -253,10 +254,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     public void onClick(DialogInterface dialog, int which) {
                        //TODO get current user
                         // if user is already interested, remove; else, join
-                        if (isAlreadyInterested(currentUserId, event)) {
-                            removeEvent(currentUserId, event, joinStatus);
+                        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
+                            removeEvent(currentUser.getObjectId(), event, joinStatus);
                         } else {
-                            joinEvent(currentUserId, event, joinStatus);
+                            joinEvent(currentUser.getObjectId(), event, joinStatus);
                         }
                     }
                 });
@@ -273,10 +274,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
        final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
-        updatedParticipantsIds.add(currentUserId);
+        updatedParticipantsIds.add(currentUser.getObjectId());
 
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // include user pointer
+        query.include("User_event_owner");
+
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, com.parse.ParseException e) {
@@ -286,6 +290,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // update database
                     object.put("participants_id", updatedParticipantsIds);
                     object.saveInBackground();
+
+                    // get hashmap & category
+                    String category = object.getString("category");
+                    Map hm = (HashMap) currentUser.getMap("categories_tracker");
+
+                    // update category counter
+                    int oldCounter = (int) hm.get(category);
+                    hm.put(category, oldCounter + 1);
+
+                    currentUser.put("categories_tracker", hm);
+
                     // update UI
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     joinStatus.setText("Joined");
@@ -304,10 +319,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void removeEvent(final String userId, final Event event, final Button joinStatus) {
         // update participants id
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
-        updatedParticipantsIds.remove(currentUserId);
+        updatedParticipantsIds.remove(currentUser.getObjectId());
 
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        // include user pointer
+        query.include("User_event_owner");
+
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
             public void done(ParseObject object, com.parse.ParseException e) {
@@ -316,6 +334,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     event.setParticipantsIds(updatedParticipantsIds);
                     // update database
                     object.put("participants_id", updatedParticipantsIds);
+
+                    // get hashmap & category
+                    String category = object.getString("category");
+                    Map hm = (HashMap) object.getParseObject("User_event_owner").getMap("categories_tracker");
+
+                    // update category counter
+                    int oldCounter = (int) hm.get(category);
+                    hm.put(category, oldCounter - 1);
+
                     object.saveInBackground();
 
                     // update UI
