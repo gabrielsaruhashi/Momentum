@@ -2,7 +2,10 @@ package shag.com.shag.Other;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.parse.Parse;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
@@ -11,12 +14,20 @@ import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowLog;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import shag.com.shag.Activities.LoginActivity;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Models.User;
 
 /**
  * Created by gabesaruhashi on 7/12/17.
@@ -35,6 +46,8 @@ public class ParseApplication extends Application {
     // application context
     private static Context context;
     private static FacebookClient facebookClient;
+    private static ArrayList<Long> facebookFriendsIds;
+    private static boolean mFirstLoad;
 
     @Override
     public void onCreate() {
@@ -77,6 +90,11 @@ public class ParseApplication extends Application {
 
         // registering device for push notifications
         ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        // initialize the array and get facebook friends for the first time
+        mFirstLoad = true;
+        facebookFriendsIds = new ArrayList<Long>();
+        getFacebookFriends();
     }
 
     public static FacebookClient getFacebookRestClient() {
@@ -84,5 +102,42 @@ public class ParseApplication extends Application {
             facebookClient = new FacebookClient(context);
         }
         return facebookClient;
+    }
+
+
+    public static ArrayList<Long> getFacebookFriends() {
+
+        if (mFirstLoad) {
+            FacebookClient client;
+            client = ParseApplication.getFacebookRestClient();
+            client.getFriendsUsingApp(new GraphRequest.Callback() {
+                public void onCompleted(GraphResponse response) {
+                    // gets friends ids
+
+                    try {
+                        JSONObject obj = response.getJSONObject();
+                        //obj should never be null but occassionally is-- need to log in again
+                        if (obj == null) {
+                            Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
+                            context.startActivity(intent);
+                        } else {
+                            JSONArray friends = obj.getJSONArray("data");
+                            for (int i = 0; i < friends.length(); i++) {
+                                User friend = User.fromJson(friends.getJSONObject(i));
+                                facebookFriendsIds.add(friend.fbUserID);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            //
+            mFirstLoad = false;
+            return facebookFriendsIds;
+
+        } else {
+            return facebookFriendsIds;
+        }
     }
 }
