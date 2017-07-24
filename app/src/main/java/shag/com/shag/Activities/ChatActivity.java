@@ -63,6 +63,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
+    boolean openedPush;
 
 
     // chat id
@@ -121,6 +122,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        if (chatParticipantsIds == null) {
+            openedPush = true;
+            try {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                ParseObject object = query.get(eventId);
+                chatParticipantsIds = (ArrayList) object.getList("participants_id");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         currentUserId = ParseUser.getCurrentUser().getObjectId();
         chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
@@ -429,5 +441,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         return ParseQuery.or(queries);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (openedPush) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("viewpager_position", 2);
+            context.startActivity(intent);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
 

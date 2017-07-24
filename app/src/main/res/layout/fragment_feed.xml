@@ -9,7 +9,7 @@
         android:layout_width="2dp"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorAccent"
         android:layout_marginLeft="32dp"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

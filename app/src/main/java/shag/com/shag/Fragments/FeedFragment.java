@@ -145,7 +145,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
                         try {
                             JSONObject obj = response.getJSONObject();
-                            //obj should never be null but occassionally is-- need to log in again
+                            //obj should never be null but occasionally is-- need to log in again
                             if (obj == null) {
                                 Intent intent = new Intent(getContext(), LoginActivity.class); //sometimes this doesn't work
                                 getContext().startActivity(intent);
