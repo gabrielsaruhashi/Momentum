@@ -17,6 +17,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +33,7 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> {
     ArrayList<Poll> polls;
-    Poll poll;
+    //Poll poll;
     // instantiate context
     Context context;
     RadioButton rb1;
@@ -93,7 +94,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
                 @Override
                 public void onClick(View v) {
-                    //final Poll poll = polls.get(getAdapterPosition());
+                    final Poll poll = polls.get(getAdapterPosition());
+                    String id = poll.getObjectId();
 
                     // specify which class to query
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Poll");
@@ -169,10 +171,12 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     public void onBindViewHolder(ViewHolder holder, int position) {
         // populate the views
 
-        poll = polls.get(position);
-
-
+        Poll poll = polls.get(position);
+        String id = poll.getObjectId();
+        String quet = poll.getQuestion();
         holder.tvQuestion.setText(poll.getQuestion());
+        List<String> peeps = poll.getPeopleVoted();
+        String me =ParseUser.getCurrentUser().getObjectId();
         if (!poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())) {
             holder.radioButton1.setText(poll.getChoices().get(0));
             holder.radioButton2.setText(poll.getChoices().get(1));
@@ -188,6 +192,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                 holder.radioButton3.setText(poll.getChoices().get(2));
                 holder.radioButton4.setText(poll.getChoices().get(3));
             }
+            holder.btVote.setText("Vote");
+            holder.btVote.setEnabled(true);
         } else {
             holder.radioButton1.setText(poll.getChoices().get(0) + ": " + poll.getScores().get(poll.getChoices().get(0)));
             holder.radioButton2.setText(poll.getChoices().get(1) + ": " + poll.getScores().get(poll.getChoices().get(1)));

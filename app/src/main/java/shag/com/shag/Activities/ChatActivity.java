@@ -323,7 +323,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
             }
         });
-        polls.add(poll);
+        polls.add(0,poll);
         pollAdapter.notifyDataSetChanged();
         rvPolls.scrollToPosition(0);
         //Log.d("onReturnValue", "Got value " + poll.getQuestion() + " back from Dialog!");
