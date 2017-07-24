@@ -62,7 +62,7 @@ public class ChatListFragment extends Fragment {
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
-        rvChats.addItemDecoration(itemDecoration);
+        //rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
@@ -137,14 +137,14 @@ public class ChatListFragment extends Fragment {
 
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
-            if (participantsNumber > 1) {
-                chat.setChatTitle("Me" + " + " + (participantsNumber - 1));
+            if (participantsNumber > 2) {
+                chat.setChatTitle("Me" + " + " + (participantsNumber - 2));
             } else {
                 chat.setChatTitle("Me");
             }
         } else { // apply the same title logic for other chat owners
-            if (participantsNumber > 1) {
-                chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 1));
+            if (participantsNumber > 2) {
+                chat.setChatTitle(eventOwnerName + " + " + (participantsNumber - 2));
             } else {
                 chat.setChatTitle(eventOwnerName);
             }
