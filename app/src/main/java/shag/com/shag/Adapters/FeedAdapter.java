@@ -96,13 +96,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
         } else if (event.getCategory().equals("Party")) {
             holder.ivCategory.setImageResource(R.drawable.ic_party);
-            holder.ivCategory.setImageResource(R.drawable.party_circle);
+            holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
         } else if (event.getCategory().equals("Food")) {
             holder.ivCategory.setImageResource(R.drawable.ic_food);
-            holder.ivCategory.setImageResource(R.drawable.food_circle);
+            holder.ivCategory.setBackgroundResource(R.drawable.food_circle);
         } else if (event.getCategory().equals("Music")) {
             holder.ivCategory.setImageResource(R.drawable.ic_music);
-            holder.ivCategory.setImageResource(R.drawable.music_circle);
+            holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
         } else {
             holder.ivCategory.setImageResource(R.drawable.ic_misc);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);

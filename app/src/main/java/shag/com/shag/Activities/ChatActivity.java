@@ -63,6 +63,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
+    boolean openedPush;
 
 
     // chat id
@@ -112,6 +113,17 @@ public class ChatActivity extends AppCompatActivity {
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        if (chatParticipantsIds == null) {
+            openedPush = true;
+            try {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                ParseObject object = query.get(eventId);
+                chatParticipantsIds = (ArrayList) object.getList("participants_id");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         currentUserId = ParseUser.getCurrentUser().getObjectId();
         chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
@@ -374,11 +386,15 @@ public class ChatActivity extends AppCompatActivity {
         return ParseQuery.or(queries);
     }
 
-    /*@Override
+    @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("viewpager_position", 2);
-        context.startActivity(intent);
-    }*/
+        if (openedPush) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.putExtra("viewpager_position", 2);
+            context.startActivity(intent);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }
 

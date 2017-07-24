@@ -125,15 +125,22 @@ public class LoginActivity extends AppCompatActivity {
         //currently this if statement is never used
         //if we override onPushOpen  we will eventually need this
         if (intent.getAction() == null) {
-            Intent i = new Intent(context, MainActivity.class);
-            context.startActivity(i);
-            /*
-            String eventId = intent.getStringExtra("event_id");
-            if (eventId != null) {
-                Intent i = new Intent(context, ChatActivity.class);
-                i.putExtras(intent.getExtras());
-                context.startActivity(i);
-            }*/
+            //Intent i = new Intent(context, MainActivity.class);
+            //context.startActivity(i);
+            Bundle extras = intent.getExtras();
+            String jsonData = extras.getString("com.parse.Data");
+            JSONObject jsonObject;
+            try {
+                jsonObject = new JSONObject(jsonData);
+                String eventID = jsonObject.getString("event_id");
+                if (eventID != null) {
+                    Intent i = new Intent(context, ChatActivity.class);
+                    i.putExtra("event_id", eventID);
+                    context.startActivity(i);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } else {
             Intent i = new Intent(context, MainActivity.class);
             context.startActivity(i);
