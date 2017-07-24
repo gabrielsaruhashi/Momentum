@@ -91,20 +91,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
             }
         });
 
-//        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                // TODO: Get info about the selected place.
-//                Log.i("SelectEventDetails", "Place: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                // TODO: Handle the error.
-//                Log.i("SelectEventDetails", "An error occurred: " + status);
-//            }
-//        });
-
     }
 
 
