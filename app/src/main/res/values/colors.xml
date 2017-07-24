@@ -14,5 +14,6 @@
     <color name="music_color">#c1403d</color>
     <color name="food_color">#f46a4e</color>
     <color name="party_color">#65734B</color>
+    <color name="orange">#ffaab8c2</color>
 
 </resources>

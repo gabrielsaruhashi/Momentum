@@ -83,6 +83,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
         //rvEvents.addItemDecoration(itemDecoration);
 
+
+
         //swipe refresh
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
         // Setup refresh listener which triggers new data loading
@@ -96,10 +98,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
         // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        swipeContainer.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark);
 
 
 
