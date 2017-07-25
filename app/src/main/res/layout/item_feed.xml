@@ -3,66 +3,103 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="16dp">
+    android:layout_margin="8dp">
 
     <ImageView
-        android:id="@+id/ivProfileImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentStart="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/misc_circle"
+        android:id="@+id/ivCategory"
+        android:gravity="center"
         android:layout_alignParentTop="true"
-        app:srcCompat="@android:color/black" />
+        android:layout_alignParentStart="true" />
 
-    <TextView
-        android:id="@+id/tvEventOwnerName"
-        android:layout_width="wrap_content"
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cvRoot"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignStart="@+id/tvBody"
-        android:text="TextView"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:autoLink="all"
-        android:layout_below="@+id/tvEventOwnerName"
         android:layout_marginLeft="8dp"
-        android:layout_toEndOf="@+id/ivProfileImage"
-        android:text="TextView"
-        android:paddingBottom="24dp"/>
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_toRightOf="@id/ivCategory"
+        card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardElevation="4dp"
+        card_view:cardUseCompatPadding="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp">
+
+            <ImageView
+                android:id="@+id/ivProfileImage"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                app:srcCompat="@android:color/black"/>
+
+            <TextView
+                android:id="@+id/tvEventOwnerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TextView"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/ivProfileImage"
+                android:layout_marginLeft="4dp"/>
+
+            <TextView
+                android:id="@+id/tvBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoLink="all"
+                android:text="TextView"
+                android:textSize="16sp"
+                android:layout_below="@+id/ivProfileImage"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="4dp"/>
 
 
-    <TextView
-        android:id="@+id/tvRelativeTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/btJoin"
-        android:layout_alignParentTop="true"
-        android:text="TextView"
-        android:textStyle="bold" />
+            <Button
+                android:id="@+id/btJoin"
+                android:layout_width="56dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/tvBody"
+                android:background="@color/colorAccent"
+                android:text="Join"
+                android:textColor="@color/white"/>
+            <!--
+            <ImageView
+                android:id="@+id/btJoin"
+                android:layout_width="84dp"
+                android:layout_height="42dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                app:srcCompat="@drawable/ic_join" />!-->
 
-    <Button
-        android:id="@+id/btJoin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/tvRelativeTime"
-        android:layout_marginRight="12dp"
-        android:background="@color/burnt_orange"
-        android:textColor="@color/white"
-        android:layout_marginTop="5dp"
-        android:text="Join" />
+            <TextView
+                android:id="@+id/tvExpiresText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Expires in "
+                android:textSize="12sp"
+                android:layout_below="@+id/tvEventOwnerName"
+                android:layout_alignLeft="@+id/tvEventOwnerName"
+                android:layout_marginTop="2dp"/>
 
-    <TextView
-        android:id="@+id/tvExpiresText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/btJoin"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@+id/tvRelativeTime"
-        android:text="Expires in " />
-
-
+            <TextView
+                android:id="@+id/tvRelativeTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tvExpiresText"
+                android:layout_alignBottom="@+id/tvExpiresText"
+                android:text="TextView"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
 </RelativeLayout>

@@ -56,21 +56,18 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         if (isMe) {
             holder.imageMe.setVisibility(View.VISIBLE);
-            holder.imageOther.setVisibility(View.GONE);
+            holder.imageOther.setVisibility(View.INVISIBLE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             holder.tvOtherName.setVisibility(View.GONE);
         } else {
             holder.imageOther.setVisibility(View.VISIBLE);
-            holder.imageMe.setVisibility(View.GONE);
+            holder.imageMe.setVisibility(View.INVISIBLE);
             holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             holder.tvOtherName.setVisibility(View.VISIBLE);
             if (message.getSenderName() != null) {
                 holder.tvOtherName.setText(message.getSenderName());
                 Log.i("DEBUG_NAME", message.getSenderName());
             }
-
-
-
         }
 
         final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;

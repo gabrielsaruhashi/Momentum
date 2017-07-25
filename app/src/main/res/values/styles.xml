@@ -8,7 +8,11 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="newTheme" parent="AppTheme" />
+    <style name="newTheme" parent="AppTheme" >
+
+    </style>
+
+
 
     <!-- styles for memories -->
     <style name="ContentImageBadgeTitle" parent="AppTheme">

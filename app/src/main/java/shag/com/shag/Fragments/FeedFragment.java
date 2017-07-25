@@ -70,7 +70,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
-        rvEvents.addItemDecoration(itemDecoration);
+        //rvEvents.addItemDecoration(itemDecoration);
+
+
 
         //swipe refresh
         swipeContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeContainer);
@@ -85,10 +87,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
         // Configure the refreshing colors
-        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
-                android.R.color.holo_green_light,
-                android.R.color.holo_orange_light,
-                android.R.color.holo_red_light);
+        swipeContainer.setColorSchemeResources(R.color.colorAccent,
+                R.color.colorPrimary,
+                R.color.colorPrimaryDark);
 
 
 
@@ -133,7 +134,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
                         try {
                             JSONObject obj = response.getJSONObject();
-                            //obj should never be null but occassionally is-- need to log in again
+                            //obj should never be null but occasionally is-- need to log in again
                             if (obj == null) {
                                 Intent intent = new Intent(getContext(), LoginActivity.class); //sometimes this doesn't work
                                 getContext().startActivity(intent);

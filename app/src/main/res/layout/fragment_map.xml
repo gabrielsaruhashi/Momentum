@@ -19,7 +19,6 @@
             android:layout_width="match_parent"
             android:layout_height="324dp"
             android:layout_marginEnd="8dp"
-
             android:layout_marginStart="8dp"
             tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
@@ -27,81 +26,144 @@
 
 
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:animateLayoutChanges="true"
         android:layout_weight="1">
-
-        <LinearLayout
-            android:orientation="horizontal"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
+            android:layout_height="wrap_content">
 
-            <ToggleButton
-                android:text="Button 1"
-                android:id="@+id/btn_Test"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"/>
-
-            <Button
-                android:id="@+id/btn_Test2"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="0.42"
                 android:gravity="center"
-                android:text="Music" />
-        </LinearLayout>
+                android:orientation="horizontal">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
+                <Button
+                    android:id="@+id/btn_Test3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Food" />
 
-            <Button
-                android:id="@+id/btn_Test3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="Food" />
+                <Button
+                    android:id="@+id/btn_Test2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="Music" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_Test4"
-                android:text="Button 4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"/>
-        </LinearLayout>
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="match_parent"
+                android:layout_height="148dp"
+                android:layout_margin="6dp"
+                android:elevation="4dp"
+                android:orientation="horizontal"
+                android:visibility="invisible"
+                app:cardElevation="4dp">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/btn_Test5"
-                android:text="Button 5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-            <Button
-                android:id="@+id/btn_Test6"
-                android:text="Button 6"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"/>
-        </LinearLayout>
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/cardImage"
+                                android:layout_width="match_parent"
+                                android:layout_height="64dp"
+                                android:layout_alignParentStart="true"
+                                app:srcCompat="@color/colorPrimary" />
+
+                            <ImageView
+                                android:id="@+id/ivClose"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="right"
+                                android:paddingLeft="4dp"
+                                android:paddingTop="2dp"
+                                android:src="@drawable/ic_close_black_24dp"
+                                android:tint="@color/white" />
+
+                            <TextView
+                                android:id="@+id/tvEventNameTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="bottom"
+                                android:paddingBottom="4dp"
+                                android:paddingLeft="8dp"
+                                android:text="Title"
+                                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                                android:textColor="@color/white" />
+                        </FrameLayout>
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
+                        <TextView
+                            android:id="@+id/tvDescription"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="8dp"
+                            android:text="Description" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
+                        <TextView
+                            android:id="@+id/tvLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="8dp"
+                            android:text="Location" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="4dp" />
+
+                        <TextView
+                            android:id="@+id/tvTime"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="8dp"
+                            android:text="Time" />
+
+                    </LinearLayout>
+
+                    <android.support.design.widget.FloatingActionButton
+                        android:id="@+id/myFAB"
+                        android:layout_width="wrap_content"
+                        android:layout_height="67dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="12dp"
+
+                        android:layout_marginEnd="12dp"
+                        android:baselineAlignBottom="true"
+                        android:tint="@color/white"
+                        app:elevation="4dp"
+                        app:fabSize="mini"
+                        app:srcCompat="@android:drawable/ic_input_add" />
+                </FrameLayout>
+            </android.support.v7.widget.CardView>
+
+        </FrameLayout>
+
+
     </LinearLayout>
 </LinearLayout>

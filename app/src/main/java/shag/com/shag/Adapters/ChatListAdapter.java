@@ -2,6 +2,7 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,7 @@ import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Chat;
+import shag.com.shag.Models.Event;
 import shag.com.shag.R;
 
 /**
@@ -51,6 +53,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         // populate the views
         Chat chat = chats.get(position);
+        Event event = chat.getParcelableEvent();
         String iconImageUrl = chat.getChatIconUrl();
         //TODO delete this later
         if (iconImageUrl == null) {
@@ -59,11 +62,24 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         holder.tvBody.setText(chat.getDescription());
         holder.tvParticipants.setText(chat.getChatTitle());
 
+        if (event.category.equals("Movie")) {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.chill_color));
+        } else if (event.category.equals("Basketball")) {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.sports_color));
+        } else if (event.category.equals("Party")) {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.party_color));
+        } else if (event.category.equals("Food")) {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.food_color));
+        } else if (event.category.equals("Music")) {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.music_color));
+        } else {
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.misc_color));
+        }
+
         // load user profile image using glide
         Glide.with(context)
                 .load(iconImageUrl)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                .placeholder(R.drawable.ic_person)
                 .into(holder.ivChatIcon);
     }
 
@@ -79,6 +95,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         @BindView(R.id.tvParticipants) TextView tvParticipants;
         @BindView(R.id.tvBody) TextView tvBody;
         @BindView(R.id.ivChatIcon) ImageView ivChatIcon;
+        @BindView(R.id.ivCategory) ImageView ivCategory;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -101,6 +118,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 // pass chat id in the intent
                 i.putExtra("event_id", chat.getEventId());
                 i.putExtra("participants_ids", chat.getChatParticipantsIds());
+                i.putExtra("event", chat.getParcelableEvent());
                 context.startActivity(i);
             }
         }

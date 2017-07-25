@@ -63,7 +63,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         btnSubmit = (Button) findViewById(R.id.btnSubmit);
         // initialize the list of tweets
         friends = new ArrayList<>();
-        // construct the adater from the data source
+        // construct the adapter from the data source
         adapter = new FriendsAdapter(friends);
         // initialize recycler view
         rvFriends = (RecyclerView) findViewById(R.id.rvFriends);
