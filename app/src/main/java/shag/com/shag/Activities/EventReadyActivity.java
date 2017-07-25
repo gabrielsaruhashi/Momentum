@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,7 +16,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -39,15 +42,22 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 import shag.com.shag.Clients.VolleyRequest;
+import shag.com.shag.Other.DataParser;
 import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -69,6 +79,12 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     LatLng mDestination;
     Date timeOfEvent;
     Geocoder geocoder;
+    LatLngBounds.Builder bounds;
+    String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?";
+    Polyline polylineFinal;
+    TextView tvDuration;
+    TextView tvDepartureTime;
+    TextView tvSummary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +96,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         //timeOfEvent = getIntent().getParcelableExtra("timeOfEvent");
 
         mDestination = new LatLng(47.6101, -122.2015);
-        timeOfEvent = new Date((new Date()).getTime() + 24*60*60*1000);
+        timeOfEvent = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
 
         activity = this;
 
@@ -88,6 +104,11 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
         geocoder = new Geocoder(getContext(), Locale.getDefault());
+        bounds = new LatLngBounds.Builder();
+
+        tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
+        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
+        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
     }
 
     @Override
@@ -177,16 +198,35 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
         //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
 
-        //TODO plot end location
-        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
+        //Place destination marker
+        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
         MarkerOptions destinationMarkerOptions = new MarkerOptions();
         destinationMarkerOptions.position(mDestination);
         destinationMarkerOptions.title("Destination");
         destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mGoogleMap.addMarker(destinationMarkerOptions);
 
-        LatLngBounds bounds = new LatLngBounds(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), mDestination);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0));
+        //include both markers in view
+        bounds.include(mDestination);
+        bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 75)); //TODO: 75 might not work for diff distances
+
+        String origin = "";
+        String destination = "";
+        try {
+            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
+            origin = currentLocation.getAddressLine(0);
+            origin = origin.replace(" ", "+");
+
+            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+            destination = destinationLocation.getAddressLine(0);
+            destination = destination.replace(" ", "+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        baseUrl += "&origin=" + origin;
+        baseUrl += "&destination=" + destination;
+        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
     }
 
     //GETTING PERMISSIONS
@@ -261,114 +301,163 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         }
     }
 
-    public void findTravelOptions(View view) {
-        //LatLng lastLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
-
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?";
-        baseUrl += "&origin=" + origin;
-        baseUrl += "&destination=" + destination;
-        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-
-        //car (default)
-        String url = baseUrl + "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        JsonObjectRequest drivingRequest = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.getString("status");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-        //bus
-        String transitUrl = baseUrl + "&mode=transit";
-        transitUrl += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        JsonObjectRequest transitRequest = new JsonObjectRequest(Request.Method.GET, transitUrl, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.getString("status");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-        //walking
-        String walkingUrl = baseUrl + "&mode=walking";
-        walkingUrl += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        JsonObjectRequest walkingRequest = new JsonObjectRequest(Request.Method.GET, walkingUrl, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.getString("status");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-        //cycling
-        String cyclingUrl = baseUrl + "&mode=cycling";
-        cyclingUrl += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        JsonObjectRequest cyclingRequest = new JsonObjectRequest(Request.Method.GET, cyclingUrl, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            String status = response.getString("status");
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
-            }
-        });
-
-
-        //TODO: let the user choose which one
-        //go full screen with map
-        // add the request object to the queue to be executed
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(drivingRequest);
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(transitRequest);
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(walkingRequest);
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(cyclingRequest);
+    public void getWalkingDirections(View view) {
+        getDirections("walking");
     }
 
+    public void getDrivingDirections(View view) {
+        getDirections("driving");
+    }
 
+    public void getTransitDirections(View view) {
+        getDirections("transit");
+    }
+
+    public void getBikingDirections(View view) {
+        getDirections("bicycling");
+    }
+
+    public void getDirections(final String mode) {
+        String url = baseUrl + "&mode=" + mode;
+        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String instructions = response.toString();
+                        populateInfoFromJson(response, mode);
+                        FetchUrl fetchUrl = new FetchUrl();
+                        fetchUrl.execute(instructions);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
+
+        // Parsing the data in non-ui thread
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try {
+                jObject = new JSONObject(jsonData[0]);
+                Log.d("ParserTask", jsonData[0].toString());
+                DataParser parser = new DataParser();
+                Log.d("ParserTask", parser.toString());
+
+                // Starts parsing data
+                routes = parser.parse(jObject);
+                Log.d("ParserTask", "Executing routes");
+                Log.d("ParserTask", routes.toString());
+
+            } catch (Exception e) {
+                Log.d("ParserTask", e.toString());
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        // Executes in UI thread, after the parsing process
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points;
+            PolylineOptions lineOptions = null;
+
+            // Traversing through all the routes
+            for (int i = 0; i < result.size(); i++) {
+                points = new ArrayList<>();
+                lineOptions = new PolylineOptions();
+
+                // Fetching i-th route
+                List<HashMap<String, String>> path = result.get(i);
+
+                // Fetching all the points in i-th route
+                for (int j = 0; j < path.size(); j++) {
+                    HashMap<String, String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                // Adding all the points in the route to LineOptions
+                lineOptions.addAll(points);
+                lineOptions.width(10);
+                lineOptions.color(getColor(R.color.colorAccent));
+
+                Log.d("onPostExecute", "onPostExecute lineoptions decoded");
+
+            }
+
+            // Drawing polyline in the Google Map for the i-th route
+            if (lineOptions != null) {
+                if (polylineFinal != null) {
+                    polylineFinal.remove();
+                }
+                polylineFinal = mGoogleMap.addPolyline(lineOptions);
+            } else {
+                Log.d("onPostExecute", "without Polylines drawn");
+            }
+        }
+    }
+
+    // Fetches data from url passed
+    private class FetchUrl extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... instructions) {
+
+            // For storing data from web service
+            String data = "";
+
+            try {
+                //TODO: reorganize this code so it's faster!
+                // Fetching the data from web service
+                data = instructions[0];
+                Log.d("Background Task data", data.toString());
+            } catch (Exception e) {
+                Log.d("Background Task", e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            // Invokes the thread for parsing the JSON data
+            parserTask.execute(result);
+
+        }
+    }
+
+    public void populateInfoFromJson(JSONObject json, String mode) {
+        try {
+            JSONArray array = json.getJSONArray("routes");
+            JSONObject object = array.getJSONObject(0);
+            String summary = object.getString("summary");
+            JSONArray legs = object.getJSONArray("legs");
+            JSONObject step = legs.getJSONObject(0);
+            String duration = step.getJSONObject("duration").getString("text");
+            tvSummary.setText(summary);
+            tvDuration.setText(duration);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        //tvSummary.setText();
+    }
 }
