@@ -49,6 +49,8 @@ public class ParseApplication extends Application {
     private static ArrayList<Long> facebookFriendsIds;
     private static boolean mFirstLoad;
 
+    static Runnable taskToRun;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -94,7 +96,18 @@ public class ParseApplication extends Application {
         // initialize the array and get facebook friends for the first time
         mFirstLoad = true;
         facebookFriendsIds = new ArrayList<Long>();
-        getFacebookFriends();
+
+
+        // define the runnable
+        taskToRun = new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        };
+        // get the user's facebook friends
+        // getFacebookFriends();
+
     }
 
     public static FacebookClient getFacebookRestClient() {
@@ -104,40 +117,147 @@ public class ParseApplication extends Application {
         return facebookClient;
     }
 
-
     public static ArrayList<Long> getFacebookFriends() {
 
         if (mFirstLoad) {
+            /*
             FacebookClient client;
             client = ParseApplication.getFacebookRestClient();
-            client.getFriendsUsingApp(new GraphRequest.Callback() {
-                public void onCompleted(GraphResponse response) {
-                    // gets friends ids
 
-                    try {
-                        JSONObject obj = response.getJSONObject();
-                        //obj should never be null but occassionally is-- need to log in again
-                        if (obj == null) {
-                            Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
-                            context.startActivity(intent);
-                        } else {
-                            JSONArray friends = obj.getJSONArray("data");
-                            for (int i = 0; i < friends.length(); i++) {
-                                User friend = User.fromJson(friends.getJSONObject(i));
-                                facebookFriendsIds.add(friend.fbUserID);
+            client.getFriendsUsingApp(new GraphRequest.Callback() {
+              public void onCompleted(GraphResponse response) {
+                  // gets friends ids
+
+                  try {
+                      JSONObject obj = response.getJSONObject();
+                      //obj should never be null but occassionally is-- need to log in again
+                       if (obj == null) {
+                          Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
+                          context.startActivity(intent);
+                      } else {
+                      JSONArray friends = obj.getJSONArray("data");
+                      for (int i = 0; i < friends.length(); i++) {
+                          User friend = User.fromJson(friends.getJSONObject(i));
+                          facebookFriendsIds.add(friend.fbUserID);
+                      }
+
+                      mFirstLoad = false;
+
+                      } catch(JSONException e){
+                          e.printStackTrace();
+                      }
+                  }
+              });*/
+            // start a new thread to execute the runnable codeblock
+            Thread thread = new Thread( ) {
+                @Override
+                public void run() {
+
+                    // Moves the current Thread into the background
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
+
+                    // The code to execute when the runnable is processed by a thread
+                    FacebookClient client;
+                    client = ParseApplication.getFacebookRestClient();
+
+                    client.getFriendsUsingApp(new GraphRequest.Callback() {
+                        public void onCompleted(GraphResponse response) {
+                            // gets friends ids
+
+                            try {
+                                JSONObject obj = response.getJSONObject();
+                                //obj should never be null but occassionally is-- need to log in again
+                                if (obj == null) {
+                                    Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
+                                    context.startActivity(intent);
+                                } else {
+                                    JSONArray friends = obj.getJSONArray("data");
+                                    for (int i = 0; i < friends.length(); i++) {
+                                        User friend = User.fromJson(friends.getJSONObject(i));
+                                        facebookFriendsIds.add(friend.fbUserID);
+                                    }
+
+                                    mFirstLoad = false;
+
+                                }
+                            } catch(JSONException e) {
+                                e.printStackTrace();
                             }
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    });
                 }
-            });
-            //
-            mFirstLoad = false;
+            };
+
+            thread.start();
+
+            try {
+                thread.join(0);
+            } catch (InterruptedException i) {
+                i.getMessage();
+            }
+
+            // return getFacebookFriendsAsynch();
+
             return facebookFriendsIds;
 
         } else {
             return facebookFriendsIds;
         }
     }
+
+    /*
+    public static void getFacebookFriendsAsynch() {
+        // Now we can execute the long-running task at any time.
+        new InitialLoadAsyncTask().execute();
+    }
+
+
+
+    public static class InitialLoadAsyncTask extends AsyncTask<Void, ArrayList, ArrayList> {
+
+
+        protected ArrayList<Long> doInBackground(Void... v) {
+            // get parameter from execute();
+            final ArrayList<Long> arrayOfFriends = new ArrayList<Long>();
+
+            // instantiate facebook client
+            FacebookClient client;
+            client = ParseApplication.getFacebookRestClient();
+
+            // gets friends ids
+            client.getFriendsUsingApp(new GraphRequest.Callback() {
+                public void onCompleted(GraphResponse response) {
+
+                    try {
+                        JSONObject obj = response.getJSONObject();
+                        //obj should never be null but occassionally is-- need to log in again
+
+                        JSONArray friends = obj.getJSONArray("data");
+                        for (int i = 0; i < friends.length(); i++) {
+                            User friend = User.fromJson(friends.getJSONObject(i));
+                            arrayOfFriends.add(friend.fbUserID);
+                        }
+
+
+                    } catch(JSONException e){
+                        e.printStackTrace();
+                    }
+                }
+            });
+            return arrayOfFriends;
+        }
+
+        // when background task finishes
+
+        @Override
+        protected void onPostExecute(ArrayList arrayList) {
+            //super.onPostExecute(arrayList);
+            mFirstLoad = false;
+            facebookFriendsIds = arrayList;
+        }
+
+
+    }
+    */
+
 }

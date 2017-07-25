@@ -56,7 +56,7 @@ public class Event extends ParseObject implements Parcelable {
     public String getDescription() { return getString("description"); }
 
     public Date getDeadline() {
-        return getDate("deadline)");
+        return getDate("deadline");
     }
 
     public String getEventOwnerName() { return getString("event_owner_name"); }

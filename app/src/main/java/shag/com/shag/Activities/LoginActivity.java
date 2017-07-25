@@ -129,7 +129,9 @@ public class LoginActivity extends AppCompatActivity {
         //if we override onPushOpen  we will eventually need this
         if (intent.getAction() == null) {
             Intent i = new Intent(context, MainActivity.class);
+            ParseApplication.getFacebookFriends();
             context.startActivity(i);
+
             /*
             String eventId = intent.getStringExtra("event_id");
             if (eventId != null) {
@@ -139,6 +141,7 @@ public class LoginActivity extends AppCompatActivity {
             }*/
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            ParseApplication.getFacebookFriends();
             context.startActivity(i);
 
         }

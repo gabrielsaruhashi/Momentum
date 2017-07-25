@@ -80,7 +80,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Event event = events.get(position);
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
-        // holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
+        holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
         holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
@@ -302,6 +302,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     hm.put(category, oldCounter + 1);
 
                     currentUser.put("categories_tracker", hm);
+                    /*
+                    // update recent friends tracker
+                    ArrayList<String> outdatedRecentFriends = (ArrayList) currentUser.getList("recent_friends_ids");
+                    currentUser.put("recent_friends_ids", outdatedRecentFriends.add(event.getEventOwner().getObjectId())); */
 
                     // update UI
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));

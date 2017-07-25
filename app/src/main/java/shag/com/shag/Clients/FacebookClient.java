@@ -31,6 +31,7 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
+
     public void getFriendsInfo(long friendFbId, GraphRequest.Callback callback) {
         Bundle params = new Bundle();
         params.putString("fields", "id,name,picture.type(large)");
