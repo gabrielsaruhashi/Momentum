@@ -11,7 +11,6 @@ import android.util.Log;
 import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
@@ -59,12 +58,11 @@ public class MyAlarm extends BroadcastReceiver {
 
         //query to find the users in the event, create a memory with these users as participants
         //eventName will likely be null until the call to new MyAlarm is moved
-        ParseQuery<ParseObject> parseQuery = ParseQuery.getQuery("Event");
-        parseQuery.getInBackground(extras.getString("eventId"), new GetCallback<ParseObject>() {
+        ParseQuery<Event> parseQuery = ParseQuery.getQuery("Event");
+        parseQuery.getInBackground(extras.getString("eventId"), new GetCallback<Event>() {
             @Override
-            public void done(ParseObject object, ParseException e) {
+            public void done(Event event, ParseException e) {
                 if (e == null) {
-                    Event event = Event.fromParseObject(object);
                     // TODO only save if more than two participants (owner and Shaggy)
                     ArrayList<String> participantIds = event.getParticipantsIds();
                     new Memory(extras.getString("eventDescription"), participantIds, extras.getString("eventId"));

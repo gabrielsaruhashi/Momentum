@@ -21,7 +21,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.CustomUser;
@@ -67,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         if (ParseUser.getCurrentUser() != null) {
             //ParseUser.logOut();
             onLoginSuccess();
+
         }
     }
 
@@ -79,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         //currently this if statement is never used
         //if we override onPushOpen  we will eventually need this
+
         if (intent.getAction() == null && intent.getExtras() != null) {
             //Intent i = new Intent(context, MainActivity.class);
             //context.startActivity(i);
@@ -98,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            ParseApplication.getFacebookFriends();
             context.startActivity(i);
         }
     }
@@ -105,6 +110,19 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         //do nothing
+    }
+
+    public Map createCategoriesMap() {
+        Map hm = new HashMap();
+
+        // Put elements to the map
+        hm.put("Chill", 0);
+        hm.put("Party", 0);
+        hm.put("Sports", 0);
+        hm.put("Misc", 0);
+        hm.put("Food", 0);
+        hm.put("Music", 0);
+        return hm;
     }
 
     public void login() {
@@ -143,6 +161,8 @@ public class LoginActivity extends AppCompatActivity {
                             newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
                             //TOD add memories list not working
                             newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
+                            newCustomUser.setMap("categories_tracker", createCategoriesMap());
+                            newCustomUser.setSomeStringArray("recent_friends_ids", new ArrayList<String>());
                         }
                     });
                     Log.d("MyApp", "User signed up and logged in through Facebook!");

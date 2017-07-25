@@ -8,6 +8,17 @@
     <color name="black">#000000</color>
     <color name="medium_gray">#ffaab8c2</color>
 
+
+    <!-- Memories Page Colors -->
+    <color name="contentBadgeTitle">#a9a9a9</color>
+    <color name="bgBackSideColor">#f4f0ff</color>
+    <color name="btnRequest">@color/colorAccent</color>
+    <color name="mainTextColor">#343d43</color>
+    <color name="bgContentTop">@color/colorPrimaryDark</color>
+    <color name="bgTitleLeft">@color/colorPrimary</color>
+    <color name="bgTitleRight">#ffffff</color>
+    <color name="bgContent">@color/white</color>
+    <color name="contentDividerLine">#e0e0e0</color>
     <color name="sports_color">#a3586d</color>
     <color name="chill_color">#5c4872</color>
     <color name="misc_color">#0abda0</color>

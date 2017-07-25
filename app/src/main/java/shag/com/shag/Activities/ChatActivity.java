@@ -34,6 +34,7 @@ import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
+
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
@@ -67,10 +68,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
     // chat id
+    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
-    private Event chatEvent;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
@@ -122,6 +123,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        event = intent.getParcelableExtra("event");
+
         if (chatParticipantsIds == null) {
             openedPush = true;
             try {
@@ -134,7 +137,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
 
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-        chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
         populatePolls();
 
