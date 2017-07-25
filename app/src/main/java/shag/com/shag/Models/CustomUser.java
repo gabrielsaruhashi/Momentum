@@ -4,6 +4,7 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by gabesaruhashi on 7/12/17.
@@ -34,6 +35,11 @@ public class CustomUser {
 
     public void setSomeEmptyList(String listName, List<ParseObject> parseObjectList) {
         user.put(listName, parseObjectList);
+        user.saveInBackground();
+    }
+
+    public void setMap(String objectName, Map map) {
+        user.put(objectName, map);
         user.saveInBackground();
     }
 

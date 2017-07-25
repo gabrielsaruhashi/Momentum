@@ -25,7 +25,6 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
@@ -34,6 +33,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import shag.com.shag.Activities.MainActivity;
 import shag.com.shag.Clients.FacebookClient;
@@ -64,7 +65,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     private String category;
     FacebookClient facebookClient;
-    private String currentUserId;
+    private ParseUser currentUser;
 
 
     public CreateDetailsDialogFragment() {
@@ -89,7 +90,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         // initialize client
         facebookClient = ParseApplication.getFacebookRestClient();
         // get current user id
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUser = ParseUser.getCurrentUser();
 
         return inflater.inflate(R.layout.fragment_create_details, container, false);
     }
@@ -141,7 +142,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 newEvent.setLocation("Facebook Seattle");
 
                 //  upon creating, save event owner's id to participant list
-                ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUserId));
+                ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUser.getObjectId()));
                 Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
                 newEvent.setParticipantsIds(initialParticipantsIds);
 
@@ -153,8 +154,16 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 }
 
                 newEvent.setCategory(category);
-                // save current user as the event owner
-                ParseObject currentUser = ParseUser.getCurrentUser();
+
+                // get hashmap & category
+                String category = currentUser.getString("category");
+                Map hm = (HashMap) currentUser.getMap("categories_tracker");
+
+                // update category counter
+                int oldCounter = (int) hm.get(category);
+                hm.put(category, oldCounter + 1);
+                currentUser.put("categories_tracker", hm);
+
                 newEvent.put("User_event_owner", currentUser);
                 Log.i("DEBUG_CREATE", currentUser.getObjectId());
 

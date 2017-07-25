@@ -13,7 +13,6 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.parse.GetCallback;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -25,6 +24,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import shag.com.shag.Adapters.FriendsAdapter;
 import shag.com.shag.Clients.FacebookClient;
@@ -48,15 +49,14 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
     String category;
     String description;
     Long deadline;
-    String currentUserId;
-
+    ParseUser currentUser;
     public final static int MILLISECONDS_IN_MINUTE = 60000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_friends);
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUser = ParseUser.getCurrentUser();
 
         // instantiate friends client
         client = ParseApplication.getFacebookRestClient();
@@ -107,12 +107,11 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         newEvent.setLocation("Facebook Seattle");
 
         //  upon creating, save event owner's id to participant list
-        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUserId));
-        Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
+        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUser.getObjectId()));
         newEvent.setParticipantsIds(initialParticipantsIds);
-
-        // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
-        newEvent.setEventOwnerId(currentUserId);
+        newEvent.setEventOwnerId(currentUser.getObjectId());
+        newEvent.setCategory(category);
+        newEvent.setTimeOfEvent(new Date()); //TODO: PUT REAL INFO IN HERE AT SOME POINT
 
         if (newEvent.deadline == null) {
             newEvent.deadline = new Date();
@@ -120,9 +119,14 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
             newEvent.setDeadline(newEvent.deadline);
         }
 
-        newEvent.setCategory(category);
-        newEvent.setTimeOfEvent(new Date()); //TODO: PUT REAL INFO IN HERE AT SOME POINT
-        ParseObject currentUser = ParseUser.getCurrentUser();
+        // get hashmap & category
+        Map hm = (HashMap) currentUser.getMap("categories_tracker");
+
+        // update user's category counter
+        int oldCounter = (int) hm.get(category);
+        hm.put(category, oldCounter + 1);
+        currentUser.put("categories_tracker", hm);
+
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
@@ -157,15 +161,15 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                 //Toast.LENGTH_SHORT).show();
 
                                 // send back to pick category dialog after being saved
-                                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+                                ParseQuery<Event> query = ParseQuery.getQuery("Event");
                                     query.whereEqualTo("event_owner_id",ParseUser.getCurrentUser().getObjectId());
                                     query.orderByDescending("createdAt");
                                     query.setLimit(1);
-                                    query.getFirstInBackground(new GetCallback<ParseObject>() {
+                                    query.getFirstInBackground(new GetCallback<Event>() {
                                         @Override
-                                        public void done(ParseObject object, ParseException e) {
-                                            if (object != null) {
-                                                ParsePush.subscribeInBackground(object.getObjectId());
+                                        public void done(Event event, ParseException e) {
+                                            if (event != null) {
+                                                ParsePush.subscribeInBackground(event.getObjectId());
 
                                                 //do not set a reminder if there is only 1 person at the event
                                                 //TODO: add back in this check for >1
@@ -173,9 +177,9 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
                                                 //if (participantsIds.size() > 1) {
                                                 //Set alarm reminder
                                                 Bundle bundle = new Bundle();
-                                                bundle.putString("eventId", object.getObjectId());
-                                                bundle.putString("eventDescription", newEvent.description);
-                                                new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
+                                                bundle.putString("eventId", event.getObjectId());
+                                                bundle.putString("eventDescription", event.getDescription());
+                                                new MyAlarm(getContext(), bundle, event.getTimeOfEvent().getTime());
                                                 // }
                                             }
                                         }
@@ -202,7 +206,8 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
 
     // get friends
     public void populateFriendsList() {
-        client.getFriendsUsingApp(new GraphRequest.Callback() {
+
+        client.getFriendsUsingAppAsynch(new GraphRequest.Callback() {
             @Override
             public void onCompleted(GraphResponse response) {
                 try {

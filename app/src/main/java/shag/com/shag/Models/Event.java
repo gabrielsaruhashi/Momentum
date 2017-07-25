@@ -8,6 +8,7 @@ import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class Event extends ParseObject implements Parcelable {
     public Date deadline;
     public ParseGeoPoint parseGeoPoint;
     public Date timeOfEvent;
-    private User eventOwner;
+    private ParseObject eventOwner;
 
     //CONSTRUCTORS
     public Event(){
@@ -43,48 +44,40 @@ public class Event extends ParseObject implements Parcelable {
     // GETTERS
 
     public String getEventId() {
-        return eventId;
+        return getObjectId();
     }
 
-    public String getLocation() { return location; }
+    public String getLocation() { return getString("location"); }
 
     public String getCategory() {
-        return category;
+        return getString("category");
     }
 
-    public ArrayList<Long> getFriendsAtEvent() {
-        return friendsAtEvent;
-    }
-
-    public String getDescription() { return description; }
+    public String getDescription() { return getString("description"); }
 
     public Date getDeadline() {
-        return deadline;
+        return getDate("deadline");
     }
 
-    public String getEventOwnerName() { return eventOwnerName; }
+    public String getEventOwnerName() { return getString("event_owner_name"); }
 
     public LatLng getLatLng() { return latLng; }
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
-    public ArrayList<String> getParticipantsIds() { return participantsIds;}
+    public ArrayList<String> getParticipantsIds() { return (ArrayList) get("participants_id");}
 
-    public long getEventOwnerFbId() { return eventOwnerFbId; }
-
-    public User getEventOwner() {
-        return eventOwner;
+    // TODO Fix this
+    public ParseUser getEventOwner() {
+        //return User.fromParseObject(getParseObject("event_owner_name"));
+        return getParseUser("User_event_owner");
     }
 
-    public String getEventOwnerId() {
-        return eventOwnerId;
-    }
-
-    public Date getTimeOfEvent() {return timeOfEvent; }
+    public Date getTimeOfEvent() {return getDate("event_time"); }
 
     // SETTERS
 
 
-    public void setEventOwner(User eventOwner) {
+    public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
         // TODO check if I need the line below
         // put("event_owner", eventOwner);
@@ -218,7 +211,6 @@ public class Event extends ParseObject implements Parcelable {
             ParseObject user = object.getParseObject("User_event_owner").fetch();
             // user found! Convert it to a user model
             User eventOwner = User.fromParseObject(user);
-            event.setEventOwner(eventOwner); // setting event owner
         } catch (ParseException e) {
             e.printStackTrace();
         }
