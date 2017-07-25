@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -79,8 +80,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
-        ParseObject.registerSubclass(Poll.class);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close);
@@ -202,6 +201,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        return true;
     }
 
     private void populatePolls() {
@@ -450,6 +456,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         } else {
             super.onBackPressed();
         }
+    }
+
+    public void onEventReady(MenuItem menuItem) {
+        Intent intent = new Intent(context, EventReadyActivity.class);
+        context.startActivity(intent);
     }
 }
 

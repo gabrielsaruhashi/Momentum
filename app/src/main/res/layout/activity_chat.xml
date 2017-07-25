@@ -61,7 +61,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/poll_title"
-        app:menu="@menu/menu_poll">
+        app:menu="@menu/menu_chat">
 
         <RelativeLayout
             android:layout_width="wrap_content"
