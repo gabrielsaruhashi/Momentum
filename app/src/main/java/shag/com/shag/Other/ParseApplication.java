@@ -154,7 +154,6 @@ public class ParseApplication extends Application {
                 public void run() {
 
                     // Moves the current Thread into the background
-                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
                     // The code to execute when the runnable is processed by a thread
                     FacebookClient client;
@@ -177,7 +176,7 @@ public class ParseApplication extends Application {
                                         facebookFriendsIds.add(friend.fbUserID);
                                     }
 
-                                    mFirstLoad = false;
+
 
                                 }
                             } catch(JSONException e) {
@@ -189,6 +188,8 @@ public class ParseApplication extends Application {
             };
 
             thread.start();
+
+            mFirstLoad = false;
 
             try {
                 thread.join(0);

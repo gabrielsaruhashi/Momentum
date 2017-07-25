@@ -28,7 +28,7 @@ public class FacebookClient {
         Bundle params = new Bundle();
         params.putString("fields", "id,name,picture.type(large)");
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", params, HttpMethod.GET,
-                callback).executeAsync();
+                callback).executeAndWait();
     }
 
 
