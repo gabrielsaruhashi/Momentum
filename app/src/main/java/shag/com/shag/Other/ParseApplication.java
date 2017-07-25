@@ -49,8 +49,6 @@ public class ParseApplication extends Application {
     private static ArrayList<Long> facebookFriendsIds;
     private static boolean mFirstLoad;
 
-    static Runnable taskToRun;
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -93,20 +91,9 @@ public class ParseApplication extends Application {
         // registering device for push notifications
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        // initialize the array and get facebook friends for the first time
+        // initialize the array
         mFirstLoad = true;
         facebookFriendsIds = new ArrayList<Long>();
-
-
-        // define the runnable
-        taskToRun = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-        // get the user's facebook friends
-        // getFacebookFriends();
 
     }
 
@@ -120,34 +107,6 @@ public class ParseApplication extends Application {
     public static ArrayList<Long> getFacebookFriends() {
 
         if (mFirstLoad) {
-            /*
-            FacebookClient client;
-            client = ParseApplication.getFacebookRestClient();
-
-            client.getFriendsUsingApp(new GraphRequest.Callback() {
-              public void onCompleted(GraphResponse response) {
-                  // gets friends ids
-
-                  try {
-                      JSONObject obj = response.getJSONObject();
-                      //obj should never be null but occassionally is-- need to log in again
-                       if (obj == null) {
-                          Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
-                          context.startActivity(intent);
-                      } else {
-                      JSONArray friends = obj.getJSONArray("data");
-                      for (int i = 0; i < friends.length(); i++) {
-                          User friend = User.fromJson(friends.getJSONObject(i));
-                          facebookFriendsIds.add(friend.fbUserID);
-                      }
-
-                      mFirstLoad = false;
-
-                      } catch(JSONException e){
-                          e.printStackTrace();
-                      }
-                  }
-              });*/
             // start a new thread to execute the runnable codeblock
             Thread thread = new Thread( ) {
                 @Override
@@ -199,11 +158,9 @@ public class ParseApplication extends Application {
 
             // return getFacebookFriendsAsynch();
 
-            return facebookFriendsIds;
-
-        } else {
-            return facebookFriendsIds;
+        //TODO why is it passing here
         }
+        return facebookFriendsIds;
     }
 
     /*

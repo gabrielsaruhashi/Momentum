@@ -206,7 +206,8 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
 
     // get friends
     public void populateFriendsList() {
-        client.getFriendsUsingApp(new GraphRequest.Callback() {
+
+        client.getFriendsUsingAppAsynch(new GraphRequest.Callback() {
             @Override
             public void onCompleted(GraphResponse response) {
                 try {

@@ -30,6 +30,13 @@ public class FacebookClient {
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", params, HttpMethod.GET,
                 callback).executeAndWait();
     }
+    public void getFriendsUsingAppAsynch(GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        params.putString("fields", "id,name,picture.type(large)");
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/friends", params, HttpMethod.GET,
+                callback).executeAsync();
+    }
+
 
 
     public void getFriendsInfo(long friendFbId, GraphRequest.Callback callback) {
