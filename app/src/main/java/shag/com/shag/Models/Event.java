@@ -31,9 +31,9 @@ public class Event extends ParseObject implements Parcelable {
     public ArrayList<Long> friendsAtEvent;
     public ArrayList<String> participantsIds;
     public Date deadline;
-    public ParseGeoPoint parseGeoPoint;
     public Date timeOfEvent;
     private User eventOwner;
+    public ParseGeoPoint parseGeoPoint;
     public boolean isFirstCreated;
 
     //CONSTRUCTORS
@@ -66,6 +66,7 @@ public class Event extends ParseObject implements Parcelable {
     public String getEventOwnerName() { return eventOwnerName; }
 
     public LatLng getLatLng() { return latLng; }
+
     public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
 
     public ArrayList<String> getParticipantsIds() { return participantsIds;}
@@ -211,7 +212,6 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeList(this.friendsAtEvent);
         dest.writeStringList(this.participantsIds);
         dest.writeLong(this.deadline != null ? this.deadline.getTime() : -1);
-        //dest.writeParcelable(this.parseGeoPoint, flags);
         dest.writeLong(this.timeOfEvent != null ? this.timeOfEvent.getTime() : -1);
         dest.writeParcelable(this.eventOwner, flags);
         dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
@@ -232,10 +232,10 @@ public class Event extends ParseObject implements Parcelable {
         this.participantsIds = in.createStringArrayList();
         long tmpDeadline = in.readLong();
         this.deadline = tmpDeadline == -1 ? null : new Date(tmpDeadline);
-        //this.parseGeoPoint = in.readParcelable(ParseGeoPoint.class.getClassLoader());
         long tmpTimeOfEvent = in.readLong();
         this.timeOfEvent = tmpTimeOfEvent == -1 ? null : new Date(tmpTimeOfEvent);
         this.eventOwner = in.readParcelable(User.class.getClassLoader());
+        this.parseGeoPoint = in.readParcelable(ParseGeoPoint.class.getClassLoader());
         this.isFirstCreated = in.readByte() != 0;
     }
 

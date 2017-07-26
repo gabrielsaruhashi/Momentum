@@ -13,7 +13,7 @@ public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
 
     public interface TimePickerFragmentListener {
-        void onFinishTimePickerFragment(String time, int btn, int post);
+        void onFinishTimePickerFragment(String time, int btn, int p);
     }
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

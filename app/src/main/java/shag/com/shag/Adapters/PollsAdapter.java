@@ -1,6 +1,8 @@
 package shag.com.shag.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -15,6 +17,9 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -44,19 +49,31 @@ import static shag.com.shag.R.id.tv3;
 public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder>  {
 
     ArrayList<Poll> polls;
-    ArrayList<View> buttons = new ArrayList<>();
-    int selectedPosition = -1;
+    ArrayList<View> timeButtons = new ArrayList<>();
+    ArrayList<View> locationButtons = new ArrayList<>();
 
-    DataTransferInterface dtInterface;
+
+    int selectedPosition = -1;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+
+    TimeButtonsInterface timeButtonsInterface;
+    LocationButtonsInterface locationButtonsInterface;
     private Context context;
 
-    public interface DataTransferInterface {
-        public void setValues(ArrayList<View> al);
+    public interface TimeButtonsInterface {
+         void setTimeValues(ArrayList<View> times);
     }
-    public PollsAdapter(Context c, DataTransferInterface dtInterface, ArrayList<Poll> polls) {
+
+    public interface LocationButtonsInterface {
+         void setLocationValues(ArrayList<View> locations, int position);
+    }
+    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
+                        LocationButtonsInterface locationButtonsInterface, ArrayList<Poll> polls) {
         this.polls = polls;
         this.context=c;
-        this.dtInterface = dtInterface;
+        this.timeButtonsInterface = timeButtonsInterface;
+        this.locationButtonsInterface = locationButtonsInterface;
+
 
     }
 
@@ -214,18 +231,31 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         createOnTextClick(holder.tvSet2, selectedPosition,2);
         createOnTextClick(holder.tvSet3, selectedPosition,3);
         boolean bool = poll.getChoices().contains("Custom");
-        if ( poll.getPollType().equals("Time") && poll.getChoices().contains("Custom") ) {
+        if ( (poll.getPollType().equals("Time") ) && poll.getChoices().contains("Custom") ) {
             //onFinishTimePickerFragment(holder,position);
-            buttons.add(holder.rButton0);
-            buttons.add(holder.rButton1);
-            buttons.add(holder.rButton2);
-            buttons.add(holder.rButton3);
+            timeButtons.add(holder.rButton0);
+            timeButtons.add(holder.rButton1);
+            timeButtons.add(holder.rButton2);
+            timeButtons.add(holder.rButton3);
             holder.btVote.setText("Vote");
             holder.btVote.setEnabled(true);
-            dtInterface.setValues(buttons);
+            timeButtonsInterface.setTimeValues(timeButtons);
 
 
-        } else {
+        }
+        else if ( (poll.getPollType().equals("Location") || poll.getPollType().equals("Location")) && poll.getChoices().contains("Custom") ) {
+            //onFinishTimePickerFragment(holder,position);
+            locationButtons.add(holder.rButton0);
+            locationButtons.add(holder.rButton1);
+            locationButtons.add(holder.rButton2);
+            locationButtons.add(holder.rButton3);
+            holder.btVote.setText("Vote");
+            holder.btVote.setEnabled(true);
+            locationButtonsInterface.setLocationValues(locationButtons, selectedPosition);
+
+
+        }
+        else {
 
             holder.tvSet0.setVisibility(View.GONE);
             holder.tvSet1.setVisibility(View.GONE);
@@ -307,7 +337,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
 
     public void createOnTextClick(final TextView txtView, final int selectedPosition, final int but){
-        if (txtView.getVisibility()==View.VISIBLE) {
+        //time
+        if (txtView.getVisibility()==View.VISIBLE && selectedPosition==0) {
             txtView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -317,7 +348,31 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                 }
             });
         }
+        else if(txtView.getVisibility()==View.VISIBLE && selectedPosition==1){
+            txtView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   //implement google maps fragment
+                    try {
+                        Intent intent =
+                                new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                                        .build((Activity) context);
+
+
+                        ((Activity) context).startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE+but);
+                    } catch (GooglePlayServicesRepairableException e) {
+                        // TODO: Handle the error.
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        // TODO: Handle the error.
+                    }
+                    txtView.setVisibility(View.GONE);
+
+                }
+            });
+        }
     }
+
+
 
 }
 

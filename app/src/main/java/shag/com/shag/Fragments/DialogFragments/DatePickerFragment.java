@@ -28,7 +28,7 @@ public class DatePickerFragment extends DialogFragment
         // Use the current date as the default date in the picker
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH) + 1;
+        int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
@@ -39,7 +39,7 @@ public class DatePickerFragment extends DialogFragment
         int button = getArguments().getInt("button");
         int position = getArguments().getInt("position");
         // Do something with the date chosen by the user
-        String calendarDay= "" + month + "/" + day + "/" + year;
+        String calendarDay= "" + month+1 + "/" + day + "/" + year;
 
         DatePickerFragmentListener v = (DatePickerFragmentListener) getActivity();
         v.onFinishDatePickerFragment(calendarDay,button, position);

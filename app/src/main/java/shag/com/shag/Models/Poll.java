@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
@@ -26,10 +27,9 @@ public class Poll extends ParseObject implements Parcelable {
     private String pollCreator;
     private List<String> peopleVoted;
     private Event event;
-
-
-
+    private String pollWinner;
     private String pollType;
+    private Map<String,ParseGeoPoint> locationOptions;
 
     public Poll() {
 
@@ -120,6 +120,17 @@ public class Poll extends ParseObject implements Parcelable {
         put("scores",scores);
     }
 
+    //location options (if a location poll)
+    public Map<String, ParseGeoPoint> getLocationOptions() {
+        return getMap("location_option");
+
+    }
+
+    public void setLocationOptions(Map<String, ParseGeoPoint> locationOptions) {
+        this.locationOptions = locationOptions;
+        put("location_options", locationOptions);
+    }
+
     //people who have voted
     public List<String> getPeopleVoted() {
         return getList("people_voted");
@@ -146,6 +157,15 @@ public class Poll extends ParseObject implements Parcelable {
         put("poll_type", pollType);
     }
 
+    //poll winner
+    public String getPollWinner() {
+        return getString("poll_winner");
+    }
+
+    public void setPollWinner(String pollWinner) {
+        this.pollWinner = pollWinner;
+        put("poll_winner", pollWinner);
+    }
 
     @Override
     public int describeContents() {
