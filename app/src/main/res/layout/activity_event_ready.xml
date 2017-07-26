@@ -33,7 +33,7 @@
         android:layout_below="@+id/map"
         android:layout_toEndOf="@+id/tvPlace"
         android:text="FinalPlace"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <TextView
@@ -52,7 +52,7 @@
         android:layout_below="@+id/tvFinalPlace"
         android:layout_toEndOf="@+id/tvPlace"
         android:text="Finaltime"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold" />
 
     <Button

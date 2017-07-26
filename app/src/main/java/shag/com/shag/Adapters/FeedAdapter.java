@@ -24,9 +24,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -92,10 +90,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
         //TODO: change categories
-        if (event.getCategory().equals("Movie")) {
+        if (event.getCategory().equals("Chill")) {
             holder.ivCategory.setImageResource(R.drawable.ic_chill);
             holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
-        } else if (event.getCategory().equals("Basketball")) {
+        } else if (event.getCategory().equals("Sports")) {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
             holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
         } else if (event.getCategory().equals("Party")) {

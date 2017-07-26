@@ -23,6 +23,8 @@ public class Event extends ParseObject implements Parcelable {
     public String eventOwnerId;
     public String eventId;
     public long eventOwnerFbId;
+    public double latitude;
+    public double longitude;
     public String eventOwnerName;
     public String eventName;
     public LatLng latLng;
@@ -61,8 +63,30 @@ public class Event extends ParseObject implements Parcelable {
 
     public String getEventOwnerName() { return getString("event_owner_name"); }
 
-    public LatLng getLatLng() { return latLng; }
-    public ParseGeoPoint getParseGeoPoint() { return parseGeoPoint; }
+    public LatLng getLatLng() { return this.latLng; }
+
+    public double getLatitude() {
+        return getDouble("latitude");
+    }
+
+    public double getLongitude() {
+        return getDouble("longitude");
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+        put("latitude", latitude);
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+        put("longitude", longitude);
+    }
+
+    public ParseGeoPoint getParseGeoPoint() {
+        ParseGeoPoint toReturn = getParseGeoPoint("parse_geo_point");
+        return toReturn;
+    }
 
     public ArrayList<String> getParticipantsIds() { return (ArrayList) get("participants_id");}
 
@@ -115,11 +139,11 @@ public class Event extends ParseObject implements Parcelable {
     public void  setParseGeoPoint(ParseGeoPoint parseGeoPoint){
         this.parseGeoPoint=parseGeoPoint;
         put("parse_geo_point", parseGeoPoint);
+        setLatLng(new LatLng(parseGeoPoint.getLatitude(), parseGeoPoint.getLongitude()));
     }
 
     public void setLatLng(LatLng latLng) {
-        this.latLng = latLng;
-        put("lat_lng", latLng); }
+        this.latLng = latLng; }
 
     public void setCategory(String category) {
         this.category=category;
@@ -160,12 +184,18 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeString(this.category);
         dest.writeList(this.friendsAtEvent);
         dest.writeList(this.participantsIds);
+        dest.writeDouble(this.latitude);
+        dest.writeDouble(this.longitude);
+        dest.writeSerializable(this.timeOfEvent);
+        //dest.writeParcelable(this.timeOfEvent, flags);
     }
 
 
     protected Event(Parcel in) {
         this.eventId = in.readString();
         this.latLng = in.readParcelable(LatLng.class.getClassLoader());
+        //this.parseGeoPoint = in.readParcelable(ParseGeoPoint.class.getClassLoader());
+        //this.timeOfEvent = in.readParcelable(Date.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
@@ -174,6 +204,9 @@ public class Event extends ParseObject implements Parcelable {
         in.readList(this.participantsIds, Long.class.getClassLoader());
         this.participantsIds = new ArrayList<String>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
+        this.latitude = in.readDouble();
+        this.longitude = in.readDouble();
+        this.timeOfEvent = (Date) in.readSerializable();
     }
 
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {

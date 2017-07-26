@@ -85,18 +85,20 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     TextView tvDuration;
     TextView tvDepartureTime;
     TextView tvSummary;
+    TextView tvDestination;
+    TextView tvTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_ready);
 
-        //TODO: put this back
-        //destination = getIntent().getParcelableExtra("destination");
-        //timeOfEvent = getIntent().getParcelableExtra("timeOfEvent");
+        mDestination = new LatLng(getIntent().getDoubleExtra("latitude", 50.6101),
+                getIntent().getDoubleExtra("longitude", -100.2015));
+        timeOfEvent = (Date) getIntent().getSerializableExtra("timeOfEvent");
 
-        mDestination = new LatLng(47.6101, -122.2015);
-        timeOfEvent = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
+        //mDestination = new LatLng(47.6101, -122.2015);
+        //timeOfEvent = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
 
         activity = this;
 
@@ -109,6 +111,18 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
         tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
         tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
+
+        String eventDestination = "";
+        try {
+            Address currentLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+            eventDestination = currentLocation.getAddressLine(0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
+        tvDestination.setText(eventDestination);
+        tvTime = (TextView) findViewById(R.id.tvFinalTime);
+        tvTime.setText(timeOfEvent.toString());
     }
 
     @Override
@@ -189,7 +203,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");

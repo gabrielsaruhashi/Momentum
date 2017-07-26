@@ -35,7 +35,6 @@ import java.util.List;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
-
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
@@ -461,8 +460,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
     public void onEventReady(MenuItem menuItem) {
-        Intent intent = new Intent(context, EventReadyActivity.class);
-        context.startActivity(intent);
+        Intent i = new Intent(context, EventReadyActivity.class);
+        i.putExtra("timeOfEvent", event.timeOfEvent);
+        i.putExtra("latitude", event.latitude);
+        i.putExtra("longitude", event.longitude);
+        context.startActivity(i);
     }
 }
 
