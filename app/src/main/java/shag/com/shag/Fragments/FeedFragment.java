@@ -159,40 +159,38 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
     //TODO improve populate feed method
     public void populateFeed() {
-        for (int i = 0; i < facebookFriendsIds.size(); i++) {
-            ParseQuery<Event> query = new ParseQuery("Event");
-            query.whereEqualTo("event_owner_fb_id", facebookFriendsIds.get(i));
-            query.include("User_event_owner");
-            query.findInBackground(new FindCallback<Event>() {
-                @Override
-                public void done(List<Event> eventsList, ParseException e) {
-                    if (e == null) {
-                        /*
-                        for (ParseObject item : itemList) {
-                            //Convert each item found to an event
-                            Event event = Event.fromParseObject(item);
-                            //add event to list to be displayed
-                            events.add(event);
-                            adapter.notifyDataSetChanged();
-                        } */
-                        events.addAll(eventsList);
+        ParseQuery<Event> query = new ParseQuery("Event");
+        query.whereContainedIn("event_owner_fb_id", facebookFriendsIds);
+        query.include("User_event_owner");
+        query.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> eventsList, ParseException e) {
+                if (e == null) {
+                    /*
+                    for (ParseObject item : itemList) {
+                        //Convert each item found to an event
+                        Event event = Event.fromParseObject(item);
+                        //add event to list to be displayed
+                        events.add(event);
                         adapter.notifyDataSetChanged();
+                    } */
+                    events.addAll(eventsList);
+                    adapter.notifyDataSetChanged();
 
-                        //TODO: move this somewhere else, it is currently over-sorting
-                        //Sort the events shown to user in order of soonest deadline
-                        /*
-                        Collections.sort(events, new Comparator<Event>() {
-                            @Override
-                            public int compare(Event event, Event t1) {
-                                return event.deadline.compareTo(t1.deadline);
-                            }
-                        }); */
-                    } else {
-                        Log.d("feedfragment", "Error: " + e.getMessage());
-                    }
+                    //TODO: move this somewhere else, it is currently over-sorting
+                    //Sort the events shown to user in order of soonest deadline
+                    /*
+                    Collections.sort(events, new Comparator<Event>() {
+                        @Override
+                        public int compare(Event event, Event t1) {
+                            return event.deadline.compareTo(t1.deadline);
+                        }
+                    }); */
+                } else {
+                    Log.d("feedfragment", "Error: " + e.getMessage());
                 }
-            });
-        }
+            }
+        });
     }
 
     // create category dialog fragment
