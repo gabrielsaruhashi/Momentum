@@ -21,6 +21,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
+import shag.com.shag.Other.RelevanceComparator;
 import shag.com.shag.R;
 
 /**
@@ -166,14 +168,14 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             @Override
             public void done(List<Event> eventsList, ParseException e) {
                 if (e == null) {
-                    /*
-                    for (ParseObject item : itemList) {
-                        //Convert each item found to an event
-                        Event event = Event.fromParseObject(item);
-                        //add event to list to be displayed
-                        events.add(event);
-                        adapter.notifyDataSetChanged();
-                    } */
+                    //TODO see if it is possible to improve this logic
+                    // calculate the relevance of each event before adding to arraylist
+                    for (Event event : eventsList) {
+                        event.setRelevance(calculateEventRelevance(event));
+                    }
+                    // sort events based on relevance
+                    Collections.sort(eventsList, new RelevanceComparator());
+
                     events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
 
@@ -235,8 +237,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     }
 
     public Double getCoefficient(String input, HashMap hm) {
-        // get the raw counter for the specific input key
-        int rawInterest =  (int) hm.get(input);
+        // get the raw counter for the specific input key, if it exists
+        int rawInterest = (hm.get(input) != null) ? (int) hm.get(input) : 0;
         double totalCounter = 0;
 
         // iterate through the entry set (a Set view of the mappings contained in this map)
@@ -247,8 +249,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             it.remove(); // avoids a ConcurrentModificationException
         }
 
-        // return the coefficient Raw Interest / Total Interest
-        return rawInterest / totalCounter;
+        // return the coefficient Raw Interest / Total Interest if total interest > 0
+        return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
     }
 
 

@@ -35,6 +35,7 @@ public class Event extends ParseObject implements Parcelable {
     public ParseGeoPoint parseGeoPoint;
     public Date timeOfEvent;
     private ParseObject eventOwner;
+    private Double relevance;
 
     //CONSTRUCTORS
     public Event(){
@@ -73,6 +74,15 @@ public class Event extends ParseObject implements Parcelable {
     }
 
     public Date getTimeOfEvent() {return getDate("event_time"); }
+
+    //TODO improve this method
+    public Double getRelevance() {
+        return relevance;
+    }
+
+    public void setRelevance(Double relevance) {
+        this.relevance = relevance;
+    }
 
     // SETTERS
 
