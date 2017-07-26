@@ -53,7 +53,7 @@ public class ParseApplication extends Application {
     private static Context context;
     private static FacebookClient facebookClient;
     private static ArrayList<Long> facebookFriendsIds;
-    private static HashMap<String, Integer> recentFriendsMap;
+    private static HashMap recentFriendsMap;
     private static boolean mFirstLoad;
 
     @Override
@@ -165,11 +165,13 @@ public class ParseApplication extends Application {
         return facebookFriendsIds;
     }
 
-    public static HashMap<String, Integer> getRecentFriends() {
+    public static HashMap getRecentFriends() {
         // ensure user is authenticated
         if (ParseUser.getCurrentUser().isAuthenticated()) {
+            ParseUser currentUser = ParseUser.getCurrentUser();
             // instantiate recent friends with last version of recent friends from the database
-            recentFriendsMap = (HashMap) ParseUser.getCurrentUser().getMap("recent_friends_map");
+            //TODO add ternary operator in case user just returned
+            recentFriendsMap = (currentUser.getMap("recent_friends_map") != null) ? (HashMap) currentUser.getMap("recent_friends_map") : new HashMap() ;
 
             // upon first load, do all the logic to the  updated recent_friends
             if (mFirstLoad) {
@@ -190,7 +192,7 @@ public class ParseApplication extends Application {
                             /* for each memory, get all the participants ids but that of the current user's
                             and add them to the respective keys in the recent friends hashmap
                              */
-                            HashMap<String, Integer> updatedRecentFriendsMap = new HashMap<>();
+                            HashMap updatedRecentFriendsMap = new HashMap<>();
 
                             for (Memory memory : memories) {
                                 ArrayList<String> participantsIds = (ArrayList) memory.getParticipantsIds();
@@ -199,7 +201,7 @@ public class ParseApplication extends Application {
 
                                     // if key already exists, just add to the key counter
                                     if (updatedRecentFriendsMap.containsKey(participantId)) {
-                                        int counter = updatedRecentFriendsMap.get(participantId);
+                                        int counter = (int) updatedRecentFriendsMap.get(participantId);
                                         updatedRecentFriendsMap.put(participantId, counter + 1);
                                     } else { // else create key
                                         updatedRecentFriendsMap.put(participantId, 1);
@@ -208,6 +210,7 @@ public class ParseApplication extends Application {
                             }
                             // update user's recent friends in the database
                             ParseUser.getCurrentUser().put("recent_friends_map", updatedRecentFriendsMap);
+                            ParseUser.getCurrentUser().saveInBackground();
                             // update local recent friends for future reference
                             recentFriendsMap = updatedRecentFriendsMap;
                         }

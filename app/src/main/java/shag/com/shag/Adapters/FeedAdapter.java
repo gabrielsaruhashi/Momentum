@@ -24,9 +24,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -291,13 +289,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     // get hashmap & category
                     String category = object.getString("category");
-                    Map hm = (HashMap) currentUser.getMap("categories_tracker");
+
+                    HashMap hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
                     int oldCounter = (int) hm.get(category);
                     hm.put(category, oldCounter + 1);
 
                     currentUser.put("categories_tracker", hm);
+                    currentUser.saveInBackground();
                     /*
                     // update recent friends tracker
                     ArrayList<String> outdatedRecentFriends = (ArrayList) currentUser.getList("recent_friends_ids");
