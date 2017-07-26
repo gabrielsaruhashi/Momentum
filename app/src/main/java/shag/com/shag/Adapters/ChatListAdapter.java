@@ -112,13 +112,14 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             if (position != RecyclerView.NO_POSITION) {
                 // get the event at the position
                 Chat chat = chats.get(position);
-
+                boolean bo = chat.getEvent().getIsFirstCreated();
                 // start chat activity
                 Intent i = new Intent(context, ChatActivity.class);
                 // pass chat id in the intent
                 i.putExtra("event_id", chat.getEventId());
                 i.putExtra("event", chat.getEvent());
                 i.putExtra("participants_ids", chat.getChatParticipantsIds());
+                i.putExtra("is_event_new", chat.getEvent().getIsFirstCreated());
                 context.startActivity(i);
             }
         }

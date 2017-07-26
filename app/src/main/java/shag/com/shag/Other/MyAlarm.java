@@ -42,7 +42,7 @@ public class MyAlarm extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(longStartTime);
-        time.add(Calendar.SECOND, 20); //TODO hard code reminder for 24 hours later
+        time.add(Calendar.SECOND, 60); //TODO hard code reminder for 24 hours later
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
                 pendingIntent);
     }

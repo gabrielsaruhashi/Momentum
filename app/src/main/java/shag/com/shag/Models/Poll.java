@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +25,17 @@ public class Poll extends ParseObject implements Parcelable {
     private Map<String,Integer> scores;
     private String pollCreator;
     private List<String> peopleVoted;
+    private Event event;
+
+
+
+    private String pollType;
 
     public Poll() {
 
     }
+
+
     public String getPollId() {
         return getObjectId();
     }
@@ -48,9 +56,17 @@ public class Poll extends ParseObject implements Parcelable {
 
     }
 
-    public void setPollCreator(String pollCreator) {
-        this.pollCreator = pollCreator;
-        put("poll_creator", pollCreator);
+    //event
+    public void setEvent(Event event) {
+        this.event = event;
+        put("Event", event);
+    }
+
+
+
+
+    public void setPollCreator() {
+        put("poll_creator", ParseUser.getCurrentUser());
     }
 
 
@@ -84,6 +100,12 @@ public class Poll extends ParseObject implements Parcelable {
         put("choices", choices);
     }
 
+    public void addChoices (List<String> choices, String newChoice) {
+
+        choices.add(newChoice);
+        put("choices", choices);
+    }
+
 
     //scores
     public void setScores(Map<String, Integer> scores) {
@@ -112,6 +134,16 @@ public class Poll extends ParseObject implements Parcelable {
         peopleVoted.add(user);
         put("people_voted",peopleVoted);
 
+    }
+
+    //poll type
+    public String getPollType() {
+        return getString("poll_type");
+    }
+
+    public void setPollType(String pollType) {
+        this.pollType = pollType;
+        put("poll_type", pollType);
     }
 
 

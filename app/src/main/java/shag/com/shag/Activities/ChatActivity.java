@@ -13,11 +13,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
@@ -31,10 +33,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
+import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
+import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
@@ -43,12 +48,16 @@ import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener{
+public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
+        TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
+        PollsAdapter.DataTransferInterface{
+
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
     Context context;
     EditText etMessage;
     Button btSend;
+    ArrayList<View> buttons;
 
     RecyclerView rvChat;
     ArrayList<Message> mMessages;
@@ -74,6 +83,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
+    private boolean isEventNew;
+    public RecyclerView.ViewHolder holder;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,6 +94,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         setContentView(R.layout.activity_chat);
 
         ParseObject.registerSubclass(Poll.class);
+
+
+
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,R.string.open,R.string.close);
@@ -99,10 +115,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 showDialog();
             }
         });
+
         // initialize the list of polls
         polls = new ArrayList<>();
         // construct the adater from the data source
-        pollAdapter = new PollsAdapter(polls);
+        pollAdapter = new PollsAdapter(getContext(), this, polls);
+
         // initialize recycler view
         rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
 
@@ -110,6 +128,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         rvPolls.setAdapter(pollAdapter);
         // Set layout manager to position the items
         rvPolls.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        chatEvent = getIntent().getParcelableExtra("event");
 
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -122,6 +142,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        //todo ask gabe/hana reasoning behind this if statement
         if (chatParticipantsIds == null) {
             openedPush = true;
             try {
@@ -133,9 +154,32 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         }
 
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        ParseObject object = null;
+        try {
+            object = query.get(eventId);
+            isEventNew = object.getBoolean("is_first_created");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         currentUserId = ParseUser.getCurrentUser().getObjectId();
-        chatEvent = getIntent().getParcelableExtra("event");
         setupMessagePosting();
+        if(isEventNew==true){
+            createTimePoll();
+            isEventNew=false;
+            ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+            eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+                public void done(ParseObject eventDb, ParseException e) {
+                    if (e == null) {
+                        eventDb.put("is_first_created", isEventNew);
+                        eventDb.saveInBackground();
+                    }
+                }
+            });
+        }
+
         populatePolls();
 
 
@@ -179,27 +223,27 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             });
 
         SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
-        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-            @Override
-            public void onEvent(ParseQuery<Poll> query, Poll object) {
-                String senderId = object.getPollCreator();
-                String newEventId = object.getEventId();
-
-                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                    polls.add(0, object);
-                }
-
-                // RecyclerView updates need to be run on the UI thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pollAdapter.notifyDataSetChanged();
-                        rvPolls.scrollToPosition(0);
-
-                    }
-                });
-            }
-        });
+//        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+//            @Override
+//            public void onEvent(ParseQuery<Poll> query, Poll object) {
+//                String senderId = object.getPollCreator();
+//                String newEventId = object.getEventId();
+//
+//                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+//                    polls.add(0, object);
+//                }
+//
+//                // RecyclerView updates need to be run on the UI thread
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        pollAdapter.notifyDataSetChanged();
+//                        rvPolls.scrollToPosition(0);
+//
+//                    }
+//                });
+//            }
+//        });
 
 
     }
@@ -324,22 +368,63 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     }
 
-
-    @Override
-    public void onFinishCreatePollFragment(Poll poll) {
+    public void createTimePoll(){
+        Poll poll = new Poll();
+        //poll.setEventId(eventId);
+        //poll.put("Event", chatEvent);
         poll.setEventId(eventId);
-        poll.setPollCreator(ParseUser.getCurrentUser().getObjectId());
+        poll.put("Poll_creator",ParseUser.getCurrentUser());
+        poll.setPollType("Time");
+        poll.setQuestion("Time of Event");
+        ArrayList<String> customs = new ArrayList<>();
+        customs.add("Custom");
+        customs.add("Custom");
+        customs.add("Custom");
+        customs.add("Custom");
+
+        poll.setChoices(customs);
+        poll.setScores(new HashMap<String, Integer>());
+        poll.setPeopleVoted(new ArrayList<String>());
+
+        polls.add(poll);
+        pollAdapter.notifyItemInserted(polls.size()-1);
+        rvPolls.scrollToPosition(0);
         poll.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
+                if (e==null){
+                    Toast.makeText(ChatActivity.this, "yay you put time poll on parse", Toast.LENGTH_LONG).show();
+                }
 
             }
         });
-        polls.add(0,poll);
+
+    }
+
+
+    @Override
+    public void onFinishCreatePollFragment(Poll poll) {
+        //poll.put("Event",eventId);
+        poll.setEventId(eventId);
+        //poll.put("Event", chatEvent);
+        poll.put("Poll_creator",ParseUser.getCurrentUser());
+        poll.setPollType("Custom");
+        poll.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e==null){
+                    Toast.makeText(ChatActivity.this, "yay you put poll on parse", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+        polls.add(poll);
         pollAdapter.notifyDataSetChanged();
         rvPolls.scrollToPosition(0);
         //Log.d("onReturnValue", "Got value " + poll.getQuestion() + " back from Dialog!");
     }
+
+
 
     public void showDialog() {
         CreatePollDialogFragment newFragment = CreatePollDialogFragment.newInstance();
@@ -392,8 +477,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
 
-        // get the latest 50 messages, order will show up newest to oldest of this group
-        query.orderByDescending("createdAt");
+        query.orderByAscending("createdAt");
 
         // Execute query to fetch all messages from Parse asynchronously
         // this is equivalent to a SELECT query with SQL
@@ -450,6 +534,90 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         } else {
             super.onBackPressed();
         }
+    }
+
+
+
+    @Override
+    public void onFinishTimePickerFragment(String time, int btn, int post) {
+        //final Poll poll = polls.get(getAdapterPosition());
+        int i = post;
+        Poll poll = polls.get(post);
+        final List<String> choices = poll.getChoices();
+        final Map<String,Integer> scores = poll.getScores();
+
+
+        ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
+
+        if (btn == 0) {
+            RadioButton rButton0 = (RadioButton) buttons.get(0);
+            rButton0.setText(rButton0.getText() + " @ " + time);
+            choices.set(0,rButton0.getText().toString());
+            scores.put(rButton0.getText().toString(),0);
+
+        } else if (btn == 1) {
+            RadioButton rButton1 = (RadioButton) buttons.get(1);
+            rButton1.setText(rButton1.getText() + " @ " + time);
+            choices.set(1,rButton1.getText().toString());
+            scores.put(rButton1.getText().toString(),0);
+
+
+
+
+        } else if (btn == 2) {
+            RadioButton rButton2 = (RadioButton) buttons.get(2);
+            rButton2.setText(rButton2.getText() + " @ " + time);
+            choices.set(2,rButton2.getText().toString());
+            scores.put(rButton2.getText().toString(),0);
+
+
+        }
+        else {
+            RadioButton rButton3 = (RadioButton) buttons.get(3);
+            rButton3.setText(rButton3.getText() + " @ " + time);
+            choices.set(3,rButton3.getText().toString());
+            scores.put(rButton3.getText().toString(),0);
+
+
+        }
+
+        pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
+            public void done(ParseObject pollDb, ParseException e) {
+                if (e == null) {
+                    pollDb.put("choices", choices);
+                    pollDb.saveInBackground();
+                }
+            }
+        });
+
+
+    }
+
+
+    @Override
+    public void onFinishDatePickerFragment(String day, int btn, int post) {
+        if (btn == 0) {
+            RadioButton rButton0 = (RadioButton) buttons.get(0);
+            rButton0.setText(day);
+        } else if (btn == 1) {
+            RadioButton rButton1 = (RadioButton) buttons.get(1);
+            rButton1.setText(day);
+        } else if (btn == 2) {
+            RadioButton rButton2 = (RadioButton) buttons.get(2);
+            rButton2.setText(day);
+        } else {
+            RadioButton rButton3 = (RadioButton) buttons.get(3);
+            rButton3.setText(day);
+        }
+
+
+    }
+
+
+    @Override
+    public void setValues(ArrayList<View> al) {
+       buttons = al;
+
     }
 }
 
