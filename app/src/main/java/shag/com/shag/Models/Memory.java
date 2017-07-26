@@ -146,7 +146,7 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     public ArrayList<String> getParticipantsIds() {
-        return participantsIds;
+        return (ArrayList) getList("participants_ids");
     }
 
     public void setParticipantsIds(ArrayList<String> participantsIds) {

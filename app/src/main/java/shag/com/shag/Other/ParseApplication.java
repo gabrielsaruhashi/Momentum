@@ -6,10 +6,14 @@ import android.content.Intent;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.parse.FindCallback;
 import com.parse.Parse;
+import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowLog;
 import com.raizlabs.android.dbflow.config.FlowManager;
@@ -19,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -47,6 +53,7 @@ public class ParseApplication extends Application {
     private static Context context;
     private static FacebookClient facebookClient;
     private static ArrayList<Long> facebookFriendsIds;
+    private static HashMap<String, Integer> recentFriendsMap;
     private static boolean mFirstLoad;
 
     @Override
@@ -97,6 +104,7 @@ public class ParseApplication extends Application {
 
     }
 
+    // facebook client singleton
     public static FacebookClient getFacebookRestClient() {
         if (facebookClient == null) {
             facebookClient = new FacebookClient(context);
@@ -112,9 +120,7 @@ public class ParseApplication extends Application {
                 @Override
                 public void run() {
 
-                    // Moves the current Thread into the background
-
-                    // The code to execute when the runnable is processed by a thread
+                    // the code to execute when the runnable is processed by a thread
                     FacebookClient client;
                     client = ParseApplication.getFacebookRestClient();
 
@@ -134,9 +140,6 @@ public class ParseApplication extends Application {
                                         User friend = User.fromJson(friends.getJSONObject(i));
                                         facebookFriendsIds.add(friend.fbUserID);
                                     }
-
-
-
                                 }
                             } catch(JSONException e) {
                                 e.printStackTrace();
@@ -146,76 +149,76 @@ public class ParseApplication extends Application {
                 }
             };
 
+            // start thread
             thread.start();
-
+            // set first load to false for future getFacebookFriends() call
             mFirstLoad = false;
-
+            // wait for the thread to return the facebook API request
             try {
                 thread.join(0);
             } catch (InterruptedException i) {
                 i.getMessage();
             }
 
-            // return getFacebookFriendsAsynch();
-
-        //TODO why is it passing here
         }
+        // return your fb friends' ids
         return facebookFriendsIds;
     }
 
-    /*
-    public static void getFacebookFriendsAsynch() {
-        // Now we can execute the long-running task at any time.
-        new InitialLoadAsyncTask().execute();
-    }
+    public static HashMap<String, Integer> getRecentFriends() {
+        // ensure user is authenticated
+        if (ParseUser.getCurrentUser().isAuthenticated()) {
+            // instantiate recent friends with last version of recent friends from the database
+            recentFriendsMap = (HashMap) ParseUser.getCurrentUser().getMap("recent_friends_map");
 
+            // upon first load, do all the logic to the  updated recent_friends
+            if (mFirstLoad) {
 
+                // Find all posts by the current user
+                ParseQuery<Memory> query = ParseQuery.getQuery("Memory");
 
-    public static class InitialLoadAsyncTask extends AsyncTask<Void, ArrayList, ArrayList> {
+                // create auxiliary list with current user id
+                List list = new ArrayList();
+                list.add(ParseUser.getCurrentUser().getObjectId());
 
+                query.whereContainedIn("participants_ids", list);
+                query.findInBackground(new FindCallback<Memory>() {
+                    @Override
+                    public void done(List<Memory> memories, ParseException e) {
+                        // check if there are new memories to be added to the map
+                        if (memories != null) {
+                            /* for each memory, get all the participants ids but that of the current user's
+                            and add them to the respective keys in the recent friends hashmap
+                             */
+                            HashMap<String, Integer> updatedRecentFriendsMap = new HashMap<>();
 
-        protected ArrayList<Long> doInBackground(Void... v) {
-            // get parameter from execute();
-            final ArrayList<Long> arrayOfFriends = new ArrayList<Long>();
+                            for (Memory memory : memories) {
+                                ArrayList<String> participantsIds = (ArrayList) memory.getParticipantsIds();
 
-            // instantiate facebook client
-            FacebookClient client;
-            client = ParseApplication.getFacebookRestClient();
+                                for (String participantId : participantsIds) {
 
-            // gets friends ids
-            client.getFriendsUsingApp(new GraphRequest.Callback() {
-                public void onCompleted(GraphResponse response) {
-
-                    try {
-                        JSONObject obj = response.getJSONObject();
-                        //obj should never be null but occassionally is-- need to log in again
-
-                        JSONArray friends = obj.getJSONArray("data");
-                        for (int i = 0; i < friends.length(); i++) {
-                            User friend = User.fromJson(friends.getJSONObject(i));
-                            arrayOfFriends.add(friend.fbUserID);
+                                    // if key already exists, just add to the key counter
+                                    if (updatedRecentFriendsMap.containsKey(participantId)) {
+                                        int counter = updatedRecentFriendsMap.get(participantId);
+                                        updatedRecentFriendsMap.put(participantId, counter + 1);
+                                    } else { // else create key
+                                        updatedRecentFriendsMap.put(participantId, 1);
+                                    }
+                                }
+                            }
+                            // update user's recent friends in the database
+                            ParseUser.getCurrentUser().put("recent_friends_map", updatedRecentFriendsMap);
+                            // update local recent friends for future reference
+                            recentFriendsMap = updatedRecentFriendsMap;
                         }
-
-
-                    } catch(JSONException e){
-                        e.printStackTrace();
                     }
-                }
-            });
-            return arrayOfFriends;
+
+                });
+            }
         }
 
-        // when background task finishes
-
-        @Override
-        protected void onPostExecute(ArrayList arrayList) {
-            //super.onPostExecute(arrayList);
-            mFirstLoad = false;
-            facebookFriendsIds = arrayList;
-        }
-
-
+        return recentFriendsMap;
     }
-    */
+
 
 }

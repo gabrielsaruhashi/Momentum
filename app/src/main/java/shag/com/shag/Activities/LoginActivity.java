@@ -102,6 +102,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            // initialize recent friends and facebook friends 'global/app' variable
+            ParseApplication.getRecentFriends();
             ParseApplication.getFacebookFriends();
             context.startActivity(i);
         }
@@ -162,7 +164,7 @@ public class LoginActivity extends AppCompatActivity {
                             //TOD add memories list not working
                             newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
                             newCustomUser.setMap("categories_tracker", createCategoriesMap());
-                            newCustomUser.setSomeStringArray("recent_friends_ids", new ArrayList<String>());
+                            newCustomUser.setMap("recent_friends_map", new HashMap<String, Integer>());
                         }
                     });
                     Log.d("MyApp", "User signed up and logged in through Facebook!");

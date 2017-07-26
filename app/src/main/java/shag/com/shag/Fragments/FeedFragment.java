@@ -18,9 +18,13 @@ import android.widget.Toast;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import shag.com.shag.Activities.SelectEventCategoryActivity;
 import shag.com.shag.Adapters.FeedAdapter;
@@ -120,8 +124,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         adapter.clear();
         populateFeed();
         swipeContainer.setRefreshing(false);
-
-
     }
 
     /*
@@ -220,5 +222,37 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         adapter.notifyDataSetChanged();
         rvEvents.smoothScrollToPosition(0);*/
     }
+
+    // returns the relevance of a specific event in the timeline
+    public Double calculateEventRelevance(Event event) {
+        // get relevant information for recommendation algorithm
+        HashMap<String, Integer> recentFriendsMap = ParseApplication.getRecentFriends();
+        HashMap categoriesTracker = (HashMap) ParseUser.getCurrentUser().getMap("categories_tracker");
+
+        // get the chill coefficient based on the user's profile
+        Double chillCoefficient = getCoefficient(event.getCategory(), categoriesTracker);
+        Double closenessCoefficient = getCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
+        return relevanceCoefficient;
+    }
+
+    public Double getCoefficient(String input, HashMap hm) {
+        // get the raw counter for the specific input key
+        int rawInterest =  (int) hm.get(input);
+        double totalCounter = 0;
+
+        // iterate through the entry set (a Set view of the mappings contained in this map)
+        Iterator it = hm.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            totalCounter += (int) pair.getValue();
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+        // return the coefficient Raw Interest / Total Interest
+        return rawInterest / totalCounter;
+    }
+
+
 
 }
