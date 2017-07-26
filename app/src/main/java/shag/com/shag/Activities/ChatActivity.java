@@ -627,13 +627,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     if (e == null) {
                         if (timeWinner != null) {
                             Date date = convertStringToDate(timeWinner);
-                            eventDb.put("", date);
+                            eventDb.put("event_time", date);
                         }
                         if (locationWinner != null) {
                             Double lat = locationWinner.getLatitude();
                             Double lng = locationWinner.getLongitude();
-                            eventDb.put("", lat);
-                            eventDb.put("", lng);
+                            eventDb.put("latitude", lat);
+                            eventDb.put("longitude", lng);
                         }
                         eventDb.saveInBackground();
                     }
