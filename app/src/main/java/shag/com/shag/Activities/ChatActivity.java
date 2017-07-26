@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -91,10 +92,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
     // chat id
+    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
-    private Event chatEvent;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
@@ -108,9 +109,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        ParseObject.registerSubclass(Poll.class);
-
-        //toggle navigation
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
@@ -141,7 +139,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // Set layout manager to position the items
         rvPolls.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        chatEvent = getIntent().getParcelableExtra("event");
 
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
@@ -151,8 +148,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // unwrap intent and get current user id
         Intent intent = getIntent();
+        Bundle b = intent.getExtras();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        event = intent.getParcelableExtra("event");
+
         if (chatParticipantsIds == null) {
             openedPush = true;
             try {
@@ -179,7 +179,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //if event is new, make time and lcoation polls
         if (isEventNew == true) {
-            //createTimePoll();
             try {
                 createTimeAndLocationPolls("Time");
                 createTimeAndLocationPolls("Location");
@@ -265,6 +264,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 //        });
 
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_chat, menu);
+        return true;
     }
 
     private void populatePolls() {
@@ -838,6 +844,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         });
 
 
+    }
+    public void onEventReady(MenuItem menuItem) {
+        Intent i = new Intent(context, EventReadyActivity.class);
+        i.putExtra("timeOfEvent", event.timeOfEvent);
+        i.putExtra("latitude", event.latitude);
+        i.putExtra("longitude", event.longitude);
+        context.startActivity(i);
     }
 }
 

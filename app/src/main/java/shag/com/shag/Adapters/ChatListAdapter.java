@@ -53,7 +53,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         // populate the views
         Chat chat = chats.get(position);
-        Event event = chat.getEvent();
+        Event event = chat.getParcelableEvent();
         String iconImageUrl = chat.getChatIconUrl();
         //TODO delete this later
         if (iconImageUrl == null) {
@@ -62,15 +62,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         holder.tvBody.setText(chat.getDescription());
         holder.tvParticipants.setText(chat.getChatTitle());
 
-        if (event.getCategory().equals("Movie")) {
+        if (event.category.equals("Movie")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.chill_color));
-        } else if (event.getCategory().equals("Basketball")) {
+        } else if (event.category.equals("Basketball")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.sports_color));
-        } else if (event.getCategory().equals("Party")) {
+        } else if (event.category.equals("Party")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.party_color));
-        } else if (event.getCategory().equals("Food")) {
+        } else if (event.category.equals("Food")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.food_color));
-        } else if (event.getCategory().equals("Music")) {
+        } else if (event.category.equals("Music")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.music_color));
         } else {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.misc_color));
@@ -112,14 +112,15 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             if (position != RecyclerView.NO_POSITION) {
                 // get the event at the position
                 Chat chat = chats.get(position);
-                boolean bo = chat.getEvent().getIsFirstCreated();
                 // start chat activity
                 Intent i = new Intent(context, ChatActivity.class);
                 // pass chat id in the intent
+                String x = chat.getEventId();
+                ArrayList<String> y = chat.getChatParticipantsIds();
+                Event z = chat.getParcelableEvent();
                 i.putExtra("event_id", chat.getEventId());
-                i.putExtra("event", chat.getEvent());
                 i.putExtra("participants_ids", chat.getChatParticipantsIds());
-                i.putExtra("is_event_new", chat.getEvent().getIsFirstCreated());
+                i.putExtra("event", chat.getParcelableEvent());
                 context.startActivity(i);
             }
         }

@@ -2,19 +2,20 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.ramotion.foldingcell.FoldingCell;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.MemoryDetailsActivity;
 import shag.com.shag.Models.Memory;
@@ -24,89 +25,136 @@ import shag.com.shag.R;
  * Created by gabesaruhashi on 7/18/17.
  */
 
-public class MemoriesAdapter extends RecyclerView.Adapter<MemoriesAdapter.ViewHolder> {
-    // list of memories
-    ArrayList<Memory> memories;
-    Context context;
+public class MemoriesAdapter extends ArrayAdapter<Memory> {
+    private HashSet<Integer> unfoldedIndexes = new HashSet<>();
+    private View.OnClickListener defaultRequestBtnClickListener;
+    private Context mContext;
 
-    // pass in the memories array in the constructor
-    public MemoriesAdapter(ArrayList<Memory> memories) { this.memories = memories; }
 
-    // creates and inflates a new view; for each row, inflate the layout and cache references
-    @Override
-    public MemoriesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // memories = new ArrayList<Memory>();
-        // get context and inflate view
-        context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        // create the view using the item_feed layout
-        View memoriesView = inflater.inflate(R.layout.item_memory, parent, false);
-
-        // Return a new holder instance
-        MemoriesAdapter.ViewHolder viewHolder = new MemoriesAdapter.ViewHolder(memoriesView);
-
-        return viewHolder;
+    public MemoriesAdapter(Context context, List<Memory> objects) {
+        super(context, 0, objects);
+        mContext = context;
     }
 
     @Override
-    public void onBindViewHolder(MemoriesAdapter.ViewHolder holder, int position) {
-        Memory memory = memories.get(position);
-        holder.rootView.setTag(memory);
-        holder.tvMemoryName.setText(memory.getMemoryName());
+    public View getView(int position, final View convertView, ViewGroup parent) {
+        // get item for selected view
+        final Memory memory = getItem(position);
+        // if cell is exists - reuse it, if not - create the new one from resource
+        FoldingCell cell = (FoldingCell) convertView;
+        ViewHolder viewHolder;
+        if (cell == null) {
+            viewHolder = new ViewHolder();
+            LayoutInflater vi = LayoutInflater.from(getContext());
+            cell = (FoldingCell) vi.inflate(R.layout.item_memory, parent, false);
 
-        // TODO add banner picture
-        // load user profile image using glide
-        Glide.with(context)
-                .load("http://theinspirationgrid.com/wp-content/uploads/2015/05/photo-nick-venton-02.jpg")
-                .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                .into(holder.ivMemoryBannerPicture);
-    }
+            // binding view parts to view holder
+            viewHolder.ivMemoryBannerPicture = (ImageView) cell.findViewById(R.id.ivMemoryBannerPicture);
+            // viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
+            viewHolder.btnAccessMemory = (Button) cell.findViewById(R.id.content_request_btn);
+            // set listener
+            viewHolder.btnAccessMemory.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent memoryDetailIntent = new Intent(mContext, MemoryDetailsActivity.class);
+                    memoryDetailIntent.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
+                    mContext.startActivity(memoryDetailIntent);
+                }
+            });
 
-    @Override
-    public int getItemCount() {
-        return memories.size();
-    }
+            // content card
+            viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
+            // title card
+            viewHolder.tvDescription = (TextView) cell.findViewById(R.id.tvDescription);
+            viewHolder.ivTitle = (ImageView) cell.findViewById(R.id.ivTitle);
 
-    // creates ViewHolder class
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            //TODO dummy data
+            viewHolder.fakeFriend1 = (ImageView) cell.findViewById(R.id.fake_pic1);
+            viewHolder.fakeFriend2 = (ImageView) cell.findViewById(R.id.fake_pic2);
+            viewHolder.fakeFriend3 = (ImageView) cell.findViewById(R.id.fake_pic3);
 
-        // Automatically finds each field by the specified ID
-        final View rootView;
-        @BindView(R.id.tvMemoryName) TextView tvMemoryName;
-        @BindView(R.id.ivMemoryBannerPicture) ImageView ivMemoryBannerPicture;
-        @BindView(R.id.vPalette) View vPalette;
-
-        public ViewHolder(View itemView) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            rootView = itemView;
-
-            // set click listener for memory
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            // gets item position
-            int position = getAdapterPosition();
-
-            if (position != RecyclerView.NO_POSITION) {
-                // get the memory at the position
-                Memory memory = memories.get(position);
-                // set up intent
-                Intent i = new Intent(context, MemoryDetailsActivity.class);
-                //TODO pass entire object (NOT priority tho)
-                i.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
-                context.startActivity(i);
+            cell.setTag(viewHolder);
+        } else {
+            // for existing cell set valid valid state(without animation)
+            if (unfoldedIndexes.contains(position)) {
+                cell.unfold(true);
+            } else {
+                cell.fold(true);
             }
-
+            viewHolder = (ViewHolder) cell.getTag();
         }
+        /*
+        viewHolder.tvMemoryName.setText(memory.getMemoryName());
+        viewHolder.tvDescription.setText(memory.getMemoryName()); */
+
+
+        //TODO use real data to populate views
+
+        Glide.with(mContext)
+                .load("http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
+                .into(viewHolder.ivTitle);
+
+
+        Glide.with(mContext)
+                .load("https://s3.amazonaws.com/classconnection/455/flashcards/8794455/jpg/belachew_samrawit_s01238564-155DC9A147C4F218FC9.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
+                .into(viewHolder.fakeFriend1);
+
+        Glide.with(mContext)
+                .load("https://media.licdn.com/mpr/mpr/shrinknp_200_200/AAEAAQAAAAAAAAnvAAAAJDVhNWUzYjMxLTA0OWYtNGU5Yy05MTM4LTQwY2QzZTFmMzkzYQ.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
+                .into(viewHolder.fakeFriend2);
+
+        Glide.with(mContext)
+                .load("https://yt3.ggpht.com/-QQ6nz0pWCk0/AAAAAAAAAAI/AAAAAAAAAAA/3NXhoHLM_LQ/s900-c-k-no-mo-rj-c0xffffff/photo.jpg")
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 0))
+                .into(viewHolder.fakeFriend3);
+
+        // viewHolder.btnAccessMemory.setOnClickListener(mContext);
+
+
+        return cell;
     }
 
-    // Easy access to the context object in the recyclerview
-    private Context getContext() {
-        return context;
+    // simple methods for register cell state changes
+    public void registerToggle(int position) {
+        if (unfoldedIndexes.contains(position))
+            registerFold(position);
+        else
+            registerUnfold(position);
+    }
+
+    public void registerFold(int position) {
+        unfoldedIndexes.remove(position);
+    }
+
+    public void registerUnfold(int position) {
+        unfoldedIndexes.add(position);
+    }
+
+    public View.OnClickListener getDefaultRequestBtnClickListener() {
+        return defaultRequestBtnClickListener;
+    }
+
+    public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
+        this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
+    }
+
+    // View lookup cache
+    private static class ViewHolder {
+        ImageView ivMemoryBannerPicture;
+        TextView tvMemoryName;
+        TextView vPalette;
+        Button btnAccessMemory;
+        ImageView ivTitle;
+        TextView tvDescription;
+
+        // dummy data
+        ImageView fakeFriend1;
+        ImageView fakeFriend2;
+        ImageView fakeFriend3;
+
+
     }
 
 }

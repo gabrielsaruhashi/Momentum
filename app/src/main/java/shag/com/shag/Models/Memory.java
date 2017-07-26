@@ -127,7 +127,7 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     public ArrayList<ParseFile> getPicturesParseFiles() {
-        return picturesParseFiles;
+        return (ArrayList) get("pictures_parse_files");
     }
 
     public void setPicturesParseFiles(ArrayList<ParseFile> picturesParseFiles) {

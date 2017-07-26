@@ -122,7 +122,7 @@ public class Poll extends ParseObject implements Parcelable {
 
     //location options (if a location poll)
     public Map<String, ParseGeoPoint> getLocationOptions() {
-        return getMap("location_option");
+        return getMap("location_options");
 
     }
 
