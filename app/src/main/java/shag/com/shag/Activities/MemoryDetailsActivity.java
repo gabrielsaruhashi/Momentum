@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -21,7 +22,12 @@ import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import org.jcodec.api.SequenceEncoder;
+import org.jcodec.common.model.Picture;
+
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -32,6 +38,9 @@ import shag.com.shag.Fragments.DialogFragments.ImageZoomDialogFragment;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
+import static org.jcodec.common.model.ColorSpace.RGB;
+
+
 public class MemoryDetailsActivity extends AppCompatActivity implements ImageAdapter.ImageZoomAdapterCallback{
     //@BindView(R.id.tvMemoryName) TextView tvMemoryName;
     @BindView(R.id.btAddPicture) Button btAddPicture;
@@ -40,11 +49,12 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
     ImageAdapter imageAdapter;
     ArrayList<ParseFile> pictures;
+
     // create constant for start activity
     final static int SELECT_IMAGE = 16;
-
     private Memory memory;
     private String memoryId;
+    private int initialNumberOfPictures;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +75,11 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
+        // save original number of pictures to later check if user added pictures
+        initialNumberOfPictures = pictures.size();
+        // set adapter
         imageAdapter = new ImageAdapter(this, pictures);
+        // get gridview
         gridView = (GridView) findViewById(R.id.gridview);
 
         // setup callback for image zoom
@@ -129,8 +143,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                  }
                              }
                          });
-
-
                     } catch (IOException e) {
                         e.getMessage();
                     }
@@ -162,5 +174,61 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         showImageZoomDialog(bitmap, screenWidth, screenHeight);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // in case used added pictures, recreate slideshow
+        if (initialNumberOfPictures != pictures.size()) {
+            try {
+                SequenceEncoder enc = new SequenceEncoder(new File("filename"));
+                // GOP size will be supported in 0.2
+                // enc.getEncoder().setKeyInterval(25);
+                for(ParseFile picture : pictures) {
+                    Bitmap pictureBitmap = bitmapConverterFromParseFile(picture);
+                    Picture
+                    BufferedImage image = ... // Obtain an image to encode
+                    enc.encodeImage(image);
+                }
+                enc.finish();
+            } catch (IOException e) {
+                e.getMessage();
+            }
 
+        }
+    }
+
+    // creates a bitmap from parsefile data
+    private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
+
+        try {
+            byte[] bitmapdata = parseFile.getData();
+            Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+            return bm;
+        } catch (ParseException e) {
+            e.getMessage();
+        }
+        return null;
+    }
+
+    public static Picture fromBitmap(Bitmap src) {
+        Picture dst = Picture.create((int)src.getWidth(), (int)src.getHeight(), RGB);
+        fromBitmap(src, dst);
+        return dst;
+    }
+
+    public static void fromBitmap(Bitmap src, Picture dst) {
+        int[] dstData = dst.getPlaneData(0);
+        int[] packed = new int[src.getWidth() * src.getHeight()];
+
+        src.getPixels(packed, 0, src.getWidth(), 0, 0, src.getWidth(), src.getHeight());
+
+        for (int i = 0, srcOff = 0, dstOff = 0; i < src.getHeight(); i++) {
+            for (int j = 0; j < src.getWidth(); j++, srcOff++, dstOff += 3) {
+                int rgb = packed[srcOff];
+                dstData[dstOff]     = (rgb >> 16) & 0xff;
+                dstData[dstOff + 1] = (rgb >> 8) & 0xff;
+                dstData[dstOff + 2] = rgb & 0xff;
+            }
+        }
+    }
 }
