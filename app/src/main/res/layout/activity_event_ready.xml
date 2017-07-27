@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shag.com.shag.Activities.EventReadyActivity">
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="368dp"
+        android:layout_height="324dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="4dp"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <TextView
+        android:id="@+id/tvPlace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/map"
+        android:layout_below="@+id/map"
+        android:text="Place: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvFinalPlace"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/map"
+        android:layout_toEndOf="@+id/tvPlace"
+        android:text="FinalPlace"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvPlace"
+        android:layout_below="@+id/tvPlace"
+        android:text="Time: "
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tvFinalTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvFinalPlace"
+        android:layout_toEndOf="@+id/tvPlace"
+        android:text="Finaltime"
+        android:textSize="17sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btGo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/map"
+        android:layout_below="@+id/map"
+        android:onClick="findTravelOptions"
+        android:text="Go"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btWalk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvTime"
+        android:layout_below="@+id/tvTime"
+        android:onClick="getWalkingDirections"
+        android:text="Walk" />
+
+    <Button
+        android:id="@+id/btDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btWalk"
+        android:layout_toRightOf="@+id/btWalk"
+        android:onClick="getDrivingDirections"
+        android:text="Drive" />
+
+    <Button
+        android:id="@+id/btTransit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btWalk"
+        android:layout_toRightOf="@+id/btDrive"
+        android:onClick="getTransitDirections"
+        android:text="Transit" />
+
+    <Button
+        android:id="@+id/btBike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btWalk"
+        android:layout_toEndOf="@+id/btTransit"
+        android:onClick="getBikingDirections"
+        android:text="Bike" />
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/btWalk">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="85dp">
+
+
+            <TextView
+                android:id="@+id/tvSummary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="Summary: " />
+
+            <TextView
+                android:id="@+id/tvDuration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tvSummary"
+                android:text="Duration: " />
+
+            <TextView
+                android:id="@+id/tvDepartureTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/tvDuration"
+                android:text="Departure Time: " />
+
+            <TextView
+                android:id="@+id/tvSummaryInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvSummary"
+                android:layout_toRightOf="@+id/tvSummary"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tvDurationInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvDuration"
+                android:layout_toRightOf="@+id/tvDuration"
+                android:text="TextView" />
+
+            <TextView
+                android:id="@+id/tvDepartureTimeInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/tvDepartureTime"
+                android:layout_toRightOf="@+id/tvDepartureTime"
+                android:text="Soon" />
+        </RelativeLayout>
+    </FrameLayout>
+
+</RelativeLayout>

@@ -90,10 +90,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
         //TODO: change categories
-        if (event.getCategory().equals("Movie")) {
+        if (event.getCategory().equals("Chill")) {
             holder.ivCategory.setImageResource(R.drawable.ic_chill);
             holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
-        } else if (event.getCategory().equals("Basketball")) {
+        } else if (event.getCategory().equals("Sports")) {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
             holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
         } else if (event.getCategory().equals("Party")) {
@@ -338,7 +338,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     // get hashmap & category
                     String category = object.getString("category");
-                    Map hm = (HashMap) object.getParseObject("User_event_owner").getMap("categories_tracker");
+                    Map hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
                     int oldCounter = (int) hm.get(category);
@@ -351,7 +351,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
-                    ParsePush.unsubscribeInBackground(event.eventId);
+                    ParsePush.unsubscribeInBackground(event.getEventId());
                 } else {
                     e.getMessage();
                 }

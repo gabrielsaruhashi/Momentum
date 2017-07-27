@@ -116,6 +116,7 @@ public class LoginActivity extends AppCompatActivity {
         //do nothing
     }
 
+
     public Map createCategoriesMap() {
         Map hm = new HashMap();
 
@@ -165,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                             newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
                             //TOD add memories list not working
                             newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
+
                             newCustomUser.setMap("categories_tracker", createCategoriesMap());
                             newCustomUser.setMap("recent_friends_map", new HashMap<String, Integer>());
                         }
