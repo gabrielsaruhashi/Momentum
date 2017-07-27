@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -87,6 +88,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     TextView tvSummary;
     TextView tvDestination;
     TextView tvTime;
+    RelativeLayout rlDirectionsInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +113,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
         tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
         tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
+        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
 
         String eventDestination = "";
         try {
@@ -466,6 +469,11 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             JSONArray legs = object.getJSONArray("legs");
             JSONObject step = legs.getJSONObject(0);
             String duration = step.getJSONObject("duration").getString("text");
+            if (summary.equals("")) {
+                summary = "Public Transportation";
+            }
+
+            rlDirectionsInfo.setVisibility(View.VISIBLE);
             tvSummary.setText(summary);
             tvDuration.setText(duration);
 

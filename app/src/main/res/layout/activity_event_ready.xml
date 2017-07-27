@@ -6,23 +6,12 @@
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.EventReadyActivity">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="368dp"
-        android:layout_height="324dp"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="4dp"
-        tools:context="com.example.mapwithmarker.MapsMarkerActivity"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp" />
-
     <TextView
         android:id="@+id/tvPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/map"
-        android:layout_below="@+id/map"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:text="Place: "
         android:textSize="18sp" />
 
@@ -30,7 +19,7 @@
         android:id="@+id/tvFinalPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/map"
+        android:layout_alignTop="@+id/tvPlace"
         android:layout_toEndOf="@+id/tvPlace"
         android:text="FinalPlace"
         android:textSize="17sp"
@@ -41,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvPlace"
-        android:layout_below="@+id/tvPlace"
+        android:layout_below="@+id/tvFinalPlace"
         android:text="Time: "
         android:textSize="18sp" />
 
@@ -55,24 +44,28 @@
         android:textSize="17sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btGo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/map"
-        android:layout_below="@+id/map"
-        android:onClick="findTravelOptions"
-        android:text="Go"
-        android:visibility="gone" />
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="368dp"
+        android:layout_height="324dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/tvFinalTime"
+        android:layout_margin="4dp"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp" />
 
+    <!--
     <Button
         android:id="@+id/btWalk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/tvTime"
-        android:layout_below="@+id/tvTime"
         android:onClick="getWalkingDirections"
-        android:text="Walk" />
+        android:text="Walk"
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/ibWalk"
+        android:layout_alignStart="@+id/tvPick" />
 
     <Button
         android:id="@+id/btDrive"
@@ -99,17 +92,19 @@
         android:layout_alignTop="@+id/btWalk"
         android:layout_toEndOf="@+id/btTransit"
         android:onClick="getBikingDirections"
-        android:text="Bike" />
+        android:text="Bike" /> !-->
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/btWalk">
+        android:layout_below="@+id/ibWalk">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="85dp">
+            android:layout_height="wrap_content"
+            android:id="@+id/rlDirectionsInfo"
+            android:visibility="gone">
 
 
             <TextView
@@ -159,7 +154,59 @@
                 android:layout_alignTop="@+id/tvDepartureTime"
                 android:layout_toRightOf="@+id/tvDepartureTime"
                 android:text="Soon" />
+
+            <Button
+                android:id="@+id/btGo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:text="Go"/>
         </RelativeLayout>
     </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvPick"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvTime"
+        android:layout_below="@+id/map"
+        android:text="Pick a method: " />
+
+    <ImageButton
+        android:id="@+id/ibWalk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/ic_walk"
+        android:layout_below="@+id/tvPick"
+        android:layout_alignStart="@+id/tvTime"
+        android:onClick="getWalkingDirections"/>
+
+    <ImageButton
+        android:id="@+id/ibDrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ibWalk"
+        android:layout_toEndOf="@+id/ibWalk"
+        app:srcCompat="@drawable/ic_drive"
+        android:onClick="getDrivingDirections"/>
+
+    <ImageButton
+        android:id="@+id/ibTransit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ibDrive"
+        android:layout_toEndOf="@+id/ibDrive"
+        app:srcCompat="@drawable/ic_transit"
+        android:onClick="getTransitDirections"/>
+
+    <ImageButton
+        android:id="@+id/ibBike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ibTransit"
+        android:layout_toEndOf="@+id/ibTransit"
+        app:srcCompat="@drawable/ic_bike"
+        android:onClick="getBikingDirections"/>
 
 </RelativeLayout>

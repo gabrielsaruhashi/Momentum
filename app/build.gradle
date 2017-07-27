@@ -98,3 +98,4 @@ dependencies {
 
 // for GMS notifications
 apply plugin: 'com.google.gms.google-services'
+android.defaultConfig.vectorDrawables.useSupportLibrary = true //for using vectors
