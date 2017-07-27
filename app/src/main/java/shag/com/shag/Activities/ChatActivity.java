@@ -200,12 +200,18 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 // ensure user actually gave permission to read events
                 if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
-                    Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
+                    final Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
 
                     // output the events
                     if (cursor.moveToFirst()) {
                         do {
-                            Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                            // RecyclerView updates need to be run on the UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                                }
+                            });
                         } while (cursor.moveToNext());
                     }
                 }
