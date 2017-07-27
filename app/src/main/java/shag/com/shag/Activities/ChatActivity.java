@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
@@ -201,6 +202,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // ensure user actually gave permission to read events
                 if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                     final Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
+                    Log.i("DEBUG_CURSOR", DatabaseUtils.dumpCursorToString(cursor));
+                    Log.i("DEBUG_SIZE", "" + cursor.getCount());
+                    Log.i("DEBUG_SIZE2", "" + cursor.getColumnCount());
 
                     // output the events
                     if (cursor.moveToFirst()) {
@@ -209,10 +213,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                                    // Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1), Toast.LENGTH_LONG).show();
                                 }
                             });
-                        } while (cursor.moveToNext());
+                        } while (cursor.moveToNext() &&  cursor.getPosition() < cursor.getCount() - 1);
                     }
                 }
             }
