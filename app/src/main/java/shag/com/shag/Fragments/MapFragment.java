@@ -446,10 +446,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                 @Override
                                                 public void onClick(View v) {
 
-
                                                     Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
                                                     i.putExtra("Location", data.get("Location"));
                                                     i.putExtra("Category", data.get("Category"));
+                                                    i.putExtra("Event Type", "Public");
                                                     getContext().startActivity(i);
                                                 }
                                             });
@@ -563,6 +563,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                 Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
                                                 i.putExtra("Location", data.get("Location"));
                                                 i.putExtra("Category", data.get("Category"));
+                                                i.putExtra("Event Type", "Public");
+                                                i.putExtra("Food Details", data.get("Description"));
                                                 getContext().startActivity(i);
                                             }
                                         });

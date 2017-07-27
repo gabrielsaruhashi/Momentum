@@ -26,10 +26,12 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Poll;
+import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -42,6 +44,9 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     Date newDate = new Date(new Date().getTime()+MILLISECONDS_IN_MINUTE*60);
     EditText etDescription;
     String category;
+    String eventType;
+    String foodDescription;
+    ParseUser currentUser;
     PlaceAutocompleteFragment autocompleteFragment;
     CardView cd1;
 
@@ -54,7 +59,14 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_details);
 
+        currentUser = ParseUser.getCurrentUser();
+
+
         category = getIntent().getStringExtra("Category");
+        eventType = getIntent().getStringExtra("Event Type");
+        if (category.equals("Food") && eventType.equals("Public")){
+            foodDescription = getIntent().getStringExtra("Food Details");
+        }
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
@@ -135,7 +147,18 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
 
         newEvent.setIsFirstCreated(true);
+
+
         newEvent.setCategory(category);
+        HashMap<String,RecommendationValues> hm = (HashMap) currentUser.getMap("categories_tracker");
+
+        // update user's category counter
+        // update category counter
+        int oldCounter = hm.get(category).getCategoryPoints();
+        hm.get(category).setCategoryPoints(oldCounter+1);
+        currentUser.put("categories_tracker", hm);
+
+
         newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
         newEvent.setLatitude(47.6101);

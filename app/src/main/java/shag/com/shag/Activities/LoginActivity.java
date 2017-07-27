@@ -27,6 +27,7 @@ import java.util.Map;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.CustomUser;
+import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
@@ -121,13 +122,40 @@ public class LoginActivity extends AppCompatActivity {
     public Map createCategoriesMap() {
         Map hm = new HashMap();
 
+        //sub category Object
+        RecommendationValues chillValues = new RecommendationValues();
+        RecommendationValues partyValues = new RecommendationValues();
+        RecommendationValues sportsValues = new RecommendationValues();
+        RecommendationValues miscValues = new RecommendationValues();
+        RecommendationValues foodValues = new RecommendationValues();
+        RecommendationValues musicValues = new RecommendationValues();
+
+        //set values object
+        chillValues.setCategoryPoints(0);
+        chillValues.setSubCategoryMap(new HashMap<String, Integer>());
+
+        partyValues.setCategoryPoints(0);
+        partyValues.setSubCategoryMap(new HashMap<String, Integer>());
+
+        sportsValues.setCategoryPoints(0);
+        sportsValues.setSubCategoryMap(new HashMap<String, Integer>());
+
+        miscValues.setCategoryPoints(0);
+        miscValues.setSubCategoryMap(new HashMap<String, Integer>());
+
+        foodValues.setCategoryPoints(0);
+        foodValues.setSubCategoryMap(new HashMap<String, Integer>());
+
+        musicValues.setCategoryPoints(0);
+        musicValues.setSubCategoryMap(new HashMap<String, Integer>());
+
         // Put elements to the map
-        hm.put("Chill", 0);
-        hm.put("Party", 0);
-        hm.put("Sports", 0);
-        hm.put("Misc", 0);
-        hm.put("Food", 0);
-        hm.put("Music", 0);
+        hm.put("Chill", chillValues);
+        hm.put("Party", partyValues);
+        hm.put("Sports", sportsValues);
+        hm.put("Misc", miscValues);
+        hm.put("Food", foodValues);
+        hm.put("Music", musicValues);
         return hm;
     }
 

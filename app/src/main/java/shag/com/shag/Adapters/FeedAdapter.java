@@ -24,13 +24,13 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.R;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -290,11 +290,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // get hashmap & category
                     String category = object.getString("category");
 
-                    HashMap hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String,RecommendationValues> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    int oldCounter = (int) hm.get(category);
-                    hm.put(category, oldCounter + 1);
+                    int oldCounter = hm.get(category).getCategoryPoints();
+                    hm.get(category).setCategoryPoints(oldCounter+1);
 
                     currentUser.put("categories_tracker", hm);
                     currentUser.saveInBackground();
@@ -338,11 +338,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     // get hashmap & category
                     String category = object.getString("category");
-                    Map hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String,RecommendationValues> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    int oldCounter = (int) hm.get(category);
-                    hm.put(category, oldCounter - 1);
+                    int oldCounter = (int) hm.get(category).getCategoryPoints();;
+                    hm.get(category).setCategoryPoints(oldCounter-1);
 
                     object.saveInBackground();
 

@@ -30,6 +30,7 @@ import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.Other.RelevanceComparator;
@@ -232,13 +233,31 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         HashMap categoriesTracker = (HashMap) currentUser.getMap("categories_tracker");
 
         // get the chill coefficient based on the user's profile
-        Double chillCoefficient = getCoefficient(event.getCategory(), categoriesTracker);
-        Double closenessCoefficient = getCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double chillCoefficient = getChillCoefficient(event.getCategory(), categoriesTracker);
+        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
         Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
         return relevanceCoefficient;
     }
 
-    public Double getCoefficient(String input, HashMap hm) {
+    public Double getChillCoefficient(String input, HashMap<String,RecommendationValues> hm) {
+        // get the raw counter for the specific input key, if it exists
+        RecommendationValues valueObject =  hm.get(input);
+
+        int rawInterest = (hm.get(input) != null) ? valueObject.getCategoryPoints() : 0;
+
+
+        double totalCounter = 0;
+
+        // iterate through the hashmap to add values
+        for (RecommendationValues ob : hm.values()) {
+            totalCounter += ob.getCategoryPoints();
+        }
+
+        // return the coefficient Raw Interest / Total Interest if total interest > 0
+        return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
+    }
+
+    public Double getClosenessCoefficient(String input, HashMap hm) {
         // get the raw counter for the specific input key, if it exists
         int rawInterest = (hm.get(input) != null) ? (int) hm.get(input) : 0;
         double totalCounter = 0;
