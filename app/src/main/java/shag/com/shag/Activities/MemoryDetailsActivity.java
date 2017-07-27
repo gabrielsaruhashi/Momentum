@@ -7,8 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.view.View;
@@ -23,21 +25,22 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.jcodec.api.SequenceEncoder;
-import org.jcodec.common.model.Picture;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import me.relex.circleindicator.CircleIndicator;
 import shag.com.shag.Adapters.ImageAdapter;
+import shag.com.shag.Adapters.ImageSliderAdapter;
 import shag.com.shag.Fragments.DialogFragments.ImageZoomDialogFragment;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
-
-import static org.jcodec.common.model.ColorSpace.RGB;
 
 
 public class MemoryDetailsActivity extends AppCompatActivity implements ImageAdapter.ImageZoomAdapterCallback{
@@ -47,6 +50,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     GridView gridView;
 
     ImageAdapter imageAdapter;
+    ImageSliderAdapter sliderAdapter;
     ArrayList<ParseFile> pictures;
 
     // create constant for start activity
@@ -54,6 +58,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private Memory memory;
     private String memoryId;
     private int initialNumberOfPictures;
+
+    private static ViewPager mPager;
+    private static int currentSliderPage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
 
+        // get memory
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
         try {
             ParseObject object = query.get(memoryId);
@@ -76,8 +84,11 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         pictures = memory.getPicturesParseFiles();
         // save original number of pictures to later check if user added pictures
         initialNumberOfPictures = pictures.size();
-        // set adapter
+
+        // set adapters
         imageAdapter = new ImageAdapter(this, pictures);
+        sliderAdapter = new ImageSliderAdapter(MemoryDetailsActivity.this, pictures);
+
         // get gridview
         gridView = (GridView) findViewById(R.id.gridview);
 
@@ -98,6 +109,39 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 startActivityForResult(Intent.createChooser(photoPickerIntent, "Select Picture"), SELECT_IMAGE);
             }
         });
+
+        // populate image slider
+        initImageSlider();
+
+    }
+
+    public void initImageSlider() {
+
+        mPager = (ViewPager) findViewById(R.id.pager);
+        mPager.setAdapter(sliderAdapter);
+        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(mPager);
+
+        // Auto start of viewpager
+        final Handler handler = new Handler();
+        final Runnable Update = new Runnable() {
+            public void run() {
+                // when the slider page goes through all the pictures in the array
+                if (currentSliderPage == pictures.size()) {
+                    currentSliderPage = 0;
+                }
+                // move to next image
+                mPager.setCurrentItem(currentSliderPage++, true);
+            }
+        };
+        Timer swipeTimer = new Timer();
+        swipeTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(Update);
+            }
+        }, 2500, 2500);
+
     }
 
     // when user returns from picking pictures
@@ -135,6 +179,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                      // update local array
                                      pictures.add(file);
                                      imageAdapter.notifyDataSetChanged();
+                                     sliderAdapter.notifyDataSetChanged();
                                      updatedMemory.put("pictures_parse_files", pictures);
                                      updatedMemory.saveInBackground();
                                  } else {
@@ -209,25 +254,4 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         return null;
     }
 
-    public static Picture fromBitmap(Bitmap src) {
-        Picture dst = Picture.create((int)src.getWidth(), (int)src.getHeight(), RGB);
-        fromBitmap(src, dst);
-        return dst;
-    }
-
-    public static void fromBitmap(Bitmap src, Picture dst) {
-        int[] dstData = dst.getPlaneData(0);
-        int[] packed = new int[src.getWidth() * src.getHeight()];
-
-        src.getPixels(packed, 0, src.getWidth(), 0, 0, src.getWidth(), src.getHeight());
-
-        for (int i = 0, srcOff = 0, dstOff = 0; i < src.getHeight(); i++) {
-            for (int j = 0; j < src.getWidth(); j++, srcOff++, dstOff += 3) {
-                int rgb = packed[srcOff];
-                dstData[dstOff]     = (rgb >> 16) & 0xff;
-                dstData[dstOff + 1] = (rgb >> 8) & 0xff;
-                dstData[dstOff + 2] = rgb & 0xff;
-            }
-        }
-    }
 }
