@@ -90,21 +90,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
-    boolean openedPush;
-    private Event parseEvent; //ONLY FOR USE IF OPENING PUSH
 
-
-    // chat id
     private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
     private boolean isEventNew;
     private String timeWinner;
     private ParseGeoPoint locationWinner;
+
+    //ONLY use these variables when opening push notification
+    boolean openedPush;
+    private Event parseEvent;
 
 
     @Override
@@ -155,28 +156,25 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
         event = intent.getParcelableExtra("event");
 
-        if (chatParticipantsIds == null) {
-            openedPush = true;
-            try {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                ParseObject object = query.get(eventId);
-                chatParticipantsIds = (ArrayList) object.getList("participants_id");
-                isEventNew = object.getBoolean("is_first_created");
-                parseEvent = (Event) object;
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
         //finding out if this is the first time the event has been creating
-//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-//        ParseObject object = null;
-//        try {
-//            object = query.get(eventId);
-//            isEventNew = object.getBoolean("is_first_created")
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        ParseObject object = null;
+        try {
+            object = query.get(eventId);
+            isEventNew = object.getBoolean("is_first_created");
+            //if so, user has just opened a push notification, need to query for more info
+            if (chatParticipantsIds == null) {
+                openedPush = true;
+                chatParticipantsIds = (ArrayList) object.getList("participants_id");
+                chatParticipantsIds.add("InuSHuTqkn");  //adding shaggy
+                parseEvent = (Event) object;
+
+                isEventNew = object.getBoolean("is_first_created"); //use for polls
+
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
@@ -716,12 +714,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     @Override
     public void onBackPressed() {
+        //need to re-load chats if user opened a push
         if (openedPush) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("viewpager_position", 2);
             context.startActivity(intent);
         } else {
-            super.onBackPressed();
+            super.onBackPressed(); //otherwise follow regular life cycle
         }
     }
 
@@ -889,10 +888,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
+        //need to access data differently if user opened push
         if (openedPush) {
-            i.putExtra("timeOfEvent", event.getTimeOfEvent());
-            i.putExtra("latitude", event.getLatitude());
-            i.putExtra("longitude", event.getLongitude());
+            i.putExtra("timeOfEvent", parseEvent.getTimeOfEvent());
+            i.putExtra("latitude", parseEvent.getLatitude());
+            i.putExtra("longitude", parseEvent.getLongitude());
         } else {
             i.putExtra("timeOfEvent", event.timeOfEvent);
             i.putExtra("latitude", event.latitude);
