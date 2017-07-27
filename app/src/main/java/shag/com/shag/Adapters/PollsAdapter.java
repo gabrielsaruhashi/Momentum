@@ -155,7 +155,6 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                         public void done(ParseObject object, com.parse.ParseException e) {
                             if (e == null) {
 
-                                //ERROR NOT GETTING ALL USERS
                                 HashMap<String,Integer> scoring = (HashMap<String,Integer>) object.get("scores");
                                 ArrayList<String> choices = (ArrayList<String>) object.get("choices");
                                 ArrayList<String> peopleWhoVoted = (ArrayList<String>) object.get("people_voted");

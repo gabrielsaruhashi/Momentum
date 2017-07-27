@@ -178,6 +178,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
 
         currentUserId = ParseUser.getCurrentUser().getObjectId();
+
         setupMessagePosting();
 
         //if event is new, make time and lcoation polls
@@ -200,7 +201,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             });
         }
-        //check if there are any winners yet
 
         refreshPolls();
 
@@ -210,7 +210,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
         ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-        ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
         // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
         // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
 
@@ -243,7 +242,30 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 });
 
+        //setup on server side
+        ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
         SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
+        subscriptionHandling2.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
+            @Override
+            public void onEvents(ParseQuery<Poll> query, SubscriptionHandling.Event event, Poll object) {
+                String senderId = object.getPollCreator();
+                String newEventId = object.getEventId();
+
+                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                    polls.add(object);
+                }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
+            }
+        });
 //        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
 //            @Override
 //            public void onEvent(ParseQuery<Poll> query, Poll object) {
@@ -274,9 +296,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
-    }
-
-    private void populatePolls() {
     }
 
 
@@ -708,8 +727,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     @Override
     public void onFinishTimePickerFragment(String time, int btn, int post) {
-        //final Poll poll = polls.get(getAdapterPosition());
-//        int i = post;
         Poll poll = polls.get(post);
         final List<String> choices = poll.getChoices();
         final Map<String, Integer> scores = poll.getScores();
@@ -799,6 +816,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         final Map<String, Integer> scores = poll.getScores();
         final Map<String, ParseGeoPoint> locOptions = poll.getLocationOptions();
 
+        //button values are hidden in code
         if (requestCode - 0 == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             btn = 0;
         } else if (requestCode - 1 == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
@@ -867,6 +885,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
     }
+
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
         i.putExtra("timeOfEvent", event.timeOfEvent);
