@@ -36,6 +36,7 @@ import com.parse.SaveCallback;
 import com.parse.SubscriptionHandling;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -43,6 +44,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import shag.com.shag.Adapters.MessagesAdapter;
@@ -151,6 +153,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         Bundle b = intent.getExtras();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
+        int s = chatParticipantsIds.size();
         event = intent.getParcelableExtra("event");
 
         if (chatParticipantsIds == null) {
@@ -178,7 +181,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         setupMessagePosting();
 
         //if event is new, make time and lcoation polls
-        if (isEventNew == true) {
+        if (isEventNew) {
             try {
                 createTimeAndLocationPolls("Time");
                 createTimeAndLocationPolls("Location");
@@ -248,7 +251,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 //                String newEventId = object.getEventId();
 //
 //                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-//                    polls.add(0, object);
+//                    polls.add(object);
 //                }
 //
 //                // RecyclerView updates need to be run on the UI thread
@@ -414,10 +417,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
         }
 
-        polls.add(poll);
-        pollAdapter.notifyItemInserted(polls.size() - 1);
-        rvPolls.scrollToPosition(0);
-        poll.save();
         poll.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -427,6 +426,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
             }
         });
+        polls.add(poll);
+        pollAdapter.notifyItemInserted(polls.size() - 1);
+        rvPolls.scrollToPosition(0);
+        //poll.save();
+
     }
 
     public void createTimePoll() {
@@ -539,13 +543,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         query.orderByAscending("createdAt");
 
-        // Execute query to fetch all messages from Parse asynchronously
+        // Execute query to fetch all POLLS from Parse asynchronously
         // this is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Poll>() {
             public void done(List<Poll> poll, ParseException e) {
                 if (e == null) {
                     polls.clear();
-                    polls.addAll(poll);
+                    //polls.addAll(poll);
+                    for (int i = 0; i<poll.size(); i++){
+                        Poll tempPoll=poll.get(i);
+                        polls.add(poll.get(i));
+                    }
                     pollAdapter.notifyDataSetChanged(); // update adapter
 
                     // Scroll to the bottom of the list on initial load
@@ -568,38 +576,52 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
     public Date convertStringToDate(String time) {
-        int monthEnd = time.indexOf('/');
-        int month = Integer.parseInt(time.substring(0, monthEnd));
-        int date = Integer.parseInt(time.substring(monthEnd + 1, monthEnd + 3));
-        int year = Integer.parseInt(time.substring(monthEnd + 4, monthEnd + 8));
+//        int monthEnd = time.indexOf('/');
+//        int month = Integer.parseInt(time.substring(0, monthEnd));
+//        int date = Integer.parseInt(time.substring(monthEnd + 1, monthEnd + 3));
+//        int year = Integer.parseInt(time.substring(monthEnd + 4, monthEnd + 8));
+//        int hour = Integer.parseInt(time.substring(clockStart + 2, time.indexOf(':')));
+//        int min = Integer.parseInt(time.substring(time.indexOf(':') + 1, time.indexOf(':') + 3));
+//        String amPm = time.substring(time.length() - 2, time.length());
+//        if (amPm.equals("AM")) {
+//            if (hour == 12) {
+//                hour = 0;
+//            }
+//        } else {
+//            hour = hour + 12;
+//        }
+
         int clockStart = time.indexOf('@');
-        int hour = Integer.parseInt(time.substring(clockStart + 2, time.indexOf(':')));
-        int min = Integer.parseInt(time.substring(time.indexOf(':') + 1, time.indexOf(':') + 3));
-        String amPm = time.substring(time.length() - 2, time.length());
-        if (amPm.equals("AM")) {
-            if (hour == 12) {
-                hour = 0;
-            }
-        } else {
-            hour = hour - 12;
+        String dateTime = time.substring(0,clockStart);
+        String clockTime = time.substring(clockStart+1);
+
+//        Calendar calendar = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy h:mm a", Locale.US);
+        try {
+            c.setTime(sdf.parse(dateTime+" "+clockTime));
         }
-        Calendar calendar = Calendar.getInstance();
-        calendar.clear();
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, date);
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, min);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+        catch (java.text.ParseException e) {
+            e.printStackTrace();
+            Log.e("Chat Activity", "can't parse date");
+
+        }
+//        calendar.clear();
+//        calendar.set(Calendar.MONTH, month);
+//        calendar.set(Calendar.DAY_OF_WEEK_IN_MONTH, date);
+//        calendar.set(Calendar.YEAR, year);
+//        calendar.set(Calendar.HOUR_OF_DAY, hour);
+//        calendar.set(Calendar.MINUTE, min);
+//        calendar.set(Calendar.SECOND, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+        return c.getTime();
     }
 
     public void findPollWinners(List<Poll> polls) {
         for (Poll eachPoll : polls) {
             if (eachPoll.getPollType().equals("Time")) {
                 //if everyone has voted (minus one is Shaggy)
-                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size() - 1) {
+                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size()-1 ) {
                     Collection<Integer> score = eachPoll.getScores().values();
                     int max = Collections.max(score);
                     for (String key : eachPoll.getScores().keySet()) {
@@ -611,7 +633,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 }
             } else if (eachPoll.getPollType().equals("Location")) {
-                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size() - 1) {
+                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size()-1 ) {
                     Collection<Integer> score = eachPoll.getScores().values();
                     int max = Collections.max(score);
                     for (String key : eachPoll.getScores().keySet()) {
@@ -626,7 +648,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
             }
         }
-        if (timeWinner != null && locationWinner != null) {
+        if (timeWinner != null || locationWinner != null) {
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
             eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
                 public void done(ParseObject eventDb, ParseException e) {

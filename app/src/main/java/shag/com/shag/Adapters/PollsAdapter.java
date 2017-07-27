@@ -26,6 +26,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -153,9 +154,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                     query.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
                         public void done(ParseObject object, com.parse.ParseException e) {
                             if (e == null) {
+
+                                //ERROR NOT GETTING ALL USERS
+                                HashMap<String,Integer> scoring = (HashMap<String,Integer>) object.get("scores");
+                                ArrayList<String> choices = (ArrayList<String>) object.get("choices");
+                                ArrayList<String> peopleWhoVoted = (ArrayList<String>) object.get("people_voted");
+
+                                poll.updateScores(scoring, choices.get(choice[0]));
+                                poll.updatePeopleVoted(peopleWhoVoted, ParseUser.getCurrentUser().getObjectId());
+
                                 //update local object
-                                poll.updateScores(poll.getScores(), poll.getChoices().get(choice[0]));
-                                poll.updatePeopleVoted(poll.getPeopleVoted(), ParseUser.getCurrentUser().getObjectId());
+                                //poll.updateScores(poll.getScores(), poll.getChoices().get(choice[0]));
+                                //poll.updatePeopleVoted(poll.getPeopleVoted(), ParseUser.getCurrentUser().getObjectId());
+
                                 rButton0.setText(poll.getChoices().get(0) + ": " + poll.getScores().get(poll.getChoices().get(0)));
                                 rButton1.setText(poll.getChoices().get(1) + ": " + poll.getScores().get(poll.getChoices().get(1)));
                                 rButton2.setText(poll.getChoices().get(2) + ": " + poll.getScores().get(poll.getChoices().get(2)));
@@ -230,7 +241,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         createOnTextClick(holder.tvSet1, selectedPosition,1);
         createOnTextClick(holder.tvSet2, selectedPosition,2);
         createOnTextClick(holder.tvSet3, selectedPosition,3);
-        boolean bool = poll.getChoices().contains("Custom");
+
         if ( (poll.getPollType().equals("Time") ) && poll.getChoices().contains("Custom") ) {
             //onFinishTimePickerFragment(holder,position);
             timeButtons.add(holder.rButton0);
@@ -243,7 +254,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
 
         }
-        else if ( (poll.getPollType().equals("Location") || poll.getPollType().equals("Location")) && poll.getChoices().contains("Custom") ) {
+        else if ( (poll.getPollType().equals("Location") ) && poll.getChoices().contains("Custom") ) {
             //onFinishTimePickerFragment(holder,position);
             locationButtons.add(holder.rButton0);
             locationButtons.add(holder.rButton1);
@@ -273,18 +284,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
             holder.rButton2.setText(poll.getChoices().get(2));
             holder.rButton3.setText(poll.getChoices().get(3));
 
-//            holder.rButton2.setVisibility(View.INVISIBLE);
-//            holder.rButton3.setVisibility(View.INVISIBLE);
-//
-//            if (poll.getChoices().size() == 3) {
-//                holder.rButton2.setVisibility(View.VISIBLE);
-//                holder.rButton2.setText(poll.getChoices().get(2));
-//            } else if (poll.getChoices().size() == 4) {
-//                holder.rButton2.setVisibility(View.VISIBLE);
-//                holder.rButton3.setVisibility(View.VISIBLE);
-//                holder.rButton2.setText(poll.getChoices().get(2));
-//                holder.rButton3.setText(poll.getChoices().get(3));
-//            }
+
             holder.btVote.setText("Vote");
             holder.btVote.setEnabled(true);
 

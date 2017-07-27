@@ -38,8 +38,9 @@ public class DatePickerFragment extends DialogFragment
     public void onDateSet(DatePicker view, int year, int month, int day) {
         int button = getArguments().getInt("button");
         int position = getArguments().getInt("position");
+        month+=1;
         // Do something with the date chosen by the user
-        String calendarDay= "" + month+1 + "/" + day + "/" + year;
+        String calendarDay= "" + month + "/" + day + "/" + year;
 
         DatePickerFragmentListener v = (DatePickerFragmentListener) getActivity();
         v.onFinishDatePickerFragment(calendarDay,button, position);
