@@ -29,6 +29,7 @@ import java.util.Date;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -49,6 +50,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ParseObject.registerSubclass(Poll.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_details);
 
@@ -132,8 +134,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
             newEvent.setDeadline(newEvent.deadline);
         }
 
+        newEvent.setIsFirstCreated(true);
         newEvent.setCategory(category);
-        newEvent.setTimeOfEvent(new Date()); //TODO: PUT REAL INFO IN HERE AT SOME POINT
+        newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
+        //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
+        newEvent.setLatitude(47.6101);
+        newEvent.setLongitude(-122.2015);
         ParseObject currentUser = ParseUser.getCurrentUser();
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());

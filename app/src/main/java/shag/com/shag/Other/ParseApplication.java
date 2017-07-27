@@ -27,6 +27,7 @@ import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Models.Poll;
 import shag.com.shag.Models.User;
 
 /**
@@ -68,6 +69,7 @@ public class ParseApplication extends Application {
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Message.class);
         ParseObject.registerSubclass(Memory.class);
+        ParseObject.registerSubclass(Poll.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

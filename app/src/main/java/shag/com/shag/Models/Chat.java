@@ -29,8 +29,8 @@ public class Chat {
         return event;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setEvent(Event proposedEvent) {
+        this.event = proposedEvent;
     }
 
     public String getEventId() {
@@ -86,8 +86,10 @@ public class Chat {
         event.category = object.getString("category");
         event.eventOwnerFbId = object.getLong("event_owner_fb_id");
         event.participantsIds = (ArrayList) object.getList("participants_id");
-        //todo: include time of event?
-        // Retrieve location using objectId
+        //event.parseGeoPoint = object.getParseGeoPoint("parse_geo_point");
+        event.timeOfEvent = object.getDate("event_time");
+        event.latitude = object.getDouble("latitude");
+        event.longitude = object.getDouble("longitude");
 
         // fetch event owner
         //TODO this runs slowly, try to figure out how to make it faster (this is also why chats take so long)
