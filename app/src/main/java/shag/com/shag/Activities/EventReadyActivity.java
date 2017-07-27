@@ -45,6 +45,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +63,8 @@ import java.util.List;
 import java.util.Locale;
 
 import shag.com.shag.Clients.VolleyRequest;
+import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 import shag.com.shag.Other.DataParser;
 import shag.com.shag.R;
 
@@ -89,18 +96,27 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     TextView tvDestination;
     TextView tvTime;
     RelativeLayout rlDirectionsInfo;
+    String ETA;
+    String eventId;
+    ParseObject event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_ready);
 
-        mDestination = new LatLng(getIntent().getDoubleExtra("latitude", 50.6101),
-                getIntent().getDoubleExtra("longitude", -100.2015));
-        timeOfEvent = (Date) getIntent().getSerializableExtra("timeOfEvent");
+        eventId = getIntent().getStringExtra("eventId");
 
-        //mDestination = new LatLng(47.6101, -122.2015);
-        //timeOfEvent = new Date((new Date()).getTime() + 24 * 60 * 60 * 1000);
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        ParseObject object = null;
+        try {
+            object = query.get(eventId);
+            Event e = (Event) object;
+            mDestination = new LatLng(e.getLatitude(), e.getLongitude());
+            timeOfEvent = e.getTimeOfEvent();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         activity = this;
 
@@ -472,6 +488,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             if (summary.equals("")) {
                 summary = "Public Transportation";
             }
+            ETA = duration;
 
             rlDirectionsInfo.setVisibility(View.VISIBLE);
             tvSummary.setText(summary);
@@ -481,5 +498,29 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
         //tvSummary.setText();
+    }
+
+    public void sendAnEta(View view) {
+        Message m = new Message();
+        m.setSenderId("InuSHuTqkn");
+        m.setBody(ParseUser.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
+        m.setEventId(eventId);
+        m.setSenderName("Shaggy");
+        try {
+            m.save();
+            HashMap<String, String> payload = new HashMap<>();
+            payload.put("customData", ParseUser.getCurrentUser().get("name") + " is on the way!");
+            payload.put("title", "New message in channel");
+            payload.put("channelID", eventId);
+            payload.put("senderID", "InuSHuTqkn");
+            payload.put("token", ""); //not being used rn
+            ParseCloud.callFunctionInBackground("pushChannelTest", payload);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void openGoogle(View view) {
+
     }
 }

@@ -90,8 +90,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
-
-    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
@@ -154,7 +152,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         Intent intent = getIntent();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
-        event = intent.getParcelableExtra("event");
 
         //finding out if this is the first time the event has been creating
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
@@ -167,11 +164,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 openedPush = true;
                 chatParticipantsIds = (ArrayList) object.getList("participants_id");
                 chatParticipantsIds.add("InuSHuTqkn");  //adding shaggy
-                parseEvent = (Event) object;
 
                 isEventNew = object.getBoolean("is_first_created"); //use for polls
 
             }
+            parseEvent = (Event) object;
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -888,16 +885,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
-        //need to access data differently if user opened push
-        if (openedPush) {
-            i.putExtra("timeOfEvent", parseEvent.getTimeOfEvent());
-            i.putExtra("latitude", parseEvent.getLatitude());
-            i.putExtra("longitude", parseEvent.getLongitude());
-        } else {
-            i.putExtra("timeOfEvent", event.timeOfEvent);
-            i.putExtra("latitude", event.latitude);
-            i.putExtra("longitude", event.longitude);
-        }
+        i.putExtra("eventId", parseEvent.getEventId());
         context.startActivity(i);
     }
 }

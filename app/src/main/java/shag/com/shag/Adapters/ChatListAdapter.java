@@ -120,7 +120,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
                 Event z = chat.getParcelableEvent();
                 i.putExtra("event_id", chat.getEventId());
                 i.putExtra("participants_ids", chat.getChatParticipantsIds());
-                i.putExtra("event", chat.getParcelableEvent());
+                i.putExtra("event", chat.getParcelableEvent()); //don't need to pass this anymore
                 context.startActivity(i);
             }
         }

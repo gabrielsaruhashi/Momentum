@@ -104,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/rlDirectionsInfo"
-            android:visibility="gone">
+            >
 
 
             <TextView
@@ -159,9 +159,10 @@
                 android:id="@+id/btGo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:text="Send an ETA"
                 android:layout_alignParentBottom="true"
-                android:text="Go"/>
+                android:layout_alignParentEnd="true"
+                android:onClick="sendAnEta"/>
         </RelativeLayout>
     </FrameLayout>
 
@@ -178,9 +179,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_walk"
-        android:layout_below="@+id/tvPick"
-        android:layout_alignStart="@+id/tvTime"
-        android:onClick="getWalkingDirections"/>
+        android:onClick="getWalkingDirections"
+        android:layout_below="@+id/map"
+        android:layout_toEndOf="@+id/tvPick" />
 
     <ImageButton
         android:id="@+id/ibDrive"

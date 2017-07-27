@@ -399,12 +399,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             payload.put("channelID", eventId);
             payload.put("senderID", "InuSHuTqkn");
             payload.put("token", ""); //not being used rn
-
-            //TODO: this would probably be a better way to notify if there's time later
-                            /*InstanceID instanceID = InstanceID.getInstance(this);
-                            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);*/
-
             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
         } catch (ParseException e) {
             e.printStackTrace();
