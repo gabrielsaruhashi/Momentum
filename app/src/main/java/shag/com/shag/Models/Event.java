@@ -34,8 +34,9 @@ public class Event extends ParseObject implements Parcelable {
     public ArrayList<Long> friendsAtEvent;
     public ArrayList<String> participantsIds;
     public Date deadline;
-    public ParseGeoPoint parseGeoPoint;
     public Date timeOfEvent;
+    public ParseGeoPoint parseGeoPoint;
+    public boolean isFirstCreated;
     private ParseObject eventOwner;
 
     //CONSTRUCTORS
@@ -98,9 +99,17 @@ public class Event extends ParseObject implements Parcelable {
 
     public Date getTimeOfEvent() {return getDate("event_time"); }
 
+    public boolean getIsFirstCreated() {
+        return getBoolean("is_first_created");
+    }
+
     // SETTERS
 
 
+    public void setIsFirstCreated(boolean isFirstCreated) {
+        this.isFirstCreated = isFirstCreated;
+        put("is_first_created", isFirstCreated);
+    }
     public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
         // TODO check if I need the line below
@@ -169,6 +178,11 @@ public class Event extends ParseObject implements Parcelable {
         return CREATOR;
     }
 
+
+    /*//TODO: make sure timeOfEvent isn't causing any errors*/
+
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -187,15 +201,13 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
         dest.writeSerializable(this.timeOfEvent);
-        //dest.writeParcelable(this.timeOfEvent, flags);
-    }
+        dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
 
+    }
 
     protected Event(Parcel in) {
         this.eventId = in.readString();
         this.latLng = in.readParcelable(LatLng.class.getClassLoader());
-        //this.parseGeoPoint = in.readParcelable(ParseGeoPoint.class.getClassLoader());
-        //this.timeOfEvent = in.readParcelable(Date.class.getClassLoader());
         this.eventName = in.readString();
         this.description = in.readString();
         this.location = in.readString();
@@ -207,7 +219,9 @@ public class Event extends ParseObject implements Parcelable {
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
+        this.isFirstCreated = in.readByte() != 0;
     }
+
 
     public static final Parcelable.Creator<Event> CREATOR = new Parcelable.Creator<Event>() {
         @Override

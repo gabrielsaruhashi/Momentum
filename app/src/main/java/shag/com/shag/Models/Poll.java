@@ -4,7 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.parse.ParseClassName;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,10 +26,16 @@ public class Poll extends ParseObject implements Parcelable {
     private Map<String,Integer> scores;
     private String pollCreator;
     private List<String> peopleVoted;
+    private Event event;
+    private String pollWinner;
+    private String pollType;
+    private Map<String,ParseGeoPoint> locationOptions;
 
     public Poll() {
 
     }
+
+
     public String getPollId() {
         return getObjectId();
     }
@@ -48,9 +56,17 @@ public class Poll extends ParseObject implements Parcelable {
 
     }
 
-    public void setPollCreator(String pollCreator) {
-        this.pollCreator = pollCreator;
-        put("poll_creator", pollCreator);
+    //event
+    public void setEvent(Event event) {
+        this.event = event;
+        put("Event", event);
+    }
+
+
+
+
+    public void setPollCreator() {
+        put("poll_creator", ParseUser.getCurrentUser());
     }
 
 
@@ -84,6 +100,12 @@ public class Poll extends ParseObject implements Parcelable {
         put("choices", choices);
     }
 
+    public void addChoices (List<String> choices, String newChoice) {
+
+        choices.add(newChoice);
+        put("choices", choices);
+    }
+
 
     //scores
     public void setScores(Map<String, Integer> scores) {
@@ -96,6 +118,17 @@ public class Poll extends ParseObject implements Parcelable {
         int currentScore = scores.get(choice);
         scores.put(choice, currentScore+1);
         put("scores",scores);
+    }
+
+    //location options (if a location poll)
+    public Map<String, ParseGeoPoint> getLocationOptions() {
+        return getMap("location_options");
+
+    }
+
+    public void setLocationOptions(Map<String, ParseGeoPoint> locationOptions) {
+        this.locationOptions = locationOptions;
+        put("location_options", locationOptions);
     }
 
     //people who have voted
@@ -114,6 +147,25 @@ public class Poll extends ParseObject implements Parcelable {
 
     }
 
+    //poll type
+    public String getPollType() {
+        return getString("poll_type");
+    }
+
+    public void setPollType(String pollType) {
+        this.pollType = pollType;
+        put("poll_type", pollType);
+    }
+
+    //poll winner
+    public String getPollWinner() {
+        return getString("poll_winner");
+    }
+
+    public void setPollWinner(String pollWinner) {
+        this.pollWinner = pollWinner;
+        put("poll_winner", pollWinner);
+    }
 
     @Override
     public int describeContents() {
