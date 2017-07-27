@@ -23,11 +23,6 @@ public class CustomUser {
         user.saveInBackground();
     }
 
-    public void setSomeArray(String listName, List<Long> list) {
-        user.put(listName, list);
-        user.saveInBackground();
-    }
-
     public void setSomeStringArray(String listName, List<String> list) {
         user.put(listName, list);
         user.saveInBackground();

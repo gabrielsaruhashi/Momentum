@@ -18,8 +18,11 @@ import android.widget.Toast;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Activities.SelectEventCategoryActivity;
@@ -29,6 +32,7 @@ import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
+import shag.com.shag.Other.RelevanceComparator;
 import shag.com.shag.R;
 
 /**
@@ -47,6 +51,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     FloatingActionButton myFab;
     private ArrayList<Long> facebookFriendsIds;
     private SwipeRefreshLayout swipeContainer;
+    private ParseUser currentUser;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -109,6 +114,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
 
+        // instantiate current user
+        currentUser = ParseUser.getCurrentUser();
+
         return v;
     }
 
@@ -120,8 +128,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         adapter.clear();
         populateFeed();
         swipeContainer.setRefreshing(false);
-
-
     }
 
     /*
@@ -157,40 +163,38 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
     //TODO improve populate feed method
     public void populateFeed() {
-        for (int i = 0; i < facebookFriendsIds.size(); i++) {
-            ParseQuery<Event> query = new ParseQuery("Event");
-            query.whereEqualTo("event_owner_fb_id", facebookFriendsIds.get(i));
-            query.include("User_event_owner");
-            query.findInBackground(new FindCallback<Event>() {
-                @Override
-                public void done(List<Event> eventsList, ParseException e) {
-                    if (e == null) {
-                        /*
-                        for (ParseObject item : itemList) {
-                            //Convert each item found to an event
-                            Event event = Event.fromParseObject(item);
-                            //add event to list to be displayed
-                            events.add(event);
-                            adapter.notifyDataSetChanged();
-                        } */
-                        events.addAll(eventsList);
-                        adapter.notifyDataSetChanged();
-
-                        //TODO: move this somewhere else, it is currently over-sorting
-                        //Sort the events shown to user in order of soonest deadline
-                        /*
-                        Collections.sort(events, new Comparator<Event>() {
-                            @Override
-                            public int compare(Event event, Event t1) {
-                                return event.deadline.compareTo(t1.deadline);
-                            }
-                        }); */
-                    } else {
-                        Log.d("feedfragment", "Error: " + e.getMessage());
+        ParseQuery<Event> query = new ParseQuery("Event");
+        query.whereContainedIn("event_owner_fb_id", facebookFriendsIds);
+        query.include("User_event_owner");
+        query.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> eventsList, ParseException e) {
+                if (e == null) {
+                    //TODO see if it is possible to improve this logic
+                    // calculate the relevance of each event before adding to arraylist
+                    for (Event event : eventsList) {
+                        event.setRelevance(calculateEventRelevance(event));
                     }
+                    // sort events based on relevance
+                    Collections.sort(eventsList, new RelevanceComparator());
+
+                    events.addAll(eventsList);
+                    adapter.notifyDataSetChanged();
+
+                    //TODO: move this somewhere else, it is currently over-sorting
+                    //Sort the events shown to user in order of soonest deadline
+                    /*
+                    Collections.sort(events, new Comparator<Event>() {
+                        @Override
+                        public int compare(Event event, Event t1) {
+                            return event.deadline.compareTo(t1.deadline);
+                        }
+                    }); */
+                } else {
+                    Log.d("feedfragment", "Error: " + e.getMessage());
                 }
-            });
-        }
+            }
+        });
     }
 
     // create category dialog fragment
@@ -220,5 +224,34 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         adapter.notifyDataSetChanged();
         rvEvents.smoothScrollToPosition(0);*/
     }
+
+    // returns the relevance of a specific event in the timeline
+    public Double calculateEventRelevance(Event event) {
+        // get relevant information for recommendation algorithm
+        HashMap<String, Integer> recentFriendsMap = ParseApplication.getRecentFriends();
+        HashMap categoriesTracker = (HashMap) currentUser.getMap("categories_tracker");
+
+        // get the chill coefficient based on the user's profile
+        Double chillCoefficient = getCoefficient(event.getCategory(), categoriesTracker);
+        Double closenessCoefficient = getCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
+        return relevanceCoefficient;
+    }
+
+    public Double getCoefficient(String input, HashMap hm) {
+        // get the raw counter for the specific input key, if it exists
+        int rawInterest = (hm.get(input) != null) ? (int) hm.get(input) : 0;
+        double totalCounter = 0;
+
+        // iterate through the hashmap to add values
+        for (Object ob : hm.values()) {
+            totalCounter += (int) ob;
+        }
+
+        // return the coefficient Raw Interest / Total Interest if total interest > 0
+        return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
+    }
+
+
 
 }

@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
         intent = getIntent();
 
-        // create permissions
+        // create permi ssions
         permissions = Arrays.asList("user_friends");
 
         // initiate client
@@ -94,6 +94,7 @@ public class LoginActivity extends AppCompatActivity {
                 String eventID = jsonObject.getString("event_id");
                 if (eventID != null) {
                     Intent i = new Intent(context, ChatActivity.class);
+                    //TODO ad
                     i.putExtra("event_id", eventID);
                     context.startActivity(i);
                 }
@@ -102,6 +103,9 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            // initialize recent friends and facebook friends 'global/app' variable
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            ParseApplication.getRecentFriends();
             ParseApplication.getFacebookFriends();
             context.startActivity(i);
         }
@@ -164,7 +168,7 @@ public class LoginActivity extends AppCompatActivity {
                             newCustomUser.setSomeEmptyList("Memories_list", new ArrayList<ParseObject>());
 
                             newCustomUser.setMap("categories_tracker", createCategoriesMap());
-                            newCustomUser.setSomeStringArray("recent_friends_ids", new ArrayList<String>());
+                            newCustomUser.setMap("recent_friends_map", new HashMap<String, Integer>());
                         }
                     });
                     Log.d("MyApp", "User signed up and logged in through Facebook!");

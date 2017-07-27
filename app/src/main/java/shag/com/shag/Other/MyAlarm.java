@@ -74,4 +74,5 @@ public class MyAlarm extends BroadcastReceiver {
 
         //TODO: delete event from database?
     }
+
 }

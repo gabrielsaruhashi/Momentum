@@ -3,7 +3,6 @@ package shag.com.shag.Activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -24,7 +23,6 @@ import shag.com.shag.R;
 public class MemoriesActivity extends AppCompatActivity {
     Context context;
 
-    RecyclerView rvMemories;
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;

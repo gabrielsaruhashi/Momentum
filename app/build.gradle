@@ -12,6 +12,8 @@ android {
         testInstrumentationRunner "android.support.chill_circle.runner.AndroidJUnitRunner"
         resValue "string", "google_maps_key",
                 (project.findProperty("GOOGLE_MAPS_API_KEY") ?: "")
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -91,6 +93,7 @@ dependencies {
     annotationProcessor 'org.parceler:parceler:1.1.6'
     compile 'com.ramotion.foldingcell:folding-cell:1.2.1' // folding effect for memories
     compile 'com.android.support:gridlayout-v7:25.3.1'
+    compile 'org.jcodec:jcodec-android:0.1.9'
 }
 
 // for GMS notifications
