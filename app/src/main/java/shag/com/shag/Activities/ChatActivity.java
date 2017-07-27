@@ -275,7 +275,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String newEventId = object.getEventId();
 
                 if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                    polls.add(object);
+                    polls.add(0, object);
                 }
 
                 // RecyclerView updates need to be run on the UI thread
