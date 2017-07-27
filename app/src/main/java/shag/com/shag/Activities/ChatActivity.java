@@ -59,6 +59,7 @@ import shag.com.shag.Adapters.PollsAdapter;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
+import shag.com.shag.Models.CalendarEvent;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
@@ -110,6 +111,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private boolean isEventNew;
     private String timeWinner;
     private ParseGeoPoint locationWinner;
+    private ArrayList<CalendarEvent> calendarEvents;
 
 
     @Override
@@ -189,7 +191,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void run() {
                 String[] projection = new String[]{CalendarContract.Events.CALENDAR_ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY, CalendarContract.Events.EVENT_LOCATION};
-
+                //TODO change start time
                 // 0 = January, 1 = February, ...
                 Calendar startTime = Calendar.getInstance();
                 startTime.set(2017, 00, 01, 00, 00);
@@ -199,22 +201,24 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // the range is all data from 2014
                 String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( " + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ))";
 
+                // instantiate array of calendar events
+                calendarEvents = new ArrayList<CalendarEvent>();
+
                 // ensure user actually gave permission to read events
                 if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
                     final Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
                     Log.i("DEBUG_CURSOR", DatabaseUtils.dumpCursorToString(cursor));
-                    Log.i("DEBUG_SIZE", "" + cursor.getCount());
-                    Log.i("DEBUG_SIZE2", "" + cursor.getColumnCount());
 
                     // output the events
                     if (cursor.moveToFirst()) {
                         do {
-                            // RecyclerView updates need to be run on the UI thread
+                            // update the calendarEvents array on the UI Thread
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     // Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
-                                    Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1), Toast.LENGTH_LONG).show();
+                                    CalendarEvent freshCalendarEvent = CalendarEvent.fromCalendarCursor(cursor);
+                                    calendarEvents.add(freshCalendarEvent);
                                 }
                             });
                         } while (cursor.moveToNext() &&  cursor.getPosition() < cursor.getCount() - 1);
