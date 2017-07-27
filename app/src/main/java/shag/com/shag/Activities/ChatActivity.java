@@ -241,11 +241,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
                 });
-
+    /*
         //setup on server side
-        ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
-        SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
-        subscriptionHandling2.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
+        ParseQuery<Poll> parseQueryPoll = ParseQuery.getQuery(Poll.class);
+        SubscriptionHandling<Poll> pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+        pollSubscriptionHandling.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
             @Override
             public void onEvents(ParseQuery<Poll> query, SubscriptionHandling.Event event, Poll object) {
                 String senderId = object.getPollCreator();
@@ -265,28 +265,30 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     }
                 });
             }
+        }); */
+        ParseQuery<Poll> parseQueryPoll = ParseQuery.getQuery(Poll.class);
+        SubscriptionHandling<Poll> pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+            @Override
+            public void onEvent(ParseQuery<Poll> query, Poll object) {
+                String senderId = object.getPollCreator();
+                String newEventId = object.getEventId();
+
+                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                    polls.add(object);
+                }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
+            }
         });
-//        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-//            @Override
-//            public void onEvent(ParseQuery<Poll> query, Poll object) {
-//                String senderId = object.getPollCreator();
-//                String newEventId = object.getEventId();
-//
-//                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-//                    polls.add(object);
-//                }
-//
-//                // RecyclerView updates need to be run on the UI thread
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        pollAdapter.notifyDataSetChanged();
-//                        rvPolls.scrollToPosition(0);
-//
-//                    }
-//                });
-//            }
-//        });
 
 
     }
