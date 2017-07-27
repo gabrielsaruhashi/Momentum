@@ -213,16 +213,13 @@ public class Event extends ParseObject implements Parcelable {
         this.location = in.readString();
         this.category = in.readString();
         this.friendsAtEvent = new ArrayList<Long>();
-        in.readList(this.friendsAtEvent, Long.class.getClassLoader());
+        in.readList(this.friendsAtEvent, Long.class.getClassLoader());  //TODO: make sure no bugs
         this.participantsIds = new ArrayList<String>();
         in.readList(this.participantsIds, Long.class.getClassLoader());
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
         this.isFirstCreated = in.readByte() != 0;
-
-
-
     }
 
 
