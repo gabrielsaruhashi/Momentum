@@ -91,6 +91,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
     boolean openedPush;
+    private Event parseEvent; //ONLY FOR USE IF OPENING PUSH
 
 
     // chat id
@@ -150,10 +151,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // unwrap intent and get current user id
         Intent intent = getIntent();
-        Bundle b = intent.getExtras();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
-        int s = chatParticipantsIds.size();
         event = intent.getParcelableExtra("event");
 
         if (chatParticipantsIds == null) {
@@ -162,20 +161,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
                 ParseObject object = query.get(eventId);
                 chatParticipantsIds = (ArrayList) object.getList("participants_id");
+                isEventNew = object.getBoolean("is_first_created");
+                parseEvent = (Event) object;
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
 
         //finding out if this is the first time the event has been creating
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        ParseObject object = null;
-        try {
-            object = query.get(eventId);
-            isEventNew = object.getBoolean("is_first_created");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+//        ParseObject object = null;
+//        try {
+//            object = query.get(eventId);
+//            isEventNew = object.getBoolean("is_first_created")
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
@@ -389,7 +390,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 rvChat.smoothScrollToPosition(0);
 
 
-                if (data.equals("hi Shaggy")) {
+                if (data.equalsIgnoreCase("hi Shaggy")) {
                     Message m = new Message();
                     m.setSenderId("InuSHuTqkn");
                     m.setBody("Hi! My name is Shaggy");
@@ -888,9 +889,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
-        i.putExtra("timeOfEvent", event.timeOfEvent);
-        i.putExtra("latitude", event.latitude);
-        i.putExtra("longitude", event.longitude);
+        if (openedPush) {
+            i.putExtra("timeOfEvent", event.getTimeOfEvent());
+            i.putExtra("latitude", event.getLatitude());
+            i.putExtra("longitude", event.getLongitude());
+        } else {
+            i.putExtra("timeOfEvent", event.timeOfEvent);
+            i.putExtra("latitude", event.latitude);
+            i.putExtra("longitude", event.longitude);
+        }
         context.startActivity(i);
     }
 }
