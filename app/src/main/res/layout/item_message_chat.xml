@@ -29,16 +29,17 @@
         android:layout_alignParentRight="true"/>
 
     <TextView
-        android:textSize="18sp"
         android:id="@+id/tvBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOtherName"
         android:layout_marginLeft="4dp"
         android:layout_marginRight="4dp"
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_toRightOf="@id/ivProfileOther"
         android:layout_toLeftOf="@id/ivProfileMe"
-        android:layout_below="@id/tvOtherName"
-        android:layout_height="wrap_content"/>
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:layout_weight="1"
+        android:autoLink="map|web|phone"
+        android:textSize="18sp" />
 
 
 

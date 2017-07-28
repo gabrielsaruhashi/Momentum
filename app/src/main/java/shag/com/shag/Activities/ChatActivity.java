@@ -1,8 +1,12 @@
 package shag.com.shag.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,12 +21,20 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseCloud;
@@ -34,6 +46,10 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SubscriptionHandling;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -49,6 +65,7 @@ import java.util.Map;
 
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
+import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
@@ -66,12 +83,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
+    static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     Context context;
     EditText etMessage;
     Button btSend;
     ArrayList<View> timeButtons;
     ArrayList<View> locationButtons;
     int viewPosition;
+    private FusedLocationProviderClient mFusedLocationClient;
 
 
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -102,8 +121,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
     private boolean isEventNew;
+    private boolean isEventPrivate;
+    private boolean isRecommendationMade;
+
+
     private String timeWinner;
     private ParseGeoPoint locationWinner;
+    private ParseObject eventFromQuery;
+
+    private String favFood;
 
 
     @Override
@@ -147,6 +173,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 DividerItemDecorator(rvPolls.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvPolls.addItemDecoration(itemDecoration);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(ChatActivity.this);
 
         // unwrap intent and get current user id
         Intent intent = getIntent();
@@ -160,19 +187,21 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             openedPush = true;
             try {
                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                ParseObject object = query.get(eventId);
-                chatParticipantsIds = (ArrayList) object.getList("participants_id");
+                eventFromQuery = query.get(eventId);
+                chatParticipantsIds = (ArrayList) eventFromQuery.getList("participants_id");
             } catch (ParseException e) {
+
                 e.printStackTrace();
             }
         }
 
+
+
         //finding out if this is the first time the event has been creating
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        ParseObject object = null;
         try {
-            object = query.get(eventId);
-            isEventNew = object.getBoolean("is_first_created");
+            eventFromQuery = query.get(eventId);
+            isEventNew = eventFromQuery.getBoolean("is_first_created");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -201,6 +230,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             });
         }
+        String id = (String) eventFromQuery.getString("event_owner_id");
+
+        if (ParseUser.getCurrentUser().getObjectId().equals(eventFromQuery.getString("event_owner_id")) &&
+                new Date().after(eventFromQuery.getDate("deadline"))) {
+            recommendRestaurant(chatParticipantsIds);
+        }
+
 
         refreshPolls();
 
@@ -290,6 +326,108 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
     }
+
+    private void recommendRestaurant(ArrayList<String> userIds) {
+        // construct OR query to userQuery
+
+        // for each id in the participants list, create a query and add to the OR arraylist
+        ArrayList<String> eventUsers = new ArrayList<>(chatParticipantsIds);
+        eventUsers.remove("InuSHuTqkn");
+        final String cuisineInterest = findMostPopularFood(eventUsers);
+        if (ActivityCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }
+        else{
+            ActivityCompat.requestPermissions(ChatActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSIONS_REQUEST_LOCATION );
+        }
+
+
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(ChatActivity.this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        favFood=cuisineInterest;
+                        Double lat = location.getLatitude();
+                        Double lng = location.getLongitude();
+                        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(cuisineInterest, lat.toString(), lng.toString()));
+
+
+                    }
+                });
+
+
+    }
+
+    private String findMostPopularFood(ArrayList<String> people) {
+
+        //list x = list of userids
+        //for each elemment in x
+        //make a query for that user
+        //specify id
+        //person.get
+        ArrayList<String> x = people;
+
+        final HashMap<String, Integer> foodCounts = new HashMap<>();
+        //TODO use an AsyncTask
+        for (String userId : people) {
+            ParseQuery<ParseUser> person = ParseUser.getQuery();
+            try {
+                ParseUser userX = person.get(userId);
+                String id = userX.getObjectId();
+                HashMap<String, Object> categoryMap = (HashMap<String, Object>) userX.getMap("categories_tracker");
+                List<Object> foodData = (List<Object>) categoryMap.get("Food");
+                HashMap<String, Integer> subCategoryMap = (HashMap<String, Integer>) foodData.get(1);
+                for (String foodType : subCategoryMap.keySet()) {
+                    //if subcategory already found, add to sum hash map
+                    if (foodCounts.get(foodType) != null) {
+                        foodCounts.put(foodType, foodCounts.get(foodType) + subCategoryMap.get(foodType));
+                    } else {
+                        foodCounts.put(foodType, subCategoryMap.get(foodType));
+                    }
+
+                }
+
+
+            } catch (ParseException e) {
+                e.getMessage();
+            }
+
+//            person.getInBackground(userId, new GetCallback<ParseUser>() {
+//                @Override
+//                public void done(ParseUser object, ParseException e) {
+//                    String id =object.getObjectId();
+//                    HashMap<String,Object> categoryMap = (HashMap<String, Object>) object.getMap("categories_tracker");
+//                    List<Object> foodData = (List<Object>) categoryMap.get("Food");
+//                    HashMap<String,Integer> subCategoryMap= (HashMap<String, Integer>) foodData.get(1);
+//                    for (String foodType: subCategoryMap.keySet()){
+//                        //if subcategory already found, add to sum hash map
+//                        if (foodCounts.get(foodType)!=null){
+//                            foodCounts.put(foodType,foodCounts.get(foodType)+subCategoryMap.get(foodType));
+//                        }
+//                        else{
+//                            foodCounts.put(foodType,subCategoryMap.get(foodType));
+//                        }
+//
+//                    }
+//                }
+//            });
+        }
+        String maxKey = null;
+        int maxValue = -1;
+        for (String food : foodCounts.keySet()) {
+            if (foodCounts.get(food) > maxValue) {
+                maxKey = food;
+                maxValue = foodCounts.get(food);
+            }
+        }
+
+        return maxKey;
+
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -404,6 +542,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     }
 
                 }
+
 
             }
         });
@@ -569,8 +708,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 if (e == null) {
                     polls.clear();
                     //polls.addAll(poll);
-                    for (int i = 0; i<poll.size(); i++){
-                        Poll tempPoll=poll.get(i);
+                    for (int i = 0; i < poll.size(); i++) {
+                        Poll tempPoll = poll.get(i);
                         polls.add(poll.get(i));
                     }
                     pollAdapter.notifyDataSetChanged(); // update adapter
@@ -611,16 +750,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 //        }
 
         int clockStart = time.indexOf('@');
-        String dateTime = time.substring(0,clockStart);
-        String clockTime = time.substring(clockStart+1);
+        String dateTime = time.substring(0, clockStart);
+        String clockTime = time.substring(clockStart + 1);
 
 //        Calendar calendar = Calendar.getInstance();
         Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("M/d/yyyy h:mm a", Locale.US);
         try {
-            c.setTime(sdf.parse(dateTime+" "+clockTime));
-        }
-        catch (java.text.ParseException e) {
+            c.setTime(sdf.parse(dateTime + " " + clockTime));
+        } catch (java.text.ParseException e) {
             e.printStackTrace();
             Log.e("Chat Activity", "can't parse date");
 
@@ -640,7 +778,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         for (Poll eachPoll : polls) {
             if (eachPoll.getPollType().equals("Time")) {
                 //if everyone has voted (minus one is Shaggy)
-                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size()-1 ) {
+                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size() - 1) {
                     Collection<Integer> score = eachPoll.getScores().values();
                     int max = Collections.max(score);
                     for (String key : eachPoll.getScores().keySet()) {
@@ -652,7 +790,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 }
             } else if (eachPoll.getPollType().equals("Location")) {
-                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size()-1 ) {
+                if (eachPoll.getPeopleVoted().size() == chatParticipantsIds.size() - 1) {
                     Collection<Integer> score = eachPoll.getScores().values();
                     int max = Collections.max(score);
                     for (String key : eachPoll.getScores().keySet()) {
@@ -892,6 +1030,68 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         i.putExtra("latitude", event.latitude);
         i.putExtra("longitude", event.longitude);
         context.startActivity(i);
+    }
+
+    public JsonObjectRequest getFoodRequest(String foodType, String lat, String lng) {
+        // Pass second argument as "null" for GET requests
+        String url = "https://developers.zomato.com/api/v2.1/search?q=";
+        String foodSearch = foodType;
+        String params = "&lat=" + lat + "&lon=" + lng + "&radius=18000";
+
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url + foodSearch + params, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("response", "aww yeah");
+                        try {
+                            JSONArray restaurantArray = response.getJSONArray("restaurants");
+                            JSONObject restaurant = restaurantArray.getJSONObject(0).getJSONObject("restaurant");
+                            String restaurantName = restaurant.getString("name");
+                            String address = restaurant.getJSONObject("location").getString("address");
+                            callShaggyForResponse("Recommendation", restaurantName + "@ " + address);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //error occur
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("Accept", "application/json");
+                params.put("user-key", "09e67b4492d86e45473c0af26442ab3d");
+                return params;
+            }
+        };
+        return req;
+    }
+
+    private void callShaggyForResponse(String type, String body) {
+
+        if (type.equals("Recommendation")) {
+            Message m = new Message();
+            m.setSenderId("InuSHuTqkn");
+            m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out " + body);
+            m.setEventId(eventId);
+            m.setSenderName("Shaggy");
+            try {
+                m.save();
+                mAdapter.notifyItemInserted(0);
+                rvChat.smoothScrollToPosition(0);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

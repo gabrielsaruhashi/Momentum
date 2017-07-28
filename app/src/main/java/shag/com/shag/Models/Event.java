@@ -39,6 +39,9 @@ public class Event extends ParseObject implements Parcelable {
     public boolean isFirstCreated;
     private ParseObject eventOwner;
     private Double relevance;
+    public boolean isEventPrivate;
+    public boolean isRecommendationMade;
+
 
     //CONSTRUCTORS
     public Event(){
@@ -112,13 +115,28 @@ public class Event extends ParseObject implements Parcelable {
         return getBoolean("is_first_created");
 
     }
+    public boolean getIsEventPrivate() {
+        return getBoolean("is_event_private");
+
+    }
+    public boolean isRecommendationMade() {
+        return isRecommendationMade;
+    }
+
 
     // SETTERS
 
-
+    public void setRecommendationMade(boolean recommendationMade) {
+        isRecommendationMade = recommendationMade;
+    }
     public void setIsFirstCreated(boolean isFirstCreated) {
         this.isFirstCreated = isFirstCreated;
         put("is_first_created", isFirstCreated);
+    }
+
+    public void setIsEventPrivate(boolean isEventPrivate) {
+        this.isEventPrivate = isEventPrivate;
+        put("is_event_private", isEventPrivate);
     }
     public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
@@ -212,6 +230,8 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeDouble(this.longitude);
         dest.writeSerializable(this.timeOfEvent);
         dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isEventPrivate ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isRecommendationMade ? (byte) 1 : (byte) 0);
 
     }
 
@@ -230,6 +250,8 @@ public class Event extends ParseObject implements Parcelable {
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
         this.isFirstCreated = in.readByte() != 0;
+        this.isEventPrivate = in.readByte() != 0;
+        this.isRecommendationMade = in.readByte() != 0;
     }
 
 
