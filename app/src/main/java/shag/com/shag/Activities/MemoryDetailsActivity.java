@@ -135,6 +135,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                     @Override
                     public void onCompleted(GraphResponse response) {
                         try {
+                            Toast.makeText(MemoryDetailsActivity.this, "Create new album!", Toast.LENGTH_SHORT).show();
                             long facebookAlbumId = response.getJSONObject().getLong("id");
                             // post all pictures of the album
                             if (pictures != null && pictures.size() > 0) {

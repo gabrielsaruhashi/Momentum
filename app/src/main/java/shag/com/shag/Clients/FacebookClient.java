@@ -6,8 +6,9 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
+
+import java.util.HashMap;
 
 
 /**
@@ -39,8 +40,9 @@ public class FacebookClient {
 
     public void postFacebookAlbum(String albumName, GraphRequest.Callback callback) {
         ParseUser user = ParseUser.getCurrentUser();
-        ParseObject data = user.getParseObject("authData");
-        Long userFacebookId = ParseUser.getCurrentUser().getParseObject("authData").getLong("id");
+        HashMap data = (HashMap) user.getMap("authData");
+        HashMap facebookData = (HashMap) data.get("facebook");
+        String userFacebookId = (String) facebookData.get("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
@@ -70,6 +72,11 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
+    public void getMyPermissions(GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions", params, HttpMethod.GET,
+                callback).executeAsync();
+    }
 
 
     //returns event node (need to call getJSONObject() before parsing)

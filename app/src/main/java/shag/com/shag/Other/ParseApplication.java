@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -56,6 +57,7 @@ public class ParseApplication extends Application {
     private static ArrayList<Long> facebookFriendsIds;
     private static HashMap recentFriendsMap;
     private static boolean mFirstLoad;
+    private static TreeSet facebookPermissionsSet;
 
     @Override
     public void onCreate() {
@@ -100,9 +102,10 @@ public class ParseApplication extends Application {
         // registering device for push notifications
         ParseInstallation.getCurrentInstallation().saveInBackground();
 
-        // initialize the array
+        // initialize the array and treeset
         mFirstLoad = true;
         facebookFriendsIds = new ArrayList<Long>();
+        facebookPermissionsSet = new TreeSet();
 
     }
 
@@ -226,5 +229,32 @@ public class ParseApplication extends Application {
         return recentFriendsMap;
     }
 
+    public static TreeSet getFacebookPermissionsSet() {
+        // upon the first load, get all permissions user gave us
+        if (mFirstLoad) {
+            // get my permissions from facebook
+            facebookClient.getMyPermissions(new GraphRequest.Callback() {
+                // create a set with the names of all permissions
+                @Override
+                public void onCompleted(GraphResponse response) {
+                    try {
+                        JSONArray permissions = response.getJSONObject().getJSONArray("data");
+                        for (int i = 0; i < permissions.length(); i ++) {
+                            String permissionName = permissions.getJSONObject(i).getString("permission");
+                            String status = permissions.getJSONObject(i).getString("status");
+                            // add all permissions to global set of permissions
+                            if (status.equals("granted")) {
+                                facebookPermissionsSet.add(permissionName);
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.getMessage();
+                    }
+                }
+            });
+        }
+
+        return facebookPermissionsSet;
+    }
 
 }

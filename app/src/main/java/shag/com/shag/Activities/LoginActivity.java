@@ -110,7 +110,8 @@ public class LoginActivity extends AppCompatActivity {
             //TODO refactor this
             ParseApplication.getRecentFriends();
             // get additional publishing permission
-
+            ParseApplication.getFacebookPermissionsSet();
+            // get facebook friends should be last call for it sets the first load to false
             ParseApplication.getFacebookFriends();
             context.startActivity(i);
         }
