@@ -41,6 +41,7 @@ public class Event extends ParseObject implements Parcelable {
     private Double relevance;
     public boolean isEventPrivate;
     public boolean isRecommendationMade;
+    public String time;
 
 
     //CONSTRUCTORS
@@ -119,15 +120,23 @@ public class Event extends ParseObject implements Parcelable {
         return getBoolean("is_event_private");
 
     }
-    public boolean isRecommendationMade() {
+    public boolean getIsRecommendationMade() {
         return isRecommendationMade;
     }
 
-
+    public String getTime() {
+        return getString("time");
+    }
     // SETTERS
 
+    public void setTime(String time) {
+        this.time = time;
+        put("time", time);
+    }
+
     public void setRecommendationMade(boolean recommendationMade) {
-        isRecommendationMade = recommendationMade;
+        this.isRecommendationMade=recommendationMade;
+        put("is_recommendation_made",isRecommendationMade);
     }
     public void setIsFirstCreated(boolean isFirstCreated) {
         this.isFirstCreated = isFirstCreated;
@@ -140,8 +149,7 @@ public class Event extends ParseObject implements Parcelable {
     }
     public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
-        // TODO check if I need the line below
-        // put("event_owner", eventOwner);
+        put("User_event_owner", eventOwner);
     }
 
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {

@@ -202,6 +202,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         try {
             eventFromQuery = query.get(eventId);
             isEventNew = eventFromQuery.getBoolean("is_first_created");
+            isEventPrivate = eventFromQuery.getBoolean("is_event_private");
+            isRecommendationMade=eventFromQuery.getBoolean("is_recommendation_made");
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -232,8 +234,18 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         String id = (String) eventFromQuery.getString("event_owner_id");
 
-        if (ParseUser.getCurrentUser().getObjectId().equals(eventFromQuery.getString("event_owner_id")) &&
-                new Date().after(eventFromQuery.getDate("deadline"))) {
+        if (ParseUser.getCurrentUser().getObjectId().equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade==false
+                && isEventPrivate==true) {
+            isRecommendationMade=true;
+            ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+            eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+                public void done(ParseObject eventDb, ParseException e) {
+                    if (e == null) {
+                        eventDb.put("is_first_created", isEventNew);
+                        eventDb.saveInBackground();
+                    }
+                }
+            });
             recommendRestaurant(chatParticipantsIds);
         }
 
@@ -775,6 +787,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
     public void findPollWinners(List<Poll> polls) {
+        String placeName = null;
         for (Poll eachPoll : polls) {
             if (eachPoll.getPollType().equals("Time")) {
                 //if everyone has voted (minus one is Shaggy)
@@ -796,6 +809,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     for (String key : eachPoll.getScores().keySet()) {
                         if (eachPoll.getScores().get(key) == max) {
                             Map<String, ParseGeoPoint> places = eachPoll.getLocationOptions();
+                            placeName=key;
                             locationWinner = places.get(key);
                             break;
                         }
@@ -807,6 +821,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         if (timeWinner != null || locationWinner != null) {
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+            final String finalPlaceName = placeName;
             eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
                 public void done(ParseObject eventDb, ParseException e) {
                     if (e == null) {
@@ -817,6 +832,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         if (locationWinner != null) {
                             Double lat = locationWinner.getLatitude();
                             Double lng = locationWinner.getLongitude();
+                            eventDb.put("location", finalPlaceName);
                             eventDb.put("latitude", lat);
                             eventDb.put("longitude", lng);
                         }

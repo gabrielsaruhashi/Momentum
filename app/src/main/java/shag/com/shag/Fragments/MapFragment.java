@@ -400,12 +400,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         }
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
-                                Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
-                                Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                final Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                final Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
                                 String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
                                 String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
                                 String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
                                 String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
+                                String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
 
 
                                 final String locationAddress=streetName+" "+city+", "+state+ ", "+ zipcode;
@@ -421,6 +422,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                     publicEventData.put("Description", "concert??");
                                     publicEventData.put("Location", locationAddress);
                                     publicEventData.put("Category", "Music");
+
                                     Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
 
                                     MarkerOptions markerOptions = new MarkerOptions();
@@ -450,6 +452,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                     i.putExtra("Location", data.get("Location"));
                                                     i.putExtra("Category", data.get("Category"));
                                                     i.putExtra("Event Type", "Public");
+                                                    i.putExtra("Lat",lat);
+                                                    i.putExtra("Lng",lng);
                                                     getContext().startActivity(i);
                                                 }
                                             });
@@ -517,8 +521,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                                 JSONObject restaurant = restaurantArray.getJSONObject(i).getJSONObject("restaurant");
                                 final String restaurantName = restaurant.getString("name");
-                                Double restaurantLat = restaurant.getJSONObject("location").getDouble("latitude");
-                                Double restaurantLng = restaurant.getJSONObject("location").getDouble("longitude");
+                                final Double restaurantLat = restaurant.getJSONObject("location").getDouble("latitude");
+                                final Double restaurantLng = restaurant.getJSONObject("location").getDouble("longitude");
                                 LatLng restaurantLatLng = new LatLng(restaurantLat, restaurantLng);
 
                                 String streetName = restaurant.getJSONObject("location").getString("address");
@@ -565,6 +569,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                 i.putExtra("Category", data.get("Category"));
                                                 i.putExtra("Event Type", "Public");
                                                 i.putExtra("Food Details", data.get("Description"));
+
                                                 getContext().startActivity(i);
                                             }
                                         });

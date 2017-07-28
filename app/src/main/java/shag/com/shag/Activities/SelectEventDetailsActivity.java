@@ -47,6 +47,9 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     String eventType;
     String foodDescription;
     ParseUser currentUser;
+    double eventLat;
+    double eventLng;
+    String placeName;
     PlaceAutocompleteFragment autocompleteFragment;
     CardView cd1;
 
@@ -64,8 +67,13 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
         category = getIntent().getStringExtra("Category");
         eventType = getIntent().getStringExtra("Event Type");
-        if (category.equals("Food") && eventType.equals("Public")){
-            foodDescription = getIntent().getStringExtra("Food Details");
+        if (eventType.equals("Public")){
+            placeName=getIntent().getStringExtra("Category");
+            eventLat=getIntent().getDoubleExtra("Lat",0.0);
+            eventLng=getIntent().getDoubleExtra("Lng",0.0);
+            if(category.equals("Food")) {
+                foodDescription = getIntent().getStringExtra("Food Details");
+            }
         }
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
@@ -130,7 +138,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
                 ); */
         //TODO what is this friends at event for
         newEvent.setFriendsAtEvent(new ArrayList<Long>());
-        newEvent.setLocation("Facebook Seattle");
+        if (eventType.equals("Public")){
+            newEvent.setLocation(placeName);
+            newEvent.setLatitude(eventLat);
+            newEvent.setLongitude(eventLng);
+        }
+
 
         //  upon creating, save event owner's id to participant list
         ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
@@ -147,7 +160,13 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
 
         newEvent.setIsFirstCreated(true);
-
+        if (eventType.equals("Public")){
+            newEvent.setIsEventPrivate(false);
+        }
+        else{
+            newEvent.setIsEventPrivate(true);
+        }
+        newEvent.setRecommendationMade(false);
 
         newEvent.setCategory(category);
         HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
