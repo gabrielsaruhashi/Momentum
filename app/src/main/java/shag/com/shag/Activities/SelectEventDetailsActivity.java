@@ -27,11 +27,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Poll;
-import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
@@ -150,12 +150,44 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
 
         newEvent.setCategory(category);
-        HashMap<String,RecommendationValues> hm = (HashMap) currentUser.getMap("categories_tracker");
+        HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
         // update user's category counter
         // update category counter
-        int oldCounter = hm.get(category).getCategoryPoints();
-        hm.get(category).setCategoryPoints(oldCounter+1);
+        int oldCounter = (int) hm.get(category).get(0);
+        hm.get(category).set(0,oldCounter+1);
+
+        if (foodDescription!=null){
+            //get list of sub categories
+            List<String> foodApiSubcategories = Arrays.asList(foodDescription.split(", "));
+            //get food data object
+            List<Object> foodData = hm.get("Food");
+            //get hashmap of scores
+            HashMap<String, Integer> foodSubCategoryMap = (HashMap<String, Integer>) foodData.get(1);
+
+            //for each of the found food types
+            for (String foodType : foodApiSubcategories){
+                //if that food type is not already in the map
+                if (foodSubCategoryMap.get(foodType)!=null){
+                    //get points and increment by one
+                    int foodSubCategoryPoints = foodSubCategoryMap.get(foodType);
+                    foodSubCategoryPoints +=1;
+                    //reset key to include incremented value
+                    foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
+                    foodData.set(1,foodSubCategoryMap);
+                    hm.put("Food", foodData);
+//                    hm.get("Food").get(1).(foodType,foodSubCategoryPoints);
+                    //foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
+                }
+                //if food type is not in map
+                else{
+                    foodSubCategoryMap.put(foodType,1);
+                    hm.get("Food").set(1,foodSubCategoryMap);
+//                    hm.get("Food").getSubCategoryMap().put(foodType,1);
+                    //foodSubCategoryMap.put(foodType,1);
+                }
+            }
+        }
         currentUser.put("categories_tracker", hm);
 
 

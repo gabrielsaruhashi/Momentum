@@ -1,7 +1,11 @@
 package shag.com.shag.Models;
 
+import android.util.Log;
+
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +39,19 @@ public class CustomUser {
 
     public void setMap(String objectName, Map map) {
         user.put(objectName, map);
-        user.saveInBackground();
+        user.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    Log.d("CustomUser", "Categories Tracker Made");
+                    // Hooray! Let them use the app now.
+                } else {
+                    // Sign up didn't succeed. Look at the ParseException
+                    // to figure out what went wrong
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
 }

@@ -27,7 +27,6 @@ import java.util.Map;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.CustomUser;
-import shag.com.shag.Models.RecommendationValues;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
@@ -123,31 +122,31 @@ public class LoginActivity extends AppCompatActivity {
         Map hm = new HashMap();
 
         //sub category Object
-        RecommendationValues chillValues = new RecommendationValues();
-        RecommendationValues partyValues = new RecommendationValues();
-        RecommendationValues sportsValues = new RecommendationValues();
-        RecommendationValues miscValues = new RecommendationValues();
-        RecommendationValues foodValues = new RecommendationValues();
-        RecommendationValues musicValues = new RecommendationValues();
+        ArrayList<Object> chillValues = new ArrayList<Object>();
+        ArrayList<Object> partyValues = new ArrayList<Object>();
+        ArrayList<Object> sportsValues = new ArrayList<Object>();
+        ArrayList<Object> miscValues = new ArrayList<Object>();
+        ArrayList<Object> foodValues = new ArrayList<Object>();
+        ArrayList<Object> musicValues = new ArrayList<Object>();
 
         //set values object
-        chillValues.setCategoryPoints(0);
-        chillValues.setSubCategoryMap(new HashMap<String, Integer>());
+        chillValues.add(0);
+        chillValues.add(new HashMap<String, Integer>());
 
-        partyValues.setCategoryPoints(0);
-        partyValues.setSubCategoryMap(new HashMap<String, Integer>());
+        partyValues.add(0);
+        partyValues.add(new HashMap<String, Integer>());
 
-        sportsValues.setCategoryPoints(0);
-        sportsValues.setSubCategoryMap(new HashMap<String, Integer>());
+        sportsValues.add(0);
+        sportsValues.add(new HashMap<String, Integer>());
 
-        miscValues.setCategoryPoints(0);
-        miscValues.setSubCategoryMap(new HashMap<String, Integer>());
+        miscValues.add(0);
+        miscValues.add(new HashMap<String, Integer>());
 
-        foodValues.setCategoryPoints(0);
-        foodValues.setSubCategoryMap(new HashMap<String, Integer>());
+        foodValues.add(0);
+        foodValues.add(new HashMap<String, Integer>());
 
-        musicValues.setCategoryPoints(0);
-        musicValues.setSubCategoryMap(new HashMap<String, Integer>());
+        musicValues.add(0);
+        musicValues.add(new HashMap<String, Integer>());
 
         // Put elements to the map
         hm.put("Chill", chillValues);
