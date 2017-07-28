@@ -6,6 +6,7 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 
@@ -37,6 +38,8 @@ public class FacebookClient {
     }
 
     public void postFacebookAlbum(String albumName, GraphRequest.Callback callback) {
+        ParseUser user = ParseUser.getCurrentUser();
+        ParseObject data = user.getParseObject("authData");
         Long userFacebookId = ParseUser.getCurrentUser().getParseObject("authData").getLong("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);

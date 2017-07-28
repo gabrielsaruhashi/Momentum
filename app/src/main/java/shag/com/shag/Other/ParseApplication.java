@@ -135,6 +135,7 @@ public class ParseApplication extends Application {
                                 //obj should never be null but occassionally is-- need to log in again
                                 if (obj == null) {
                                     Intent intent = new Intent(context, LoginActivity.class); //sometimes this doesn't work
+
                                     context.startActivity(intent);
                                 } else {
                                     JSONArray friends = obj.getJSONArray("data");
