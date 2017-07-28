@@ -50,9 +50,11 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SubscriptionHandling;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,11 +105,15 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     String ETA;
     String eventId;
     Event parseEvent;
+    boolean firstOpen;
+    List<Marker> markerList = new ArrayList<Marker>();
+    ArrayList<String> friendNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_ready);
+        firstOpen = true;
 
         eventId = getIntent().getStringExtra("eventId");
 
@@ -145,6 +151,46 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDestination.setText(eventDestination);
         tvTime = (TextView) findViewById(R.id.tvFinalTime);
         tvTime.setText(timeOfEvent.toString());
+
+        // Make sure the Parse server is setup to configured for live queries
+        // URL for server is determined by Parse.initialize() call.
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+
+        ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
+        // Connect to Parse server
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
+        // Listen for UPDATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
+                SubscriptionHandling.HandleEventCallback<Event>() {
+                    @Override
+                    public void onEvent(ParseQuery<Event> query, Event object) {
+                        if (object.getEventId().equals(eventId)) {
+                            parseEvent = object;
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    putFriendsOnMap();
+                                }
+                            });
+
+                        }
+                    }
+                });
+
+        friendNames = new ArrayList<>();
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        for (String id: participantsLocations.keySet()) {
+            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
+                ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
+                try {
+                    ParseUser friend = queryForUser.get(id);
+                    friendNames.add(friend.getString("name"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
@@ -191,13 +237,21 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
+
+        //Place destination marker
+        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+        MarkerOptions destinationMarkerOptions = new MarkerOptions();
+        destinationMarkerOptions.position(mDestination);
+        destinationMarkerOptions.title("Destination");
+        destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        mGoogleMap.addMarker(destinationMarkerOptions);
     }
 
     //DIFFERENT STATES OF MAP
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
-        //mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(1000);
         //mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(getContext(),
@@ -220,67 +274,27 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
     public void onLocationChanged(Location location) {
         mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
-
-        //Place current location marker
         LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-
-        //Place destination marker
-        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
-        MarkerOptions destinationMarkerOptions = new MarkerOptions();
-        destinationMarkerOptions.position(mDestination);
-        destinationMarkerOptions.title("Destination");
-        destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        mGoogleMap.addMarker(destinationMarkerOptions);
-
-        //if the location is not the default then the location has been set, show everyone's locations
+        //if the location is not the default then the location has been set, put location in db and get friends on map
         if (mDestination.latitude != 47.6101 || mDestination.longitude != -122.2015) {
             //put current user location in db
             HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
             participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
             parseEvent.setParticipantsLocations(participantsLocations);
-            try {
-                parseEvent.save();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
 
-            putFriendsOnMap(); //show all of your friends on the map
+            parseEvent.saveInBackground();
+            //putFriendsOnMap();
+
         }
 
         //include both markers in view
-        bounds.include(mDestination);
-        bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 75)); //TODO: 75 might not work for diff distances
-
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
-
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (firstOpen) {
+            firstOpen = false;
+            bounds.include(mDestination);
+            bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 75)); //TODO: 75 might not work for diff distances
         }
-        baseUrl += "&origin=" + origin;
-        launchMapsUrl += "&origin=" + origin;
-        baseUrl += "&destination=" + destination;
-        launchMapsUrl += "&destination=" + destination;
-        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
     }
 
     //GETTING PERMISSIONS
@@ -372,6 +386,28 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getDirections(final String mode) {
+        //TODO: decide if we want to move this
+        String origin = "";
+        String destination = "";
+        try {
+            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
+            origin = currentLocation.getAddressLine(0);
+            origin = origin.replace(" ", "+");
+
+            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+            destination = destinationLocation.getAddressLine(0);
+            destination = destination.replace(" ", "+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        baseUrl += "&origin=" + origin;
+        launchMapsUrl += "&origin=" + origin;
+        baseUrl += "&destination=" + destination;
+        launchMapsUrl += "&destination=" + destination;
+        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+        //END TODO
+
         String url = baseUrl + "&mode=" + mode;
         url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
         launchMapsUrl +=  "&travelmode=" + mode;
@@ -549,16 +585,24 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void putFriendsOnMap() {
+        for (Marker marker: markerList) {
+            marker.remove();
+        }
+        markerList.clear();
+
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        int i = 0;
         for (String id : participantsLocations.keySet()) {
             if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
                 ParseGeoPoint point = participantsLocations.get(id);
                 MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.title(friendNames.get(i));
                 markerOptions.position(new LatLng(point.getLatitude(), point.getLongitude()));
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+                Marker marker = mGoogleMap.addMarker(markerOptions);
+                markerList.add(marker);
             }
+            i++;
         }
     }
-
 }

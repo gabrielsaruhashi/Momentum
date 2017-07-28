@@ -90,7 +90,7 @@ public class Chat {
         event.timeOfEvent = object.getDate("event_time");
         event.latitude = object.getDouble("latitude");
         event.longitude = object.getDouble("longitude");
-        event.participantsLocations = object.getMap("participants_locations");
+        //event.participantsLocations = object.getMap("participants_locations"); //TODO: cannit pass geopoint
 
         // fetch event owner
         //TODO this runs slowly, try to figure out how to make it faster (this is also why chats take so long)

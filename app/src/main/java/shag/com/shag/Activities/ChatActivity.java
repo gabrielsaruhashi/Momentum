@@ -240,6 +240,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //setup on server side
         ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
+        parseQuery2.whereEqualTo("event_id", eventId);
         SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
         subscriptionHandling2.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
             @Override
@@ -247,7 +248,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String senderId = object.getPollCreator();
                 String newEventId = object.getEventId();
 
-                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                if (!senderId.equals(currentUserId)) { //TODO: hana changed this logic, make sure it's fine
                     polls.add(object);
                 }
 

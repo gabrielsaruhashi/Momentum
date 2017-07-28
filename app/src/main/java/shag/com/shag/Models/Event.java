@@ -223,7 +223,7 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeDouble(this.longitude);
         dest.writeSerializable(this.timeOfEvent);
         dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
-        dest.writeMap(participantsLocations);
+        //dest.writeMap(this.participantsLocations); //TODO: CANNOT PASS PARSEGEO
 
     }
 
@@ -242,7 +242,7 @@ public class Event extends ParseObject implements Parcelable {
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
         this.isFirstCreated = in.readByte() != 0;
-        this.participantsLocations = in.readHashMap(Map.class.getClassLoader());
+        //this.participantsLocations = in.readHashMap(Map.class.getClassLoader());
     }
 
 
