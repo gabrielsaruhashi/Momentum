@@ -18,6 +18,9 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
@@ -25,11 +28,13 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import org.jcodec.api.SequenceEncoder;
+import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -38,27 +43,30 @@ import butterknife.ButterKnife;
 import me.relex.circleindicator.CircleIndicator;
 import shag.com.shag.Adapters.ImageAdapter;
 import shag.com.shag.Adapters.ImageSliderAdapter;
+import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.DialogFragments.ImageZoomDialogFragment;
 import shag.com.shag.Models.Memory;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 
 public class MemoryDetailsActivity extends AppCompatActivity implements ImageAdapter.ImageZoomAdapterCallback{
     //@BindView(R.id.tvMemoryName) TextView tvMemoryName;
     @BindView(R.id.btAddPicture) Button btAddPicture;
+    @BindView(R.id.btFacebookShare) Button btFacebookShare;
     // @BindView(R.id.ivMemoryBannerPicture) ImageView ivMemoryBannerPicture;
     GridView gridView;
-
+    // adapters and arraylist
     ImageAdapter imageAdapter;
     ImageSliderAdapter sliderAdapter;
     ArrayList<ParseFile> pictures;
-
+    FacebookClient fbClient;
     // create constant for start activity
     final static int SELECT_IMAGE = 16;
     private Memory memory;
     private String memoryId;
     private int initialNumberOfPictures;
-
+    // slideshow components
     private static ViewPager mPager;
     private static int currentSliderPage = 0;
     CircleIndicator indicator;
@@ -71,7 +79,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // TODO pass entire memory instead
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
-
+        // instantiate client
+        fbClient = ParseApplication.getFacebookRestClient();
         // get memory
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
         try {
@@ -111,10 +120,57 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             }
         });
 
+        // get additional publishing permission
+        LoginManager.getInstance().logInWithPublishPermissions(
+                MemoryDetailsActivity.this,
+                Arrays.asList("publish_actions"));
+
+        //TODO if album already exists, just add photo
+        // add listener to facebook share
+        btFacebookShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // on click create album, create new album and share pics
+                fbClient.postFacebookAlbum(memory.getMemoryName(), new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        try {
+                            long facebookAlbumId = response.getJSONObject().getLong("id");
+                            // post all pictures of the album
+                            if (pictures != null && pictures.size() > 0) {
+                                uploadPicturesFb(pictures, facebookAlbumId);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
         // populate image slider
         initImageSlider();
 
     }
+
+    public void uploadPicturesFb(ArrayList<ParseFile> pictures, long albumId) {
+        for (ParseFile picture: pictures) {
+            try {
+                byte[] pictureData = picture.getData();
+                fbClient.postPictureToAlbum(pictureData, albumId, new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+                        Toast.makeText(MemoryDetailsActivity.this, "Pictures were uploaded successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (ParseException e) {
+                e.getMessage();
+            }
+
+        }
+    }
+
 
     public void initImageSlider() {
 

@@ -5,20 +5,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.MemoryDetailsActivity">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btAddPicture"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Share" />
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btAddPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Pictures"
+                android:layout_weight="50"/>
+
+            <Button
+                android:id="@+id/btFacebookShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share"
+                android:layout_weight="50"/>
+
+        </LinearLayout>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="150dp">
             <android.support.v4.view.ViewPager
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
@@ -40,8 +56,14 @@
             android:horizontalSpacing="10dp"
             android:stretchMode="columnWidth"
             android:gravity="center"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="80dp"/>
 
     </LinearLayout>
+
+
+
+
+
+
 
 </RelativeLayout>

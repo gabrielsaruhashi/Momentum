@@ -74,20 +74,20 @@ public class FriendsFragment extends Fragment {
     // get friends
     public void populateFriendsList() {
         client.getFriendsUsingApp(new GraphRequest.Callback() {
-            @Override
-            public void onCompleted(GraphResponse response) {
-                try {
-                    JSONArray users = response.getJSONObject().getJSONArray("data");
-                    for (int i = 0; i < users.length(); i++) {
-                        User friend = User.fromJson(users.getJSONObject(i));
-                        friends.add(friend);
-                        adapter.notifyItemInserted(friends.size() - 1);
-                        rvFriends.smoothScrollToPosition(0);
+                @Override
+                public void onCompleted(GraphResponse response) {
+                    try {
+                        JSONArray users = response.getJSONObject().getJSONArray("data");
+                        for (int i = 0; i < users.length(); i++) {
+                            User friend = User.fromJson(users.getJSONObject(i));
+                            friends.add(friend);
+                            adapter.notifyItemInserted(friends.size() - 1);
+                            rvFriends.smoothScrollToPosition(0);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
-            }
         });
     }
 

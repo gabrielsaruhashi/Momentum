@@ -50,8 +50,8 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
         intent = getIntent();
 
-        // create permi ssions
-        permissions = Arrays.asList("user_friends");
+        // create permissions
+        permissions = Arrays.asList("user_friends", "user_photos");
 
         // initiate client
         client = ParseApplication.getFacebookRestClient();
@@ -187,4 +187,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }
