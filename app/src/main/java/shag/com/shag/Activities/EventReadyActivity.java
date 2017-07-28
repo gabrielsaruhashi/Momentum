@@ -248,6 +248,12 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
             participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
             parseEvent.setParticipantsLocations(participantsLocations);
+            try {
+                parseEvent.save();
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             putFriendsOnMap(); //show all of your friends on the map
         }
 
