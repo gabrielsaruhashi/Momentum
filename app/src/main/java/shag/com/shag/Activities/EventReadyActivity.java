@@ -3,11 +3,13 @@ package shag.com.shag.Activities;
 import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +49,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -96,9 +99,10 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     TextView tvDestination;
     TextView tvTime;
     RelativeLayout rlDirectionsInfo;
+    String launchMapsUrl = "https://www.google.com/maps/dir/?api=1";
     String ETA;
     String eventId;
-    ParseObject event;
+    Event parseEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,10 +114,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         ParseObject object = null;
         try {
-            object = query.get(eventId);
-            Event e = (Event) object;
-            mDestination = new LatLng(e.getLatitude(), e.getLongitude());
-            timeOfEvent = e.getTimeOfEvent();
+            parseEvent = (Event) query.get(eventId);
+            mDestination = new LatLng(parseEvent.getLatitude(), parseEvent.getLongitude());
+            timeOfEvent = parseEvent.getTimeOfEvent();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -239,6 +242,15 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mGoogleMap.addMarker(destinationMarkerOptions);
 
+        //if the location is not the default then the location has been set, show everyone's locations
+        if (mDestination.latitude != 47.6101 || mDestination.longitude != -122.2015) {
+            //put current user location in db
+            HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+            participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
+            parseEvent.setParticipantsLocations(participantsLocations);
+            putFriendsOnMap(); //show all of your friends on the map
+        }
+
         //include both markers in view
         bounds.include(mDestination);
         bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
@@ -258,8 +270,11 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
         baseUrl += "&origin=" + origin;
+        launchMapsUrl += "&origin=" + origin;
         baseUrl += "&destination=" + destination;
+        launchMapsUrl += "&destination=" + destination;
         baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
     }
 
     //GETTING PERMISSIONS
@@ -353,6 +368,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     public void getDirections(final String mode) {
         String url = baseUrl + "&mode=" + mode;
         url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        launchMapsUrl +=  "&travelmode=" + mode;
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -521,6 +537,22 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void openGoogle(View view) {
-
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(launchMapsUrl));
+        intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+        startActivity(intent);
     }
+
+    public void putFriendsOnMap() {
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        for (String id : participantsLocations.keySet()) {
+            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
+                ParseGeoPoint point = participantsLocations.get(id);
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(new LatLng(point.getLatitude(), point.getLongitude()));
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            }
+        }
+    }
+
 }

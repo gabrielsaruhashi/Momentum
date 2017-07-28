@@ -15,6 +15,7 @@ import com.facebook.GraphResponse;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
@@ -137,9 +139,9 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         newEvent.setIsFirstCreated(true);
         newEvent.setCategory(category);
         newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
-        //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
         newEvent.setLatitude(47.6101);
         newEvent.setLongitude(-122.2015);
+        newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
         ParseObject currentUser = ParseUser.getCurrentUser();
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());

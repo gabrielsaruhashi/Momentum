@@ -12,6 +12,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by samrabelachew on 7/10/17.
@@ -37,6 +38,7 @@ public class Event extends ParseObject implements Parcelable {
     public Date timeOfEvent;
     public ParseGeoPoint parseGeoPoint;
     public boolean isFirstCreated;
+    public Map participantsLocations;
     private ParseObject eventOwner;
     private Double relevance;
 
@@ -188,6 +190,15 @@ public class Event extends ParseObject implements Parcelable {
         return CREATOR;
     }
 
+    public void setParticipantsLocations(Map locations) {
+        this.participantsLocations = locations;
+        put("participants_locations", participantsLocations);
+    }
+
+    public Map getParticipantsLocations() {
+        return getMap("participants_locations");
+    }
+
 
     /*//TODO: make sure timeOfEvent isn't causing any errors*/
 
@@ -212,6 +223,7 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeDouble(this.longitude);
         dest.writeSerializable(this.timeOfEvent);
         dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
+        dest.writeMap(participantsLocations);
 
     }
 
@@ -230,6 +242,7 @@ public class Event extends ParseObject implements Parcelable {
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
         this.isFirstCreated = in.readByte() != 0;
+        this.participantsLocations = in.readHashMap(Map.class.getClassLoader());
     }
 
 
