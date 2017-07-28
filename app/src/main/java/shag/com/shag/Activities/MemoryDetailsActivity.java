@@ -61,6 +61,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
     private static ViewPager mPager;
     private static int currentSliderPage = 0;
+    CircleIndicator indicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         mPager = (ViewPager) findViewById(R.id.pager);
         mPager.setAdapter(sliderAdapter);
-        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
+        indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(mPager);
 
         // Auto start of viewpager
@@ -180,6 +181,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                      pictures.add(file);
                                      imageAdapter.notifyDataSetChanged();
                                      sliderAdapter.notifyDataSetChanged();
+                                     indicator.setViewPager(mPager);
+
                                      updatedMemory.put("pictures_parse_files", pictures);
                                      updatedMemory.saveInBackground();
                                  } else {
