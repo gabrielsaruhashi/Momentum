@@ -240,27 +240,28 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //setup on server side
         ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
-        parseQuery2.whereEqualTo("event_id", eventId);
         SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
         subscriptionHandling2.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
             @Override
             public void onEvents(ParseQuery<Poll> query, SubscriptionHandling.Event event, Poll object) {
                 String senderId = object.getPollCreator();
-                String newEventId = object.getEventId();
+                if (senderId != null) {
+                    String newEventId = object.getEventId();
 
-                if (!senderId.equals(currentUserId)) { //TODO: hana changed this logic, make sure it's fine
-                    polls.add(object);
-                }
-
-                // RecyclerView updates need to be run on the UI thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pollAdapter.notifyDataSetChanged();
-                        rvPolls.scrollToPosition(0);
-
+                    if (!senderId.equals(currentUserId) && eventId == newEventId) {
+                        polls.add(object);
                     }
-                });
+
+                    // RecyclerView updates need to be run on the UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pollAdapter.notifyDataSetChanged();
+                            rvPolls.scrollToPosition(0);
+
+                        }
+                    });
+                }
             }
         });
 //        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
