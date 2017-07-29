@@ -19,12 +19,13 @@
     <color name="bgTitleRight">#ffffff</color>
     <color name="bgContent">@color/white</color>
     <color name="contentDividerLine">#e0e0e0</color>
-    <color name="sports_color">#a3586d</color>
-    <color name="chill_color">#5c4872</color>
-    <color name="misc_color">#0abda0</color>
-    <color name="music_color">#c1403d</color>
-    <color name="food_color">#f46a4e</color>
-    <color name="party_color">#65734B</color>
-    <color name="orange">#ffaab8c2</color>
+    <color name="sports_color">#EF476F</color>
+    <color name="chill_color">#5F0F40</color>
+    <color name="misc_color">#436436</color>
+    <color name="music_color">#FFD166</color>
+    <color name="food_color">#26547C</color>
+    <color name="party_color">#2A9D8F</color>
+    <color name="orange">#D95B43</color>
+    <color name="background_material_light">#0c0a59</color>
 
 </resources>
