@@ -161,7 +161,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // on click create album, create new album and share pics
         Long albumId= Long.valueOf(memory.getFacebookAlbumId());
         // if album hasnt been created yet
-        if (albumId == null) {
+        if (albumId == 0) {
             fbClient.postFacebookAlbum(participantsFacebookIds, memory.getMemoryName(), new GraphRequest.Callback() {
                 @Override
                 public void onCompleted(GraphResponse response) {
