@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
@@ -49,22 +48,22 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ChatListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final ChatListAdapter.ViewHolder holder, int position) {
 
         // populate the views
         Chat chat = chats.get(position);
-        Event event = chat.getParcelableEvent();
+        final Event event = chat.getParcelableEvent();
         String iconImageUrl = chat.getChatIconUrl();
         //TODO delete this later
         if (iconImageUrl == null) {
             iconImageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
         }
-        holder.tvBody.setText(chat.getDescription());
+        holder.tvEventDescription.setText(chat.getDescription());
         holder.tvParticipants.setText(chat.getChatTitle());
 
-        if (event.category.equals("Movie")) {
+        if (event.category.equals("Chill")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.chill_color));
-        } else if (event.category.equals("Basketball")) {
+        } else if (event.category.equals("Sports")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.sports_color));
         } else if (event.category.equals("Party")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.party_color));
@@ -76,10 +75,29 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.misc_color));
         }
 
+//        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+//        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+//        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+//        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
+//                SubscriptionHandling.HandleEventCallback<Message>() {
+//                    @Override
+//                    public void onEvent(ParseQuery<Message> query, Message object) {
+//                        String newEventId = object.getEventId();
+//
+//                        if (newEventId.equals(event.eventId)) {
+//                            holder.tvLastMessage.setVisibility(View.VISIBLE);
+//                            holder.tvLastMessage.setText(object.getBody());
+//
+//                            holder.tvLastMessageTime.setVisibility(View.VISIBLE);
+//                            holder.tvLastMessageTime.setText(object.getCreatedAt().toString());
+//                        }
+//                    }
+//                });
+
         // load user profile image using glide
         Glide.with(context)
                 .load(iconImageUrl)
-                .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                .centerCrop()
                 .into(holder.ivChatIcon);
     }
 
@@ -93,9 +111,11 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
 
         // Automatically finds each field by the specified ID
         @BindView(R.id.tvParticipants) TextView tvParticipants;
-        @BindView(R.id.tvBody) TextView tvBody;
+        @BindView(R.id.tvLastMessage) TextView tvLastMessage;
+        @BindView(R.id.tvEventDescription) TextView tvEventDescription;
         @BindView(R.id.ivChatIcon) ImageView ivChatIcon;
         @BindView(R.id.ivCategory) ImageView ivCategory;
+        @BindView(R.id.tvLastMessageTime) TextView tvLastMessageTime;
 
         public ViewHolder(View itemView) {
             super(itemView);

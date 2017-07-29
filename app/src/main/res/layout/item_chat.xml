@@ -3,60 +3,67 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/rv_margin_left"
+    android:layout_marginRight="@dimen/rv_margin_right"
     android:orientation="vertical">
 
-    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/cvRoot"
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/ivChatIcon"
+        android:layout_width="@dimen/profile_picture_length"
+        android:layout_height="@dimen/profile_picture_length"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        app:srcCompat="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/ivCategory"
+        android:layout_width="@dimen/category_tag_width"
+        android:layout_height="@dimen/profile_picture_length"
+        android:layout_alignTop="@+id/ivChatIcon"
+        android:layout_toRightOf="@+id/ivChatIcon"
+        android:background="@color/black" />
+
+    <TextView
+        android:id="@+id/tvParticipants"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:foreground="?android:attr/selectableItemBackground"
-        card_view:cardElevation="2dp"
-        card_view:cardUseCompatPadding="true">
+        android:layout_below="@+id/tvEventDescription"
+        android:layout_marginLeft="@dimen/rv_margin_left"
+        android:layout_toEndOf="@+id/ivCategory"
+        android:text="TextView"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:padding="4dp">
+    <TextView
+        android:id="@+id/tvLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvParticipants"
+        android:layout_marginLeft="@dimen/rv_margin_left"
+        android:layout_toEndOf="@+id/ivCategory"
+        android:autoLink="all"
+        android:visibility="gone"
+        android:text="Textview" />
 
-            <ImageView
-                android:id="@+id/ivChatIcon"
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                app:srcCompat="@android:color/black"
-                android:layout_marginStart="10dp"
-                android:layout_alignParentTop="true"
-                android:layout_toEndOf="@+id/ivCategory" />
+    <TextView
+        android:id="@+id/tvLastMessageTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:visibility="gone"
+        android:text="Textview" />
 
-            <TextView
-                android:id="@+id/tvParticipants"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/ivChatIcon"
-                android:layout_alignStart="@+id/tvBody"
-                android:text="TextView"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvBody"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tvParticipants"
-                android:layout_marginLeft="8dp"
-                android:layout_toEndOf="@+id/ivChatIcon"
-                android:autoLink="all"
-                android:paddingBottom="24dp"
-                android:text="TextView" />
-
-            <ImageView
-                android:id="@+id/ivCategory"
-                android:layout_width="16dp"
-                android:layout_height="56dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:background="@color/black"/>
-        </RelativeLayout>
-
-    </android.support.v7.widget.CardView>
+    <TextView
+        android:id="@+id/tvEventDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivCategory"
+        android:layout_marginLeft="@dimen/rv_margin_left"
+        android:text="DESCRIPTION"
+        android:layout_toLeftOf="@+id/tvLastMessageTime"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textSize="12sp" />
 </RelativeLayout>

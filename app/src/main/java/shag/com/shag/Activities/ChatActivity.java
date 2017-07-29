@@ -248,7 +248,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 if (senderId != null) {
                     String newEventId = object.getEventId();
 
-                    if (!senderId.equals(currentUserId) && eventId == newEventId) {
+                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
                         polls.add(object);
                     }
 
