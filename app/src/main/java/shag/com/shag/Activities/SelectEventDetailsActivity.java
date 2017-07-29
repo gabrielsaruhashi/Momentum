@@ -177,7 +177,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         newEvent.setRecommendationMade(false);
 
         newEvent.setCategory(category);
-<<<<<<< HEAD
+
         HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
         // update user's category counter
@@ -219,12 +219,9 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         currentUser.put("categories_tracker", hm);
 
 
-        newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
-=======
         newEvent.setTimeOfEvent(new Date());
         //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
->>>>>>> gabriel-recalg
         newEvent.setLatitude(47.6101);
         newEvent.setLongitude(-122.2015);
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());

@@ -4,11 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
@@ -99,7 +97,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     ArrayList<View> locationButtons;
     int viewPosition;
     private FusedLocationProviderClient mFusedLocationClient;
-    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     // constants
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 23;
@@ -119,7 +116,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
 
-    boolean openedPush;
     // for the chat views
     private Event event;
     private String eventId;
