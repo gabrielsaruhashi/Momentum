@@ -20,15 +20,20 @@
     <color name="bgContent">@color/white</color>
     <color name="contentDividerLine">#e0e0e0</color>
 
-    <color name="sports_color">#a3586d</color>
-    <color name="chill_color">#5c4872</color>
-    <color name="misc_color">#0abda0</color>
-    <color name="music_color">#c1403d</color>
-    <color name="food_color">#f46a4e</color>
-    <color name="party_color">#65734B</color>
-    <color name="orange">#ffaab8c2</color>
+    <color name="sports_color">#F3A183</color>
+    <color name="chill_color">#F3A183</color>
+    <color name="misc_color">#F3A183</color>
+    <color name="music_color">#F3A183</color>
+    <color name="food_color">#F3A183</color>
+    <color name="party_color">#F3A183</color>
+    <color name="orange">#F3A183</color>
 
-    <color name="gradient_start">#f4874b</color>
-    <color name="gradient_end">#f46A4e</color>
+    <color name="gradient_start">#EC6F66</color>
+    <color name="gradient_end">#F3A183</color>
+    <color name="material_dark_orange">#FFBF360C</color>
+    <color name="material_bright_orange">#EC6F66</color>
+
+    <color name="gradient_start_2">#857FF1</color>
+    <color name="gradient_end_2">#7799D7</color>
 
 </resources>

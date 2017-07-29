@@ -94,7 +94,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.btJoin.setText("Joined");
 
         } else {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
             holder.btJoin.setText("Join");
         }
 
@@ -225,7 +225,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
                 } else {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -372,7 +372,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
