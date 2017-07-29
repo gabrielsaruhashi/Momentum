@@ -7,6 +7,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.os.Bundle;
+import android.provider.CalendarContract;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -69,6 +75,7 @@ import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
+import shag.com.shag.Models.CalendarEvent;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
@@ -76,6 +83,7 @@ import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
+
 
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
@@ -91,24 +99,29 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     ArrayList<View> locationButtons;
     int viewPosition;
     private FusedLocationProviderClient mFusedLocationClient;
-
-
     int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
-
-
+    // constants
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 23;
+    // thread
+    Runnable taskToGetCalendarEvents;
+    // for the adapter logic
     RecyclerView rvChat;
     ArrayList<Message> mMessages;
     MessagesAdapter mAdapter;
     // Keep track of initial load to scroll to the bottom of the ListView
     boolean mFirstLoad;
-
-    //polls
+    /* polls */
     // list of tweets
     ArrayList<Poll> polls;
     // recycler view
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
+
+    boolean openedPush;
+    // for the chat views
+    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
@@ -124,12 +137,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private String timeWinner;
     private ParseGeoPoint locationWinner;
     private ParseObject eventFromQuery;
-
     private String favFood;
 
     //ONLY use these variables when opening push notification
     boolean openedPush;
     private Event parseEvent;
+    private ArrayList<CalendarEvent> calendarEvents;
 
 
     @Override
@@ -161,13 +174,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // initialize recycler view
         rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
-
         // attach the adapter to the RecyclerView
         rvPolls.setAdapter(pollAdapter);
         // Set layout manager to position the items
         rvPolls.setLayoutManager(new LinearLayoutManager(getContext()));
-
-
         // add line divider decorator
         RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvPolls.getContext(), DividerItemDecorator.VERTICAL_LIST);
@@ -202,12 +212,55 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+        // get current user information
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
+        // populate views, setup listeners and populate views
         setupMessagePosting();
 
-        //if event is new, make time and lcoation polls
+        // check for permissions and set up thread to get events
+        taskToGetCalendarEvents = new Runnable() {
+            @Override
+            public void run() {
+                String[] projection = new String[]{CalendarContract.Events.CALENDAR_ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY, CalendarContract.Events.EVENT_LOCATION};
+                //TODO change start time
+                // 0 = January, 1 = February, ...
+                Calendar startTime = Calendar.getInstance();
+                startTime.set(2017, 00, 01, 00, 00);
+                Calendar endTime = Calendar.getInstance();
+                endTime.set(2018, 00, 01, 00, 00);
+
+                // the range is all data from 2014
+                String selection = "(( " + CalendarContract.Events.DTSTART + " >= " + startTime.getTimeInMillis() + " ) AND ( " + CalendarContract.Events.DTSTART + " <= " + endTime.getTimeInMillis() + " ))";
+
+                // instantiate array of calendar events
+                calendarEvents = new ArrayList<CalendarEvent>();
+
+                // ensure user actually gave permission to read events
+                if (ContextCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.READ_CALENDAR) == PackageManager.PERMISSION_GRANTED) {
+                    final Cursor cursor = getBaseContext().getContentResolver().query(CalendarContract.Events.CONTENT_URI, projection, selection, null, null);
+                    Log.i("DEBUG_CURSOR", DatabaseUtils.dumpCursorToString(cursor));
+
+                    // output the events
+                    if (cursor.moveToFirst()) {
+                        do {
+                            // update the calendarEvents array on the UI Thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                                    CalendarEvent freshCalendarEvent = CalendarEvent.fromCalendarCursor(cursor);
+                                    calendarEvents.add(freshCalendarEvent);
+                                }
+                            });
+                        } while (cursor.moveToNext() &&  cursor.getPosition() < cursor.getCount() - 1);
+                    }
+                }
+            }
+        };
+        setupCalendars();
+
+        //if event is new, make time and location polls
         if (isEventNew) {
             try {
                 createTimeAndLocationPolls("Time");
@@ -244,8 +297,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             recommendRestaurant(chatParticipantsIds);
         }
 
-
-        refreshPolls();
 
 
         // Make sure the Parse server is setup to configured for live queries
@@ -285,12 +336,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 });
 
-        //setup on server side
-        ParseQuery<Poll> parseQuery2 = ParseQuery.getQuery(Poll.class);
-        SubscriptionHandling<Poll> subscriptionHandling2 = parseLiveQueryClient.subscribe(parseQuery2);
-        subscriptionHandling2.handleEvents(new SubscriptionHandling.HandleEventsCallback<Poll>() {
+        ParseQuery<Poll> parseQueryPoll = ParseQuery.getQuery(Poll.class);
+        SubscriptionHandling<Poll> pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
             @Override
-            public void onEvents(ParseQuery<Poll> query, SubscriptionHandling.Event event, Poll object) {
+            public void onEvent(ParseQuery<Poll> query, Poll object) {
                 String senderId = object.getPollCreator();
                 if (senderId != null) {
                     String newEventId = object.getEventId();
@@ -311,27 +361,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             }
         });
-//        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-//            @Override
-//            public void onEvent(ParseQuery<Poll> query, Poll object) {
-//                String senderId = object.getPollCreator();
-//                String newEventId = object.getEventId();
-//
-//                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-//                    polls.add(object);
-//                }
-//
-//                // RecyclerView updates need to be run on the UI thread
-//                runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        pollAdapter.notifyDataSetChanged();
-//                        rvPolls.scrollToPosition(0);
-//
-//                    }
-//                });
-//            }
-//        });
 
 
     }
@@ -556,11 +585,50 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         });
 
-        // call refresh messages
+        // populate messages and polls
         refreshMessages();
         refreshPolls();
 
     }
+
+    public void setupCalendars() {
+
+        // Assume thisActivity is the current activity
+        int permissionCheck = ContextCompat.checkSelfPermission(ChatActivity.this,
+                android.Manifest.permission.READ_CALENDAR);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.READ_CALENDAR  },
+                    MY_PERMISSIONS_REQUEST_READ_CALENDAR);
+
+        } else { // if permissions is granted, just start the thread
+            Thread calendarThread = new Thread(taskToGetCalendarEvents);
+            calendarThread.start();
+        }
+    }
+    // when user grants access to the read events class
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.d("TAG", "dialog onRequestPermissionsResult");
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CALENDAR:
+                // Check Permissions Granted or not
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Thread calendarThread = new Thread(taskToGetCalendarEvents);
+                    calendarThread.start();
+                } else {
+                    // Permission Denied
+                    Toast.makeText(getContext(), "Read contact permission is denied", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+
+
 
     public void createTimeAndLocationPolls(final String type) throws ParseException {
         final Poll poll = new Poll();
@@ -632,7 +700,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         });
 
     }
-
 
     @Override
     public void onFinishCreatePollFragment(Poll poll) {
@@ -946,7 +1013,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     }
 
-
     @Override
     public void setTimeValues(ArrayList<View> al) {
         timeButtons = al;
@@ -957,7 +1023,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     public void setLocationValues(ArrayList<View> al, int position) {
         locationButtons = al;
         viewPosition = position;
-
     }
 
     @Override

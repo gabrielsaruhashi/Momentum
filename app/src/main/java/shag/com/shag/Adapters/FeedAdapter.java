@@ -52,7 +52,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     Context context;
 
     // current user's info
-    ParseUser currentUser;
+    private ParseUser currentUser;
+    private String userFacebookId;
 
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
@@ -69,6 +70,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // instantiate id's
         currentUser = ParseUser.getCurrentUser();
+
+        // instantiate user facebook id
+        HashMap data = (HashMap) currentUser.getMap("authData");
+        HashMap facebookData = (HashMap) data.get("facebook");
+        userFacebookId = (String) facebookData.get("id");
 
         return viewHolder;
     }
@@ -272,8 +278,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
-       final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
+        final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
         updatedParticipantsIds.add(currentUser.getObjectId());
+
+        final ArrayList<String> updatedParticipantsFacebookIds = event.getParticipantsFacebookIds();
+        updatedParticipantsFacebookIds.add(userFacebookId);
 
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
@@ -286,8 +295,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 if (e == null) {
                     // update local object
                     event.setParticipantsIds(updatedParticipantsIds);
+                    event.setParticipantsFacebookIds(updatedParticipantsFacebookIds);
                     // update database
                     object.put("participants_id", updatedParticipantsIds);
+                    object.put("participants_facebook_ids", updatedParticipantsFacebookIds);
                     object.saveInBackground();
 
                     // get hashmap & category
@@ -328,6 +339,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // update participants id
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
         updatedParticipantsIds.remove(currentUser.getObjectId());
+        // update facebook array
+        final ArrayList<String> updatedParticipantsFacebookIds = event.getParticipantsFacebookIds();
+        updatedParticipantsFacebookIds.remove(userFacebookId);
 
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
@@ -340,8 +354,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 if (e == null) {
                     // update local object
                     event.setParticipantsIds(updatedParticipantsIds);
+                    event.setParticipantsFacebookIds(updatedParticipantsFacebookIds);
                     // update database
                     object.put("participants_id", updatedParticipantsIds);
+                    object.put("participants_facebook_ids", updatedParticipantsFacebookIds);
 
                     // get hashmap & category
                     String category = object.getString("category");

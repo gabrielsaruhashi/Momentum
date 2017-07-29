@@ -33,6 +33,7 @@ public class Event extends ParseObject implements Parcelable {
     public String location;
     public String category;
     public ArrayList<Long> friendsAtEvent;
+    public ArrayList<String> participantsFacebookIds;
     public ArrayList<String> participantsIds;
     public Date deadline;
     public Date timeOfEvent;
@@ -49,9 +50,15 @@ public class Event extends ParseObject implements Parcelable {
     //CONSTRUCTORS
     public Event(){
         friendsAtEvent = new ArrayList<>();
+        participantsFacebookIds = new ArrayList<>();
 
     }
     // GETTERS
+
+
+    public ArrayList<String> getParticipantsFacebookIds() {
+        return (ArrayList) get("participants_facebook_ids");
+    }
 
     public String getEventId() {
         return getObjectId();
@@ -140,6 +147,11 @@ public class Event extends ParseObject implements Parcelable {
         this.isRecommendationMade=recommendationMade;
         put("is_recommendation_made",isRecommendationMade);
     }
+    public void setParticipantsFacebookIds(ArrayList<String> participantsFacebookIds) {
+        this.participantsFacebookIds = participantsFacebookIds;
+        put("participants_facebook_ids", participantsFacebookIds);
+    }
+
     public void setIsFirstCreated(boolean isFirstCreated) {
         this.isFirstCreated = isFirstCreated;
         put("is_first_created", isFirstCreated);

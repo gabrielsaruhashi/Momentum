@@ -5,41 +5,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.MemoryDetailsActivity">
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/btAddPicture"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Share" />
-        <!--
-        <ImageView
-            android:id="@+id/ivMemoryBannerPicture"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/grid_profile_height"
-            android:scaleType="centerCrop" />
-
-        <RelativeLayout
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/palette_height">
-
-            <View
-                android:id="@+id/vPalette"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/tvMemoryName"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btAddPicture"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textSize="@dimen/memory_name_text_size"
-                android:textColor="@android:color/black" />
-        </RelativeLayout> -->
+                android:text="Add Pictures"
+                android:layout_weight="50"/>
+
+            <Button
+                android:id="@+id/btFacebookShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Share"
+                android:layout_weight="50"/>
+
+        </LinearLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp">
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentTop="true" />
+            <me.relex.circleindicator.CircleIndicator
+                android:id="@+id/indicator"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/gridview"
@@ -49,8 +55,15 @@
             android:verticalSpacing="4dp"
             android:horizontalSpacing="10dp"
             android:stretchMode="columnWidth"
-            android:gravity="center" />
+            android:gravity="center"
+            android:layout_marginBottom="80dp"/>
 
     </LinearLayout>
+
+
+
+
+
+
 
 </RelativeLayout>

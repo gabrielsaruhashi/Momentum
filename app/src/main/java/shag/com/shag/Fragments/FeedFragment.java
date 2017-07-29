@@ -21,7 +21,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -32,7 +31,6 @@ import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
-import shag.com.shag.Other.RelevanceComparator;
 import shag.com.shag.R;
 
 /**
@@ -173,10 +171,10 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     //TODO see if it is possible to improve this logic
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
-                        event.setRelevance(calculateEventRelevance(event));
+                        //event.setRelevance(calculateEventRelevance(event));
                     }
                     // sort events based on relevance
-                    Collections.sort(eventsList, new RelevanceComparator());
+                    //Collections.sort(eventsList, new RelevanceComparator());
 
                     events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
@@ -268,7 +266,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // return the coefficient Raw Interest / Total Interest if total interest > 0
         return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
     }
-
 
 
 }

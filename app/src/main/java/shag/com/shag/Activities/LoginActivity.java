@@ -6,10 +6,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.widget.LoginButton;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
 import com.parse.ParseFacebookUtils;
@@ -51,15 +51,16 @@ public class LoginActivity extends AppCompatActivity {
         context = this;
         intent = getIntent();
 
-        // create permi ssions
-        permissions = Arrays.asList("user_friends");
+        // create permissions
+        permissions = Arrays.asList("user_friends", "user_friends");
 
         // initiate client
         client = ParseApplication.getFacebookRestClient();
 
         //LoginManager.getInstance().logOut();
         //ParseUser.logOut();
-        Button bLogin = (Button) findViewById(R.id.bLogin);
+        LoginButton bLogin = (LoginButton) findViewById(R.id.bLogin);
+        bLogin.setReadPermissions(Arrays.asList("user_photos", "user_friends"));
         bLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
+        ParseUser me = ParseUser.getCurrentUser();
         if (ParseUser.getCurrentUser() != null) {
             //ParseUser.logOut();
             onLoginSuccess();
@@ -106,7 +108,11 @@ public class LoginActivity extends AppCompatActivity {
             Intent i = new Intent(context, MainActivity.class);
             // initialize recent friends and facebook friends 'global/app' variable
             ParseUser currentUser = ParseUser.getCurrentUser();
+            //TODO refactor this
             ParseApplication.getRecentFriends();
+            // get additional publishing permission
+            ParseApplication.getFacebookPermissionsSet();
+            // get facebook friends should be last call for it sets the first load to false
             ParseApplication.getFacebookFriends();
             context.startActivity(i);
         }
@@ -215,4 +221,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }

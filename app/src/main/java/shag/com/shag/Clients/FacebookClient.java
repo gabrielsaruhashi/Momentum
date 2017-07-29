@@ -6,7 +6,10 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
-import com.loopj.android.http.AsyncHttpClient;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -14,7 +17,6 @@ import com.loopj.android.http.AsyncHttpClient;
  */
 
 public class FacebookClient {
-    AsyncHttpClient client;
     Context context;
 
     public FacebookClient(Context context) {
@@ -37,7 +39,26 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
+    public void postFacebookAlbum(ArrayList<String> contributors, String albumName, GraphRequest.Callback callback) {
+        ParseUser user = ParseUser.getCurrentUser();
+        HashMap data = (HashMap) user.getMap("authData");
+        HashMap facebookData = (HashMap) data.get("facebook");
+        String userFacebookId = (String) facebookData.get("id");
+        Bundle params = new Bundle();
+        params.putString("name", albumName);
+        params.putStringArrayList("contributors", contributors);
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
+                callback).executeAsync();
+    }
 
+    public void postPictureToAlbum(byte[] imageFormData, long albumId, GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        params.putByteArray("source", imageFormData);
+        /* make the API call */
+        new GraphRequest(AccessToken.getCurrentAccessToken(),
+                "/" + albumId + "/photos", params, HttpMethod.POST,
+                callback).executeAsync();
+    }
 
     public void getFriendsInfo(long friendFbId, GraphRequest.Callback callback) {
         Bundle params = new Bundle();
@@ -53,6 +74,11 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
+    public void getMyPermissions(GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions", params, HttpMethod.GET,
+                callback).executeAsync();
+    }
 
 
     //returns event node (need to call getJSONObject() before parsing)

@@ -148,8 +148,15 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
         //  upon creating, save event owner's id to participant list
         ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
-        Log.i("DEBUG_CREATE_EVENT", initialParticipantsIds.toString());
         newEvent.setParticipantsIds(initialParticipantsIds);
+        //  upon creating, save event owner's facebook id to participant list
+        HashMap data = (HashMap) ParseUser.getCurrentUser().getMap("authData");
+        HashMap facebookData = (HashMap) data.get("facebook");
+        String userFacebookId = (String) facebookData.get("id");
+        ArrayList<String> initialParticipantsFbIds = new ArrayList<String>();
+        initialParticipantsFbIds.add(userFacebookId);
+        newEvent.setParticipantsFacebookIds(initialParticipantsFbIds);
+
 
         // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
         newEvent.setEventOwnerId(ParseUser.getCurrentUser().getObjectId());
@@ -170,6 +177,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         newEvent.setRecommendationMade(false);
 
         newEvent.setCategory(category);
+<<<<<<< HEAD
         HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
         // update user's category counter
@@ -212,6 +220,11 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
 
         newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
+=======
+        newEvent.setTimeOfEvent(new Date());
+        //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
+        //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
+>>>>>>> gabriel-recalg
         newEvent.setLatitude(47.6101);
         newEvent.setLongitude(-122.2015);
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());

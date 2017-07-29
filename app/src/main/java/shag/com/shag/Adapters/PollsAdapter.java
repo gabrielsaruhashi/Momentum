@@ -297,6 +297,11 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
             holder.btVote.setEnabled(false);
         }
 
+        //TODO visual cue
+        if (position == 0) {
+
+        }
+
 
     }
 
