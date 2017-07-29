@@ -26,6 +26,7 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.jcodec.api.SequenceEncoder;
 import org.json.JSONException;
@@ -35,8 +36,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,6 +66,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     FacebookClient fbClient;
     // create constant for start activity
     final static int SELECT_IMAGE = 16;
+    private ParseObject memoryDbObject;
     private Memory memory;
     private String memoryId;
     private int initialNumberOfPictures;
@@ -70,6 +74,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private static ViewPager mPager;
     private static int currentSliderPage = 0;
     CircleIndicator indicator;
+    private TreeSet facebookPermissionsSet;
+    private ArrayList<String> participantsIds;
+    private ArrayList<Long> participantsFacebookIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,19 +86,25 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // TODO pass entire memory instead
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
-        // instantiate client
+
+        // instantiate client and facebook permission set
         fbClient = ParseApplication.getFacebookRestClient();
+        facebookPermissionsSet = ParseApplication.getFacebookPermissionsSet();
+
         // get memory
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
+        ParseQuery<Memory> query = ParseQuery.getQuery("Memory");
         try {
-            ParseObject object = query.get(memoryId);
-            memory = Memory.fromParseObject(object);
+            //memoryDbObject = query.get(memoryId);
+            // memory = Memory.fromParseObject(memoryDbObject);
+            memory = query.get(memoryId);
         } catch (ParseException e) {
             e.getMessage();
         }
-
+        // initialize participantsIds
+        participantsIds = memory.getParticipantsIds();
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
+
         // save original number of pictures to later check if user added pictures
         initialNumberOfPictures = pictures.size();
 
@@ -120,38 +133,80 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             }
         });
 
-        // get additional publishing permission
-        LoginManager.getInstance().logInWithPublishPermissions(
-                MemoryDetailsActivity.this,
-                Arrays.asList("publish_actions"));
 
         //TODO if album already exists, just add photo
         // add listener to facebook share
         btFacebookShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // on click create album, create new album and share pics
-                fbClient.postFacebookAlbum(memory.getMemoryName(), new GraphRequest.Callback() {
-                    @Override
-                    public void onCompleted(GraphResponse response) {
-                        try {
-                            Toast.makeText(MemoryDetailsActivity.this, "Create new album!", Toast.LENGTH_SHORT).show();
-                            long facebookAlbumId = response.getJSONObject().getLong("id");
-                            // post all pictures of the album
-                            if (pictures != null && pictures.size() > 0) {
-                                uploadPicturesFb(pictures, facebookAlbumId);
-                            }
+                // check if user already gave publishing permissions
+                if (!facebookPermissionsSet.contains("publish_actions")) {
+                    // if not, get additional publishing permission
+                    LoginManager.getInstance().logInWithPublishPermissions(
+                            MemoryDetailsActivity.this,
+                            Arrays.asList("publish_actions"));
+                }
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                // instantiate arraylist of participants facebook id
+                participantsFacebookIds = new ArrayList<Long>();
+
+                // get participants facebook ids, ignore the user's id
+
+                for (int i = 2; i < participantsIds.size(); i++) {
+                    // support counter to keep track of iterations
+                    final int counter = i;
+                    // query for participant's facebooks ids
+                    ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
+                    //
+                    // userQuery.selectKeys(Arrays.asList("authData"));
+                    userQuery.getInBackground(participantsIds.get(i), new GetCallback<ParseUser>() {
+                        @Override
+                        public void done(ParseUser user, ParseException e) {
+                            HashMap data = (HashMap) user.getMap("authData");
+                            HashMap facebookData = (HashMap) data.get("facebook");
+                            Long userFacebookId = (Long) facebookData.get("id");
+                            participantsFacebookIds.add(userFacebookId);
+
+                            // in the last iteration, call postFacebookAlbum
+                            if (counter == participantsIds.size() - 1) {
+                                createFacebookAlbum();
+                            } else {
+                                e.getMessage();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
+                // populate image slider
+                initImageSlider();
             }
         });
+    }
 
-        // populate image slider
-        initImageSlider();
+    public void createFacebookAlbum() {
+        // on click create album, create new album and share pics
+        Long albumId= Long.valueOf(memory.getFacebookAlbumId());
+        // if album hasnt been created yet
+        if (albumId == null) {
+            fbClient.postFacebookAlbum(participantsFacebookIds, memory.getMemoryName(), new GraphRequest.Callback() {
+                @Override
+                public void onCompleted(GraphResponse response) {
+                    try {
+                        Toast.makeText(MemoryDetailsActivity.this, "Create new album!", Toast.LENGTH_SHORT).show();
+                        long facebookAlbumId = response.getJSONObject().getLong("id");
+                        // post all pictures of the album
+                        if (pictures != null && pictures.size() > 0) {
+                            uploadPicturesFb(pictures, facebookAlbumId);
+                            memory.setFacebookAlbumId(facebookAlbumId);
+                            memory.saveInBackground();
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
 
     }
 
@@ -184,6 +239,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         final Handler handler = new Handler();
         final Runnable Update = new Runnable() {
             public void run() {
+                //TODO check if this is working
                 // when the slider page goes through all the pictures in the array
                 if (currentSliderPage == pictures.size()) {
                     currentSliderPage = 0;

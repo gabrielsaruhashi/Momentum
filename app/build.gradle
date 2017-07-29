@@ -95,6 +95,8 @@ dependencies {
     compile 'com.android.support:gridlayout-v7:25.3.1'
     compile 'org.jcodec:jcodec-android:0.1.9'
     compile 'me.relex:circleindicator:1.2.2@aar' // circle indicator for slideshow
+    compile 'com.google.guava:guava:22.0-android'
+
 }
 
 // for GMS notifications

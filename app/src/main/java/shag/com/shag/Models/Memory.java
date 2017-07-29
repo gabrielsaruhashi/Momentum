@@ -29,7 +29,9 @@ public class Memory extends ParseObject implements Parcelable {
     private String memoryName;
     private ArrayList<ParseFile> picturesParseFiles;
     private ArrayList<String> participantsIds;
+    private ArrayList<String> participantsFacebookIds;
     private String eventId; //id of the corresponding event
+    private long facebookAlbumId;
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -49,13 +51,12 @@ public class Memory extends ParseObject implements Parcelable {
         return memory;
     }
 
-    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId) {
+    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId, final ArrayList<String> facebookIds) {
         // set values
         setMemoryName(eventDescription);
         setParticipantsIds(participantsIds);
-
         setEventId(eventId);
-
+        setParticipantsFacebookIds(facebookIds);
         picturesParseFiles = new ArrayList<ParseFile>();
         setPicturesParseFiles(picturesParseFiles);
 
@@ -117,6 +118,27 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     // GETTERS & SETTERS
+
+
+    public ArrayList<String> getParticipantsFacebookIds() {
+        return (ArrayList) get("participants_facebook_ids");
+    }
+
+    public void setParticipantsFacebookIds(ArrayList<String> participantsFacebookIds) {
+        this.participantsFacebookIds = participantsFacebookIds;
+        put("participants_facebook_ids", participantsFacebookIds);
+    }
+
+    public long getFacebookAlbumId() {
+        return getLong("facebook_album_id");
+    }
+
+    public void setFacebookAlbumId(long facebookAlbumId) {
+        this.facebookAlbumId = facebookAlbumId;
+        put("facebook_album_id", facebookAlbumId);
+    }
+
+
     public String getMemoryName() {
         return getString("memory_name");
     }
