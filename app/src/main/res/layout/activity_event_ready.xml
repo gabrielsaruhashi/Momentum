@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/my_toolbar"
+        android:layout_marginLeft="@dimen/activity_items_margin"
         android:text="Place: "
         android:textSize="18sp" />
 
@@ -60,7 +61,7 @@
         android:layout_height="324dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tvFinalTime"
-        android:layout_margin="4dp"
+        android:layout_margin="@dimen/map_margin_sides"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp" />
@@ -191,6 +192,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvTime"
         android:layout_below="@+id/map"
+        android:layout_marginLeft="@dimen/activity_items_margin"
         android:text="Pick a method: " />
 
     <ImageButton

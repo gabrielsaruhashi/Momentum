@@ -6,11 +6,11 @@
     >
 
     <View
-        android:layout_width="2dp"
+        android:layout_width="@dimen/feed_line_width"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
         android:background="@color/material_bright_orange"
-        android:layout_marginLeft="32dp"/>
+        android:layout_marginLeft="@dimen/feed_line_margin_left"/>
 
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -38,9 +38,9 @@
         android:tint="@color/white"
 
         app:fabSize="mini"
-        app:elevation="4dp"
+        app:elevation="@dimen/fab_elevation"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginBottom="12dp" />
+        android:layout_marginEnd="@dimen/rv_margin_right"
+        android:layout_marginBottom="@dimen/rv_margin_bottom" />
 </RelativeLayout>

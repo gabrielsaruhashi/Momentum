@@ -20,12 +20,12 @@
     <color name="bgContent">@color/white</color>
     <color name="contentDividerLine">#e0e0e0</color>
 
-    <color name="sports_color">#F3A183</color>
-    <color name="chill_color">#F3A183</color>
-    <color name="misc_color">#F3A183</color>
-    <color name="music_color">#F3A183</color>
-    <color name="food_color">#F3A183</color>
-    <color name="party_color">#F3A183</color>
+    <color name="sports_color">#EBC778</color>
+    <color name="chill_color">#D46AAC</color>
+    <color name="misc_color">#7799D7</color>
+    <color name="music_color">#C6A7AC</color>
+    <color name="food_color">#BD61D0</color>
+    <color name="party_color">#EC6F66</color>
     <color name="orange">#F3A183</color>
 
     <color name="gradient_start">#EC6F66</color>
@@ -33,7 +33,14 @@
     <color name="material_dark_orange">#FFBF360C</color>
     <color name="material_bright_orange">#EC6F66</color>
 
+    <!--if we go with option 2 for the gradient, here are color options!-->
     <color name="gradient_start_2">#857FF1</color>
     <color name="gradient_end_2">#7799D7</color>
+    <color name="option1">#1ACCAC</color>
+    <color name="option2">#C6A7AC</color>
+    <color name="option3">#BD61D0</color>
+    <color name="option4">#D46AAC</color>
+    <color name="option5">#EBC778</color>
+    <color name="option6">#F3A183</color>
 
 </resources>

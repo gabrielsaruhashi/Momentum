@@ -15,4 +15,9 @@
     <dimen name="rv_margin_bottom">8dp</dimen>
     <dimen name="rv_margin_top">8dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="activity_items_margin">4dp</dimen>
+    <dimen name="feed_line_width">2dp</dimen>
+    <dimen name="feed_line_margin_left">32dp</dimen>
+    <dimen name="fab_elevation">4dp</dimen>
+    <dimen name="map_margin_sides">8dp</dimen>
 </resources>

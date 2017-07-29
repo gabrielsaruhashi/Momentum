@@ -18,8 +18,8 @@
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
             android:layout_height="324dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/map_margin_sides"
+            android:layout_marginStart="@dimen/map_margin_sides"
             tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
     </LinearLayout>
@@ -63,11 +63,11 @@
                 android:id="@+id/cardView"
                 android:layout_width="match_parent"
                 android:layout_height="148dp"
-                android:layout_margin="6dp"
-                android:elevation="4dp"
+                android:layout_margin="@dimen/activity_items_margin"
+                android:elevation="@dimen/card_elevation"
                 android:orientation="horizontal"
                 android:visibility="invisible"
-                app:cardElevation="4dp">
+                app:cardElevation="@dimen/card_elevation">
 
                 <FrameLayout
                     android:layout_width="match_parent"
