@@ -24,7 +24,7 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -290,11 +290,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // get hashmap & category
                     String category = object.getString("category");
 
-                    HashMap hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    int oldCounter = (int) hm.get(category);
-                    hm.put(category, oldCounter + 1);
+                    List<Object> categoryData= hm.get(category);
+                    int oldCounter = (int) categoryData.get(0);
+                    categoryData.set(0,oldCounter+1);
+                    hm.put(category, categoryData);
 
                     currentUser.put("categories_tracker", hm);
                     currentUser.saveInBackground();
@@ -338,11 +340,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     // get hashmap & category
                     String category = object.getString("category");
-                    Map hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    int oldCounter = (int) hm.get(category);
-                    hm.put(category, oldCounter - 1);
+                    List<Object> categoryData= hm.get(category);
+                    int oldCounter = (int) categoryData.get(0);
+                    categoryData.set(0,oldCounter-1);
+                    hm.put(category, categoryData);
 
                     object.saveInBackground();
 

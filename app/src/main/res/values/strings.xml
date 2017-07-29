@@ -4,6 +4,8 @@
     <string name="fb_login_protocol_scheme">fb450046772028420</string>
     <string name="google_maps_api_key">"AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI"</string>
     <string name="jambase_api_key">6dhquzx3559xvcd2un49madm</string>
+    <string name="zomato_api_key">09e67b4492d86e45473c0af26442ab3d</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

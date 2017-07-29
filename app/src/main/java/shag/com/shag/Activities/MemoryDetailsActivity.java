@@ -25,7 +25,6 @@ import com.parse.ParseQuery;
 import org.jcodec.api.SequenceEncoder;
 import org.jcodec.common.model.Picture;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -184,10 +183,10 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 // GOP size will be supported in 0.2
                 // enc.getEncoder().setKeyInterval(25);
                 for(ParseFile picture : pictures) {
-                    Bitmap pictureBitmap = bitmapConverterFromParseFile(picture);
-                    Picture
-                    BufferedImage image = ... // Obtain an image to encode
-                    enc.encodeImage(image);
+//                    Bitmap pictureBitmap = bitmapConverterFromParseFile(picture);
+//                    Picture
+//                    BufferedImage image = ... // Obtain an image to encode
+//                    enc.encodeImage(image);
                 }
                 enc.finish();
             } catch (IOException e) {

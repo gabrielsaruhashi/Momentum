@@ -46,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
         context = this;
         intent = getIntent();
@@ -120,13 +121,40 @@ public class LoginActivity extends AppCompatActivity {
     public Map createCategoriesMap() {
         Map hm = new HashMap();
 
+        //sub category Object
+        ArrayList<Object> chillValues = new ArrayList<Object>();
+        ArrayList<Object> partyValues = new ArrayList<Object>();
+        ArrayList<Object> sportsValues = new ArrayList<Object>();
+        ArrayList<Object> miscValues = new ArrayList<Object>();
+        ArrayList<Object> foodValues = new ArrayList<Object>();
+        ArrayList<Object> musicValues = new ArrayList<Object>();
+
+        //set values object
+        chillValues.add(0);
+        chillValues.add(new HashMap<String, Integer>());
+
+        partyValues.add(0);
+        partyValues.add(new HashMap<String, Integer>());
+
+        sportsValues.add(0);
+        sportsValues.add(new HashMap<String, Integer>());
+
+        miscValues.add(0);
+        miscValues.add(new HashMap<String, Integer>());
+
+        foodValues.add(0);
+        foodValues.add(new HashMap<String, Integer>());
+
+        musicValues.add(0);
+        musicValues.add(new HashMap<String, Integer>());
+
         // Put elements to the map
-        hm.put("Chill", 0);
-        hm.put("Party", 0);
-        hm.put("Sports", 0);
-        hm.put("Misc", 0);
-        hm.put("Food", 0);
-        hm.put("Music", 0);
+        hm.put("Chill", chillValues);
+        hm.put("Party", partyValues);
+        hm.put("Sports", sportsValues);
+        hm.put("Misc", miscValues);
+        hm.put("Food", foodValues);
+        hm.put("Music", musicValues);
         return hm;
     }
 

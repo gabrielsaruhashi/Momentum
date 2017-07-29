@@ -26,6 +26,8 @@ import org.json.JSONException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
@@ -42,6 +44,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     Date newDate = new Date(new Date().getTime()+MILLISECONDS_IN_MINUTE*60);
     EditText etDescription;
     String category;
+    String eventType;
+    String foodDescription;
+    ParseUser currentUser;
+    double eventLat;
+    double eventLng;
+    String placeName;
     PlaceAutocompleteFragment autocompleteFragment;
     CardView cd1;
 
@@ -54,7 +62,19 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_details);
 
+        currentUser = ParseUser.getCurrentUser();
+
+
         category = getIntent().getStringExtra("Category");
+        eventType = getIntent().getStringExtra("Event Type");
+        if (eventType.equals("Public")){
+            placeName=getIntent().getStringExtra("Place Name");
+            eventLat=getIntent().getDoubleExtra("Lat",0.0);
+            eventLng=getIntent().getDoubleExtra("Lng",0.0);
+            if(category.equals("Food")) {
+                foodDescription = getIntent().getStringExtra("Food Details");
+            }
+        }
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
@@ -118,7 +138,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
                 ); */
         //TODO what is this friends at event for
         newEvent.setFriendsAtEvent(new ArrayList<Long>());
-        newEvent.setLocation("Facebook Seattle");
+        if (eventType.equals("Public")){
+            newEvent.setLocation(placeName);
+            newEvent.setLatitude(eventLat);
+            newEvent.setLongitude(eventLng);
+        }
+
 
         //  upon creating, save event owner's id to participant list
         ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
@@ -135,7 +160,56 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
 
         newEvent.setIsFirstCreated(true);
+        if (eventType.equals("Public")){
+            newEvent.setIsEventPrivate(false);
+        }
+        else{
+            newEvent.setIsEventPrivate(true);
+        }
+        newEvent.setRecommendationMade(false);
+
         newEvent.setCategory(category);
+        HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
+
+        // update user's category counter
+        // update category counter
+        int oldCounter = (int) hm.get(category).get(0);
+        hm.get(category).set(0,oldCounter+1);
+
+        if (foodDescription!=null){
+            //get list of sub categories
+            List<String> foodApiSubcategories = Arrays.asList(foodDescription.split(", "));
+            //get food data object
+            List<Object> foodData = hm.get("Food");
+            //get hashmap of scores
+            HashMap<String, Integer> foodSubCategoryMap = (HashMap<String, Integer>) foodData.get(1);
+
+            //for each of the found food types
+            for (String foodType : foodApiSubcategories){
+                //if that food type is not already in the map
+                if (foodSubCategoryMap.get(foodType)!=null){
+                    //get points and increment by one
+                    int foodSubCategoryPoints = foodSubCategoryMap.get(foodType);
+                    foodSubCategoryPoints +=1;
+                    //reset key to include incremented value
+                    foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
+                    foodData.set(1,foodSubCategoryMap);
+                    hm.put("Food", foodData);
+//                    hm.get("Food").get(1).(foodType,foodSubCategoryPoints);
+                    //foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
+                }
+                //if food type is not in map
+                else{
+                    foodSubCategoryMap.put(foodType,1);
+                    hm.get("Food").set(1,foodSubCategoryMap);
+//                    hm.get("Food").getSubCategoryMap().put(foodType,1);
+                    //foodSubCategoryMap.put(foodType,1);
+                }
+            }
+        }
+        currentUser.put("categories_tracker", hm);
+
+
         newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
         newEvent.setLatitude(47.6101);
