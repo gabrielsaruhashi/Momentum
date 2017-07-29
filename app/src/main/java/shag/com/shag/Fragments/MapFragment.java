@@ -406,7 +406,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
                                 String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
                                 String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
-                                String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
+                                final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
 
 
                                 final String locationAddress=streetName+" "+city+", "+state+ ", "+ zipcode;
@@ -454,6 +454,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                     i.putExtra("Event Type", "Public");
                                                     i.putExtra("Lat",lat);
                                                     i.putExtra("Lng",lng);
+                                                    i.putExtra("Place Name",concertPlace);
                                                     getContext().startActivity(i);
                                                 }
                                             });
@@ -569,7 +570,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                 i.putExtra("Category", data.get("Category"));
                                                 i.putExtra("Event Type", "Public");
                                                 i.putExtra("Food Details", data.get("Description"));
-
+                                                i.putExtra("Lat",restaurantLat);
+                                                i.putExtra("Lng",restaurantLng);
+                                                i.putExtra("Place Name",restaurantName);
                                                 getContext().startActivity(i);
                                             }
                                         });

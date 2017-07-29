@@ -234,7 +234,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         String id = (String) eventFromQuery.getString("event_owner_id");
 
-        if (ParseUser.getCurrentUser().getObjectId().equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade==false
+        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade==false
                 && isEventPrivate==true) {
             isRecommendationMade=true;
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
@@ -1108,6 +1108,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 e.printStackTrace();
             }
         }
+        refreshMessages();
+        refreshPolls();
     }
 }
 

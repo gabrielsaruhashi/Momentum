@@ -68,7 +68,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         category = getIntent().getStringExtra("Category");
         eventType = getIntent().getStringExtra("Event Type");
         if (eventType.equals("Public")){
-            placeName=getIntent().getStringExtra("Category");
+            placeName=getIntent().getStringExtra("Place Name");
             eventLat=getIntent().getDoubleExtra("Lat",0.0);
             eventLng=getIntent().getDoubleExtra("Lng",0.0);
             if(category.equals("Food")) {
