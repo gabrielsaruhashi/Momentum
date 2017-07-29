@@ -109,14 +109,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     RecyclerView rvPolls;
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
-    boolean openedPush;
-
-
-    // chat id
-    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
+
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
@@ -130,6 +126,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private ParseObject eventFromQuery;
 
     private String favFood;
+
+    //ONLY use these variables when opening push notification
+    boolean openedPush;
+    private Event parseEvent;
 
 
     @Override
@@ -177,29 +177,24 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // unwrap intent and get current user id
         Intent intent = getIntent();
-        Bundle b = intent.getExtras();
         eventId = intent.getStringExtra("event_id");
         chatParticipantsIds = intent.getStringArrayListExtra("participants_ids");
-        int s = chatParticipantsIds.size();
-        event = intent.getParcelableExtra("event");
-
-        if (chatParticipantsIds == null) {
-            openedPush = true;
-            try {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                eventFromQuery = query.get(eventId);
-                chatParticipantsIds = (ArrayList) eventFromQuery.getList("participants_id");
-            } catch (ParseException e) {
-
-                e.printStackTrace();
-            }
-        }
-
-
 
         //finding out if this is the first time the event has been creating
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         try {
+            ParseObject object = query.get(eventId);
+            isEventNew = object.getBoolean("is_first_created");
+            //if so, user has just opened a push notification, need to query for more info
+            if (chatParticipantsIds == null) {
+                openedPush = true;
+                chatParticipantsIds = (ArrayList) object.getList("participants_id");
+                chatParticipantsIds.add("InuSHuTqkn");  //adding shaggy
+
+                isEventNew = object.getBoolean("is_first_created"); //use for polls
+
+            }
+            parseEvent = (Event) object;
             eventFromQuery = query.get(eventId);
             isEventNew = eventFromQuery.getBoolean("is_first_created");
             isEventPrivate = eventFromQuery.getBoolean("is_event_private");
@@ -297,21 +292,23 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void onEvents(ParseQuery<Poll> query, SubscriptionHandling.Event event, Poll object) {
                 String senderId = object.getPollCreator();
-                String newEventId = object.getEventId();
+                if (senderId != null) {
+                    String newEventId = object.getEventId();
 
-                if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                    polls.add(object);
-                }
-
-                // RecyclerView updates need to be run on the UI thread
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pollAdapter.notifyDataSetChanged();
-                        rvPolls.scrollToPosition(0);
-
+                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+                        polls.add(object);
                     }
-                });
+
+                    // RecyclerView updates need to be run on the UI thread
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            pollAdapter.notifyDataSetChanged();
+                            rvPolls.scrollToPosition(0);
+
+                        }
+                    });
+                }
             }
         });
 //        subscriptionHandling2.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
@@ -539,7 +536,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 rvChat.smoothScrollToPosition(0);
 
 
-                if (data.equals("hi Shaggy")) {
+                if (data.equalsIgnoreCase("hi Shaggy")) {
                     Message m = new Message();
                     m.setSenderId("InuSHuTqkn");
                     m.setBody("Hi! My name is Shaggy");
@@ -737,7 +734,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                findPollWinners(polls);
+                //findPollWinners(polls);
 
 
             }
@@ -869,12 +866,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     @Override
     public void onBackPressed() {
+        //need to re-load chats if user opened a push
         if (openedPush) {
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra("viewpager_position", 2);
             context.startActivity(intent);
         } else {
-            super.onBackPressed();
+            super.onBackPressed(); //otherwise follow regular life cycle
         }
     }
 
@@ -1042,9 +1040,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
-        i.putExtra("timeOfEvent", event.timeOfEvent);
-        i.putExtra("latitude", event.latitude);
-        i.putExtra("longitude", event.longitude);
+        i.putExtra("eventId", parseEvent.getEventId());
         context.startActivity(i);
     }
 

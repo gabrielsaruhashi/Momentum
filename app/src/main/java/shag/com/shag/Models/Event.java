@@ -12,6 +12,7 @@ import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by samrabelachew on 7/10/17.
@@ -37,6 +38,7 @@ public class Event extends ParseObject implements Parcelable {
     public Date timeOfEvent;
     public ParseGeoPoint parseGeoPoint;
     public boolean isFirstCreated;
+    public Map participantsLocations;
     private ParseObject eventOwner;
     private Double relevance;
     public boolean isEventPrivate;
@@ -212,6 +214,15 @@ public class Event extends ParseObject implements Parcelable {
 
     public static Creator<Event> getCREATOR() {
         return CREATOR;
+    }
+
+    public void setParticipantsLocations(Map locations) {
+        this.participantsLocations = locations;
+        put("participants_locations", participantsLocations);
+    }
+
+    public Map getParticipantsLocations() {
+        return getMap("participants_locations");
     }
 
 

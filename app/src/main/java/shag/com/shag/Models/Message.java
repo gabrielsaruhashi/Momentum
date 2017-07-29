@@ -3,6 +3,8 @@ package shag.com.shag.Models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
+import java.util.Date;
+
 /**
  * Created by gabesaruhashi on 7/14/17.
  */
@@ -34,6 +36,10 @@ public class Message extends ParseObject {
 
     public String getBody() {
         return getString("message_body");
+    }
+
+    public Date getCreatedAt() {
+        return getDate("created_at");
     }
 
     public void setBody(String body) {

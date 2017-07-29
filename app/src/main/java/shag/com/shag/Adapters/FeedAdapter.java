@@ -16,6 +16,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParsePush;
 import com.parse.ParseQuery;
@@ -31,6 +33,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 import shag.com.shag.R;
 
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -312,6 +315,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // subscribes user to this "channel" for notifications
                     ParsePush.subscribeInBackground(event.getEventId());
 
+                    sendJoinedMessage(event.getEventId());
+
 
                 } else {
                     e.getMessage();
@@ -382,6 +387,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         int minutes = difference - 60 * hours;
         timeRemaining += minutes + "m";
         return timeRemaining;
+    }
+
+    public void sendJoinedMessage(String eventId) {
+        Message m = new Message();
+        m.setSenderId("InuSHuTqkn");
+        m.setBody("Hey! " + currentUser.get("name") + " just joined the chat.");
+        m.setEventId(eventId);
+        m.setSenderName("Shaggy");
+        try {
+            m.save();
+            HashMap<String, String> payload = new HashMap<>();
+            payload.put("customData", currentUser.get("name") + " just joined the chat.");
+            payload.put("title", "New message in channel");
+            payload.put("channelID", eventId);
+            payload.put("senderID", "InuSHuTqkn");
+            payload.put("token", ""); //not being used rn
+            ParseCloud.callFunctionInBackground("pushChannelTest", payload);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
 }
