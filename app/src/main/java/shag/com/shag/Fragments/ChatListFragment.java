@@ -102,7 +102,7 @@ public class ChatListFragment extends Fragment {
                 }
             }
         });
-        startLiveQueries();
+        //startLiveQueries();
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event) {
