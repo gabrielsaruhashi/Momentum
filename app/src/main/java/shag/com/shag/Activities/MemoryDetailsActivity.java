@@ -26,7 +26,6 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import org.jcodec.api.SequenceEncoder;
 import org.json.JSONException;
@@ -36,7 +35,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -76,7 +74,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     CircleIndicator indicator;
     private TreeSet facebookPermissionsSet;
     private ArrayList<String> participantsIds;
-    private ArrayList<Long> participantsFacebookIds;
+    private ArrayList<String> participantsFacebookIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +132,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         });
 
 
+        // populate image slider
+        initImageSlider();
+
         //TODO if album already exists, just add photo
         // add listener to facebook share
         btFacebookShare.setOnClickListener(new View.OnClickListener() {
@@ -148,37 +149,10 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 }
 
                 // instantiate arraylist of participants facebook id
-                participantsFacebookIds = new ArrayList<Long>();
+                participantsFacebookIds = memory.getParticipantsFacebookIds();
 
-                // get participants facebook ids, ignore the user's id
+                createFacebookAlbum();
 
-                for (int i = 2; i < participantsIds.size(); i++) {
-                    // support counter to keep track of iterations
-                    final int counter = i;
-                    // query for participant's facebooks ids
-                    ParseQuery<ParseUser> userQuery = ParseUser.getQuery();
-                    //
-                    // userQuery.selectKeys(Arrays.asList("authData"));
-                    userQuery.getInBackground(participantsIds.get(i), new GetCallback<ParseUser>() {
-                        @Override
-                        public void done(ParseUser user, ParseException e) {
-                            HashMap data = (HashMap) user.getMap("authData");
-                            HashMap facebookData = (HashMap) data.get("facebook");
-                            Long userFacebookId = (Long) facebookData.get("id");
-                            participantsFacebookIds.add(userFacebookId);
-
-                            // in the last iteration, call postFacebookAlbum
-                            if (counter == participantsIds.size() - 1) {
-                                createFacebookAlbum();
-                            } else {
-                                e.getMessage();
-                            }
-                        }
-                    });
-                }
-
-                // populate image slider
-                initImageSlider();
             }
         });
     }

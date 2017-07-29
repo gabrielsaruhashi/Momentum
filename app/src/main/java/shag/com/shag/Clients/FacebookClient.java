@@ -6,7 +6,6 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
-import com.google.common.primitives.Longs;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -40,15 +39,14 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
-    public void postFacebookAlbum(ArrayList<Long> contributors, String albumName, GraphRequest.Callback callback) {
+    public void postFacebookAlbum(ArrayList<String> contributors, String albumName, GraphRequest.Callback callback) {
         ParseUser user = ParseUser.getCurrentUser();
         HashMap data = (HashMap) user.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);
-        long[] contributorsFormatted = Longs.toArray(contributors);
-        params.putLongArray("contributors", contributorsFormatted);
+        params.putStringArrayList("contributors", contributors);
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
                 callback).executeAsync();
     }
