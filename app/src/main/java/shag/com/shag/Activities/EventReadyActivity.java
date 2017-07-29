@@ -528,7 +528,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             super.onPostExecute(result);
 
             ParserTask parserTask = new ParserTask();
-
             // Invokes the thread for parsing the JSON data
             parserTask.execute(result);
 

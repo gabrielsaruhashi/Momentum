@@ -41,6 +41,10 @@ public class Event extends ParseObject implements Parcelable {
     public Map participantsLocations;
     private ParseObject eventOwner;
     private Double relevance;
+    public boolean isEventPrivate;
+    public boolean isRecommendationMade;
+    public String time;
+
 
     //CONSTRUCTORS
     public Event(){
@@ -114,18 +118,40 @@ public class Event extends ParseObject implements Parcelable {
         return getBoolean("is_first_created");
 
     }
+    public boolean getIsEventPrivate() {
+        return getBoolean("is_event_private");
 
+    }
+    public boolean getIsRecommendationMade() {
+        return isRecommendationMade;
+    }
+
+    public String getTime() {
+        return getString("time");
+    }
     // SETTERS
 
+    public void setTime(String time) {
+        this.time = time;
+        put("time", time);
+    }
 
+    public void setRecommendationMade(boolean recommendationMade) {
+        this.isRecommendationMade=recommendationMade;
+        put("is_recommendation_made",isRecommendationMade);
+    }
     public void setIsFirstCreated(boolean isFirstCreated) {
         this.isFirstCreated = isFirstCreated;
         put("is_first_created", isFirstCreated);
     }
+
+    public void setIsEventPrivate(boolean isEventPrivate) {
+        this.isEventPrivate = isEventPrivate;
+        put("is_event_private", isEventPrivate);
+    }
     public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
-        // TODO check if I need the line below
-        // put("event_owner", eventOwner);
+        put("User_event_owner", eventOwner);
     }
 
     public void setFriendsAtEvent(ArrayList<Long> friendsAtEvent) {
@@ -223,7 +249,8 @@ public class Event extends ParseObject implements Parcelable {
         dest.writeDouble(this.longitude);
         dest.writeSerializable(this.timeOfEvent);
         dest.writeByte(this.isFirstCreated ? (byte) 1 : (byte) 0);
-        //dest.writeMap(this.participantsLocations); //TODO: CANNOT PASS PARSEGEO
+        dest.writeByte(this.isEventPrivate ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isRecommendationMade ? (byte) 1 : (byte) 0);
 
     }
 
@@ -242,7 +269,8 @@ public class Event extends ParseObject implements Parcelable {
         this.longitude = in.readDouble();
         this.timeOfEvent = (Date) in.readSerializable();
         this.isFirstCreated = in.readByte() != 0;
-        //this.participantsLocations = in.readHashMap(Map.class.getClassLoader());
+        this.isEventPrivate = in.readByte() != 0;
+        this.isRecommendationMade = in.readByte() != 0;
     }
 
 

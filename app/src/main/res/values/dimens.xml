@@ -12,4 +12,6 @@
     <dimen name="rv_margin_right">8dp</dimen>
     <dimen name="profile_picture_length">72dp</dimen>
     <dimen name="category_tag_width">8dp</dimen>
+    <dimen name="rv_margin_bottom">8dp</dimen>
+    <dimen name="rv_margin_top">8dp</dimen>
 </resources>

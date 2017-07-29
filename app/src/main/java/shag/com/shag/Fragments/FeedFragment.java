@@ -229,16 +229,33 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     public Double calculateEventRelevance(Event event) {
         // get relevant information for recommendation algorithm
         HashMap<String, Integer> recentFriendsMap = ParseApplication.getRecentFriends();
-        HashMap categoriesTracker = (HashMap) currentUser.getMap("categories_tracker");
+        HashMap<String, List<Object>> categoriesTracker = (HashMap) currentUser.getMap("categories_tracker");
 
         // get the chill coefficient based on the user's profile
-        Double chillCoefficient = getCoefficient(event.getCategory(), categoriesTracker);
-        Double closenessCoefficient = getCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double chillCoefficient = getChillCoefficient(event.getCategory(), categoriesTracker);
+        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
         Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
         return relevanceCoefficient;
     }
 
-    public Double getCoefficient(String input, HashMap hm) {
+    public Double getChillCoefficient(String input, HashMap<String, List<Object>> hm) {
+
+        // get the raw counter for the specific input key, if it exists
+        int rawInterest = (hm.get(input).get(0) != null) ? (int) hm.get(input).get(0) : 0;
+
+
+        double totalCounter = 0;
+
+        // iterate through the hashmap to add values
+        for (List<Object> ob : hm.values()) {
+            totalCounter += (int) ob.get(0);
+        }
+
+        // return the coefficient Raw Interest / Total Interest if total interest > 0
+        return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
+    }
+
+    public Double getClosenessCoefficient(String input, HashMap hm) {
         // get the raw counter for the specific input key, if it exists
         int rawInterest = (hm.get(input) != null) ? (int) hm.get(input) : 0;
         double totalCounter = 0;
