@@ -117,7 +117,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     PollsAdapter pollAdapter;
 
     // for the chat views
-    private Event event;
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;

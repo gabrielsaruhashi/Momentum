@@ -32,7 +32,8 @@
         android:layout_toEndOf="@+id/ivCategory"
         android:text="TextView"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginTop="4dp"/>
 
     <TextView
         android:id="@+id/tvLastMessage"
@@ -42,7 +43,9 @@
         android:layout_marginLeft="@dimen/rv_margin_left"
         android:layout_toEndOf="@+id/ivCategory"
         android:autoLink="all"
-        android:visibility="gone"
+        android:ellipsize="end"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
         android:text="Textview" />
 
     <TextView
@@ -51,7 +54,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:visibility="gone"
         android:text="Textview" />
 
     <TextView

@@ -26,7 +26,9 @@ public class Message extends ParseObject {
         return getObjectId();
     }
 
-    public String getEventId() { return getString("event_id"); }
+    public String getEventId() {
+        return getString("event_id");
+    }
 
     public void setEventId(String eventId) {
         this.eventId = eventId;
@@ -38,8 +40,8 @@ public class Message extends ParseObject {
         return getString("message_body");
     }
 
-    public Date getCreatedAt() {
-        return getDate("created_at");
+    public Date getCreatedDate() {
+        return getCreatedAt();
     }
 
     public void setBody(String body) {

@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.Objects;
 import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -38,12 +41,14 @@ public class ChatListFragment extends Fragment {
     ChatListAdapter adapter;
     // user id
     String currentUserId;
+    ArrayList<String> eventIds;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_chat_list, container, false);
+        eventIds = new ArrayList<>();
 
         // initialize the list of chats
         chats = new ArrayList<>();
@@ -87,6 +92,7 @@ public class ChatListFragment extends Fragment {
 
                         //add event to list to be displayed
                         chats.add(eventChat);
+                        eventIds.add(event.getEventId());
                         adapter.notifyItemInserted(chats.size() - 1);
                         rvChats.smoothScrollToPosition(0);
 
@@ -96,6 +102,7 @@ public class ChatListFragment extends Fragment {
                 }
             }
         });
+        startLiveQueries();
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event) {
@@ -140,6 +147,32 @@ public class ChatListFragment extends Fragment {
         }
 
         return chat;
+    }
+
+    public void startLiveQueries() {
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
+                SubscriptionHandling.HandleEventCallback<Message>() {
+                    @Override
+                    public void onEvent(ParseQuery<Message> query, Message object) {
+                        String newEventId = object.getEventId();
+
+                        if (eventIds.contains(newEventId)) {
+                            ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
+                            try {
+                                Event event = eventQuery.get(newEventId);
+                                event.setLastMessageSent(object);
+                                event.saveInBackground(); //TODO: in background or...?
+                                adapter.notifyItemChanged(eventIds.indexOf(newEventId));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
     }
 
 

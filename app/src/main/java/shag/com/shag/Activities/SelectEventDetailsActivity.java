@@ -32,6 +32,7 @@ import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
@@ -219,6 +220,8 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         currentUser.put("categories_tracker", hm);
 
 
+        newEvent.setLastMessageSent(new Message());
+        newEvent.setTimeOfEvent(new Date());
         newEvent.setTimeOfEvent(new Date());
         //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
