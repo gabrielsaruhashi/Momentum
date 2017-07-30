@@ -64,14 +64,15 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_event_details);
 
         currentUser = ParseUser.getCurrentUser();
-
-
         category = getIntent().getStringExtra("Category");
+        //public or private
         eventType = getIntent().getStringExtra("Event Type");
+        //if public get the name, and LatLng of place
         if (eventType.equals("Public")){
             placeName=getIntent().getStringExtra("Place Name");
             eventLat=getIntent().getDoubleExtra("Lat",0.0);
             eventLng=getIntent().getDoubleExtra("Lng",0.0);
+            //if food category, find the restaurant details
             if(category.equals("Food")) {
                 foodDescription = getIntent().getStringExtra("Food Details");
             }
@@ -97,9 +98,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         CardView tv12h = (CardView) findViewById(R.id.cv12h);
         setListenerForTime(tv12h, 720);
 
-
-
-
         nextButton = (Button) findViewById(R.id.btNext);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,14 +113,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
     }
 
-
     public void setListenerForTime(CardView tv, final int minToDeadline) {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 newDate.setTime((new Date()).getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
                 Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
-                //newEvent.deadline = newDate;
 
             }
         });
@@ -134,15 +130,20 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         // populate newEvent
         newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
         newEvent.setDescription(etDescription.getText().toString());
-                /*newEvent.setLatLng(
-                        new LatLng(47.628883, -122.342606)
-                ); */
+
         //TODO what is this friends at event for
+
         newEvent.setFriendsAtEvent(new ArrayList<Long>());
+
+        //if public, set the location and lat long
         if (eventType.equals("Public")){
             newEvent.setLocation(placeName);
             newEvent.setLatitude(eventLat);
             newEvent.setLongitude(eventLng);
+            newEvent.setIsEventPrivate(false);
+        }
+        else{
+            newEvent.setIsEventPrivate(true);
         }
 
 
@@ -168,12 +169,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
 
         newEvent.setIsFirstCreated(true);
-        if (eventType.equals("Public")){
-            newEvent.setIsEventPrivate(false);
-        }
-        else{
-            newEvent.setIsEventPrivate(true);
-        }
+
         newEvent.setRecommendationMade(false);
 
         newEvent.setCategory(category);
@@ -204,15 +200,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
                     foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
                     foodData.set(1,foodSubCategoryMap);
                     hm.put("Food", foodData);
-//                    hm.get("Food").get(1).(foodType,foodSubCategoryPoints);
-                    //foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
+
                 }
                 //if food type is not in map
                 else{
                     foodSubCategoryMap.put(foodType,1);
                     hm.get("Food").set(1,foodSubCategoryMap);
-//                    hm.get("Food").getSubCategoryMap().put(foodType,1);
-                    //foodSubCategoryMap.put(foodType,1);
                 }
             }
         }
@@ -220,10 +213,12 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
 
         newEvent.setTimeOfEvent(new Date());
+
         //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO
-        newEvent.setLatitude(47.6101);
-        newEvent.setLongitude(-122.2015);
+        //newEvent.setLatitude(47.6101);
+        //newEvent.setLongitude(-122.2015);
+
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
         ParseObject currentUser = ParseUser.getCurrentUser();
         newEvent.put("User_event_owner", currentUser);
