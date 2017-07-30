@@ -282,8 +282,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
 
         //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
-        //TODO REPLACE FIRST CONDITION WITH JOIN CONDITION
-        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
+        if (new Date().after(eventFromQuery.getDate("deadline")) && isRecommendationMade == false
                 && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
             isRecommendationMade = true;
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
