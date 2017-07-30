@@ -163,7 +163,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // listen for updates in this memory
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
         ParseQuery<Memory> parseQuery = ParseQuery.getQuery(Memory.class);
-        parseQuery.whereEqualTo("_id", memory.getMemoryId());
+        parseQuery.whereEqualTo("event_id", memory.getEventId());
 
         // Connect to Parse server
         SubscriptionHandling<Memory> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
@@ -175,9 +175,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                     public void onEvent(ParseQuery<Memory> query, Memory object) {
                         // get live query's updated pictures
                         ArrayList<ParseFile> liveQueryPictures = object.getPicturesParseFiles();
-
+                        //TODO discover if there is a way to fix in case other user uploads at the same time
                         // listen for new pictures
-                        if (pictures.size() != liveQueryPictures.size()) {
+                        if (pictures.size() < liveQueryPictures.size()) {
                             // get new pictures
                             ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(liveQueryPictures.subList(pictures.size(),liveQueryPictures.size()));
 
@@ -191,17 +191,17 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
                             // add new pictures to the bottom
                             pictures.addAll(newPictures);
+
+                            // RecyclerView updates need to be run on the UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageAdapter.notifyDataSetChanged();
+                                    sliderAdapter.notifyDataSetChanged();
+
+                                }
+                            });
                         }
-
-                        // RecyclerView updates need to be run on the UI thread
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageAdapter.notifyDataSetChanged();
-                                sliderAdapter.notifyDataSetChanged();
-
-                            }
-                        });
                     }
 
 
@@ -238,14 +238,18 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 }
             });
         }  else { // else upload new pictures to album
-            ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(pictures.subList(memory.getIndexOfLastPictureShared(), pictures.size()));
-            // post pictures
-            uploadPicturesFb(newPictures, albumId);
-            // update index of last picture shared on facebook
-            memory.setIndexOfLastPictureShared(pictures.size());
-            memory.saveInBackground();
+            // check if user uploaded new pictures
+            if (memory.getIndexOfLastPictureShared() < pictures.size()) {
+                ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(pictures.subList(memory.getIndexOfLastPictureShared(), pictures.size()));
+                // post pictures
+                uploadPicturesFb(newPictures, albumId);
+                // update index of last picture shared on facebook
+                memory.setIndexOfLastPictureShared(pictures.size());
+                memory.saveInBackground();
+            } else {
+                Toast.makeText(MemoryDetailsActivity.this, "No new pictures to be posted", Toast.LENGTH_SHORT).show();
+            }
         }
-
     }
 
 

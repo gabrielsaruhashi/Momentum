@@ -173,7 +173,7 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     public String getEventId() {
-        return this.eventId;
+        return getString("event_id");
     }
 
     public ArrayList<String> getParticipantsIds() {
