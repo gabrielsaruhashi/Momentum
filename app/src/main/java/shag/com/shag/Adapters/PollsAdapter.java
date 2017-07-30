@@ -178,7 +178,6 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 //update parse object
                                 object.put("people_voted", poll.getPeopleVoted());
                                 object.put("scores", poll.getScores());
-
                                 object.saveInBackground();
 
                             } else {
@@ -240,6 +239,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         createOnTextClick(holder.tvSet1, selectedPosition,1);
         createOnTextClick(holder.tvSet2, selectedPosition,2);
         createOnTextClick(holder.tvSet3, selectedPosition,3);
+
+        if (!poll.getChoices().get(0).equals("Custom")){
+            holder.tvSet0.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(1).equals("Custom")){
+            holder.tvSet1.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(2).equals("Custom")){
+            holder.tvSet2.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(3).equals("Custom")){
+            holder.tvSet3.setVisibility(View.GONE);
+        }
 
         if ( (poll.getPollType().equals("Time") ) && poll.getChoices().contains("Custom") ) {
             //onFinishTimePickerFragment(holder,position);

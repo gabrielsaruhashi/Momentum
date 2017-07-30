@@ -138,7 +138,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     boolean openedPush;
     private Event parseEvent;
     private ArrayList<CalendarEvent> calendarEvents;
-
+    ParseQuery<Poll> parseQueryPoll;
+    SubscriptionHandling<Poll> pollSubscriptionHandling;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -200,7 +201,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
             isEventNew = eventFromQuery.getBoolean("is_first_created");
             isEventPrivate = eventFromQuery.getBoolean("is_event_private");
-            isRecommendationMade=eventFromQuery.getBoolean("is_recommendation_made");
+            isRecommendationMade = eventFromQuery.getBoolean("is_recommendation_made");
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -213,7 +214,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         if (isEventNew) {
             try {
                 createTimeAndLocationPolls("Time");
-                if(isEventPrivate) {
+                if (isEventPrivate) {
                     createTimeAndLocationPolls("Location");
                 }
             } catch (ParseException e) {
@@ -271,7 +272,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                     calendarEvents.add(freshCalendarEvent);
                                 }
                             });
-                        } while (cursor.moveToNext() &&  cursor.getPosition() < cursor.getCount() - 1);
+                        }
+                        while (cursor.moveToNext() && cursor.getPosition() < cursor.getCount() - 1);
                     }
                 }
             }
@@ -281,9 +283,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
         //TODO REPLACE FIRST CONDITION WITH JOIN CONDITION
-        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade==false
-                && isEventPrivate==true && eventFromQuery.getString("category").equals("Food")) {
-            isRecommendationMade=true;
+        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
+                && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
+            isRecommendationMade = true;
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
             eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
                 public void done(ParseObject eventDb, ParseException e) {
@@ -295,7 +297,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             });
             recommendRestaurant();
         }
-
 
 
         // Make sure the Parse server is setup to configured for live queries
@@ -335,12 +336,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 });
 
-        ParseQuery<Poll> parseQueryPoll = ParseQuery.getQuery(Poll.class);
-        SubscriptionHandling<Poll> pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+
+        parseQueryPoll = ParseQuery.getQuery(Poll.class);
+        pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
         pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
             @Override
             public void onEvent(ParseQuery<Poll> query, Poll object) {
-                String senderId = object.getPollCreator();
+                String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
 
@@ -361,19 +363,39 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         });
 
+        // Connect to Parse server
         pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
             @Override
             public void onEvent(ParseQuery<Poll> query, Poll object) {
+                int pos = -1;
+                if (object.getPollType().equals("Time")){
+                    pos = 0;
+                }
+                else if (object.getPollType().equals("Location")) {
+                    pos = 1;
+                }
+                String newEventId = object.getEventId();
+                if (eventId.equals(newEventId)) {
+                    polls.set(pos, object);
+
+                }
+                // RecyclerView updates need to be run on the UI thread
+                final int finalPos = pos;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.invalidate();
+                        pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
+                        //pollAdapter.notifyItemChanged(1);
 
                     }
                 });
             }
+
+
         });
+
     }
 
     private void recommendRestaurant() {
@@ -387,11 +409,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         if (ActivityCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(ChatActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-        }
-        else{
+        } else {
             ActivityCompat.requestPermissions(ChatActivity.this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_REQUEST_LOCATION );
+                    MY_PERMISSIONS_REQUEST_LOCATION);
         }
 
         //find last location
@@ -399,7 +420,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 .addOnSuccessListener(ChatActivity.this, new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
-                        favFood=cuisineInterest;
+                        favFood = cuisineInterest;
                         Double lat = location.getLatitude();
                         Double lng = location.getLongitude();
                         VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(cuisineInterest, lat.toString(), lng.toString()));
@@ -584,7 +605,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions( this, new String[] {  Manifest.permission.READ_CALENDAR  },
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CALENDAR},
                     MY_PERMISSIONS_REQUEST_READ_CALENDAR);
 
         } else { // if permissions is granted, just start the thread
@@ -592,6 +613,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             calendarThread.start();
         }
     }
+
     // when user grants access to the read events class
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -613,14 +635,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-
-
     public void createTimeAndLocationPolls(final String type) throws ParseException {
         final Poll poll = new Poll();
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.setEventId(eventId);
         poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("poll_creator_id", currentUserId);
         poll.setPollType(type);
         poll.setQuestion(type + " of Event");
         ArrayList<String> customs = new ArrayList<>();
@@ -692,6 +713,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("poll_creator_id", currentUserId);
         poll.setPollType("Custom");
         poll.saveInBackground(new SaveCallback() {
             @Override
@@ -791,7 +813,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
             }
         });
-
+        findPollWinners(polls);
     }
 
     public Date convertStringToDate(String time) {
@@ -858,7 +880,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     for (String key : eachPoll.getScores().keySet()) {
                         if (eachPoll.getScores().get(key) == max) {
                             Map<String, ParseGeoPoint> places = eachPoll.getLocationOptions();
-                            placeName=key;
+                            placeName = key;
                             locationWinner = places.get(key);
                             break;
                         }
@@ -970,7 +992,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 if (e == null) {
                     pollDb.put("choices", choices);
                     pollDb.put("scores", scores);
-                    pollDb.saveInBackground();
+                    try {
+                        pollDb.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
@@ -1072,7 +1098,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // The user canceled the operation.
             }
         }
-        ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
+        final ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
 
         pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
             public void done(ParseObject pollDb, ParseException e) {
@@ -1080,10 +1106,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     pollDb.put("choices", choices);
                     pollDb.put("scores", scores);
                     pollDb.put("location_options", locOptions);
-                    pollDb.saveInBackground();
+                    try {
+                        pollDb.save();
+                    } catch (ParseException e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         });
+
+
+
 
 
     }
@@ -1141,17 +1174,36 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private void callShaggyForResponse(String type, String body) {
 
         if (type.equals("Recommendation")) {
-            Message m = new Message();
+            final Message m = new Message();
             m.setSenderId("InuSHuTqkn");
-            if(favFood==null){
+            if (favFood == null) {
                 m.setBody("Hey! Feel free to start looking for restaurants. Why not try out " + body);
-            }
-            else {
+            } else {
                 m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out " + body);
             }
             m.setEventId(eventId);
             m.setSenderName("Shaggy");
             try {
+                m.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        String token = "";
+                        try {
+                            //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
+                            token = InstanceID.getInstance(context)
+                                    .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                            Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        HashMap<String, String> payload = new HashMap<>();
+                        payload.put("customData", m.getBody());
+                        payload.put("title", "New message in channel");
+                        payload.put("channelID", eventId);
+                        payload.put("senderID", currentUserId);
+                        payload.put("token", token);
+                    }
+                });
                 m.save();
                 mAdapter.notifyItemInserted(0);
                 rvChat.smoothScrollToPosition(0);
