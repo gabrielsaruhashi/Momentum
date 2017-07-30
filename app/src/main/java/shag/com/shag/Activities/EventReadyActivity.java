@@ -109,7 +109,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     boolean firstOpen;
     List<Marker> markerList = new ArrayList<Marker>();
     ArrayList<String> friendNames;
-    boolean detailsSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,11 +133,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             parseEvent = (Event) query.get(eventId);
             mDestination = new LatLng(parseEvent.getLatitude(), parseEvent.getLongitude());
             timeOfEvent = parseEvent.getTimeOfEvent();
-
-            if ((parseEvent.getLatitude() != 0 || parseEvent.getLongitude() != 0) &&
-                    timeOfEvent.getTime() > (new Date()).getTime()) {
-                detailsSelected = true;
-            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -151,11 +145,8 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         bounds = new LatLngBounds.Builder();
 
-
-        if (detailsSelected) {
-            tvDestination.setText(parseEvent.getLocation());
-            tvTime.setText(timeOfEvent.toString());
-        }
+        tvDestination.setText(parseEvent.getLocation());
+        tvTime.setText(timeOfEvent.toString());
 
 
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
@@ -180,7 +171,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
         friendNames = new ArrayList<>();
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        for (String id: participantsLocations.keySet()) {
+        for (String id : participantsLocations.keySet()) {
             if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
                 ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
                 try {
@@ -239,14 +230,12 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         //Place destination marker
-        if (detailsSelected) {
-            Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
-            MarkerOptions destinationMarkerOptions = new MarkerOptions();
-            destinationMarkerOptions.position(mDestination);
-            destinationMarkerOptions.title("Destination");
-            destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-            mGoogleMap.addMarker(destinationMarkerOptions);
-        }
+        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+        MarkerOptions destinationMarkerOptions = new MarkerOptions();
+        destinationMarkerOptions.position(mDestination);
+        destinationMarkerOptions.title("Destination");
+        destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+        mGoogleMap.addMarker(destinationMarkerOptions);
     }
 
     //DIFFERENT STATES OF MAP
@@ -279,16 +268,14 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
         //put location in db and get friends on map if event details have been defined
-        if (detailsSelected) {
-            //put current user location in db
-            HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-            participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
-            parseEvent.setParticipantsLocations(participantsLocations);
+        //put current user location in db
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
+        parseEvent.setParticipantsLocations(participantsLocations);
 
-            parseEvent.saveInBackground();
-            //putFriendsOnMap();
+        parseEvent.saveInBackground();
+        //putFriendsOnMap();
 
-        }
 
         //include both markers in view
         if (firstOpen) {
@@ -388,7 +375,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getDirections(final String mode) {
-        if (detailsSelected) {
             String origin = "";
             String destination = "";
             try {
@@ -430,7 +416,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             });
 
             VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
-        }
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
@@ -587,7 +572,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void putFriendsOnMap() {
-        for (Marker marker: markerList) {
+        for (Marker marker : markerList) {
             marker.remove();
         }
         markerList.clear();

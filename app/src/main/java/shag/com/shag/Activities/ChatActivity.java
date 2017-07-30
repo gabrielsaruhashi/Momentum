@@ -140,6 +140,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private Event parseEvent;
     private ArrayList<CalendarEvent> calendarEvents;
 
+    Menu menu;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -467,6 +469,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
     }
@@ -910,6 +913,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             eventDb.put("location", finalPlaceName);
                             eventDb.put("latitude", lat);
                             eventDb.put("longitude", lng);
+                        }
+
+                        if (timeWinner != null && locationWinner != null) {
+                            MenuItem mi = menu.findItem(R.id.miEventReady);
+                            mi.setVisible(true);
                         }
                         eventDb.saveInBackground();
                     }
