@@ -24,6 +24,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -145,6 +146,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     ParseQuery<Poll> parseQueryPoll;
     SubscriptionHandling<Poll> pollSubscriptionHandling;
 
+    // for the poll fragment
+    TextView tvConflict;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +156,24 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         setContentView(R.layout.activity_chat);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        //TODO check if this is working
+        tvConflict = (TextView) findViewById(R.id.tvConflict);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                if (conflictingCalendarEvents.size() > 0) {
+                    tvConflict.setVisibility(View.VISIBLE);
+                    // set click listener for conflicts
+                    tvConflict.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showConflictingEventsDialog();
+                        }
+                    });
+                }
+
+            }
+        };
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
