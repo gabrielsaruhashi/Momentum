@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -70,6 +71,7 @@ import java.util.Map;
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
 import shag.com.shag.Clients.VolleyRequest;
+import shag.com.shag.Fragments.DialogFragments.ConflictingEventsDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
@@ -1138,10 +1140,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         });
 
-
-
-
-
     }
 
     public void onEventReady(MenuItem menuItem) {
@@ -1237,5 +1235,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         refreshMessages();
         refreshPolls();
     }
+
+    private void showConflictingEventsDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ConflictingEventsDialogFragment conflictingEventsDialogFragment = ConflictingEventsDialogFragment.newInstance(conflictingCalendarEvents);
+        conflictingEventsDialogFragment.show(fm, "fragment_conflicting_calendar_events");
+    }
+
 }
 

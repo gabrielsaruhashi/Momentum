@@ -1,6 +1,8 @@
 package shag.com.shag.Models;
 
 import android.database.Cursor;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.Date;
 
@@ -8,7 +10,7 @@ import java.util.Date;
  * Created by gabesaruhashi on 7/27/17.
  */
 
-public class CalendarEvent {
+public class CalendarEvent implements Parcelable {
     private String calendarId;
     private String title;
     private String description;
@@ -91,4 +93,48 @@ public class CalendarEvent {
     public void setEventLocation(String eventLocation) {
         this.eventLocation = eventLocation;
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.calendarId);
+        dest.writeString(this.title);
+        dest.writeString(this.description);
+        dest.writeLong(this.dStart != null ? this.dStart.getTime() : -1);
+        dest.writeLong(this.dEnd != null ? this.dEnd.getTime() : -1);
+        dest.writeByte(this.allDay ? (byte) 1 : (byte) 0);
+        dest.writeString(this.eventLocation);
+    }
+
+    public CalendarEvent() {
+    }
+
+    protected CalendarEvent(Parcel in) {
+        this.calendarId = in.readString();
+        this.title = in.readString();
+        this.description = in.readString();
+        long tmpDStart = in.readLong();
+        this.dStart = tmpDStart == -1 ? null : new Date(tmpDStart);
+        long tmpDEnd = in.readLong();
+        this.dEnd = tmpDEnd == -1 ? null : new Date(tmpDEnd);
+        this.allDay = in.readByte() != 0;
+        this.eventLocation = in.readString();
+    }
+
+    public static final Creator<CalendarEvent> CREATOR = new Creator<CalendarEvent>() {
+        @Override
+        public CalendarEvent createFromParcel(Parcel source) {
+            return new CalendarEvent(source);
+        }
+
+        @Override
+        public CalendarEvent[] newArray(int size) {
+            return new CalendarEvent[size];
+        }
+    };
 }
