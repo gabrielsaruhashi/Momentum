@@ -134,12 +134,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private ParseObject eventFromQuery;
     private String favFood;
 
-    //ONLY use these variables when opening push notification
+    // ONLY use these variables when opening push notification
     boolean openedPush;
     private Event parseEvent;
+    // for calendar integration
     private ArrayList<CalendarEvent> calendarEvents;
+    private ArrayList<CalendarEvent> conflictingCalendarEvents;
     ParseQuery<Poll> parseQueryPoll;
     SubscriptionHandling<Poll> pollSubscriptionHandling;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -237,6 +240,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //refresh messages and polls both here
         setupMessagePosting();
         refreshPolls();
+
+        // instantiate conflicting calendar events
+        conflictingCalendarEvents = new ArrayList<CalendarEvent>();
+
         // check for permissions and set up thread to get events
         taskToGetCalendarEvents = new Runnable() {
             @Override
@@ -964,6 +971,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             rButton0.setText(rButton0.getText() + " @ " + time);
             choices.set(0, rButton0.getText().toString());
             scores.put(rButton0.getText().toString(), 0);
+            //TODO check this, put in different thread
+            if (conflictsWithCalendarEvent((String) rButton0.getText())) {
+                rButton0.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            }
 
         } else if (btn == 1) {
             RadioButton rButton1 = (RadioButton) timeButtons.get(1);
@@ -976,7 +987,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             rButton2.setText(rButton2.getText() + " @ " + time);
             choices.set(2, rButton2.getText().toString());
             scores.put(rButton2.getText().toString(), 0);
-
 
         } else {
             RadioButton rButton3 = (RadioButton) timeButtons.get(3);
@@ -999,8 +1009,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             }
         });
+    }
+    //TODO this might break if calendar events hasnt returned yet
+    public boolean conflictsWithCalendarEvent(String timeOption) {
+        Date dateTimeOption = convertStringToDate(timeOption);
+        boolean hasConflict = false;
 
-
+        // gets list of all calendar events that conflict with this time option
+        for (CalendarEvent calendarEvent : calendarEvents) {
+            if(!calendarEvent.getdStart().after(dateTimeOption) && !calendarEvent.getdEnd().before(dateTimeOption)) {
+                /* calendar event start time <= poll option <= calendar event end time */
+                conflictingCalendarEvents.add(calendarEvent);
+                // return true to add * to poll option UI
+                hasConflict = true;
+            }
+        }
+        return hasConflict;
     }
 
 

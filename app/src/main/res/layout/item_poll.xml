@@ -106,6 +106,7 @@
             android:layout_marginBottom="10dp"
             android:layout_toEndOf="@+id/rgPoll"
             android:text="  Click to set option" />
+
     </RadioGroup>
 
     <Button
@@ -115,6 +116,17 @@
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/rgPoll"
         android:text="Vote" />
+
+    <TextView
+        android:id="@+id/tvConflict"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/tvQuestion"
+        android:layout_marginStart="15dp"
+        android:layout_toEndOf="@+id/tvQuestion"
+        android:text="See conflicting events"
+        android:visibility="gone"
+        />
 
 
 </RelativeLayout>
