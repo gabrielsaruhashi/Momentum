@@ -293,7 +293,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             recommendRestaurant(chatParticipantsIds);
         }
 
+        setupLiveQueires();
 
+    }
+
+    private void setupLiveQueires() {
 
         // Make sure the Parse server is setup to configured for live queries
         // URL for server is determined by Parse.initialize() call.
@@ -332,6 +336,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                 });
 
+        // Listen for CREATE polls
         ParseQuery<Poll> parseQueryPoll = ParseQuery.getQuery(Poll.class);
         SubscriptionHandling<Poll> pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
         pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
@@ -358,9 +363,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         });
 
-
     }
-
     private void recommendRestaurant(ArrayList<String> userIds) {
         // construct OR query to userQuery
 
