@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tvPlace"
         android:layout_toEndOf="@+id/tvPlace"
-        android:text="FinalPlace"
+        android:text="TBD"
         android:textSize="17sp"
         android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvFinalPlace"
         android:layout_toEndOf="@+id/tvPlace"
-        android:text="Finaltime"
+        android:text="TBD"
         android:textSize="17sp"
         android:textStyle="bold" />
 

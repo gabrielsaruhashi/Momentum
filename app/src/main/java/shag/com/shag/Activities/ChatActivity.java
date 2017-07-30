@@ -812,7 +812,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                //findPollWinners(polls);
+                findPollWinners(polls);
 
 
             }

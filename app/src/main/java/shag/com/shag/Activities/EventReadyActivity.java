@@ -109,6 +109,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     boolean firstOpen;
     List<Marker> markerList = new ArrayList<Marker>();
     ArrayList<String> friendNames;
+    boolean detailsSelected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +119,13 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         setSupportActionBar(myToolbar);
         firstOpen = true;
 
+        tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
+        tvTime = (TextView) findViewById(R.id.tvFinalTime);
+        tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
+        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
+        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
+        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
+
         eventId = getIntent().getStringExtra("eventId");
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
@@ -126,6 +134,11 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             parseEvent = (Event) query.get(eventId);
             mDestination = new LatLng(parseEvent.getLatitude(), parseEvent.getLongitude());
             timeOfEvent = parseEvent.getTimeOfEvent();
+
+            if ((parseEvent.getLatitude() != 0 || parseEvent.getLongitude() != 0) &&
+                    timeOfEvent.getTime() > (new Date()).getTime()) {
+                detailsSelected = true;
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -138,32 +151,16 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         bounds = new LatLngBounds.Builder();
 
-        tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
-        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
-        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
-        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
 
-        String eventDestination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            eventDestination = currentLocation.getAddressLine(0);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (detailsSelected) {
+            tvDestination.setText(parseEvent.getLocation());
+            tvTime.setText(timeOfEvent.toString());
         }
-        tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
-        tvDestination.setText(eventDestination);
-        tvTime = (TextView) findViewById(R.id.tvFinalTime);
-        tvTime.setText(timeOfEvent.toString());
 
-        // Make sure the Parse server is setup to configured for live queries
-        // URL for server is determined by Parse.initialize() call.
+
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
-
         ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
-        // Connect to Parse server
         SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
-
-        // Listen for UPDATE events
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
                 SubscriptionHandling.HandleEventCallback<Event>() {
                     @Override
@@ -242,12 +239,14 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         }
 
         //Place destination marker
-        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
-        MarkerOptions destinationMarkerOptions = new MarkerOptions();
-        destinationMarkerOptions.position(mDestination);
-        destinationMarkerOptions.title("Destination");
-        destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-        mGoogleMap.addMarker(destinationMarkerOptions);
+        if (detailsSelected) {
+            Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+            MarkerOptions destinationMarkerOptions = new MarkerOptions();
+            destinationMarkerOptions.position(mDestination);
+            destinationMarkerOptions.title("Destination");
+            destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+            mGoogleMap.addMarker(destinationMarkerOptions);
+        }
     }
 
     //DIFFERENT STATES OF MAP
@@ -279,8 +278,8 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         mLastLocation = location;
         LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        //if the location is not the default then the location has been set, put location in db and get friends on map
-        if (mDestination.latitude != 47.6101 || mDestination.longitude != -122.2015) {
+        //put location in db and get friends on map if event details have been defined
+        if (detailsSelected) {
             //put current user location in db
             HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
             participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
@@ -389,48 +388,49 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getDirections(final String mode) {
-        //TODO: decide if we want to move this
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
+        if (detailsSelected) {
+            String origin = "";
+            String destination = "";
+            try {
+                Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
+                origin = currentLocation.getAddressLine(0);
+                origin = origin.replace(" ", "+");
 
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        baseUrl += "&origin=" + origin;
-        launchMapsUrl += "&origin=" + origin;
-        baseUrl += "&destination=" + destination;
-        launchMapsUrl += "&destination=" + destination;
-        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-        //END TODO
-
-        String url = baseUrl + "&mode=" + mode;
-        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        launchMapsUrl +=  "&travelmode=" + mode;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String instructions = response.toString();
-                        populateInfoFromJson(response, mode);
-                        FetchUrl fetchUrl = new FetchUrl();
-                        fetchUrl.execute(instructions);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
+                Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+                destination = destinationLocation.getAddressLine(0);
+                destination = destination.replace(" ", "+");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            baseUrl += "&origin=" + origin;
+            launchMapsUrl += "&origin=" + origin;
+            baseUrl += "&destination=" + destination;
+            launchMapsUrl += "&destination=" + destination;
+            baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+            launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+            //END TODO
 
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+            String url = baseUrl + "&mode=" + mode;
+            url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+            launchMapsUrl += "&travelmode=" + mode;
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String instructions = response.toString();
+                            populateInfoFromJson(response, mode);
+                            FetchUrl fetchUrl = new FetchUrl();
+                            fetchUrl.execute(instructions);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                }
+            });
+
+            VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+        }
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
