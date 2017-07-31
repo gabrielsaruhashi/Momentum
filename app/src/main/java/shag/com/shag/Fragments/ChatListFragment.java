@@ -150,29 +150,6 @@ public class ChatListFragment extends Fragment {
     }
 
     public void startLiveQueries() {
-//        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
-//        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-//        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
-//        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
-//                SubscriptionHandling.HandleEventCallback<Message>() {
-//                    @Override
-//                    public void onEvent(ParseQuery<Message> query, Message object) {
-//                        String newEventId = object.getEventId();
-//
-//                        if (eventIds.contains(newEventId)) {
-//                            ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
-//                            try {
-//                                Event event = eventQuery.get(newEventId);
-//                                event.setLastMessageSent(object);
-//                                event.saveInBackground(); //TODO: in background or...?
-//                                adapter.notifyItemChanged(eventIds.indexOf(newEventId));
-//                            } catch (ParseException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
-//                    }
-//                });
-
         // Make sure the Parse server is setup to configured for live queries
         // URL for server is determined by Parse.initialize() call.
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();

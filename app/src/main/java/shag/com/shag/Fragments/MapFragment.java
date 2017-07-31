@@ -172,7 +172,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 cardView.setVisibility(View.GONE);
                             }
                         });
-                //cardView.setVisibility(View.INVISIBLE);
 
             }
         });
@@ -270,12 +269,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
 
-//
-//        MarkerOptions markerOptions2 = new MarkerOptions();
-//        markerOptions2.position(firstEvent.latLng);
-//        markerOptions2.title("Bill Position");
-//        markerOptions2.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//        marker2 = mGoogleMap.addMarker(markerOptions1);
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,13));
 
@@ -341,14 +334,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                 } else {
 
-                    // permission denied, boo! Disable the
+                    // permission denied, Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(getContext(), "permission denied", Toast.LENGTH_LONG).show();
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
+
             // permissions this app might request
         }
     }
@@ -382,12 +375,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         }
         SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
         String time = localDateFormat.format(date.getTime());
+        String jamBaseApi = "6dhquzx3559xvcd2un49madm";
 
 
         String jamBaseUrl = "http://api.jambase.com/events?";
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode+
                 "&radius="+radius+"&startDate=+"+year+"-" + formattedMonth + "-"+day+"T"+time.substring(0,2)+"%3A"+time.substring(3,5)+"%3A"+time.substring(6)
-                +"&endDate=+"+year+"-"+ formattedMonth +"-"+finalDay+"T23%3A59%3A59&page=0&api_key=6dhquzx3559xvcd2un49madm", null,
+                +"&endDate=+"+year+"-"+ formattedMonth +"-"+finalDay+"T23%3A59%3A59&page=0&api_key="+jamBaseApi, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -400,13 +394,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         }
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
-                                final Double lat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
-                                final Double lng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                final Double musicLng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
                                 String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
                                 String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
                                 String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
                                 String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
-                                final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
 
 
                                 final String locationAddress=streetName+" "+city+", "+state+ ", "+ zipcode;
@@ -415,11 +409,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 try {
                                     getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
                                     String artist = getArtistArray.getJSONObject(0).getString("Name");
-                                    LatLng musicLatLng = new LatLng(lat, lng);
+                                    LatLng musicLatLng = new LatLng(musicLat, musicLng);
 
                                     final HashMap<String,String> publicEventData = new HashMap<>();
                                     publicEventData.put("Name", artist);
-                                    publicEventData.put("Description", "concert??");
+                                    publicEventData.put("Description", "Music Concert");
                                     publicEventData.put("Location", locationAddress);
                                     publicEventData.put("Category", "Music");
 
@@ -452,9 +446,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                                     i.putExtra("Location", data.get("Location"));
                                                     i.putExtra("Category", data.get("Category"));
                                                     i.putExtra("Event Type", "Public");
-                                                    i.putExtra("Lat",lat);
-                                                    i.putExtra("Lng",lng);
-                                                    i.putExtra("Place Name",concertPlace);
+                                                    i.putExtra("Lat", musicLat);
+                                                    i.putExtra("Lng", musicLng);
+                                                    i.putExtra("Place Name", concertPlace);
                                                     getContext().startActivity(i);
                                                 }
                                             });
@@ -510,7 +504,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     public JsonObjectRequest getFoodRequest(String lat, String lng){
         // Pass second argument as "null" for GET requests
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, "https://developers.zomato.com/api/v2.1/geocode?lat="+lat+"&lon="+lng, null,
+        String zomatoUrl = "https://developers.zomato.com/api/v2.1/";
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, zomatoUrl+"geocode?lat="+lat+"&lon="+lng, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
