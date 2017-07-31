@@ -540,6 +540,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
+
                             String token = "";
                             try {
                                 //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
@@ -556,61 +557,50 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             payload.put("senderID", currentUserId);
                             payload.put("token", token);
 
-                            //TODO: this would probably be a better way to notify if there's time later
-                            /*InstanceID instanceID = InstanceID.getInstance(this);
-                            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);*/
-
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
-
-                            parseEvent.setLastMessageSent(message);
-                            try {
-                                parseEvent.save(); //TODO: in background or...?
-                            } catch (ParseException ex) {
-                                ex.printStackTrace();
-                            }
-
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
-
-
-                            if (data.equalsIgnoreCase("hi Shaggy")) {
-                                Message m = new Message();
-                                m.setSenderId("InuSHuTqkn");
-                                m.setBody("Hi! My name is Shaggy");
-                                m.setEventId(eventId);
-                                m.setSenderName("Shaggy");
-                                try {
-                                    m.save();
-
-                                    parseEvent.setLastMessageSent(m);
-                                    try {
-                                        parseEvent.save(); //TODO: in background or...?
-                                    } catch (ParseException ex) {
-                                        ex.printStackTrace();
-                                    }
-
-                                    mAdapter.notifyItemInserted(0);
-                                    rvChat.smoothScrollToPosition(0);
-                                } catch (ParseException exception) {
-                                    exception.printStackTrace();
-                                }
-
-                            }
-
 
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
                     }
                 });
+
                 etMessage.setText(null);
                 // add message to arraylist
                 mMessages.add(0, message);
                 mAdapter.notifyItemInserted(0);
-                rvChat.smoothScrollToPosition(0);
+                parseEvent.setLastMessageSent(message);
+                try {
+                    parseEvent.save(); //TODO: in background or...?
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
 
 
+                if (data.equalsIgnoreCase("hi Shaggy")) {
+                    Message m = new Message();
+                    m.setSenderId("InuSHuTqkn");
+                    m.setBody("Hi! My name is Shaggy");
+                    m.setEventId(eventId);
+                    m.setSenderName("Shaggy");
+                    try {
+                        m.save();
+
+                        parseEvent.setLastMessageSent(m);
+                        try {
+                            parseEvent.save(); //TODO: in background or...?
+                        } catch (ParseException ex) {
+                            ex.printStackTrace();
+                        }
+
+                        mAdapter.notifyItemInserted(0);
+                    } catch (ParseException exception) {
+                        exception.printStackTrace();
+                    }
+
+                }
             }
         });
 

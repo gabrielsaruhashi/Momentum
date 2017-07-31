@@ -46,8 +46,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     // list of tweets
     ArrayList<Event> events;
+
     // pass in the Tweets array in the constructor
-    public FeedAdapter(ArrayList<Event> events) { this.events = events; };
+    public FeedAdapter(ArrayList<Event> events) {
+        this.events = events;
+    }
+
+    ;
     // initialize context
     Context context;
 
@@ -141,14 +146,19 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
-        @BindView(R.id.tvEventOwnerName) TextView tvEventOwnerName;
-        @BindView(R.id.tvBody) TextView tvBody;
-        @BindView(R.id.tvRelativeTime) TextView tvRelativeTime;
-        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
-        @BindView(R.id.btJoin) Button btJoin;
-        @BindView(R.id.ivCategory) ImageView ivCategory;
+        @BindView(R.id.tvEventOwnerName)
+        TextView tvEventOwnerName;
+        @BindView(R.id.tvBody)
+        TextView tvBody;
+        @BindView(R.id.tvRelativeTime)
+        TextView tvRelativeTime;
+        @BindView(R.id.ivProfileImage)
+        ImageView ivProfileImage;
+        @BindView(R.id.btJoin)
+        Button btJoin;
+        @BindView(R.id.ivCategory)
+        ImageView ivCategory;
         Drawable backgroundCircle;
-
 
 
         public ViewHolder(View itemView) {
@@ -201,6 +211,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         events.clear();
         notifyDataSetChanged();
     }
+
     // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
     private void showMoreDetails(final Event event, final Button joinStatus) {
         // inflate message_item.xml view
@@ -257,7 +268,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       //TODO get current user
+                        //TODO get current user
                         // if user is already interested, remove; else, join
                         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                             removeEvent(currentUser.getObjectId(), event, joinStatus);
@@ -270,7 +281,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // Configure dialog button (Cancel)
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) { dialog.cancel(); }
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
                 });
 
         // Display the dialog
@@ -304,12 +317,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     // get hashmap & category
                     String category = object.getString("category");
 
-                    HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String, List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    List<Object> categoryData= hm.get(category);
+                    List<Object> categoryData = hm.get(category);
                     int oldCounter = (int) categoryData.get(0);
-                    categoryData.set(0,oldCounter+1);
+                    categoryData.set(0, oldCounter + 1);
                     hm.put(category, categoryData);
 
                     currentUser.put("categories_tracker", hm);
@@ -335,6 +348,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             }
         });
     }
+
     public void removeEvent(final String userId, final Event event, final Button joinStatus) {
         // update participants id
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
@@ -361,12 +375,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
                     // get hashmap & category
                     String category = object.getString("category");
-                    HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
+                    HashMap<String, List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
                     // update category counter
-                    List<Object> categoryData= hm.get(category);
+                    List<Object> categoryData = hm.get(category);
                     int oldCounter = (int) categoryData.get(0);
-                    categoryData.set(0,oldCounter-1);
+                    categoryData.set(0, oldCounter - 1);
                     hm.put(category, categoryData);
 
                     object.saveInBackground();
@@ -420,6 +434,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             payload.put("senderID", "InuSHuTqkn");
             payload.put("token", ""); //not being used rn
             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
+            //TODO: note, this message does not appear as last message in chats (we could fix that though)
         } catch (ParseException e) {
             e.printStackTrace();
         }

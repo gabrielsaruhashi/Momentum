@@ -23,7 +23,6 @@ import java.util.Objects;
 import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
-import shag.com.shag.Models.Message;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
@@ -70,7 +69,7 @@ public class ChatListFragment extends Fragment {
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         populateChatList(currentUserId);
-
+        startLiveQueries();
         return v;
     }
 
@@ -102,7 +101,6 @@ public class ChatListFragment extends Fragment {
                 }
             }
         });
-        startLiveQueries();
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event) {
@@ -150,25 +148,26 @@ public class ChatListFragment extends Fragment {
     }
 
     public void startLiveQueries() {
-        // Make sure the Parse server is setup to configured for live queries
-        // URL for server is determined by Parse.initialize() call.
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
-        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+        ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
         // Listen for CREATE events
-        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
-                SubscriptionHandling.HandleEventCallback<Message>() {
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
+                SubscriptionHandling.HandleEventCallback<Event>() {
                     @Override
-                    public void onEvent(ParseQuery<Message> query, Message object) {
+                    public void onEvent(ParseQuery<Event> query, Event object) {
                         String newEventId = object.getEventId();
 
                         if (eventIds.contains(newEventId)) {
                             ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
+                            eventQuery.include("User_event_owner");
+                            eventQuery.include("last_message_sent");
                             try {
                                 Event event = eventQuery.get(newEventId);
-                                event.setLastMessageSent(object);
-                                event.saveInBackground(); //TODO: in background or...?
-                                adapter.notifyItemChanged(eventIds.indexOf(newEventId));
+                                Chat chat = getChatInfoFromEvent(event);
+                                int index = eventIds.indexOf(newEventId);
+                                chats.set(index, chat);
+                                itemChanged(index);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -178,6 +177,16 @@ public class ChatListFragment extends Fragment {
 
                 });
 
+    }
+
+    //execute adapter refresh on ui thread
+    public void itemChanged(final int index) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyItemChanged(index);
+            }
+        });
     }
 
 
