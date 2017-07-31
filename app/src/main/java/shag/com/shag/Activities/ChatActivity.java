@@ -560,6 +560,31 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                     Toast.LENGTH_SHORT).show();
 
 
+                            if (data.equalsIgnoreCase("hi Shaggy")) {
+                                Message m = new Message();
+                                m.setSenderId("InuSHuTqkn");
+                                m.setBody("Hi! My name is Shaggy");
+                                m.setEventId(eventId);
+                                m.setSenderName("Shaggy");
+                                try {
+                                    m.save();
+
+                                    parseEvent.setLastMessageSent(m);
+                                    try {
+                                        parseEvent.save(); //TODO: in background or...?
+                                    } catch (ParseException ex) {
+                                        ex.printStackTrace();
+                                    }
+
+                                    mAdapter.notifyItemInserted(0);
+                                    rvChat.smoothScrollToPosition(0);
+                                } catch (ParseException exception) {
+                                    exception.printStackTrace();
+                                }
+
+                            }
+
+
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
@@ -572,29 +597,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 rvChat.smoothScrollToPosition(0);
 
 
-                if (data.equalsIgnoreCase("hi Shaggy")) {
-                    Message m = new Message();
-                    m.setSenderId("InuSHuTqkn");
-                    m.setBody("Hi! My name is Shaggy");
-                    m.setEventId(eventId);
-                    m.setSenderName("Shaggy");
-                    try {
-                        m.save();
 
-                        parseEvent.setLastMessageSent(m);
-                        try {
-                            parseEvent.save(); //TODO: in background or...?
-                        } catch (ParseException ex) {
-                            ex.printStackTrace();
-                        }
-
-                        mAdapter.notifyItemInserted(0);
-                        rvChat.smoothScrollToPosition(0);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-
-                }
 
 
             }
