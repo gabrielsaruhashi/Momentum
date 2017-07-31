@@ -65,7 +65,6 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             // content card
             viewHolder.tvMemoryName = (TextView) cell.findViewById(R.id.tvMemoryName);
             // title card
-            viewHolder.tvDescription = (TextView) cell.findViewById(R.id.tvDescription);
             viewHolder.ivTitle = (ImageView) cell.findViewById(R.id.ivTitle);
 
             //TODO dummy data
@@ -83,15 +82,14 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             }
             viewHolder = (ViewHolder) cell.getTag();
         }
-        /*
+
         viewHolder.tvMemoryName.setText(memory.getMemoryName());
-        viewHolder.tvDescription.setText(memory.getMemoryName()); */
 
 
         //TODO use real data to populate views
 
         Glide.with(mContext)
-                .load("http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
+                .load(memory.getCoverPictureUrl() != null ? memory.getCoverPictureUrl() : "http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
                 .into(viewHolder.ivTitle);
 
 
@@ -147,7 +145,6 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         TextView vPalette;
         Button btnAccessMemory;
         ImageView ivTitle;
-        TextView tvDescription;
 
         // dummy data
         ImageView fakeFriend1;
