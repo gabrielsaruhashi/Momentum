@@ -97,6 +97,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.2@aar' // circle indicator for slideshow
     compile 'com.google.guava:guava:22.0-android'
 
+
 }
 
 // for GMS notifications
