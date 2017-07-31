@@ -68,7 +68,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         if (iconImageUrl == null) {
             iconImageUrl = "https://cnet4.cbsistatic.com/img/QJcTT2ab-sYWwOGrxJc0MXSt3UI=/2011/10/27/a66dfbb7-fdc7-11e2-8c7c-d4ae52e62bcc/android-wallpaper5_2560x1600_1.jpg";
         }
-        holder.tvEventDescription.setText(chat.getDescription());
+        holder.tvEventDescription.setText(chat.getDescription().toUpperCase());
         holder.tvParticipants.setText(chat.getChatTitle());
 
         if (event.category.equals("Chill")) {
