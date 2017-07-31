@@ -6,7 +6,7 @@
 
     <item
         android:id="@+id/miEventReady"
-        android:icon="@drawable/ic_person"
+        android:icon="@drawable/ic_event_ready"
         android:onClick="onEventReady"
         android:title="Item"
         app:showAsAction="always"

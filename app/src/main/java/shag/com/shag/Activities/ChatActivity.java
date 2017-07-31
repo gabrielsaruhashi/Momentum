@@ -86,7 +86,7 @@ import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
-        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface {
+        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.EventReadyCheckInterface {
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
@@ -172,7 +172,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // initialize the list of polls
         polls = new ArrayList<>();
         // construct the adater from the data source
-        pollAdapter = new PollsAdapter(getContext(), this, this, polls);
+        pollAdapter = new PollsAdapter(getContext(), this, this, this, polls);
 
         // initialize recycler view
         rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
@@ -924,12 +924,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             MenuItem mi = menu.findItem(R.id.miEventReady);
                             mi.setVisible(true);
                         }
+
                         eventDb.saveInBackground();
                     }
                 }
             });
         }
-
     }
 
     // function creates the main OR query to search for all user ids
@@ -1235,6 +1235,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         refreshMessages();
         refreshPolls();
+    }
+
+    public void checkIfEventReady() {
+        findPollWinners(polls);
+        if (timeWinner != null && locationWinner != null) {
+            MenuItem mi = menu.findItem(R.id.miEventReady);
+            mi.setVisible(true);
+        }
     }
 }
 
