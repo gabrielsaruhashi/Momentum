@@ -59,6 +59,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
     TimeButtonsInterface timeButtonsInterface;
     LocationButtonsInterface locationButtonsInterface;
+    ConflictTextViewInterface conflictTextViewInterface;
     private Context context;
 
     public interface TimeButtonsInterface {
@@ -68,14 +69,17 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     public interface LocationButtonsInterface {
          void setLocationValues(ArrayList<View> locations, int position);
     }
+
+    public interface ConflictTextViewInterface {
+        void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions);
+    }
     public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
-                        LocationButtonsInterface locationButtonsInterface, ArrayList<Poll> polls) {
+                        LocationButtonsInterface locationButtonsInterface, ConflictTextViewInterface conflictTextViewInterface, ArrayList<Poll> polls) {
         this.polls = polls;
         this.context=c;
         this.timeButtonsInterface = timeButtonsInterface;
         this.locationButtonsInterface = locationButtonsInterface;
-
-
+        this.conflictTextViewInterface = conflictTextViewInterface;
     }
 
 
@@ -128,6 +132,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         TextView tvSet2;
         @BindView(tv3)
         TextView tvSet3;
+
+        @BindView(R.id.tvConflict) TextView tvConflict;
 
 
         //Button btVote;
@@ -310,8 +316,14 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         }
 
         //TODO visual cue
-        if (position == 0) {
-
+        if (poll.getPollType().equals("Time")) {
+            ArrayList<String> choices = new ArrayList<>();
+            for (String choice : poll.getChoices()) {
+                if (!choice.equalsIgnoreCase("Custom")) {
+                    choices.add(choice);
+                }
+            }
+            conflictTextViewInterface.setTvConflictVisibility(holder.tvConflict, choices);
         }
 
 

@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import shag.com.shag.Adapters.ConflictingEventsAdapter;
 import shag.com.shag.Models.CalendarEvent;
-import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.R;
 
 /**
@@ -61,9 +60,9 @@ public class ConflictingEventsDialogFragment extends DialogFragment {
         rvConflictingEvents.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // add line divider decorator
-        RecyclerView.ItemDecoration itemDecoration = new
+        /* RecyclerView.ItemDecoration itemDecoration = new
                 DividerItemDecorator(rvConflictingEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
-        rvConflictingEvents.addItemDecoration(itemDecoration);
+        rvConflictingEvents.addItemDecoration(itemDecoration); */
 
 
     }

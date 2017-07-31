@@ -43,7 +43,9 @@
         android:id="@+id/tvEventTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_below="@id/tvLocation"
+        android:layout_marginLeft="@dimen/rv_margin_left"
+        android:layout_marginTop="4dp"
         android:text="TextView"
         android:textSize="12sp"
         android:textStyle="bold" />
