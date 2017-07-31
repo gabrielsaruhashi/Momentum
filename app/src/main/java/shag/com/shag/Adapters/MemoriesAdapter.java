@@ -1,23 +1,20 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.HashSet;
 import java.util.List;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-import shag.com.shag.Activities.MemoryDetailsActivity;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
@@ -38,6 +35,32 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     @Override
     public View getView(int position, final View convertView, ViewGroup parent) {
+        Context context = parent.getContext();
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View contactView = inflater.inflate(R.layout.cell_title_layout, parent, false);
+
+        ViewHolder viewHolder = new ViewHolder(contactView);
+
+        final Memory memory = getItem(position);
+
+        // populate views
+        viewHolder.tvMemoryName.setText(memory.getMemoryName());
+        /*
+        if (memory.getTotalFacebookLikes() != 0) {
+
+        }
+        viewHolder.tvLoveCount.setText(memory.getTotalFacebookLikes());
+        viewHolder.tvPhotoCount.setText(memory.getPicturesParseFiles().size()); */
+
+        viewHolder.ivCoverPicture.setAdjustViewBounds(true);
+        Glide.with(mContext)
+                .load(memory.getCoverPictureUrl() != null ? memory.getCoverPictureUrl() : "http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
+                .centerCrop()
+                .into(viewHolder.ivCoverPicture);
+
+        return contactView;
+
+        /*
         // get item for selected view
         final Memory memory = getItem(position);
         // if cell is exists - reuse it, if not - create the new one from resource
@@ -112,8 +135,9 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
 
         return cell;
+        */
     }
-
+    /*
     // simple methods for register cell state changes
     public void registerToggle(int position) {
         if (unfoldedIndexes.contains(position))
@@ -136,10 +160,11 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     public void setDefaultRequestBtnClickListener(View.OnClickListener defaultRequestBtnClickListener) {
         this.defaultRequestBtnClickListener = defaultRequestBtnClickListener;
-    }
+    } */
 
     // View lookup cache
-    private static class ViewHolder {
+    public static class ViewHolder {
+        /*
         ImageView ivMemoryBannerPicture;
         TextView tvMemoryName;
         TextView vPalette;
@@ -149,7 +174,17 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         // dummy data
         ImageView fakeFriend1;
         ImageView fakeFriend2;
-        ImageView fakeFriend3;
+        ImageView fakeFriend3; */
+
+        @BindView(R.id.tvMemoryName) TextView tvMemoryName;
+        @BindView(R.id.ivCoverPicture) ImageView ivCoverPicture;
+        @BindView(R.id.tvLoveCount) TextView tvLoveCount;
+        @BindView(R.id.tvPhotoCount) TextView tvPhotoCount;
+
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
 
 
     }
