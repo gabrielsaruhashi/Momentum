@@ -4,13 +4,11 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -150,18 +148,20 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // instantiate facebook album id
         facebookAlbumId =  Long.valueOf(memory.getFacebookAlbumId());
 
+        // check if user already gave publishing permissions
+        if (!facebookPermissionsSet.contains("publish_actions")) {
+            // if not, get additional publishing permission
+            LoginManager.getInstance().logInWithPublishPermissions(
+                    MemoryDetailsActivity.this,
+                    Arrays.asList("publish_actions"));
+        }
+
         //TODO if album already exists, just add photo
         // add listener to facebook share
         btFacebookShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // check if user already gave publishing permissions
-                if (!facebookPermissionsSet.contains("publish_actions")) {
-                    // if not, get additional publishing permission
-                    LoginManager.getInstance().logInWithPublishPermissions(
-                            MemoryDetailsActivity.this,
-                            Arrays.asList("publish_actions"));
-                }
+
 
                 // instantiate arraylist of participants facebook id
                 participantsFacebookIds = memory.getParticipantsFacebookIds();
@@ -174,7 +174,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         myToolbar.setTitle(memory.getMemoryName());
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
 
     }
@@ -403,6 +402,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     protected void onDestroy() {
         super.onDestroy();
 
+
         // in case user uploads pictures, update the album status
 
         if (initialNumberOfPictures != pictures.size()) {
@@ -424,6 +424,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             // support variables
                             String mostLikesUrl = new String();
                             int mostLikes = 0;
+                            int mostLikesIndex = 0;
                             int totalNumberOfFacebookLikes = 0;
 
                             // iterate through the pictures array
@@ -439,30 +440,43 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                 }
 
 
-                                // if pic has any likes, add to the likes counter and check if it is the most populatr
+                                // if pic has any likes, add to the likes counter and check if it is more popular
                                 if (likes != null ) {
                                     int numberOfLikes = likes.getJSONArray("data").length();
 
                                     totalNumberOfFacebookLikes += numberOfLikes;
                                     // check if current picture has more likes
                                     if (numberOfLikes > mostLikes) {
+                                        // save the highest number of likes
                                         mostLikes = numberOfLikes;
-                                        // get the pictures
+                                        // get the picture
                                         mostLikesUrl = pictureData.getJSONArray("images").getJSONObject(0).getString("source");
+                                        mostLikesIndex = i;
                                     }
                                 }
                             }
 
                             // at the end of the for loop, update total number of facebook likes and cover picture
                             memory.setTotalFacebookLikes(totalNumberOfFacebookLikes);
+
                             if (mostLikesUrl != null) { // ensure that the url is valid
                                 memory.setCoverPictureUrl(mostLikesUrl);
+                                // reorder memories, so that the one with most likes becomes the first element
+                                ParseFile mostLikedPicture = pictures.get(mostLikesIndex);
+                                pictures.remove(mostLikesIndex);
+                                pictures.add(0, mostLikedPicture);
+
+                                // save the new pictures array
+                                memory.setPicturesParseFiles(pictures);
+
                             } else {
-                                // if there are no images with most likes, just set it to be the last picture added
-                                memory.setCoverPictureUrl(pictures.get(pictures.size() - 1).getUrl());
+                                // if there are no images with most likes, just set it to be the first picture added
+                                memory.setCoverPictureUrl(pictures.get(0).getUrl());
                             }
                             // save
                             memory.saveInBackground();
+
+                            handler.removeCallbacks(Update);
 
                         } catch (JSONException e) {
                             e.getMessage();
@@ -474,18 +488,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         }
 
     }
-    // creates a bitmap from parsefile data
-    private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
 
-        try {
-            byte[] bitmapdata = parseFile.getData();
-            Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-            return bm;
-        } catch (ParseException e) {
-            e.getMessage();
-        }
-        return null;
-    }
 
     // helper to return an arraylist of integers with the name of the contributors
     private ArrayList<Integer> getIntegerArray(ArrayList<String> stringArray) {
@@ -505,12 +508,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     @Override
     public void onBackPressed() {
         supportFinishAfterTransition();
-    }
-
-    protected void onStop() {
-        super.onStop();
-        handler.removeCallbacks(Update);
-
     }
 
 
