@@ -26,7 +26,7 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
 
     public void onSelectCategory(View view) {
         switch (view.getId()) {
-            case R.id.chillCard: pickedCategory = "Chill";
+            case R.id.chillCard: pickedCategory = "Location";
                 break;
             case R.id.foodCard: pickedCategory = "Food";
                 break;
@@ -40,9 +40,16 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
                 break;
         }
         if (pickedCategory != null) {
-            Intent i = new Intent(SelectEventCategoryActivity.this, SelectEventDetailsActivity.class);
+            Intent i;
+            if (pickedCategory.equals("Location")) {
+                i = new Intent(SelectEventCategoryActivity.this, SelectPublicEventTypeActivity.class);
+                i.putExtra("Event Type", "Public");
+            }
+            else {
+                i = new Intent(SelectEventCategoryActivity.this, SelectEventDetailsActivity.class);
+                i.putExtra("Event Type", "Private");
+            }
             i.putExtra("Category", pickedCategory);
-            i.putExtra("Event Type", "Private");
             startActivity(i);
         }
     }

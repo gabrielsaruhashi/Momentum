@@ -34,7 +34,7 @@ def dbflow_version = "4.0.4"
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     //androidTestCompile('com.android.support.chill_circle.espresso:espresso-core:2.2.2', {
-      //  exclude group: 'com.android.support', module: 'support-annotations'
+    //  exclude group: 'com.android.support', module: 'support-annotations'
     //})
     // If you want to use the GPU Filters
 
@@ -63,6 +63,10 @@ dependencies {
     // for Parse Live Queries
     // for Card View
     // GCM
+    // folding effect for memories
+    // circle indicator for slideshow
+
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -88,16 +92,14 @@ dependencies {
     compile 'com.parse:parse-livequery-android:1.0.4'
     compile 'com.android.support:cardview-v7:25.2.1'
     compile 'com.google.android.gms:play-services-gcm:11.0.1'
+    compile 'com.ramotion.foldingcell:folding-cell:1.2.1'
+    compile 'com.android.support:gridlayout-v7:25.3.1'
+    compile 'org.jcodec:jcodec-android:0.1.9'
+    compile 'me.relex:circleindicator:1.2.2@aar'
+    compile 'com.google.guava:guava:22.0-android'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
-    compile 'com.ramotion.foldingcell:folding-cell:1.2.1' // folding effect for memories
-    compile 'com.android.support:gridlayout-v7:25.3.1'
-    compile 'org.jcodec:jcodec-android:0.1.9'
-    compile 'me.relex:circleindicator:1.2.2@aar' // circle indicator for slideshow
-    compile 'com.google.guava:guava:22.0-android'
-
-
 }
 
 // for GMS notifications

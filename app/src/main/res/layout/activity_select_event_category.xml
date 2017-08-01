@@ -54,14 +54,16 @@
                         android:id="@+id/chillIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="104dp"
+                        android:tint="@color/white"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_chill" />
+                        android:src="@drawable/ic_globe"
+                        android:layout_alignParentTop="true" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/chillIcon"
-                        android:text="CHILL"
+                        android:text="LOCATION"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
