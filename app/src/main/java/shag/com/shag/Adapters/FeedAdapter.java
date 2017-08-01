@@ -1,11 +1,10 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +21,12 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -35,8 +36,6 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 /**
  * Created by gabesaruhashi on 7/10/17.
@@ -90,6 +89,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void onBindViewHolder(FeedAdapter.ViewHolder holder, int position) {
         // populate the views
         Event event = events.get(position);
+        if (!event.getIsEventPrivate())  {
+            showMap(event, holder);
+        }
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
@@ -212,6 +214,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         @BindView(R.id.ivFriend2) ImageView ivFriend2;
         @BindView(R.id.ivFriend3) ImageView ivFriend3;
         @BindView(R.id.ivCategoryBar) ImageView ivCategoryBar;
+        @BindView(R.id.ivMap) ImageView ivMap;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -244,7 +247,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         break;
                     // if user presses viewholder, show more details of activity
                     default:
-                        showMoreDetails(event, btJoin);
+                        //showMoreDetails(event, btJoin);
                         break;
                 }
 
@@ -262,7 +265,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         events.clear();
         notifyDataSetChanged();
     }
-
+    /*
     // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
     private void showMoreDetails(final Event event, final Button joinStatus) {
         // inflate message_item.xml view
@@ -304,11 +307,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 tvRelativeTime.setText(event.getDeadline().toString());
 
                 //TODO upload image of event owner
-                /*
+
                 Glide.with(context)
                         .load(event.user.profileImageUrl)
                         .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                        .into(ivProfileImage); */
+                        .into(ivProfileImage);
 
             }
         });
@@ -339,7 +342,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // Display the dialog
         alertDialog.show();
-    }
+    } */
 
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
@@ -489,6 +492,31 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showMap(Event event, FeedAdapter.ViewHolder holder) {
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?";
+        String destination = "";
+        try {
+            Address destinationLocation = geocoder.getFromLocation(event.getLatitude(), event.getLongitude(), 1).get(0);
+            destination = destinationLocation.getAddressLine(0);
+            destination = destination.replace(" ", "+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        baseUrl += "center=" + destination;
+        baseUrl += "&zoom=17";
+        baseUrl += "&size=450x250";
+        baseUrl += "&markers=color:blue%7C" + destination;
+        baseUrl += "&sensor=false";
+        baseUrl += "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+
+        holder.ivMap.setVisibility(View.VISIBLE);
+        Glide.with(context)
+                .load(baseUrl)
+                .into(holder.ivMap);
     }
 
 }

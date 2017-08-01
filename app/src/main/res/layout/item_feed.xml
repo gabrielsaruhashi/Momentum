@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginBottom="0dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="16dp"
     android:orientation="vertical">
 
     <ImageView
@@ -25,6 +27,7 @@
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
         card_view:cardBackgroundColor="@android:color/white"
+        card_view:cardCornerRadius="5dp"
         card_view:cardElevation="4dp"
         card_view:cardUseCompatPadding="true">
 
@@ -56,6 +59,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_toRightOf="@+id/ivProfileImage"
+                android:fontFamily="sans-serif-light"
                 android:text="TextView"
                 android:textSize="14sp"
                 android:textStyle="bold" />
@@ -64,14 +68,15 @@
                 android:id="@+id/tvBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/btJoin"
                 android:layout_alignParentStart="true"
                 android:layout_below="@+id/ivProfileImage"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:autoLink="all"
+                android:fontFamily="sans-serif-light"
                 android:text="TextView"
-                android:textSize="16sp"
-                android:layout_alignEnd="@+id/btJoin" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tvExpiresText"
@@ -80,27 +85,28 @@
                 android:layout_alignBaseline="@+id/tvEventOwnerName"
                 android:layout_alignBottom="@+id/tvEventOwnerName"
                 android:layout_toStartOf="@+id/tvRelativeTime"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="Expires in "
                 android:textAllCaps="true"
-                android:textSize="12sp" />
+                android:textSize="10sp" />
 
             <TextView
                 android:id="@+id/tvRelativeTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tvExpiresText"
+                android:layout_alignBottom="@+id/tvExpiresText"
+                android:layout_alignParentEnd="true"
                 android:layout_marginRight="8dp"
                 android:text="TXT"
                 android:textAllCaps="true"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:layout_alignBaseline="@+id/tvExpiresText"
-                android:layout_alignBottom="@+id/tvExpiresText"
-                android:layout_alignParentEnd="true" />
+                android:textSize="10sp"
+                android:textStyle="bold" />
 
             <ImageView
                 android:id="@+id/ivFriend1"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_alignTop="@+id/btJoin"
                 android:layout_marginBottom="8dp"
                 android:layout_marginLeft="8dp"
@@ -108,16 +114,16 @@
 
             <ImageView
                 android:id="@+id/ivFriend2"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_alignTop="@+id/btJoin"
                 android:layout_marginLeft="8dp"
                 android:layout_toLeftOf="@+id/ivFriend3" />
 
             <ImageView
                 android:id="@+id/ivFriend3"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
                 android:layout_alignTop="@+id/btJoin"
                 android:layout_marginLeft="8dp"
                 android:layout_toLeftOf="@+id/btJoin" />
@@ -127,11 +133,26 @@
                 android:layout_width="64dp"
                 android:layout_height="28dp"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/tvBody"
-                android:layout_margin="8dp"
+                android:layout_below="@+id/ivMap"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
                 android:background="@color/colorAccent"
+                android:fontFamily="sans-serif-smallcaps"
                 android:text="Join"
                 android:textColor="@color/white" />
+
+            <ImageView
+                android:id="@+id/ivMap"
+                android:layout_width="225dp"
+                android:layout_height="125dp"
+                android:layout_alignLeft="@+id/tvBody"
+                android:layout_marginLeft="8dp"
+                android:layout_below="@id/tvBody"
+                android:background="@color/black"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"/>
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>
