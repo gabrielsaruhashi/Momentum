@@ -1,105 +1,137 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/ivCategory"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_marginTop="12dp"
         android:background="@drawable/misc_circle"
-        android:id="@+id/ivCategory"
-        android:gravity="center"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:gravity="center" />
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/cvRoot"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/ivCategory"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:layout_toRightOf="@id/ivCategory"
         card_view:cardBackgroundColor="@android:color/white"
         card_view:cardElevation="4dp"
         card_view:cardUseCompatPadding="true">
 
+        <ImageView
+            android:id="@+id/ivCategoryBar"
+            android:layout_width="@dimen/category_tag_width"
+            android:layout_height="match_parent"
+            android:background="@color/black" />
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="2dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/ivProfileImage"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                app:srcCompat="@android:color/black"/>
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                app:srcCompat="@android:color/black" />
 
             <TextView
                 android:id="@+id/tvEventOwnerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:layout_alignParentTop="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_toRightOf="@+id/ivProfileImage"
-                android:layout_marginLeft="4dp"/>
+                android:text="TextView"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tvBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/ivProfileImage"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
                 android:autoLink="all"
                 android:text="TextView"
                 android:textSize="16sp"
-                android:layout_below="@+id/ivProfileImage"
-                android:layout_alignParentStart="true"
-                android:layout_marginTop="4dp"/>
-
-
-            <Button
-                android:id="@+id/btJoin"
-                android:layout_width="56dp"
-                android:layout_height="28dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignTop="@+id/tvBody"
-                android:background="@color/colorAccent"
-                android:text="Join"
-                android:textColor="@color/white"/>
-            <!--
-            <ImageView
-                android:id="@+id/btJoin"
-                android:layout_width="84dp"
-                android:layout_height="42dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentTop="true"
-                app:srcCompat="@drawable/ic_join" />!-->
+                android:layout_alignEnd="@+id/btJoin" />
 
             <TextView
                 android:id="@+id/tvExpiresText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/tvEventOwnerName"
+                android:layout_alignBottom="@+id/tvEventOwnerName"
+                android:layout_toStartOf="@+id/tvRelativeTime"
                 android:text="Expires in "
-                android:textSize="12sp"
-                android:layout_below="@+id/tvEventOwnerName"
-                android:layout_alignLeft="@+id/tvEventOwnerName"
-                android:layout_marginTop="2dp"/>
+                android:textAllCaps="true"
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvRelativeTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/tvExpiresText"
-                android:layout_alignBottom="@+id/tvExpiresText"
-                android:text="TextView"
+                android:layout_marginRight="8dp"
+                android:text="TXT"
+                android:textAllCaps="true"
                 android:textSize="12sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_alignBaseline="@+id/tvExpiresText"
+                android:layout_alignBottom="@+id/tvExpiresText"
+                android:layout_alignParentEnd="true" />
+
+            <ImageView
+                android:id="@+id/ivFriend1"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignTop="@+id/btJoin"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/ivFriend2" />
+
+            <ImageView
+                android:id="@+id/ivFriend2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignTop="@+id/btJoin"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/ivFriend3" />
+
+            <ImageView
+                android:id="@+id/ivFriend3"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignTop="@+id/btJoin"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/btJoin" />
+
+            <Button
+                android:id="@+id/btJoin"
+                android:layout_width="64dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/tvBody"
+                android:layout_margin="8dp"
+                android:background="@color/colorAccent"
+                android:text="Join"
+                android:textColor="@color/white" />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 </RelativeLayout>

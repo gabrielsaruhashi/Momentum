@@ -2,7 +2,6 @@ package shag.com.shag.Adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -31,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
@@ -46,6 +46,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     // list of tweets
     ArrayList<Event> events;
+    int colorId;
 
     // pass in the Tweets array in the constructor
     public FeedAdapter(ArrayList<Event> events) {
@@ -94,34 +95,46 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
         holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
 
+        //TODO: change categories
+        if (event.getCategory().equals("Chill")) {
+            colorId = R.color.chill_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_chill);
+            holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
+        } else if (event.getCategory().equals("Sports")) {
+            colorId = R.color.sports_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_sports);
+            holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
+        } else if (event.getCategory().equals("Party")) {
+            colorId = R.color.party_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_party);
+            holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
+        } else if (event.getCategory().equals("Food")) {
+            colorId = R.color.food_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_food);
+            holder.ivCategory.setBackgroundResource(colorId);
+            holder.ivCategoryBar.setBackgroundResource(R.color.food_color);
+        } else if (event.getCategory().equals("Music")) {
+            colorId = R.color.music_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_music);
+            holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
+        } else {
+            colorId = R.color.misc_color;
+            holder.ivCategory.setImageResource(R.drawable.ic_misc);
+            holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
+        }
+
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
             holder.btJoin.setText("Joined");
 
         } else {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, colorId));
             holder.btJoin.setText("Join");
-        }
-
-        //TODO: change categories
-        if (event.getCategory().equals("Chill")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_chill);
-            holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
-        } else if (event.getCategory().equals("Sports")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_sports);
-            holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
-        } else if (event.getCategory().equals("Party")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_party);
-            holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
-        } else if (event.getCategory().equals("Food")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_food);
-            holder.ivCategory.setBackgroundResource(R.drawable.food_circle);
-        } else if (event.getCategory().equals("Music")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_music);
-            holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
-        } else {
-            holder.ivCategory.setImageResource(R.drawable.ic_misc);
-            holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
         }
 
         // get icon url
@@ -135,6 +148,49 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                 .into(holder.ivProfileImage);
 
+        ArrayList<String> participants = event.getParticipantsIds();
+        if (participants.size() > 1) {
+            try {
+                ParseUser user = ParseUser.getQuery().get(participants.get(1));
+                Glide.with(context)
+                        .load(user.getString("profile_image_url").replace("_normal", ""))
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(holder.ivFriend1);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            holder.ivFriend1.setVisibility(View.GONE);
+        }
+
+        if (participants.size() > 2) {
+            try {
+                ParseUser user = ParseUser.getQuery().get(participants.get(2));
+                Glide.with(context)
+                        .load(user.getString("profile_image_url").replace("_normal", ""))
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(holder.ivFriend2);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            holder.ivFriend2.setVisibility(View.GONE);
+        }
+
+        if (participants.size() > 3) {
+            try {
+                ParseUser user = ParseUser.getQuery().get(participants.get(3));
+                Glide.with(context)
+                        .load(user.getString("profile_image_url").replace("_normal", ""))
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(holder.ivFriend3);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            holder.ivFriend3.setVisibility(View.GONE);
+        }
+
     }
 
     @Override
@@ -146,20 +202,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
-        @BindView(R.id.tvEventOwnerName)
-        TextView tvEventOwnerName;
-        @BindView(R.id.tvBody)
-        TextView tvBody;
-        @BindView(R.id.tvRelativeTime)
-        TextView tvRelativeTime;
-        @BindView(R.id.ivProfileImage)
-        ImageView ivProfileImage;
-        @BindView(R.id.btJoin)
-        Button btJoin;
-        @BindView(R.id.ivCategory)
-        ImageView ivCategory;
-        Drawable backgroundCircle;
-
+        @BindView(R.id.tvEventOwnerName) TextView tvEventOwnerName;
+        @BindView(R.id.tvBody) TextView tvBody;
+        @BindView(R.id.tvRelativeTime) TextView tvRelativeTime;
+        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
+        @BindView(R.id.btJoin) Button btJoin;
+        @BindView(R.id.ivCategory) ImageView ivCategory;
+        @BindView(R.id.ivFriend1) ImageView ivFriend1;
+        @BindView(R.id.ivFriend2) ImageView ivFriend2;
+        @BindView(R.id.ivFriend3) ImageView ivFriend3;
+        @BindView(R.id.ivCategoryBar) ImageView ivCategoryBar;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -169,7 +221,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
             // set click listener for quick join shortcut
             btJoin.setOnClickListener(this);
-            backgroundCircle = ivCategory.getBackground();
         }
 
         @Override
@@ -236,7 +287,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
                 } else {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
+                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, colorId));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -386,7 +437,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, colorId));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
