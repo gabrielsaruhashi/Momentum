@@ -112,49 +112,18 @@
             android:layout_marginBottom="6dp">
 
             <!-- Bottom of the card -->
-            <ImageView
-                android:id="@+id/ivLove"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/mainFrame"
-                android:layout_marginLeft="16dp"
-                card_view:srcCompat="@drawable/ic_love" />
-
-
-            <TextView
-                android:id="@+id/tvLoveCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/mainFrame"
-                android:layout_toEndOf="@id/ivLove"
-                android:text="5"
-                android:textSize="16sp"
-                android:padding="2dp"/>
-
-            <TextView
-                android:id="@+id/tvLikesBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Likes"
-                android:textSize="16sp"
-                android:layout_below="@+id/mainFrame"
-                android:layout_toEndOf="@+id/tvLoveCount"
-                android:padding="2dp"/>
 
             <ImageView
                 android:id="@+id/ivPhoto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/mainFrame"
                 android:layout_marginLeft="16dp"
-                android:layout_toEndOf="@id/tvLikesBadge"
                 card_view:srcCompat="@drawable/ic_photo" />
 
             <TextView
                 android:id="@+id/tvPhotoCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/mainFrame"
                 android:layout_toEndOf="@id/ivPhoto"
                 android:text="23"
                 android:padding="2dp"
@@ -164,11 +133,33 @@
                 android:id="@+id/tvPhotosBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/mainFrame"
                 android:layout_toEndOf="@id/tvPhotoCount"
                 android:text="Photos"
                 android:textSize="16sp"
                 android:padding="2dp"/>
+
+            <ImageView
+                android:id="@+id/ivFriend1"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/ivFriend2" />
+
+            <ImageView
+                android:id="@+id/ivFriend2"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginLeft="8dp"
+                android:layout_toLeftOf="@+id/ivFriend3" />
+
+            <ImageView
+                android:id="@+id/ivFriend3"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"/>
         </RelativeLayout>
 
 
