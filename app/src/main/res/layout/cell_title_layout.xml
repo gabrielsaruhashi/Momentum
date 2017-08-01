@@ -51,6 +51,7 @@
                     app:srcCompat="@color/black" />
 
                 <ImageView
+                    android:transitionName="memoryDetail"
                     android:id="@+id/ivCoverPicture"
                     android:layout_width="350dp"
                     android:layout_height="350dp"
@@ -125,7 +126,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@id/ivPhoto"
-                android:text="23"
+                android:text="0"
                 android:padding="2dp"
                 android:textSize="16sp" />
 

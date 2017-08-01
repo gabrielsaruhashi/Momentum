@@ -141,7 +141,7 @@ public class ParseApplication extends Application {
 
                                     context.startActivity(intent);
                                 } else {
-                                    JSONArray friends = obj.getJSONArray("data");
+                                    JSONArray friends = response.getJSONObject().getJSONArray("data");
                                     for (int i = 0; i < friends.length(); i++) {
                                         User friend = User.fromJson(friends.getJSONObject(i));
                                         facebookFriendsIds.add(friend.fbUserID);

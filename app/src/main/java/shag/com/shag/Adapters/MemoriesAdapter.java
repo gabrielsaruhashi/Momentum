@@ -1,7 +1,9 @@
 package shag.com.shag.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,11 +41,11 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     @Override
     public View getView(int position, final View convertView, ViewGroup parent) {
-        Context context = parent.getContext();
+        final Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View contactView = inflater.inflate(R.layout.cell_title_layout, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(contactView);
+        final ViewHolder viewHolder = new ViewHolder(contactView);
 
         final Memory memory = getItem(position);
 
@@ -66,7 +68,9 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             public void onClick(View v) {
                 Intent i = new Intent(mContext, MemoryDetailsActivity.class);
                 i.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
-                mContext.startActivity(i);
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation((Activity) mContext, (View) viewHolder.ivCoverPicture, "memoryDetail");
+                mContext.startActivity(i, options.toBundle());
             }
         });
 
@@ -139,9 +143,6 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         @BindView(R.id.ivFriend1) ImageView ivFriend1;
         @BindView(R.id.ivFriend2) ImageView ivFriend2;
         @BindView(R.id.ivFriend3) ImageView ivFriend3;
-
-
-
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);

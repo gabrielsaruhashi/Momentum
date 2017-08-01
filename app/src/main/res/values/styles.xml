@@ -13,6 +13,7 @@
         <item name="colorPrimary">@color/gradient_end</item>
         <item name="colorPrimaryDark">@color/material_dark_orange</item>
         <item name="colorAccent">@color/material_bright_orange</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
 
