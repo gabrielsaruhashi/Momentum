@@ -41,7 +41,7 @@ public class MyAlarm extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Calendar time = Calendar.getInstance();
         time.setTimeInMillis(longStartTime);
-        time.add(Calendar.SECOND, 60);
+        time.add(Calendar.SECOND, 10);
 
         alarmMgr.set(AlarmManager.RTC_WAKEUP, time.getTimeInMillis(),
                 pendingIntent);

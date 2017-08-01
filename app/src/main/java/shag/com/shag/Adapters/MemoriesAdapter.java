@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import shag.com.shag.Activities.MemoryDetailsActivity;
 import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
@@ -57,6 +59,16 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
                 .load(memory.getCoverPictureUrl() != null ? memory.getCoverPictureUrl() : "http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
                 .centerCrop()
                 .into(viewHolder.ivCoverPicture);
+
+        contactView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(mContext, MemoryDetailsActivity.class);
+                i.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
+                mContext.startActivity(i);
+            }
+        });
+
 
         return contactView;
 
@@ -163,7 +175,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
     } */
 
     // View lookup cache
-    public static class ViewHolder {
+    public class ViewHolder {
         /*
         ImageView ivMemoryBannerPicture;
         TextView tvMemoryName;
