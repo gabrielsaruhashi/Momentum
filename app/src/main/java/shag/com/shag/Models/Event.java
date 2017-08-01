@@ -45,16 +45,25 @@ public class Event extends ParseObject implements Parcelable {
     public boolean isEventPrivate;
     public boolean isRecommendationMade;
     public String time;
+    public ParseObject lastMessageSent;
 
 
     //CONSTRUCTORS
-    public Event(){
+    public Event() {
         friendsAtEvent = new ArrayList<>();
         participantsFacebookIds = new ArrayList<>();
 
     }
     // GETTERS
 
+    public ParseObject getLastMessageSent() {
+        return getParseObject("last_message_sent");
+    }
+
+    public void setLastMessageSent(ParseObject message) {
+        this.lastMessageSent = message;
+        put("last_message_sent", message);
+    }
 
     public ArrayList<String> getParticipantsFacebookIds() {
         return (ArrayList) get("participants_facebook_ids");
@@ -64,21 +73,29 @@ public class Event extends ParseObject implements Parcelable {
         return getObjectId();
     }
 
-    public String getLocation() { return getString("location"); }
+    public String getLocation() {
+        return getString("location");
+    }
 
     public String getCategory() {
         return getString("category");
     }
 
-    public String getDescription() { return getString("description"); }
+    public String getDescription() {
+        return getString("description");
+    }
 
     public Date getDeadline() {
         return getDate("deadline");
     }
 
-    public String getEventOwnerName() { return getString("event_owner_name"); }
+    public String getEventOwnerName() {
+        return getString("event_owner_name");
+    }
 
-    public LatLng getLatLng() { return this.latLng; }
+    public LatLng getLatLng() {
+        return this.latLng;
+    }
 
     public double getLatitude() {
         return getDouble("latitude");
@@ -103,7 +120,9 @@ public class Event extends ParseObject implements Parcelable {
         return toReturn;
     }
 
-    public ArrayList<String> getParticipantsIds() { return (ArrayList) get("participants_id");}
+    public ArrayList<String> getParticipantsIds() {
+        return (ArrayList) get("participants_id");
+    }
 
     // TODO Fix this
     public ParseUser getEventOwner() {
@@ -111,7 +130,9 @@ public class Event extends ParseObject implements Parcelable {
         return getParseUser("User_event_owner");
     }
 
-    public Date getTimeOfEvent() {return getDate("event_time"); }
+    public Date getTimeOfEvent() {
+        return getDate("event_time");
+    }
 
     //TODO improve this method
     public Double getRelevance() {
@@ -121,14 +142,17 @@ public class Event extends ParseObject implements Parcelable {
     public void setRelevance(Double relevance) {
         this.relevance = relevance;
     }
+
     public boolean getIsFirstCreated() {
         return getBoolean("is_first_created");
 
     }
+
     public boolean getIsEventPrivate() {
         return getBoolean("is_event_private");
 
     }
+
     public boolean getIsRecommendationMade() {
         return isRecommendationMade;
     }
@@ -144,9 +168,10 @@ public class Event extends ParseObject implements Parcelable {
     }
 
     public void setRecommendationMade(boolean recommendationMade) {
-        this.isRecommendationMade=recommendationMade;
-        put("is_recommendation_made",isRecommendationMade);
+        this.isRecommendationMade = recommendationMade;
+        put("is_recommendation_made", isRecommendationMade);
     }
+
     public void setParticipantsFacebookIds(ArrayList<String> participantsFacebookIds) {
         this.participantsFacebookIds = participantsFacebookIds;
         put("participants_facebook_ids", participantsFacebookIds);
@@ -161,6 +186,7 @@ public class Event extends ParseObject implements Parcelable {
         this.isEventPrivate = isEventPrivate;
         put("is_event_private", isEventPrivate);
     }
+
     public void setEventOwner(ParseObject eventOwner) {
         this.eventOwner = eventOwner;
         put("User_event_owner", eventOwner);
@@ -172,11 +198,12 @@ public class Event extends ParseObject implements Parcelable {
     }
 
     public void setLocation(String location) {
-        this.location=location;
-        put("location", location); }
+        this.location = location;
+        put("location", location);
+    }
 
     public void setDescription(String description) {
-        this.description=description;
+        this.description = description;
         put("description", description);
     }
 
@@ -187,7 +214,8 @@ public class Event extends ParseObject implements Parcelable {
 
     public void setEventOwnerName(String eventOwnerName) {
         this.eventOwnerName = eventOwnerName;
-        put("event_owner_name", eventOwnerName); }
+        put("event_owner_name", eventOwnerName);
+    }
 
     public void setEventOwnerFbId(long eventOwnerFbId) {
         this.eventOwnerFbId = eventOwnerFbId;
@@ -195,23 +223,25 @@ public class Event extends ParseObject implements Parcelable {
     }
 
     /*public void setLatLng(LatLng latLng) { put("lat_lng", latLng); } */
-    public void  setParseGeoPoint(ParseGeoPoint parseGeoPoint){
-        this.parseGeoPoint=parseGeoPoint;
+    public void setParseGeoPoint(ParseGeoPoint parseGeoPoint) {
+        this.parseGeoPoint = parseGeoPoint;
         put("parse_geo_point", parseGeoPoint);
         setLatLng(new LatLng(parseGeoPoint.getLatitude(), parseGeoPoint.getLongitude()));
     }
 
     public void setLatLng(LatLng latLng) {
-        this.latLng = latLng; }
+        this.latLng = latLng;
+    }
 
     public void setCategory(String category) {
-        this.category=category;
-        put("category", category); }
+        this.category = category;
+        put("category", category);
+    }
 
     public void setParticipantsIds(ArrayList<String> participantsIds) {
-        this.participantsIds=participantsIds;
+        this.participantsIds = participantsIds;
         put("participants_id", participantsIds);
-      }
+    }
 
     public void setEventOwnerId(String eventOwnerId) {
         this.eventOwnerId = eventOwnerId;
@@ -239,7 +269,6 @@ public class Event extends ParseObject implements Parcelable {
 
 
     /*//TODO: make sure timeOfEvent isn't causing any errors*/
-
 
 
     @Override

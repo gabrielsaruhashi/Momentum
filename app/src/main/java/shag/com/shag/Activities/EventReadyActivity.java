@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -113,7 +114,16 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_ready);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         firstOpen = true;
+
+        tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
+        tvTime = (TextView) findViewById(R.id.tvFinalTime);
+        tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
+        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
+        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
+        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
 
         eventId = getIntent().getStringExtra("eventId");
 
@@ -135,32 +145,13 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         geocoder = new Geocoder(getContext(), Locale.getDefault());
         bounds = new LatLngBounds.Builder();
 
-        tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
-        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
-        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
-        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
-
-        String eventDestination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            eventDestination = currentLocation.getAddressLine(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
-        tvDestination.setText(eventDestination);
-        tvTime = (TextView) findViewById(R.id.tvFinalTime);
+        tvDestination.setText(parseEvent.getLocation());
         tvTime.setText(timeOfEvent.toString());
 
-        // Make sure the Parse server is setup to configured for live queries
-        // URL for server is determined by Parse.initialize() call.
+
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
-
         ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
-        // Connect to Parse server
         SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
-
-        // Listen for UPDATE events
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
                 SubscriptionHandling.HandleEventCallback<Event>() {
                     @Override
@@ -180,7 +171,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
         friendNames = new ArrayList<>();
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        for (String id: participantsLocations.keySet()) {
+        for (String id : participantsLocations.keySet()) {
             if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
                 ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
                 try {
@@ -276,17 +267,15 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         mLastLocation = location;
         LatLng latLng = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
 
-        //if the location is not the default then the location has been set, put location in db and get friends on map
-        if (mDestination.latitude != 47.6101 || mDestination.longitude != -122.2015) {
-            //put current user location in db
-            HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-            participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
-            parseEvent.setParticipantsLocations(participantsLocations);
+        //put location in db and get friends on map if event details have been defined
+        //put current user location in db
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
+        parseEvent.setParticipantsLocations(participantsLocations);
 
-            parseEvent.saveInBackground();
-            //putFriendsOnMap();
+        parseEvent.saveInBackground();
+        //putFriendsOnMap();
 
-        }
 
         //include both markers in view
         if (firstOpen) {
@@ -386,48 +375,47 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getDirections(final String mode) {
-        //TODO: decide if we want to move this
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
+            String origin = "";
+            String destination = "";
+            try {
+                Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
+                origin = currentLocation.getAddressLine(0);
+                origin = origin.replace(" ", "+");
 
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        baseUrl += "&origin=" + origin;
-        launchMapsUrl += "&origin=" + origin;
-        baseUrl += "&destination=" + destination;
-        launchMapsUrl += "&destination=" + destination;
-        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-        //END TODO
-
-        String url = baseUrl + "&mode=" + mode;
-        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-        launchMapsUrl +=  "&travelmode=" + mode;
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        String instructions = response.toString();
-                        populateInfoFromJson(response, mode);
-                        FetchUrl fetchUrl = new FetchUrl();
-                        fetchUrl.execute(instructions);
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
+                Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+                destination = destinationLocation.getAddressLine(0);
+                destination = destination.replace(" ", "+");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        });
+            baseUrl += "&origin=" + origin;
+            launchMapsUrl += "&origin=" + origin;
+            baseUrl += "&destination=" + destination;
+            launchMapsUrl += "&destination=" + destination;
+            baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+            launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+            //END TODO
 
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+            String url = baseUrl + "&mode=" + mode;
+            url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+            launchMapsUrl += "&travelmode=" + mode;
+            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            String instructions = response.toString();
+                            populateInfoFromJson(response, mode);
+                            FetchUrl fetchUrl = new FetchUrl();
+                            fetchUrl.execute(instructions);
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
+                }
+            });
+
+            VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
@@ -584,7 +572,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void putFriendsOnMap() {
-        for (Marker marker: markerList) {
+        for (Marker marker : markerList) {
             marker.remove();
         }
         markerList.clear();

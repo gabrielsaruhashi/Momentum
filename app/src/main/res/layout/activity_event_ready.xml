@@ -6,12 +6,22 @@
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.EventReadyActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
     <TextView
         android:id="@+id/tvPlace"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/my_toolbar"
+        android:layout_marginLeft="@dimen/activity_items_margin"
         android:text="Place: "
         android:textSize="18sp" />
 
@@ -21,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/tvPlace"
         android:layout_toEndOf="@+id/tvPlace"
-        android:text="FinalPlace"
+        android:text="TBD"
         android:textSize="17sp"
         android:textStyle="bold" />
 
@@ -40,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvFinalPlace"
         android:layout_toEndOf="@+id/tvPlace"
-        android:text="Finaltime"
+        android:text="TBD"
         android:textSize="17sp"
         android:textStyle="bold" />
 
@@ -51,7 +61,7 @@
         android:layout_height="324dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/tvFinalTime"
-        android:layout_margin="4dp"
+        android:layout_margin="@dimen/map_margin_sides"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="0dp" />
@@ -182,6 +192,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/tvTime"
         android:layout_below="@+id/map"
+        android:layout_marginLeft="@dimen/activity_items_margin"
         android:text="Pick a method: " />
 
     <ImageButton

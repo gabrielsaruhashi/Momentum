@@ -8,12 +8,22 @@
     android:orientation="vertical">
 
     <ImageView
+        android:id="@+id/ivTintColor"
+        android:layout_width="@dimen/profile_picture_length"
+        android:layout_height="@dimen/profile_picture_length"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:backgroundTint="@color/gradient_end"
+        app:srcCompat="@color/gradient_end"/>
+
+    <ImageView
         android:id="@+id/ivChatIcon"
         android:layout_width="@dimen/profile_picture_length"
         android:layout_height="@dimen/profile_picture_length"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        app:srcCompat="@android:color/black" />
+        app:srcCompat="@color/black"
+        android:alpha="1"/>
 
     <ImageView
         android:id="@+id/ivCategory"
@@ -27,43 +37,46 @@
         android:id="@+id/tvParticipants"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvEventDescription"
         android:layout_marginLeft="@dimen/rv_margin_left"
         android:layout_toEndOf="@+id/ivCategory"
         android:text="TextView"
         android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/tvLastMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/tvParticipants"
-        android:layout_marginLeft="@dimen/rv_margin_left"
-        android:layout_toEndOf="@+id/ivCategory"
-        android:autoLink="all"
-        android:visibility="gone"
-        android:text="Textview" />
+        android:textStyle="bold"
+        android:layout_centerVertical="true"/>
 
     <TextView
         android:id="@+id/tvLastMessageTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:visibility="gone"
-        android:text="Textview" />
+        android:layout_alignTop="@+id/tvEventDescription"
+        android:text="Textview"
+        android:textColor="@color/medium_gray"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/tvEventDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvParticipants"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/ivCategory"
-        android:layout_marginLeft="@dimen/rv_margin_left"
-        android:text="DESCRIPTION"
+        android:layout_marginTop="@dimen/chat_item_margin"
         android:layout_toLeftOf="@+id/tvLastMessageTime"
+        android:layout_toRightOf="@+id/ivCategory"
         android:ellipsize="end"
         android:maxLines="1"
+        android:text="DESCRIPTION"
+        android:textColor="@color/medium_gray"
         android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/tvLastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:text="Textview"
+        android:layout_alignLeft="@+id/tvParticipants"
+        android:layout_alignBottom="@+id/ivChatIcon"
+        android:layout_marginBottom="@dimen/chat_item_margin"/>
 </RelativeLayout>
