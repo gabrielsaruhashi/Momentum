@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -71,6 +73,7 @@ import java.util.Map;
 import shag.com.shag.Adapters.MessagesAdapter;
 import shag.com.shag.Adapters.PollsAdapter;
 import shag.com.shag.Clients.VolleyRequest;
+import shag.com.shag.Fragments.DialogFragments.ConflictingEventsDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.CreatePollDialogFragment;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
@@ -86,7 +89,7 @@ import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
-        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.EventReadyCheckInterface {
+        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.ConflictTextViewInterface {
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
@@ -135,15 +138,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private ParseObject eventFromQuery;
     private String favFood;
 
-    //ONLY use these variables when opening push notification
+    // ONLY use these variables when opening push notification
     boolean openedPush;
     private Event parseEvent;
+    // for calendar integration
     private ArrayList<CalendarEvent> calendarEvents;
-
+    private ArrayList<CalendarEvent> conflictingCalendarEvents;
     Menu menu;
-
     ParseQuery<Poll> parseQueryPoll;
     SubscriptionHandling<Poll> pollSubscriptionHandling;
+
+    TextView tvConflict;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,7 +156,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         setContentView(R.layout.activity_chat);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        //TODO check if this is working
+        tvConflict = (TextView) findViewById(R.id.tvConflict);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+
+            }
+        };
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -242,6 +254,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //refresh messages and polls both here
         setupMessagePosting();
         refreshPolls();
+
+        // instantiate conflicting calendar events
+        conflictingCalendarEvents = new ArrayList<CalendarEvent>();
+
         // check for permissions and set up thread to get events
         taskToGetCalendarEvents = new Runnable() {
             @Override
@@ -272,7 +288,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    // Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_LONG).show();
+                                    //Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_SHORT).show();
                                     CalendarEvent freshCalendarEvent = CalendarEvent.fromCalendarCursor(cursor);
                                     calendarEvents.add(freshCalendarEvent);
                                 }
@@ -982,6 +998,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             rButton0.setText(rButton0.getText() + " @ " + time);
             choices.set(0, rButton0.getText().toString());
             scores.put(rButton0.getText().toString(), 0);
+            //TODO check this, put in different thread
+            if (conflictsWithCalendarEvent((String) rButton0.getText())) {
+                rButton0.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            }
 
         } else if (btn == 1) {
             RadioButton rButton1 = (RadioButton) timeButtons.get(1);
@@ -995,12 +1015,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             choices.set(2, rButton2.getText().toString());
             scores.put(rButton2.getText().toString(), 0);
 
-
         } else {
             RadioButton rButton3 = (RadioButton) timeButtons.get(3);
             rButton3.setText(rButton3.getText() + " @ " + time);
             choices.set(3, rButton3.getText().toString());
             scores.put(rButton3.getText().toString(), 0);
+
+            if (conflictsWithCalendarEvent((String) rButton3.getText())) {
+                rButton3.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            }
 
         }
 
@@ -1017,8 +1040,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             }
         });
+    }
+    //TODO this might break if calendar events hasnt returned yet
+    public boolean conflictsWithCalendarEvent(String timeOption) {
+        Date dateTimeOption = convertStringToDate(timeOption);
+        boolean hasConflict = false;
 
-
+        // gets list of all calendar events that conflict with this time option
+        for (CalendarEvent calendarEvent : calendarEvents) {
+            if(!calendarEvent.getdStart().after(dateTimeOption) && !calendarEvent.getdEnd().before(dateTimeOption)) {
+                /* calendar event start time <= poll option <= calendar event end time */
+                conflictingCalendarEvents.add(calendarEvent);
+                // return true to add * to poll option UI
+                hasConflict = true;
+            }
+        }
+        return hasConflict;
     }
 
 
@@ -1131,8 +1168,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             }
         });
-
-
     }
 
     public void onEventReady(MenuItem menuItem) {
@@ -1236,6 +1271,27 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         refreshMessages();
         refreshPolls();
     }
+
+    private void showConflictingEventsDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        ConflictingEventsDialogFragment conflictingEventsDialogFragment = ConflictingEventsDialogFragment.newInstance(conflictingCalendarEvents);
+        conflictingEventsDialogFragment.show(fm, "fragment_conflicting_calendar_events");
+    }
+
+    @Override
+    public void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions) {
+        for (String timeOption : timeOptions) {
+            if (conflictsWithCalendarEvent(timeOption)) {
+                tvConflict.setVisibility(View.VISIBLE);
+                // set click listener for conflicts
+                tvConflict.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showConflictingEventsDialog();
+                    }
+                });
+            }
+        }
 
     public void checkIfEventReady() {
         findPollWinners(polls);
