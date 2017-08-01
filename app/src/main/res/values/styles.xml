@@ -6,10 +6,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorBackground">@color/bgTitleRight</item>
     </style>
 
-    <style name="newTheme" parent="AppTheme" >
-
+    <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="colorPrimary">@color/gradient_end</item>
+        <item name="colorPrimaryDark">@color/material_dark_orange</item>
+        <item name="colorAccent">@color/material_bright_orange</item>
     </style>
 
 

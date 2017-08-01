@@ -59,6 +59,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
     TimeButtonsInterface timeButtonsInterface;
     LocationButtonsInterface locationButtonsInterface;
+    ConflictTextViewInterface conflictTextViewInterface;
+    EventReadyCheckInterface eventReadyCheckInterface;
     private Context context;
 
     public interface TimeButtonsInterface {
@@ -68,14 +70,25 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     public interface LocationButtonsInterface {
          void setLocationValues(ArrayList<View> locations, int position);
     }
+
+    public interface ConflictTextViewInterface {
+        void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions);
+    }
     public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
-                        LocationButtonsInterface locationButtonsInterface, ArrayList<Poll> polls) {
+                        LocationButtonsInterface locationButtonsInterface, ConflictTextViewInterface conflictTextViewInterface, ArrayList<Poll> polls) {
+    
+      public interface EventReadyCheckInterface {
+        void checkIfEventReady();
+    }
+    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
+                        LocationButtonsInterface locationButtonsInterface, EventReadyCheckInterface eventReadyCheckInterface,
+                        ArrayList<Poll> polls) {
         this.polls = polls;
         this.context=c;
         this.timeButtonsInterface = timeButtonsInterface;
         this.locationButtonsInterface = locationButtonsInterface;
-
-
+        this.conflictTextViewInterface = conflictTextViewInterface;
+        this.eventReadyCheckInterface = eventReadyCheckInterface;
     }
 
 
@@ -129,6 +142,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         @BindView(tv3)
         TextView tvSet3;
 
+        @BindView(R.id.tvConflict) TextView tvConflict;
+
 
         //Button btVote;
         @BindView(R.id.btVote)
@@ -178,8 +193,9 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 //update parse object
                                 object.put("people_voted", poll.getPeopleVoted());
                                 object.put("scores", poll.getScores());
-
                                 object.saveInBackground();
+
+                                eventReadyCheckInterface.checkIfEventReady();
 
                             } else {
                                 e.getMessage();
@@ -241,6 +257,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         createOnTextClick(holder.tvSet2, selectedPosition,2);
         createOnTextClick(holder.tvSet3, selectedPosition,3);
 
+        if (!poll.getChoices().get(0).equals("Custom")){
+            holder.tvSet0.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(1).equals("Custom")){
+            holder.tvSet1.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(2).equals("Custom")){
+            holder.tvSet2.setVisibility(View.GONE);
+        }
+        if (!poll.getChoices().get(3).equals("Custom")){
+            holder.tvSet3.setVisibility(View.GONE);
+        }
+
         if ( (poll.getPollType().equals("Time") ) && poll.getChoices().contains("Custom") ) {
             //onFinishTimePickerFragment(holder,position);
             timeButtons.add(holder.rButton0);
@@ -298,11 +327,15 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         }
 
         //TODO visual cue
-        if (position == 0) {
-
+        if (poll.getPollType().equals("Time")) {
+            ArrayList<String> choices = new ArrayList<>();
+            for (String choice : poll.getChoices()) {
+                if (!choice.equalsIgnoreCase("Custom")) {
+                    choices.add(choice);
+                }
+            }
+            conflictTextViewInterface.setTvConflictVisibility(holder.tvConflict, choices);
         }
-
-
     }
 
 

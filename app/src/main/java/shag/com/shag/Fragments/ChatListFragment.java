@@ -11,8 +11,10 @@ import android.view.ViewGroup;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +40,14 @@ public class ChatListFragment extends Fragment {
     ChatListAdapter adapter;
     // user id
     String currentUserId;
+    ArrayList<String> eventIds;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_chat_list, container, false);
+        eventIds = new ArrayList<>();
 
         // initialize the list of chats
         chats = new ArrayList<>();
@@ -65,7 +69,7 @@ public class ChatListFragment extends Fragment {
         currentUserId = ParseUser.getCurrentUser().getObjectId();
 
         populateChatList(currentUserId);
-
+        startLiveQueries();
         return v;
     }
 
@@ -87,6 +91,7 @@ public class ChatListFragment extends Fragment {
 
                         //add event to list to be displayed
                         chats.add(eventChat);
+                        eventIds.add(event.getEventId());
                         adapter.notifyItemInserted(chats.size() - 1);
                         rvChats.smoothScrollToPosition(0);
 
@@ -140,6 +145,48 @@ public class ChatListFragment extends Fragment {
         }
 
         return chat;
+    }
+
+    public void startLiveQueries() {
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+        ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+        // Listen for CREATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
+                SubscriptionHandling.HandleEventCallback<Event>() {
+                    @Override
+                    public void onEvent(ParseQuery<Event> query, Event object) {
+                        String newEventId = object.getEventId();
+
+                        if (eventIds.contains(newEventId)) {
+                            ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
+                            eventQuery.include("User_event_owner");
+                            eventQuery.include("last_message_sent");
+                            try {
+                                Event event = eventQuery.get(newEventId);
+                                Chat chat = getChatInfoFromEvent(event);
+                                int index = eventIds.indexOf(newEventId);
+                                chats.set(index, chat);
+                                itemChanged(index);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+
+                });
+
+    }
+
+    //execute adapter refresh on ui thread
+    public void itemChanged(final int index) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyItemChanged(index);
+            }
+        });
     }
 
 

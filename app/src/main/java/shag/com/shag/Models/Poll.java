@@ -30,6 +30,8 @@ public class Poll extends ParseObject implements Parcelable {
     private String pollWinner;
     private String pollType;
     private Map<String,ParseGeoPoint> locationOptions;
+    private ParseUser pollOwner;
+    private String pollOwnerId;
 
     public Poll() {
 
@@ -50,11 +52,7 @@ public class Poll extends ParseObject implements Parcelable {
         return getString("event_id");
     }
 
-    //poll creator
-    public String getPollCreator() {
-        return getString("poll_creator");
 
-    }
 
     //event
     public void setEvent(Event event) {
@@ -66,7 +64,7 @@ public class Poll extends ParseObject implements Parcelable {
 
 
     public void setPollCreator() {
-        put("poll_creator", ParseUser.getCurrentUser());
+        put("Poll_creator", ParseUser.getCurrentUser());
     }
 
 
@@ -165,6 +163,27 @@ public class Poll extends ParseObject implements Parcelable {
     public void setPollWinner(String pollWinner) {
         this.pollWinner = pollWinner;
         put("poll_winner", pollWinner);
+    }
+    //poll owner
+    public ParseUser getPollCreator() {
+        return getParseUser("Poll_creator");
+    }
+
+    public void setPollCreator(ParseUser pollOwner) {
+        this.pollOwner = pollOwner;
+        put("Poll_creator", pollWinner);
+
+    }
+
+    //poll owner Id
+    public String getPollOwnerId() {
+        return getString("poll_creator_id");
+    }
+
+    public void setPollOwnerId(String pollOwnerId) {
+        this.pollOwnerId = pollOwnerId;
+        put("poll_creator_id", pollWinner);
+
     }
 
     @Override
