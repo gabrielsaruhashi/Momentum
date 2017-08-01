@@ -217,7 +217,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // on click create album, create new album and share pics
         ArrayList<Integer> contributors = getIntegerArray(participantsFacebookIds);
         // if album hasnt been created yet
-        if (albumId == 0) {
+        if (facebookAlbumId == 0) {
             fbClient.postFacebookAlbum(contributors, memory.getMemoryName(), new GraphRequest.Callback() {
                 @Override
                 public void onCompleted(GraphResponse response) {
@@ -247,7 +247,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             if (memory.getIndexOfLastPictureShared() < pictures.size()) {
                 ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(pictures.subList(memory.getIndexOfLastPictureShared(), pictures.size()));
                 // post pictures
-                uploadPicturesFb(newPictures, albumId);
+                uploadPicturesFb(newPictures, facebookAlbumId);
                 // update index of last picture shared on facebook
                 memory.setIndexOfLastPictureShared(pictures.size());
                 memory.saveInBackground();
