@@ -17,20 +17,21 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="324dp"
-            android:layout_marginEnd="@dimen/map_margin_sides"
-            android:layout_marginStart="@dimen/map_margin_sides"
+            android:layout_height="320dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
 
     </LinearLayout>
 
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_weight="1"
         android:animateLayoutChanges="true"
-        android:layout_weight="1">
+        android:orientation="horizontal">
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -57,113 +58,35 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="Music" />
+
+
             </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/cardView"
+            <RelativeLayout
+                android:id="@+id/eventDetails"
                 android:layout_width="match_parent"
-                android:layout_height="148dp"
-                android:layout_margin="@dimen/activity_items_margin"
-                android:elevation="@dimen/card_elevation"
-                android:orientation="horizontal"
-                android:visibility="invisible"
-                app:cardElevation="@dimen/card_elevation">
+                android:layout_height="180dp"
+                android:visibility="invisible">
 
-                <FrameLayout
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pagerMapCards"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp" />
 
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                <me.relex.circleindicator.CircleIndicator
+                    android:id="@+id/indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="bottom" />
 
-                            <ImageView
-                                android:id="@+id/cardImage"
-                                android:layout_width="match_parent"
-                                android:layout_height="64dp"
-                                android:layout_alignParentStart="true"
-                                app:srcCompat="@color/colorPrimary" />
-
-                            <ImageView
-                                android:id="@+id/ivClose"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="right"
-                                android:paddingLeft="4dp"
-                                android:paddingTop="2dp"
-                                android:src="@drawable/ic_close_black_24dp"
-                                android:tint="@color/white" />
-
-                            <TextView
-                                android:id="@+id/tvEventNameTitle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="bottom"
-                                android:paddingBottom="4dp"
-                                android:paddingLeft="8dp"
-                                android:text="Title"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-                                android:textColor="@color/white" />
-                        </FrameLayout>
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp" />
-
-                        <TextView
-                            android:id="@+id/tvDescription"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="8dp"
-                            android:text="Description" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp" />
-
-                        <TextView
-                            android:id="@+id/tvLocation"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="8dp"
-                            android:text="Location" />
-
-                        <Space
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp" />
-
-                        <TextView
-                            android:id="@+id/tvTime"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="8dp"
-                            android:text="Time" />
-
-                    </LinearLayout>
-
-                    <android.support.design.widget.FloatingActionButton
-                        android:id="@+id/myFAB"
-                        android:layout_width="wrap_content"
-                        android:layout_height="67dp"
-                        android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="12dp"
-
-                        android:layout_marginEnd="12dp"
-                        android:baselineAlignBottom="true"
-                        android:tint="@color/white"
-                        app:elevation="4dp"
-                        app:fabSize="mini"
-                        app:srcCompat="@android:drawable/ic_input_add" />
-                </FrameLayout>
-            </android.support.v7.widget.CardView>
-
+            </RelativeLayout>
         </FrameLayout>
-
 
     </LinearLayout>
 </LinearLayout>

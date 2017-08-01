@@ -169,7 +169,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tddsa2h"
+                        android:id="@+id/td30"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical|right"
@@ -198,7 +198,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tddsafsad2h"
+                        android:id="@+id/td1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"
@@ -244,7 +244,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tddfasd2h"
+                        android:id="@+id/td2h"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"
@@ -274,7 +274,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/td2h"
+                        android:id="@+id/td3h"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"
@@ -316,7 +316,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/tds2h"
+                        android:id="@+id/td6"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"
@@ -344,7 +344,7 @@
                     android:layout_height="match_parent">
 
                     <TextView
-                        android:id="@+id/ts2h"
+                        android:id="@+id/td12h"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:clickable="false"
