@@ -47,7 +47,19 @@
                 android:layout_alignParentBottom="true"/>
         </RelativeLayout>
 
+
+        <TextView
+            android:id="@+id/tvPhotosBadge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="PHOTOS"
+            android:textColor="@color/medium_gray"
+            android:layout_marginLeft="@dimen/rv_margin_left"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"/>
+
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_marginTop="24dp"
             android:id="@+id/gridview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

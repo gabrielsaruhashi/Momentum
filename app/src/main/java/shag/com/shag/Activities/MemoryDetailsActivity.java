@@ -30,7 +30,9 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.SubscriptionHandling;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -76,6 +78,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private TreeSet facebookPermissionsSet;
     private ArrayList<String> participantsIds;
     private ArrayList<String> participantsFacebookIds;
+    private long facebookAlbumId;
     private ArrayList<String> userPicturesIds;
 
     @Override
@@ -136,6 +139,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // populate image slider
         initImageSlider();
         setupLiveQuery();
+
+        // instantiate facebook album id
+        facebookAlbumId =  Long.valueOf(memory.getFacebookAlbumId());
 
         //TODO if album already exists, just add photo
         // add listener to facebook share
@@ -209,10 +215,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     }
     public void createFacebookAlbum() {
         // on click create album, create new album and share pics
-        Long albumId= Long.valueOf(memory.getFacebookAlbumId());
         ArrayList<Integer> contributors = getIntegerArray(participantsFacebookIds);
         // if album hasnt been created yet
-        if (albumId == 0) {
+        if (facebookAlbumId == 0) {
             fbClient.postFacebookAlbum(contributors, memory.getMemoryName(), new GraphRequest.Callback() {
                 @Override
                 public void onCompleted(GraphResponse response) {
@@ -242,7 +247,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             if (memory.getIndexOfLastPictureShared() < pictures.size()) {
                 ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(pictures.subList(memory.getIndexOfLastPictureShared(), pictures.size()));
                 // post pictures
-                uploadPicturesFb(newPictures, albumId);
+                uploadPicturesFb(newPictures, facebookAlbumId);
                 // update index of last picture shared on facebook
                 memory.setIndexOfLastPictureShared(pictures.size());
                 memory.saveInBackground();
@@ -379,6 +384,81 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         showImageZoomDialog(bitmap, screenWidth, screenHeight);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // in case user uploads pictures, update the album status
+
+        if (initialNumberOfPictures != pictures.size()) {
+
+            // query for the event, and update it with the last picture uploaded
+            // if user hasnt yet created an album, but has uploaded pictures
+            if (facebookAlbumId == 0 && pictures.size() > 0) {
+                memory.setCoverPictureUrl(pictures.get(pictures.size() - 1).getUrl());
+                memory.saveInBackground();
+            } else if (facebookAlbumId != 0) { // else query for the facebook pictures, and get the one that has the most amount of likes
+                fbClient.getAlbumPhotos(facebookAlbumId, new GraphRequest.Callback() {
+                    @Override
+                    public void onCompleted(GraphResponse response) {
+
+                        try {
+                            // get array with pictures from album
+                            JSONArray fbPicturesArray = response.getJSONObject().getJSONArray("data");
+
+                            // support variables
+                            String mostLikesUrl = new String();
+                            int mostLikes = 0;
+                            int totalNumberOfFacebookLikes = 0;
+
+                            // iterate through the pictures array
+                            for (int i = 0; i < fbPicturesArray.length(); i++) {
+                                JSONObject pictureData = fbPicturesArray.getJSONObject(i);
+                                JSONObject likes;
+                                // if picture does not have likes, just assign it to null
+                                try {
+                                    likes = pictureData.getJSONObject("likes");
+                                } catch (JSONException e) {
+                                    e.getMessage();
+                                    likes = null;
+                                }
+
+
+                                // if pic has any likes, add to the likes counter and check if it is the most populatr
+                                if (likes != null ) {
+                                    int numberOfLikes = likes.getJSONArray("data").length();
+
+                                    totalNumberOfFacebookLikes += numberOfLikes;
+                                    // check if current picture has more likes
+                                    if (numberOfLikes > mostLikes) {
+                                        mostLikes = numberOfLikes;
+                                        // get the pictures
+                                        mostLikesUrl = pictureData.getJSONArray("images").getJSONObject(0).getString("source");
+                                    }
+                                }
+                            }
+
+                            // at the end of the for loop, update total number of facebook likes and cover picture
+                            memory.setTotalFacebookLikes(totalNumberOfFacebookLikes);
+                            if (mostLikesUrl != null) { // ensure that the url is valid
+                                memory.setCoverPictureUrl(mostLikesUrl);
+                            } else {
+                                // if there are no images with most likes, just set it to be the last picture added
+                                memory.setCoverPictureUrl(pictures.get(pictures.size() - 1).getUrl());
+                            }
+                            // save
+                            memory.saveInBackground();
+
+                        } catch (JSONException e) {
+                            e.getMessage();
+                        }
+                    }
+                });
+            }
+
+        }
+
+    }
     // creates a bitmap from parsefile data
     private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
 

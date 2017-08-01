@@ -12,7 +12,6 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.ramotion.foldingcell.FoldingCell;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,7 @@ public class MemoriesActivity extends AppCompatActivity {
 
         // populate memory
         populateMemories();
-
+        /*
         // set on click event listener to list view
         lvMemories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -75,7 +74,7 @@ public class MemoriesActivity extends AppCompatActivity {
                 // register in adapter that state for selected cell is toggled
                 mAdapter.registerToggle(pos);
             }
-        });
+        }); */
     }
 
     private void populateMemories() {

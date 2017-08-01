@@ -51,6 +51,13 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
+    public void getAlbumPhotos(long albumId, GraphRequest.Callback callback) {
+        Bundle params = new Bundle();
+        params.putString("fields", "likes, images");
+        new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ albumId + "/photos", params, HttpMethod.GET,
+                callback).executeAsync();
+    }
+
     public void postPictureToAlbum(byte[] imageFormData, long albumId, GraphRequest.Callback callback) {
         Bundle params = new Bundle();
         params.putByteArray("source", imageFormData);
