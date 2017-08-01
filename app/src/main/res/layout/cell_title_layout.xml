@@ -17,71 +17,73 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:orientation="horizontal" android:layout_width="match_parent"
+            android:id="@+id/mainFrame"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
-            android:id="@+id/mainFrame">
+            android:orientation="horizontal">
 
 
-                <!-- LEFT TITLE PART -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
+            <!-- LEFT TITLE PART -->
+            <RelativeLayout
+                android:id="@+id/colorColumn"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_weight="20"
+                android:background="@color/sports_color"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+            </RelativeLayout>
+
+            <!-- RIGHT TITLE PART -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/bgTitleRight">
+
+                <ImageView
+                    android:id="@+id/ivTransparencyBackground"
+                    android:layout_width="350dp"
                     android:layout_height="350dp"
-                    android:layout_weight="40"
-                    android:background="@color/sports_color"
-                    android:gravity="center_horizontal"
-                    android:orientation="vertical">
+                    android:layout_centerHorizontal="true"
+                    app:srcCompat="@color/black" />
 
-                </RelativeLayout>
+                <ImageView
+                    android:id="@+id/ivCoverPicture"
+                    android:layout_width="350dp"
+                    android:layout_height="350dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginEnd="10dp"
+                    android:alpha="0.7" />
 
-                <!-- RIGHT TITLE PART -->
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@color/bgTitleRight">
+                <TextView
+                    android:id="@id/tvMemoryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="sans-serif-black"
+                    android:lines="2"
+                    android:text="Memory Name"
+                    android:textColor="@color/white"
+                    android:textSize="32dp" />
 
-                    <ImageView
-                        android:id="@+id/ivTransparencyBackground"
-                        android:layout_width="350dp"
-                        android:layout_height="350dp"
-                        app:srcCompat="@color/black"
-                        android:layout_centerHorizontal="true"/>
-
-                    <ImageView
-                        android:id="@+id/ivCoverPicture"
-                        android:layout_width="350dp"
-                        android:layout_height="350dp"
-                        android:layout_marginEnd="10dp"
-                        android:alpha="0.7"
-                        android:layout_centerHorizontal="true"/>
-
-                    <TextView
-                        android:id="@id/tvMemoryName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:textColor="@color/white"
-                        android:textSize="32dp"
-                        android:lines="2"
-                        android:fontFamily="sans-serif-black"
-                        android:text="Memory Name" />
-
-                    <TextView
-                        android:id="@id/tvLocation"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/tvMemoryName"
-                        android:textColor="@color/white"
-                        android:textSize="20dp"
-                        android:layout_centerHorizontal="true"
-                        android:lines="2"
-                        android:fontFamily="sans-serif-condensed"
-                        android:text="SPACE NEEDLE" />
+                <TextView
+                    android:id="@id/tvLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvMemoryName"
+                    android:layout_centerHorizontal="true"
+                    android:fontFamily="sans-serif-condensed"
+                    android:lines="2"
+                    android:text="SPACE NEEDLE"
+                    android:textColor="@color/white"
+                    android:textSize="20dp" />
 
 
-                </RelativeLayout>
-                <!--
+            </RelativeLayout>
+            <!--
                 <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     android:id="@+id/cvTitle"
@@ -102,65 +104,72 @@
                 </android.support.v7.widget.CardView> -->
         </LinearLayout>
 
-
-        <!-- Bottom of the card -->
-        <ImageView
+        <RelativeLayout
             android:layout_below="@id/mainFrame"
-            android:id="@+id/ivLove"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            card_view:srcCompat="@drawable/ic_love"
-            android:layout_marginLeft="@dimen/cv_margin_left"/>
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp">
+
+            <!-- Bottom of the card -->
+            <ImageView
+                android:id="@+id/ivLove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainFrame"
+                android:layout_marginLeft="16dp"
+                card_view:srcCompat="@drawable/ic_love" />
 
 
-        <TextView
-            android:id="@+id/tvLoveCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainFrame"
-            android:layout_toEndOf="@id/ivLove"
-            android:textSize="16sp"
-            android:text="5"
-            />
+            <TextView
+                android:id="@+id/tvLoveCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainFrame"
+                android:layout_toEndOf="@id/ivLove"
+                android:text="5"
+                android:textSize="16sp"
+                android:padding="2dp"/>
 
-        <TextView
-            android:id="@+id/tvLikesBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainFrame"
-            android:layout_toEndOf="@id/tvLoveCount"
-            android:textSize="16sp"
-            android:text="Likes"
-            />
+            <TextView
+                android:id="@+id/tvLikesBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Likes"
+                android:textSize="16sp"
+                android:layout_below="@+id/mainFrame"
+                android:layout_toEndOf="@+id/tvLoveCount"
+                android:padding="2dp"/>
 
-        <ImageView
-            android:id="@+id/ivPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainFrame"
-            android:layout_toEndOf="@id/tvLikesBadge"
-            android:layout_marginLeft="16dp"
-            card_view:srcCompat="@drawable/ic_photo" />
+            <ImageView
+                android:id="@+id/ivPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainFrame"
+                android:layout_marginLeft="16dp"
+                android:layout_toEndOf="@id/tvLikesBadge"
+                card_view:srcCompat="@drawable/ic_photo" />
 
-        <TextView
-            android:id="@+id/tvPhotoCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainFrame"
-            android:layout_toEndOf="@id/ivPhoto"
-            android:textSize="16sp"
-            android:text="23"
-            />
+            <TextView
+                android:id="@+id/tvPhotoCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainFrame"
+                android:layout_toEndOf="@id/ivPhoto"
+                android:text="23"
+                android:padding="2dp"
+                android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tvPhotosBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/mainFrame"
-            android:layout_toEndOf="@id/tvPhotoCount"
-            android:textSize="16sp"
-            android:text="Photos"
-            />
+            <TextView
+                android:id="@+id/tvPhotosBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/mainFrame"
+                android:layout_toEndOf="@id/tvPhotoCount"
+                android:text="Photos"
+                android:textSize="16sp"
+                android:padding="2dp"/>
+        </RelativeLayout>
 
 
     </RelativeLayout>

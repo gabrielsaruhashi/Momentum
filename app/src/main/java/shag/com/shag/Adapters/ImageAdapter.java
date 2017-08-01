@@ -9,12 +9,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 
 import java.util.ArrayList;
-
-import shag.com.shag.R;
 
 /**
  * Created by gabesaruhashi on 7/18/17.
@@ -44,17 +43,36 @@ public class ImageAdapter extends BaseAdapter {
     }
 
     // create a new ImageView for each item referenced by the Adapter
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(240, 240));
+            imageView.setLayoutParams(new GridView.LayoutParams(475, 475));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             //imageView.setPadding(8, 8, 8, 8);
         } else {
             imageView = (ImageView) convertView;
         }
+
+        final String imageUrl = memoryPictures.get(position).getUrl();
+        Glide.with(mContext)
+                .load(imageUrl)
+                .into(imageView);
+
+        // upon click, initiate dialog fragment through interface
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (callback != null) {
+                    // convert parse file to bitmap
+                    final Bitmap bm = bitmapConverterFromParseFile(memoryPictures.get(position));
+                    callback.initiateDialog(bm);
+                }
+            }
+        });
+
+        /*
         // convert parse file to bitmap
         final Bitmap bm = bitmapConverterFromParseFile(memoryPictures.get(position));
 
@@ -75,7 +93,7 @@ public class ImageAdapter extends BaseAdapter {
                     callback.initiateDialog(bm);
                 }
             }
-        });
+        }); */
         // TODO return with glide
         return imageView;
     }
@@ -92,21 +110,7 @@ public class ImageAdapter extends BaseAdapter {
         }
         return null;
     }
-    /*
-    // references to our images
-    private Integer[] mThumbIds = {
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7,
-            R.drawable.sample_0, R.drawable.sample_1,
-            R.drawable.sample_2, R.drawable.sample_3,
-            R.drawable.sample_4, R.drawable.sample_5,
-            R.drawable.sample_6, R.drawable.sample_7
-    }; */
+
 
     // create interface to pass Bitmap back to activity
     public interface ImageZoomAdapterCallback {
