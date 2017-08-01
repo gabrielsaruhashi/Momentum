@@ -320,7 +320,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 recommendRestaurant();
             }
 
+        setupLiveQueires();
+    }
 
+    private void setupLiveQueires() {
             // Make sure the Parse server is setup to configured for live queries
             // URL for server is determined by Parse.initialize() call.
             ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
@@ -413,7 +416,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     });
                 }
-
 
             });
 

@@ -39,14 +39,14 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
-    public void postFacebookAlbum(ArrayList<String> contributors, String albumName, GraphRequest.Callback callback) {
+    public void postFacebookAlbum(ArrayList<Integer> contributors, String albumName, GraphRequest.Callback callback) {
         ParseUser user = ParseUser.getCurrentUser();
         HashMap data = (HashMap) user.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);
-        params.putStringArrayList("contributors", contributors);
+        params.putIntegerArrayList("contributors", contributors);
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
                 callback).executeAsync();
     }

@@ -4,17 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.loopj.android.http.AsyncHttpClient.log;
 
@@ -32,6 +28,7 @@ public class Memory extends ParseObject implements Parcelable {
     private ArrayList<String> participantsFacebookIds;
     private String eventId; //id of the corresponding event
     private long facebookAlbumId;
+    private int indexOfLastPictureShared;
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -66,6 +63,8 @@ public class Memory extends ParseObject implements Parcelable {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
+                    Log.i("success", "memory created");
+                    /*
                     ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
                     query.whereEqualTo("event_id", eventId); //get the event that just finished
                     query.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -90,6 +89,7 @@ public class Memory extends ParseObject implements Parcelable {
                                                 }
 
                                                 memories.add(memoryObject);
+
                                                 user.put("Memories_list", memories);
                                                 user.saveInBackground(new SaveCallback() {
                                                     @Override
@@ -109,7 +109,7 @@ public class Memory extends ParseObject implements Parcelable {
                                 }
                             }
                         }
-                    });
+                    });*/
                 } else {
                     log.e("MyAlarm", "Error creating memory: " + e.toString());
                 }
@@ -119,6 +119,15 @@ public class Memory extends ParseObject implements Parcelable {
 
     // GETTERS & SETTERS
 
+
+    public int getIndexOfLastPictureShared() {
+        return getInt("index_of_last_picture_shared");
+    }
+
+    public void setIndexOfLastPictureShared(int indexOfLastPictureShared) {
+        this.indexOfLastPictureShared = indexOfLastPictureShared;
+        put("index_of_last_picture_shared", indexOfLastPictureShared);
+    }
 
     public ArrayList<String> getParticipantsFacebookIds() {
         return (ArrayList) get("participants_facebook_ids");
@@ -164,7 +173,7 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
     public String getEventId() {
-        return this.eventId;
+        return getString("event_id");
     }
 
     public ArrayList<String> getParticipantsIds() {
