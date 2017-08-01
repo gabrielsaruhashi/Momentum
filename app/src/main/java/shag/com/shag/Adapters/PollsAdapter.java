@@ -59,6 +59,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
     TimeButtonsInterface timeButtonsInterface;
     LocationButtonsInterface locationButtonsInterface;
+    ConflictTextViewInterface conflictTextViewInterface;
+    EventReadyCheckInterface eventReadyCheckInterface;
     private Context context;
 
     public interface TimeButtonsInterface {
@@ -68,14 +70,24 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     public interface LocationButtonsInterface {
          void setLocationValues(ArrayList<View> locations, int position);
     }
-    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
-                        LocationButtonsInterface locationButtonsInterface, ArrayList<Poll> polls) {
+
+    public interface ConflictTextViewInterface {
+        void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions);
+    }
+
+
+    public interface EventReadyCheckInterface {
+        void checkIfEventReady();
+    }
+    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface, ConflictTextViewInterface conflictTextViewInterface,
+                        LocationButtonsInterface locationButtonsInterface, EventReadyCheckInterface eventReadyCheckInterface,
+                        ArrayList<Poll> polls) {
         this.polls = polls;
         this.context=c;
         this.timeButtonsInterface = timeButtonsInterface;
         this.locationButtonsInterface = locationButtonsInterface;
-
-
+        this.conflictTextViewInterface = conflictTextViewInterface;
+        this.eventReadyCheckInterface = eventReadyCheckInterface;
     }
 
 
@@ -129,6 +141,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         @BindView(tv3)
         TextView tvSet3;
 
+        @BindView(R.id.tvConflict) TextView tvConflict;
+
 
         //Button btVote;
         @BindView(R.id.btVote)
@@ -179,6 +193,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 object.put("people_voted", poll.getPeopleVoted());
                                 object.put("scores", poll.getScores());
                                 object.saveInBackground();
+
+                                eventReadyCheckInterface.checkIfEventReady();
 
                             } else {
                                 e.getMessage();
@@ -310,11 +326,15 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         }
 
         //TODO visual cue
-        if (position == 0) {
-
+        if (poll.getPollType().equals("Time")) {
+            ArrayList<String> choices = new ArrayList<>();
+            for (String choice : poll.getChoices()) {
+                if (!choice.equalsIgnoreCase("Custom")) {
+                    choices.add(choice);
+                }
+            }
+            conflictTextViewInterface.setTvConflictVisibility(holder.tvConflict, choices);
         }
-
-
     }
 
 

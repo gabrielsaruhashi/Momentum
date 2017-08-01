@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Display;
 import android.view.View;
 import android.widget.Button;
@@ -24,8 +25,10 @@ import com.facebook.login.LoginManager;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SubscriptionHandling;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -76,6 +79,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private ArrayList<String> participantsIds;
     private ArrayList<String> participantsFacebookIds;
     private long facebookAlbumId;
+    private ArrayList<String> userPicturesIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +107,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         participantsIds = memory.getParticipantsIds();
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
-
-        // save original number of pictures to later check if user added pictures
-        initialNumberOfPictures = pictures.size();
+        // initialize user pictures for the parse live query
+        userPicturesIds = new ArrayList<String>();
 
         // set adapters
         imageAdapter = new ImageAdapter(this, pictures);
@@ -135,6 +138,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         // populate image slider
         initImageSlider();
+        setupLiveQuery();
 
         // instantiate facebook album id
         facebookAlbumId =  Long.valueOf(memory.getFacebookAlbumId());
@@ -161,20 +165,75 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         });
     }
 
+    public void setupLiveQuery() {
+        // listen for updates in this memory
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+        ParseQuery<Memory> parseQuery = ParseQuery.getQuery(Memory.class);
+        parseQuery.whereEqualTo("event_id", memory.getEventId());
+
+        // Connect to Parse server
+        SubscriptionHandling<Memory> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
+        // Listen for UPDATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
+                SubscriptionHandling.HandleEventCallback<Memory>() {
+                    @Override
+                    public void onEvent(ParseQuery<Memory> query, Memory object) {
+                        // get live query's updated pictures
+                        ArrayList<ParseFile> liveQueryPictures = object.getPicturesParseFiles();
+                        //TODO discover if there is a way to fix in case other user uploads at the same time
+                        // listen for new pictures
+                        if (pictures.size() < liveQueryPictures.size()) {
+                            // get new pictures
+                            ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(liveQueryPictures.subList(pictures.size(),liveQueryPictures.size()));
+
+                            // iterate through new pictures to verify which ones were shared by current user
+                            for (ParseFile file: newPictures) {
+                                // if one of the new pictures was posted by user, remove it from the new pictures array
+                                if (userPicturesIds.contains(file.getName())) {
+                                    newPictures.remove(file);
+                                }
+                            }
+
+                            // add new pictures to the bottom
+                            pictures.addAll(newPictures);
+
+                            // RecyclerView updates need to be run on the UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageAdapter.notifyDataSetChanged();
+                                    sliderAdapter.notifyDataSetChanged();
+
+                                }
+                            });
+                        }
+                    }
+
+
+                });
+    }
     public void createFacebookAlbum() {
         // on click create album, create new album and share pics
+        ArrayList<Integer> contributors = getIntegerArray(participantsFacebookIds);
         // if album hasnt been created yet
-        if (facebookAlbumId == 0) {
-            fbClient.postFacebookAlbum(participantsFacebookIds, memory.getMemoryName(), new GraphRequest.Callback() {
+        if (albumId == 0) {
+            fbClient.postFacebookAlbum(contributors, memory.getMemoryName(), new GraphRequest.Callback() {
                 @Override
                 public void onCompleted(GraphResponse response) {
                     try {
-                        Toast.makeText(MemoryDetailsActivity.this, "Create new album!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MemoryDetailsActivity.this, "Successfully created new album!", Toast.LENGTH_SHORT).show();
                         long facebookAlbumId = response.getJSONObject().getLong("id");
                         // post all pictures of the album
                         if (pictures != null && pictures.size() > 0) {
+                            // upload pictures to facebook
                             uploadPicturesFb(pictures, facebookAlbumId);
+
+                            // store facebook album id to the database
                             memory.setFacebookAlbumId(facebookAlbumId);
+                            // set the index of the last picture shared
+                            memory.setIndexOfLastPictureShared(pictures.size());
+
                             memory.saveInBackground();
                         }
 
@@ -183,9 +242,21 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                     }
                 }
             });
+        }  else { // else upload new pictures to album
+            // check if user uploaded new pictures
+            if (memory.getIndexOfLastPictureShared() < pictures.size()) {
+                ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(pictures.subList(memory.getIndexOfLastPictureShared(), pictures.size()));
+                // post pictures
+                uploadPicturesFb(newPictures, albumId);
+                // update index of last picture shared on facebook
+                memory.setIndexOfLastPictureShared(pictures.size());
+                memory.saveInBackground();
+            } else {
+                Toast.makeText(MemoryDetailsActivity.this, "No new pictures to be posted", Toast.LENGTH_SHORT).show();
+            }
         }
-
     }
+
 
     public void uploadPicturesFb(ArrayList<ParseFile> pictures, long albumId) {
         for (ParseFile picture: pictures) {
@@ -216,9 +287,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         final Handler handler = new Handler();
         final Runnable Update = new Runnable() {
             public void run() {
-                //TODO check if this is working
                 // when the slider page goes through all the pictures in the array
-                if (currentSliderPage == pictures.size()) {
+                if (currentSliderPage >= pictures.size()) {
                     currentSliderPage = 0;
                 }
                 // move to next image
@@ -258,6 +328,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
                         // save uploaded picture to the cloud as a parsefile
                         final ParseFile file = new ParseFile("image.JPEG", image);
+                        // keep track of files uploaded by user
+                        userPicturesIds.add(file.getName());
+
                         file.saveInBackground();
 
                         // update database
@@ -386,7 +459,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         }
 
     }
-
     // creates a bitmap from parsefile data
     private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
 
@@ -399,5 +471,21 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         }
         return null;
     }
+
+    // helper to return an arraylist of integers with the name of the contributors
+    private ArrayList<Integer> getIntegerArray(ArrayList<String> stringArray) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        for(String stringValue : stringArray) {
+            try {
+                //Convert String to Integer, and store it into integer array list.
+                result.add(Integer.parseInt(stringValue));
+            } catch(NumberFormatException nfe) {
+                //System.out.println("Could not parse " + nfe);
+                Log.w("NumberFormat", "Parsing failed! " + stringValue + " can not be an integer");
+            }
+        }
+        return result;
+    }
+
 
 }

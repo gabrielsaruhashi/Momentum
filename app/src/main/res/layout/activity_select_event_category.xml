@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/tvCategoryInstructions"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
-        android:text="Pick a Category:"
+        android:text="Choose a Category"
+        android:textAlignment="center"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -60,7 +61,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/chillIcon"
-                        android:text="Chill"
+                        android:text="CHILL"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -98,7 +99,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/sportsIcon"
-                        android:text="Sports"
+                        android:text="SPORTS"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -136,7 +137,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/musicIcon"
-                        android:text="Music"
+                        android:text="MUSIC"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -179,7 +180,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/foodIcon"
-                        android:text="Food"
+                        android:text="FOOD"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -217,7 +218,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/partyIcon"
-                        android:text="Party"
+                        android:text="PARTY"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -255,7 +256,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_below="@+id/miscIcon"
-                        android:text="Miscellaneous"
+                        android:text="MISCELLANEOUS"
                         android:textAlignment="center"
                         android:textColor="@color/white" />
                 </RelativeLayout>
@@ -269,16 +270,6 @@
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_centerHorizontal="true"-->
     <!--android:layout_marginTop="16dp" />-->
-
-    <Button
-        android:id="@+id/btNext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="4dp"/>
 
 
 </RelativeLayout>

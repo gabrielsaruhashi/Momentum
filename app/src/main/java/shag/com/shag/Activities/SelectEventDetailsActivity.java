@@ -32,6 +32,7 @@ import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.MyAlarm;
 import shag.com.shag.Other.ParseApplication;
@@ -162,6 +163,8 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
         newEvent.setEventOwnerId(ParseUser.getCurrentUser().getObjectId());
 
+
+        //if they didn't pick a deadline, auto-set 1 hour deadline
         if (newEvent.deadline == null) {
             newEvent.deadline = new Date();
             newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE*60);
@@ -212,6 +215,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         currentUser.put("categories_tracker", hm);
 
 
+        newEvent.setLastMessageSent(new Message());
         newEvent.setTimeOfEvent(new Date());
 
         //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
