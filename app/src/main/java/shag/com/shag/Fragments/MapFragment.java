@@ -40,12 +40,14 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -265,7 +267,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,13));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
 
     }
 
@@ -389,6 +391,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         }
                         cardPagerSize=0;
                         cardViews.setVisibility(View.VISIBLE);
+                        LatLngBounds.Builder b = new LatLngBounds.Builder();
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
                                 final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
@@ -407,6 +410,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                     getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
                                     String artist = getArtistArray.getJSONObject(0).getString("Name");
                                     LatLng musicLatLng = new LatLng(musicLat, musicLng);
+                                    b.include(musicLatLng);
 
                                     final HashMap<String,Object> publicEventData = new HashMap<>();
                                     publicEventData.put("Name", artist);
@@ -470,6 +474,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             }
                         }
 
+                        LatLngBounds bounds = b.build();
+                        CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
+                        mGoogleMap.animateCamera(cu);
+
 
 
                     }
@@ -511,6 +519,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public JsonObjectRequest getFoodRequest(String lat, String lng){
         // Pass second argument as "null" for GET requests
         String zomatoUrl = "https://developers.zomato.com/api/v2.1/";
+
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, zomatoUrl+"geocode?lat="+lat+"&lon="+lng, null,
                 new Response.Listener<JSONObject>() {
 
@@ -521,6 +530,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             JSONArray restaurantArray = response.getJSONArray("nearby_restaurants");
                             cardPagerSize=0;
                             cardViews.setVisibility(View.VISIBLE);
+                            LatLngBounds.Builder b = new LatLngBounds.Builder();
 
                             for (int i = 0; i < restaurantArray.length(); i++) {
 
@@ -529,7 +539,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 final Double restaurantLat = restaurant.getJSONObject("location").getDouble("latitude");
                                 final Double restaurantLng = restaurant.getJSONObject("location").getDouble("longitude");
                                 LatLng restaurantLatLng = new LatLng(restaurantLat, restaurantLng);
-
+                                b.include(restaurantLatLng);
                                 String streetName = restaurant.getJSONObject("location").getString("address");
                                 //String city = restaurant.getJSONObject("location").getString("city");
                                 //String zipcode = restaurant.getJSONObject("location").getString("zipcode");
@@ -600,6 +610,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                     }
                                 });
                             }
+                            LatLngBounds bounds = b.build();
+                            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
+                            mGoogleMap.animateCamera(cu);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }

@@ -73,7 +73,8 @@
         <activity android:name=".Activities.ChatActivity" />
         <activity android:name=".Activities.MemoriesActivity" />
         <activity android:name=".Activities.PublicEventDetailsActivity" />
-        <activity android:name=".Activities.SelectEventCategoryActivity" />
+        <activity android:name=".Activities.SelectEventCategoryActivity"
+            android:label="Create an Event"/>
         <activity android:name=".Activities.SelectEventDetailsActivity" />
         <activity android:name=".Activities.SelectEventFriendsActivity" />
 
