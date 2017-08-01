@@ -16,6 +16,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -85,7 +86,7 @@ import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
-        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface {
+        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.EventReadyCheckInterface {
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
@@ -138,6 +139,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     boolean openedPush;
     private Event parseEvent;
     private ArrayList<CalendarEvent> calendarEvents;
+
+    Menu menu;
+
     ParseQuery<Poll> parseQueryPoll;
     SubscriptionHandling<Poll> pollSubscriptionHandling;
 
@@ -150,6 +154,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
         actionBarDrawerToggle.syncState();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         context = this;
@@ -166,7 +172,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // initialize the list of polls
         polls = new ArrayList<>();
         // construct the adater from the data source
-        pollAdapter = new PollsAdapter(getContext(), this, this, polls);
+        pollAdapter = new PollsAdapter(getContext(), this, this, this, polls);
 
         // initialize recycler view
         rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
@@ -202,7 +208,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             isEventNew = eventFromQuery.getBoolean("is_first_created");
             isEventPrivate = eventFromQuery.getBoolean("is_event_private");
             isRecommendationMade = eventFromQuery.getBoolean("is_recommendation_made");
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -281,120 +286,122 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         setupCalendars();
 
 
-        //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
-        if (new Date().after(eventFromQuery.getDate("deadline")) && isRecommendationMade == false
-                && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
-            isRecommendationMade = true;
-            ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
-            eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
-                public void done(ParseObject eventDb, ParseException e) {
-                    if (e == null) {
-                        eventDb.put("is_recommendation_made", isRecommendationMade);
-                        eventDb.saveInBackground();
+        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
+                && isEventPrivate == true) {
+            //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
+            if (new Date().after(eventFromQuery.getDate("deadline")) && isRecommendationMade == false
+                    && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
+                isRecommendationMade = true;
+                ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+                eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+                    public void done(ParseObject eventDb, ParseException e) {
+                        if (e == null) {
+                            eventDb.put("is_recommendation_made", isRecommendationMade);
+                            eventDb.saveInBackground();
+                        }
                     }
-                }
-            });
-            recommendRestaurant();
-        }
+                });
+                recommendRestaurant();
+            }
 
 
-        // Make sure the Parse server is setup to configured for live queries
-        // URL for server is determined by Parse.initialize() call.
-        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+            // Make sure the Parse server is setup to configured for live queries
+            // URL for server is determined by Parse.initialize() call.
+            ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
-        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-        // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
-        // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
+            ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+            // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
+            // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
 
-        // Connect to Parse server
-        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+            // Connect to Parse server
+            SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
-        // Listen for CREATE events
-        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
-                SubscriptionHandling.HandleEventCallback<Message>() {
-                    @Override
-                    public void onEvent(ParseQuery<Message> query, Message object) {
-                        String senderId = object.getSenderId();
+            // Listen for CREATE events
+            subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
+                    SubscriptionHandling.HandleEventCallback<Message>() {
+                        @Override
+                        public void onEvent(ParseQuery<Message> query, Message object) {
+                            String senderId = object.getSenderId();
+                            String newEventId = object.getEventId();
+
+                            if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                                mMessages.add(0, object);
+                            }
+
+                            // RecyclerView updates need to be run on the UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mAdapter.notifyDataSetChanged();
+                                    rvChat.scrollToPosition(0);
+
+                                }
+                            });
+                        }
+
+
+                    });
+
+
+            parseQueryPoll = ParseQuery.getQuery(Poll.class);
+            pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+            pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+                @Override
+                public void onEvent(ParseQuery<Poll> query, Poll object) {
+                    String senderId = (String) object.get("poll_creator_id");
+                    if (senderId != null) {
                         String newEventId = object.getEventId();
 
-                        if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                            mMessages.add(0, object);
+                        if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+                            polls.add(object);
                         }
 
                         // RecyclerView updates need to be run on the UI thread
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mAdapter.notifyDataSetChanged();
-                                rvChat.scrollToPosition(0);
+                                pollAdapter.notifyDataSetChanged();
+                                rvPolls.scrollToPosition(0);
 
                             }
                         });
                     }
+                }
+            });
 
-
-                });
-
-
-        parseQueryPoll = ParseQuery.getQuery(Poll.class);
-        pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
-        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-            @Override
-            public void onEvent(ParseQuery<Poll> query, Poll object) {
-                String senderId = (String) object.get("poll_creator_id");
-                if (senderId != null) {
-                    String newEventId = object.getEventId();
-
-                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                        polls.add(object);
+            // Connect to Parse server
+            pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+                @Override
+                public void onEvent(ParseQuery<Poll> query, Poll object) {
+                    int pos = -1;
+                    if (object.getPollType().equals("Time")) {
+                        pos = 0;
+                    } else if (object.getPollType().equals("Location")) {
+                        pos = 1;
                     }
+                    String newEventId = object.getEventId();
+                    if (eventId.equals(newEventId)) {
+                        polls.set(pos, object);
 
+                    }
                     // RecyclerView updates need to be run on the UI thread
+                    final int finalPos = pos;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            pollAdapter.notifyDataSetChanged();
+                            rvPolls.invalidate();
+                            pollAdapter.notifyItemChanged(finalPos);
                             rvPolls.scrollToPosition(0);
+                            //pollAdapter.notifyItemChanged(1);
 
                         }
                     });
                 }
-            }
-        });
-
-        // Connect to Parse server
-        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-            @Override
-            public void onEvent(ParseQuery<Poll> query, Poll object) {
-                int pos = -1;
-                if (object.getPollType().equals("Time")){
-                    pos = 0;
-                }
-                else if (object.getPollType().equals("Location")) {
-                    pos = 1;
-                }
-                String newEventId = object.getEventId();
-                if (eventId.equals(newEventId)) {
-                    polls.set(pos, object);
-
-                }
-                // RecyclerView updates need to be run on the UI thread
-                final int finalPos = pos;
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        rvPolls.invalidate();
-                        pollAdapter.notifyItemChanged(finalPos);
-                        rvPolls.scrollToPosition(0);
-                        //pollAdapter.notifyItemChanged(1);
-
-                    }
-                });
-            }
 
 
-        });
+            });
 
+        }
     }
 
     private void recommendRestaurant() {
@@ -476,6 +483,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_chat, menu);
         return true;
     }
@@ -517,7 +525,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 final String data = etMessage.getText().toString();
 
                 // using new `Message` Parse-backed model now
-                Message message = new Message();
+                final Message message = new Message();
                 // populate message
                 //TODO pass the entire event object
                 message.setBody(data);
@@ -532,6 +540,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
+
                             String token = "";
                             try {
                                 //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
@@ -548,27 +557,26 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             payload.put("senderID", currentUserId);
                             payload.put("token", token);
 
-                            //TODO: this would probably be a better way to notify if there's time later
-                            /*InstanceID instanceID = InstanceID.getInstance(this);
-                            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                                    GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);*/
-
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
-
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
-
 
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
                     }
                 });
+
                 etMessage.setText(null);
                 // add message to arraylist
                 mMessages.add(0, message);
                 mAdapter.notifyItemInserted(0);
-                rvChat.smoothScrollToPosition(0);
+                parseEvent.setLastMessageSent(message);
+                try {
+                    parseEvent.save(); //TODO: in background or...?
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
 
 
                 if (data.equalsIgnoreCase("hi Shaggy")) {
@@ -579,15 +587,20 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     m.setSenderName("Shaggy");
                     try {
                         m.save();
+
+                        parseEvent.setLastMessageSent(m);
+                        try {
+                            parseEvent.save(); //TODO: in background or...?
+                        } catch (ParseException ex) {
+                            ex.printStackTrace();
+                        }
+
                         mAdapter.notifyItemInserted(0);
-                        rvChat.smoothScrollToPosition(0);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                    } catch (ParseException exception) {
+                        exception.printStackTrace();
                     }
 
                 }
-
-
             }
         });
 
@@ -807,7 +820,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                //findPollWinners(polls);
+                findPollWinners(polls);
 
 
             }
@@ -906,12 +919,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             eventDb.put("latitude", lat);
                             eventDb.put("longitude", lng);
                         }
+
+                        if (timeWinner != null && locationWinner != null) {
+                            MenuItem mi = menu.findItem(R.id.miEventReady);
+                            mi.setVisible(true);
+                        }
+
                         eventDb.saveInBackground();
                     }
                 }
             });
         }
-
     }
 
     // function creates the main OR query to search for all user ids
@@ -1115,9 +1133,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         });
 
 
-
-
-
     }
 
     public void onEventReady(MenuItem menuItem) {
@@ -1204,6 +1219,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     }
                 });
                 m.save();
+
+                parseEvent.setLastMessageSent(m);
+                try {
+                    parseEvent.save(); //TODO: in background or...?
+                } catch (ParseException ex) {
+                    ex.printStackTrace();
+                }
+
                 mAdapter.notifyItemInserted(0);
                 rvChat.smoothScrollToPosition(0);
             } catch (ParseException e) {
@@ -1212,6 +1235,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         refreshMessages();
         refreshPolls();
+    }
+
+    public void checkIfEventReady() {
+        findPollWinners(polls);
+        if (timeWinner != null && locationWinner != null) {
+            MenuItem mi = menu.findItem(R.id.miEventReady);
+            mi.setVisible(true);
+        }
     }
 }
 

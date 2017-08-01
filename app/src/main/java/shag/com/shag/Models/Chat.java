@@ -93,9 +93,10 @@ public class Chat {
         //event.participantsLocations = object.getMap("participants_locations"); //TODO: cannit pass geopoint
 
         // fetch event owner
-        //TODO this runs slowly, try to figure out how to make it faster (this is also why chats take so long)
+        //TODO why do we never set the eventOwner?
         try {
             ParseObject user = object.getParseObject("User_event_owner").fetch();
+            event.lastMessageSent = object.getParseObject("last_message_sent").fetch();
             // user found! Convert it to a user model
             event.setEventOwner(user); // setting event owner
         } catch (ParseException e) {
