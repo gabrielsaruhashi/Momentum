@@ -28,6 +28,8 @@ public class Memory extends ParseObject implements Parcelable {
     private ArrayList<String> participantsFacebookIds;
     private String eventId; //id of the corresponding event
     private long facebookAlbumId;
+    private String coverPictureUrl;
+    private int totalFacebookLikes;
     private int indexOfLastPictureShared;
 
     //needs to implement empty constructor to be a Parse Object
@@ -119,6 +121,24 @@ public class Memory extends ParseObject implements Parcelable {
 
     // GETTERS & SETTERS
 
+
+    public int getTotalFacebookLikes() {
+        return getInt("total_facebook_likes");
+    }
+
+    public void setTotalFacebookLikes(int totalFacebookLikes) {
+        this.totalFacebookLikes = totalFacebookLikes;
+        put("total_facebook_likes", totalFacebookLikes);
+    }
+
+    public String getCoverPictureUrl() {
+        return getString("cover_picture");
+    }
+
+    public void setCoverPictureUrl(String coverPictureUrl) {
+        this.coverPictureUrl = coverPictureUrl;
+        put("cover_picture", coverPictureUrl);
+    }
 
     public int getIndexOfLastPictureShared() {
         return getInt("index_of_last_picture_shared");

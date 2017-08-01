@@ -14,6 +14,7 @@
     <dimen name="category_tag_width">8dp</dimen>
     <dimen name="rv_margin_bottom">8dp</dimen>
     <dimen name="rv_margin_top">8dp</dimen>
+    <dimen name="cv_margin_left">8dp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="activity_items_margin">4dp</dimen>
     <dimen name="feed_line_width">2dp</dimen>
