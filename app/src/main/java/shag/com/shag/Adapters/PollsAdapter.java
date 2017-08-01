@@ -60,6 +60,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     TimeButtonsInterface timeButtonsInterface;
     LocationButtonsInterface locationButtonsInterface;
     ConflictTextViewInterface conflictTextViewInterface;
+    EventReadyCheckInterface eventReadyCheckInterface;
     private Context context;
 
     public interface TimeButtonsInterface {
@@ -75,11 +76,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     }
     public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
                         LocationButtonsInterface locationButtonsInterface, ConflictTextViewInterface conflictTextViewInterface, ArrayList<Poll> polls) {
+    
+      public interface EventReadyCheckInterface {
+        void checkIfEventReady();
+    }
+    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
+                        LocationButtonsInterface locationButtonsInterface, EventReadyCheckInterface eventReadyCheckInterface,
+                        ArrayList<Poll> polls) {
         this.polls = polls;
         this.context=c;
         this.timeButtonsInterface = timeButtonsInterface;
         this.locationButtonsInterface = locationButtonsInterface;
         this.conflictTextViewInterface = conflictTextViewInterface;
+        this.eventReadyCheckInterface = eventReadyCheckInterface;
     }
 
 
@@ -185,6 +194,8 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 object.put("people_voted", poll.getPeopleVoted());
                                 object.put("scores", poll.getScores());
                                 object.saveInBackground();
+
+                                eventReadyCheckInterface.checkIfEventReady();
 
                             } else {
                                 e.getMessage();
@@ -325,8 +336,6 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
             }
             conflictTextViewInterface.setTvConflictVisibility(holder.tvConflict, choices);
         }
-
-
     }
 
 
