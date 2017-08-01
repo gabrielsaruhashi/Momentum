@@ -217,6 +217,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                 public void run() {
                                     imageAdapter.notifyDataSetChanged();
                                     sliderAdapter.notifyDataSetChanged();
+                                    indicator.setViewPager(mPager);
 
                                 }
                             });
@@ -228,7 +229,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     }
     public void createFacebookAlbum() {
         // on click create album, create new album and share pics
-        ArrayList<Integer> contributors = getIntegerArray(participantsFacebookIds);
+        ArrayList<Integer> contributorsArrayList = getIntegerArray(participantsFacebookIds);
+        int[] contributors =  toIntArray(contributorsArrayList);
+
         // if album hasnt been created yet
         if (facebookAlbumId == 0) {
             fbClient.postFacebookAlbum(contributors, memory.getMemoryName(), new GraphRequest.Callback() {
@@ -503,6 +506,13 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             }
         }
         return result;
+    }
+
+    int[] toIntArray(ArrayList<Integer> list){
+        int[] ret = new int[list.size()];
+        for(int i = 0;i < ret.length;i++)
+            ret[i] = list.get(i);
+        return ret;
     }
 
     @Override
