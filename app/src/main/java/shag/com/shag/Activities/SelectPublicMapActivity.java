@@ -600,12 +600,12 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         for (int i = 0; i < markerOptionsArrayList.size(); i++){
 
         }
-        //oldMarker.icon()
-        MarkerOptions newMarker = new MarkerOptions();
-        //newMarker;
-
-        Animation anim = AnimationUtils.loadAnimation(this, R.animator.scale);
-
-        //animatedMarker.getIcon();
+//        //oldMarker.icon()
+//        MarkerOptions newMarker = new MarkerOptions();
+//        //newMarker;
+//
+//        Animation anim = AnimationUtils.loadAnimation(this, R.animator.scale);
+//
+//        //animatedMarker.getIcon();
     }
 }
