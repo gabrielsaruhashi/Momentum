@@ -89,7 +89,8 @@ import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
-        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.ConflictTextViewInterface {
+        PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.ConflictTextViewInterface,
+    PollsAdapter.EventReadyCheckInterface {
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
@@ -184,7 +185,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // initialize the list of polls
         polls = new ArrayList<>();
         // construct the adater from the data source
-        pollAdapter = new PollsAdapter(getContext(), this, this, this, polls);
+        pollAdapter = new PollsAdapter(getContext(), this, this, this, this, polls);
 
         // initialize recycler view
         rvPolls = (RecyclerView) findViewById(R.id.rvPolls);
@@ -262,7 +263,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         taskToGetCalendarEvents = new Runnable() {
             @Override
             public void run() {
-                String[] projection = new String[]{CalendarContract.Events.CALENDAR_ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY, CalendarContract.Events.EVENT_LOCATION};
+                String[] projection = new String[]{CalendarContract.Events.CALENDAR_ID, CalendarContract.Events.TITLE, CalendarContract.Events.DESCRIPTION,
+                        CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND, CalendarContract.Events.ALL_DAY, CalendarContract.Events.EVENT_LOCATION};
                 //TODO change start time
                 // 0 = January, 1 = February, ...
                 Calendar startTime = Calendar.getInstance();
@@ -320,106 +322,106 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 recommendRestaurant();
             }
 
-        setupLiveQueires();
+            setupLiveQueires();
+        }
     }
 
     private void setupLiveQueires() {
-            // Make sure the Parse server is setup to configured for live queries
-            // URL for server is determined by Parse.initialize() call.
-            ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+        // Make sure the Parse server is setup to configured for live queries
+        // URL for server is determined by Parse.initialize() call.
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
 
-            ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
-            // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
-            // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
+        ParseQuery<Message> parseQuery = ParseQuery.getQuery(Message.class);
+        // This query can even be more granular (i.e. only refresh if the entry was added by some other user)
+        // parseQuery.whereNotEqualTo(USER_ID_KEY, ParseUser.getCurrentUser().getObjectId());
 
-            // Connect to Parse server
-            SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+        // Connect to Parse server
+        SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
-            // Listen for CREATE events
-            subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
-                    SubscriptionHandling.HandleEventCallback<Message>() {
-                        @Override
-                        public void onEvent(ParseQuery<Message> query, Message object) {
-                            String senderId = object.getSenderId();
-                            String newEventId = object.getEventId();
-
-                            if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                                mMessages.add(0, object);
-                            }
-
-                            // RecyclerView updates need to be run on the UI thread
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mAdapter.notifyDataSetChanged();
-                                    rvChat.scrollToPosition(0);
-
-                                }
-                            });
-                        }
-
-
-                    });
-
-
-            parseQueryPoll = ParseQuery.getQuery(Poll.class);
-            pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
-            pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-                @Override
-                public void onEvent(ParseQuery<Poll> query, Poll object) {
-                    String senderId = (String) object.get("poll_creator_id");
-                    if (senderId != null) {
+        // Listen for CREATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
+                SubscriptionHandling.HandleEventCallback<Message>() {
+                    @Override
+                    public void onEvent(ParseQuery<Message> query, Message object) {
+                        String senderId = object.getSenderId();
                         String newEventId = object.getEventId();
 
-                        if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                            polls.add(object);
+                        if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                            mMessages.add(0, object);
                         }
 
                         // RecyclerView updates need to be run on the UI thread
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                pollAdapter.notifyDataSetChanged();
-                                rvPolls.scrollToPosition(0);
+                                mAdapter.notifyDataSetChanged();
+                                rvChat.scrollToPosition(0);
 
                             }
                         });
                     }
-                }
-            });
 
-            // Connect to Parse server
-            pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
-                @Override
-                public void onEvent(ParseQuery<Poll> query, Poll object) {
-                    int pos = -1;
-                    if (object.getPollType().equals("Time")) {
-                        pos = 0;
-                    } else if (object.getPollType().equals("Location")) {
-                        pos = 1;
-                    }
+
+                });
+
+
+        parseQueryPoll = ParseQuery.getQuery(Poll.class);
+        pollSubscriptionHandling = parseLiveQueryClient.subscribe(parseQueryPoll);
+        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+            @Override
+            public void onEvent(ParseQuery<Poll> query, Poll object) {
+                String senderId = (String) object.get("poll_creator_id");
+                if (senderId != null) {
                     String newEventId = object.getEventId();
-                    if (eventId.equals(newEventId)) {
-                        polls.set(pos, object);
 
+                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+                        polls.add(object);
                     }
+
                     // RecyclerView updates need to be run on the UI thread
-                    final int finalPos = pos;
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            rvPolls.invalidate();
-                            pollAdapter.notifyItemChanged(finalPos);
+                            pollAdapter.notifyDataSetChanged();
                             rvPolls.scrollToPosition(0);
-                            //pollAdapter.notifyItemChanged(1);
 
                         }
                     });
                 }
+            }
+        });
 
-            });
+        // Connect to Parse server
+        pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
+            @Override
+            public void onEvent(ParseQuery<Poll> query, Poll object) {
+                int pos = -1;
+                if (object.getPollType().equals("Time")) {
+                    pos = 0;
+                } else if (object.getPollType().equals("Location")) {
+                    pos = 1;
+                }
+                String newEventId = object.getEventId();
+                if (eventId.equals(newEventId)) {
+                    polls.set(pos, object);
 
-        }
+                }
+                // RecyclerView updates need to be run on the UI thread
+                final int finalPos = pos;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        rvPolls.invalidate();
+                        pollAdapter.notifyItemChanged(finalPos);
+                        rvPolls.scrollToPosition(0);
+                        //pollAdapter.notifyItemChanged(1);
+
+                    }
+                });
+            }
+
+        });
+
     }
 
     private void recommendRestaurant() {
@@ -1043,6 +1045,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
         });
     }
+
     //TODO this might break if calendar events hasnt returned yet
     public boolean conflictsWithCalendarEvent(String timeOption) {
         Date dateTimeOption = convertStringToDate(timeOption);
@@ -1050,7 +1053,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // gets list of all calendar events that conflict with this time option
         for (CalendarEvent calendarEvent : calendarEvents) {
-            if(!calendarEvent.getdStart().after(dateTimeOption) && !calendarEvent.getdEnd().before(dateTimeOption)) {
+            if (!calendarEvent.getdStart().after(dateTimeOption) && !calendarEvent.getdEnd().before(dateTimeOption)) {
                 /* calendar event start time <= poll option <= calendar event end time */
                 conflictingCalendarEvents.add(calendarEvent);
                 // return true to add * to poll option UI
@@ -1294,6 +1297,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 });
             }
         }
+    }
 
     public void checkIfEventReady() {
         findPollWinners(polls);

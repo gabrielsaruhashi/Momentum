@@ -74,13 +74,12 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
     public interface ConflictTextViewInterface {
         void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions);
     }
-    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
-                        LocationButtonsInterface locationButtonsInterface, ConflictTextViewInterface conflictTextViewInterface, ArrayList<Poll> polls) {
-    
-      public interface EventReadyCheckInterface {
+
+
+    public interface EventReadyCheckInterface {
         void checkIfEventReady();
     }
-    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface,
+    public PollsAdapter(Context c, TimeButtonsInterface timeButtonsInterface, ConflictTextViewInterface conflictTextViewInterface,
                         LocationButtonsInterface locationButtonsInterface, EventReadyCheckInterface eventReadyCheckInterface,
                         ArrayList<Poll> polls) {
         this.polls = polls;
