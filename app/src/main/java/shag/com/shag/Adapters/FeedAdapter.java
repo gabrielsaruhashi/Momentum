@@ -508,7 +508,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         baseUrl += "center=" + destination;
         baseUrl += "&zoom=17";
-        baseUrl += "&size=450x250";
+        baseUrl += "&size=200x250";
         baseUrl += "&markers=color:blue%7C" + destination;
         baseUrl += "&sensor=false";
         baseUrl += "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
