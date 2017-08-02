@@ -200,10 +200,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             // get new pictures
                             ArrayList<ParseFile> newPictures = new ArrayList<ParseFile>(liveQueryPictures.subList(pictures.size(),liveQueryPictures.size()));
 
-                            for (int i = 0; i < newPictures.size(); i ++) {
-                                pictures.add(null);
-                            }
-
                             // iterate through new pictures to verify which ones were shared by current user
                             for (ParseFile file: newPictures) {
                                 // if one of the new pictures was posted by user, remove it from the new pictures array
@@ -211,11 +207,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                     newPictures.remove(file);
                                 }
                             }
-
-                            for (int i = 1; i <= newPictures.size(); i ++) {
-                                pictures.remove(pictures.size() - i);
-                            }
-
 
                             // add new pictures to the bottom
                             pictures.addAll(newPictures);
