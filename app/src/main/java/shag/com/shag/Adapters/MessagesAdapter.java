@@ -97,7 +97,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 } else {
                     //they sent the last message, don't show name and pic again
                     holder.tvOtherName.setVisibility(View.GONE);
-                    holder.imageOther.setVisibility(View.VISIBLE);
+                    holder.imageOther.setVisibility(View.INVISIBLE);
                 }
             }
         }
