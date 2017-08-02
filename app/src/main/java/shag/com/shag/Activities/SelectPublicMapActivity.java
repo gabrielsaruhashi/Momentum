@@ -327,13 +327,13 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         }
         SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
         String time = localDateFormat.format(date.getTime());
-        String jamBaseApi = "6dhquzx3559xvcd2un49madm";
-
+        String jamBaseApi = "&api_key=6dhquzx3559xvcd2un49madm";
+        String endTime = "T23%3A59%3A59&page=0";
 
         String jamBaseUrl = "http://api.jambase.com/events?";
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode +
                 "&radius=" + radius + "&startDate=+" + year + "-" + formattedMonth + "-" + day + "T" + time.substring(0, 2) + "%3A" + time.substring(3, 5) + "%3A" + time.substring(6)
-                + "&endDate=+" + year + "-" + formattedMonth + "-" + finalDay + "T23%3A59%3A59&page=0&api_key=" + jamBaseApi, null,
+                + "&endDate=+" + year + "-" + formattedMonth + "-" + finalDay + endTime + jamBaseApi, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

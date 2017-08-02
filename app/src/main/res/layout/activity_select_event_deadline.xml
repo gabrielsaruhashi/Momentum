@@ -39,7 +39,7 @@
         android:layout_below="@+id/tvDescription"
         android:background="@null"
         android:gravity="top"
-        android:hint="What do ya wanna do?"
+        android:hint="Required: What do ya wanna do?"
         android:inputType="textMultiLine"
         android:padding="8dp"
         android:textAppearance="@android:style/TextAppearance.Small"

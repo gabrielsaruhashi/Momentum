@@ -64,7 +64,6 @@ public class MapCardAdapter extends PagerAdapter {
         cardTitle.setText((String) data.get("Name"));
         cardDescription.setText((String) data.get("Description"));
         cardLocation.setText((String) data.get("Location"));
-        cardTime.setText((String) data.get("Time"));
 
         cardCreate.setOnClickListener(new View.OnClickListener() {
             @Override

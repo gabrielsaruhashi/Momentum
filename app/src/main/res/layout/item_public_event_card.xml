@@ -81,13 +81,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="4dp" />
 
-                <TextView
-                    android:id="@+id/tvTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingLeft="8dp"
-                    android:text="Time" />
-
             </LinearLayout>
 
             <Button
@@ -95,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_gravity="bottom|end"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="4dp"
                 android:text="Create"
                 android:backgroundTint="@color/colorPrimary"
                 android:textSize="14dp"

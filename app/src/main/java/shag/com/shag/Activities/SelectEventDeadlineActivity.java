@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -107,6 +109,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         Button tv12h = (Button) findViewById(R.id.bt12);
         setListenerForTime(tv12h, 720);
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
+
         tvCategory.setText(category);
         tvCategory.setTextColor(Color.WHITE);
 
@@ -181,17 +184,48 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         makeEventButton = (Button) findViewById(R.id.btMakeEvent);
         makeEventButton.setBackgroundColor(getResources().getColor(color));
         makeEventButton.setTextColor(Color.WHITE);
-        makeEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        makeEventButton.setEnabled(false);
 
-                createEvent();
-                Intent i = new Intent(SelectEventDeadlineActivity.this,MainActivity.class);
-                startActivity(i);
+        etDescription.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                if(s.toString().trim().length()==0){
+                    makeEventButton.setEnabled(false);
+                } else {
+                    makeEventButton.setEnabled(true);
+                }
 
 
             }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count,
+                                          int after) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
         });
+
+            makeEventButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (makeEventButton.isEnabled()) {
+
+                        createEvent();
+                        Intent i = new Intent(SelectEventDeadlineActivity.this, MainActivity.class);
+                        startActivity(i);
+                    }
+
+
+                }
+            });
+
 
     }
 
