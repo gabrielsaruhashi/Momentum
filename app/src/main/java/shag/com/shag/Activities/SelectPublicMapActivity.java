@@ -563,16 +563,16 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position!=cardPagerSize) {
+                if (position!=cardPagerSize-1) {
                     position+=1;
                 }
                 else{
                     position=0;
                 }
-                Marker oldMarker = markerOptionsArrayList.get(position);
-                oldMarker.getTag();
-                oldMarker.showInfoWindow();
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(oldMarker.getPosition()));
+                Marker marker = markerOptionsArrayList.get(position);
+                marker.getTag();
+                marker.showInfoWindow();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(marker.getPosition()));
 
             }
 

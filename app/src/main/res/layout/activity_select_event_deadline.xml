@@ -30,19 +30,7 @@
         android:textSize="24sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:textAllCaps="true"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000"/>
+
     <EditText
         android:id="@+id/tvDescriptionInput"
         android:layout_width="match_parent"
@@ -51,17 +39,14 @@
         android:layout_below="@+id/tvDescription"
         android:background="@null"
         android:gravity="top"
-        android:hint="Required 5 characters"
+        android:hint="What do ya wanna do?"
         android:inputType="textMultiLine"
         android:padding="8dp"
         android:textAppearance="@android:style/TextAppearance.Small"
         android:textSize="16dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="53dp" />
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#000"/>
+
 
     <TextView
         android:id="@+id/textView5"
