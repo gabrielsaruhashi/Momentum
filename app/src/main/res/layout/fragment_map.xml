@@ -72,7 +72,11 @@
                     android:id="@+id/pagerMapCards"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true" />
+                    android:layout_alignParentTop="true"
+                    android:gravity="center"
+                    android:paddingLeft="24dp"
+                    android:paddingRight="12dp"
+                    android:layout_weight="1" />
 
                 <Space
                     android:layout_width="match_parent"

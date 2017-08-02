@@ -113,7 +113,10 @@
 
         <activity android:name=".Activities.EventReadyActivity" />
         <activity android:name=".Activities.SelectPublicEventTypeActivity" />
-        <activity android:name=".Activities.SelectPublicMapActivity"></activity>
+        <activity android:name=".Activities.SelectPublicMapActivity" />
+        <activity android:name=".Activities.SelectEventDeadlineActivity"
+            android:windowSoftInputMode="stateAlwaysVisible">
+        </activity>
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package shag.com.shag.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import butterknife.ButterKnife;
@@ -19,6 +20,9 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         setContentView(R.layout.activity_select_event_category);
 
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(0xFFFFFFFF);
 
 
     }
@@ -46,7 +50,7 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
                 i.putExtra("Event Type", "Public");
             }
             else {
-                i = new Intent(SelectEventCategoryActivity.this, SelectEventDetailsActivity.class);
+                i = new Intent(SelectEventCategoryActivity.this, SelectEventDeadlineActivity.class);
                 i.putExtra("Event Type", "Private");
             }
             i.putExtra("Category", pickedCategory);

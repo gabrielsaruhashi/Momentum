@@ -122,6 +122,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         cardViews = (RelativeLayout) v.findViewById(R.id.eventDetails);
         mapCardAdapter = new MapCardAdapter(getContext(), cardData);
         viewPager = (ViewPager) v.findViewById(R.id.pagerMapCards);
+        viewPager.setClipToPadding(false);
+        viewPager.setPageMargin(12);
         viewPager.setAdapter(mapCardAdapter);
         viewPager.setOffscreenPageLimit(3);
 

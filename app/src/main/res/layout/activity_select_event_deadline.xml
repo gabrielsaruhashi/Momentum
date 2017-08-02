@@ -1,36 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="shag.com.shag.Activities.SelectEventDetailsActivity"
-    android:weightSum="1">
+    tools:context="shag.com.shag.Activities.SelectEventDeadlineActivity"
+    android:weightSum="1"
+
+    >
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <TextView
         android:id="@+id/tvCategory"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="12dp"
+        android:layout_weight="0.07"
         android:text="Category"
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_weight="0.07" />
+        android:textAllCaps="true"
+        android:textSize="24sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Description"
+        android:textAllCaps="true"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold" />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000"/>
     <EditText
         android:id="@+id/tvDescriptionInput"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="140dp"
         android:layout_alignStart="@+id/tvDescription"
         android:layout_below="@+id/tvDescription"
         android:background="@null"
@@ -42,13 +58,17 @@
         android:textSize="16dp"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="53dp" />
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#000"/>
 
     <TextView
         android:id="@+id/textView5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Deadline To Join"
+        android:textAllCaps="true"
         android:textAlignment="center"
         android:textSize="16sp"
         android:textStyle="bold" />
@@ -61,66 +81,83 @@
         android:layout_weight="0.07">
 
         <!--<Button-->
-            <!--android:id="@+id/bt30"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight=".1667"-->
-            <!--android:text="30 M" />-->
+        <!--android:id="@+id/bt30"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight=".1667"-->
+        <!--android:text="30 M" />-->
+
         <Button
             android:id="@+id/bt30"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".2290"
             android:textColor="@color/white"
             style="@style/AppTheme.Button"
             android:text="30 M" />
+        <android.support.v4.widget.Space
+            android:layout_width=".3dp"
+            android:layout_height="match_parent" />
 
         <Button
             android:id="@+id/bt1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".1367"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="1 Hr"/>
+        <android.support.v4.widget.Space
+            android:layout_width=".3dp"
+            android:layout_height="match_parent" />
 
         <Button
             android:id="@+id/bt2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".1367"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="2 Hr" />
-
+        <android.support.v4.widget.Space
+            android:layout_width=".3dp"
+            android:layout_height="match_parent" />
         <Button
             android:id="@+id/bt3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".1367"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="3 Hr"/>
+        <android.support.v4.widget.Space
+            android:layout_width=".3dp"
+            android:layout_height="match_parent" />
         <Button
             android:id="@+id/bt6"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".1367"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="6 Hr"/>
+        <android.support.v4.widget.Space
+            android:layout_width=".3dp"
+            android:layout_height="match_parent" />
         <Button
             android:id="@+id/bt12"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1667"
+            android:layout_weight=".1367"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="12 Hr"/>
     </LinearLayout>
-
+    <android.support.v4.widget.Space
+        android:layout_width="match_parent"
+        android:layout_height="2dp" />
     <Button
-        android:id="@+id/btNext"
+        android:id="@+id/btMakeEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
