@@ -11,8 +11,8 @@
 
     <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar" >
         <item name="colorPrimary">@color/gradient_end</item>
-        <item name="colorPrimaryDark">@color/material_dark_orange</item>
-        <item name="colorAccent">@color/material_bright_orange</item>
+        <item name="colorPrimaryDark">@color/toolbar_dark</item>
+        <item name="colorAccent">@color/gradient_end</item>
     </style>
 
 

@@ -48,7 +48,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     // list of tweets
     ArrayList<Event> events;
-    int colorId;
 
     // pass in the Tweets array in the constructor
     public FeedAdapter(ArrayList<Event> events) {
@@ -92,7 +91,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void onBindViewHolder(FeedAdapter.ViewHolder holder, int position) {
         // populate the views
         Event event = events.get(position);
-        if (!event.getIsEventPrivate())  {
+        if (!event.getIsEventPrivate()) {
             showMap(event, holder);
         }
         holder.tvBody.setText(event.getDescription());
@@ -104,37 +103,26 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         //TODO: change categories
         if (event.getCategory().equals("Chill")) {
-            colorId = R.color.chill_color;
             holder.ivCategory.setImageResource(R.drawable.ic_chill);
             holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Sports")) {
-            colorId = R.color.sports_color;
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
             holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Party")) {
-            colorId = R.color.party_color;
             holder.ivCategory.setImageResource(R.drawable.ic_party1);
             holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Food")) {
-            colorId = R.color.food_color;
             holder.ivCategory.setImageResource(R.drawable.ic_food1);
             holder.ivCategory.setBackgroundResource(R.drawable.food_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Music")) {
-            colorId = R.color.music_color;
             holder.ivCategory.setImageResource(R.drawable.ic_music1);
             holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else {
-            colorId = R.color.misc_color;
             holder.ivCategory.setImageResource(R.drawable.ic_misc1);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
-            holder.ivCategoryBar.setBackgroundResource(colorId);
         }
         ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.WHITE);
+        holder.ivCategoryBar.setBackgroundResource(findCorrectColor(event));
         holder.ivCategory.setColorFilter(filter);
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
@@ -142,7 +130,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.btJoin.setText("Joined");
 
         } else {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, colorId));
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, findCorrectColor(event)));
             holder.btJoin.setText("Join");
         }
 
@@ -158,47 +146,18 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .into(holder.ivProfileImage);
 
         ArrayList<String> participants = event.getParticipantsIds();
-        if (participants.size() > 1) {
-            try {
-                ParseUser user = ParseUser.getQuery().get(participants.get(1));
-                Glide.with(context)
-                        .load(user.getString("profile_image_url").replace("_normal", ""))
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.ivFriend1);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            holder.ivFriend1.setVisibility(View.GONE);
-        }
+        //ignore index zero, which is the event owner
+        boolean isMe1 = loadUserIntoIndex(participants, 1, holder.ivFriend1);
+        boolean isMe2 = loadUserIntoIndex(participants, 2, holder.ivFriend2);
+        boolean isMe3 = loadUserIntoIndex(participants, 3, holder.ivFriend3);
 
-        if (participants.size() > 2) {
-            try {
-                ParseUser user = ParseUser.getQuery().get(participants.get(2));
-                Glide.with(context)
-                        .load(user.getString("profile_image_url").replace("_normal", ""))
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.ivFriend2);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            holder.ivFriend2.setVisibility(View.GONE);
-        }
-
-        if (participants.size() > 3) {
-            try {
-                ParseUser user = ParseUser.getQuery().get(participants.get(3));
-                Glide.with(context)
-                        .load(user.getString("profile_image_url").replace("_normal", ""))
-                        .bitmapTransform(new CropCircleTransformation(context))
-                        .into(holder.ivFriend3);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        } else {
-            holder.ivFriend3.setVisibility(View.GONE);
-        }
+//        if (!isMe1) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend1);
+//        } else if (!isMe2) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend2);
+//        } else if (!isMe3) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend3);
+//        }
 
     }
 
@@ -211,17 +170,28 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         // Automatically finds each field by the specified ID
-        @BindView(R.id.tvEventOwnerName) TextView tvEventOwnerName;
-        @BindView(R.id.tvBody) TextView tvBody;
-        @BindView(R.id.tvRelativeTime) TextView tvRelativeTime;
-        @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
-        @BindView(R.id.btJoin) Button btJoin;
-        @BindView(R.id.ivCategory) ImageView ivCategory;
-        @BindView(R.id.ivFriend1) ImageView ivFriend1;
-        @BindView(R.id.ivFriend2) ImageView ivFriend2;
-        @BindView(R.id.ivFriend3) ImageView ivFriend3;
-        @BindView(R.id.ivCategoryBar) ImageView ivCategoryBar;
-        @BindView(R.id.ivMap) ImageView ivMap;
+        @BindView(R.id.tvEventOwnerName)
+        TextView tvEventOwnerName;
+        @BindView(R.id.tvBody)
+        TextView tvBody;
+        @BindView(R.id.tvRelativeTime)
+        TextView tvRelativeTime;
+        @BindView(R.id.ivProfileImage)
+        ImageView ivProfileImage;
+        @BindView(R.id.btJoin)
+        Button btJoin;
+        @BindView(R.id.ivCategory)
+        ImageView ivCategory;
+        @BindView(R.id.ivFriend1)
+        ImageView ivFriend1;
+        @BindView(R.id.ivFriend2)
+        ImageView ivFriend2;
+        @BindView(R.id.ivFriend3)
+        ImageView ivFriend3;
+        @BindView(R.id.ivCategoryBar)
+        ImageView ivCategoryBar;
+        @BindView(R.id.ivMap)
+        ImageView ivMap;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -447,7 +417,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, colorId));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, findCorrectColor(event)));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
@@ -524,6 +494,45 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Glide.with(context)
                 .load(baseUrl)
                 .into(holder.ivMap);
+    }
+
+    public boolean loadUserIntoIndex(ArrayList<String> participants, int friendIndex, ImageView view) {
+        if (participants.size() > friendIndex) {
+            try {
+                ParseUser user = ParseUser.getQuery().get(participants.get(friendIndex));
+                //if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                    Glide.with(context)
+                            .load(user.getString("profile_image_url").replace("_normal", ""))
+                            .bitmapTransform(new CropCircleTransformation(context))
+                            .into(view);
+                    return true;
+               // } else {
+                //    view.setVisibility(View.GONE);
+               //     return false;
+               // }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        //load failed but should not try again
+        view.setVisibility(View.GONE);
+        return true;
+    }
+
+    public int findCorrectColor(Event event) {
+        if (event.getCategory().equals("Chill")) {
+            return R.color.chill_color;
+        } else if (event.getCategory().equals("Sports")) {
+            return R.color.sports_color;
+        } else if (event.getCategory().equals("Party")) {
+            return R.color.party_color;
+        } else if (event.getCategory().equals("Food")) {
+            return R.color.food_color;
+        } else if (event.getCategory().equals("Music")) {
+            return R.color.music_color;
+        }
+
+        return R.color.misc_color;
     }
 
 }
