@@ -40,11 +40,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvOtherName"
-        android:maxWidth="240dp"
-        android:layout_toRightOf="@id/ivProfileOther"
         android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/ivProfileOther"
         android:layout_weight="1"
         android:background="@drawable/text_bubble1"
+        android:maxWidth="240dp"
+        android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="14sp" />
 
@@ -52,12 +53,13 @@
         android:id="@+id/tvMyBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvOtherName"
         android:layout_alignParentRight="true"
-        android:maxWidth="240dp"
+        android:layout_below="@id/tvOtherName"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:background="@drawable/text_bubble1"
+        android:background="@drawable/text_bubble_me"
+        android:maxWidth="240dp"
+        android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="14sp" />
 

@@ -3,7 +3,6 @@ package shag.com.shag.Adapters;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,13 +59,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             holder.imageOther.setVisibility(View.GONE);
             holder.theirBody.setVisibility(View.INVISIBLE);
             holder.tvOtherName.setVisibility(View.GONE);
-            holder.myBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            //holder.myBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
             holder.myBody.setText(messageBody);
             showPic = false;
         } else {
             holder.myBody.setVisibility(View.INVISIBLE);
             holder.imageOther.setVisibility(View.VISIBLE);
-            holder.theirBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            //holder.theirBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             holder.tvOtherName.setVisibility(View.VISIBLE);
             holder.theirBody.setText(messageBody);
 
