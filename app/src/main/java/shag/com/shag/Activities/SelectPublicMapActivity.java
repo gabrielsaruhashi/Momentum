@@ -20,8 +20,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -32,7 +30,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -94,7 +91,7 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
     ArrayList<HashMap<String, Object>> cardData = new ArrayList<>();
     int cardPagerSize = 0;
     HashMap<String, MarkerOptions> markers;
-    ArrayList<MarkerOptions> markerOptionsArrayList;
+    ArrayList<Marker> markerOptionsArrayList = new ArrayList<>();
 
 
     @Override
@@ -120,6 +117,7 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
 
         if (getIntent().getStringExtra("Event Type").equals("Public") && getIntent().getStringExtra("Category").equals("Music")) {
             try {
+                mLastLocation=getIntent().getParcelableExtra("CurrentLoc");
                 addresses = new ArrayList<>();
                 geocoder = new Geocoder(getContext(), Locale.getDefault());
                 addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
@@ -131,10 +129,10 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
 
         }
         if (getIntent().getStringExtra("Event Type").equals("Public") && getIntent().getStringExtra("Category").equals("Food")) {
+            mLastLocation=getIntent().getParcelableExtra("CurrentLoc");
             onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
 
         }
-        animateMarkers();
 
 }
 
@@ -349,91 +347,69 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                         LatLngBounds.Builder b = new LatLngBounds.Builder();
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
-                                final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
-                                final Double musicLng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
-                                final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
-                                String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
-                                String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
-                                String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
-                                String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
+                                if (eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude") != 0.0) {
+
+                                    final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                    final Double musicLng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                    final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
+                                    String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
+                                    String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
+                                    String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
+                                    String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
 
 
-                                final String locationAddress = streetName + " " + city + ", " + state + ", " + zipcode;
+                                    final String locationAddress = streetName + " " + city + ", " + state + ", " + zipcode;
 
-                                JSONArray getArtistArray = null;
-                                try {
-                                    getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
-                                    String artist = getArtistArray.getJSONObject(0).getString("Name");
-                                    LatLng musicLatLng = new LatLng(musicLat, musicLng);
-                                    b.include(musicLatLng);
+                                    JSONArray getArtistArray = null;
+                                    try {
+                                        getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
+                                        String artist = getArtistArray.getJSONObject(0).getString("Name");
+                                        LatLng musicLatLng = new LatLng(musicLat, musicLng);
+                                        b.include(musicLatLng);
 
-                                    final HashMap<String, Object> publicEventData = new HashMap<>();
-                                    publicEventData.put("Name", artist);
-                                    publicEventData.put("Description", "Music Concert");
-                                    publicEventData.put("Location", locationAddress);
-                                    publicEventData.put("Category", "Music");
-                                    publicEventData.put("Lat", musicLat);
-                                    publicEventData.put("Lng", musicLng);
-                                    publicEventData.put("Place Name", concertPlace);
-                                    cardPagerSize++;
+                                        final HashMap<String, Object> publicEventData = new HashMap<>();
+                                        publicEventData.put("Name", artist);
+                                        publicEventData.put("Description", "Music Concert");
+                                        publicEventData.put("Location", locationAddress);
+                                        publicEventData.put("Category", "Music");
+                                        publicEventData.put("Lat", musicLat);
+                                        publicEventData.put("Lng", musicLng);
+                                        publicEventData.put("Place Name", concertPlace);
+                                        cardPagerSize++;
 
-                                    Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+                                        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
-                                    MarkerOptions markerOptions = new MarkerOptions();
-                                    markerOptions.position(musicLatLng);
-                                    markerOptions.title(artist);
-                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                    mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
-                                    markers.put(concertPlace, markerOptions);
-                                    markerOptionsArrayList.add(markerOptions);
-                                    cardData.add(publicEventData);
-                                    mapCardAdapter.notifyDataSetChanged();
-                                    indicator.setViewPager(viewPager);
+                                        Marker newMarker = mGoogleMap.addMarker(new MarkerOptions().position(musicLatLng)
+                                                .title(artist).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
 
-//                                    mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//                                        @Override
-//                                        public void onInfoWindowClick(Marker marker) {
-//
-//                                            final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
-//
-//                                            cardTitle.setText(data.get("Name"));
-//                                            cardDescription.setText(data.get("Description"));
-//                                            cardLocation.setText(data.get("Location"));
-//
-//                                            cardView.setVisibility(View.VISIBLE);
-//
-//
-//                                            fab.setOnClickListener(new View.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(View v) {
-//
-//                                                    Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
-//                                                    i.putExtra("Location", data.get("Location"));
-//                                                    i.putExtra("Category", data.get("Category"));
-//                                                    i.putExtra("Event Type", "Public");
-//                                                    i.putExtra("Lat", musicLat);
-//                                                    i.putExtra("Lng", musicLng);
-//                                                    i.putExtra("Place Name", concertPlace);
-//                                                    getContext().startActivity(i);
-//                                                }
-//                                            });
-//
-//                                        }
-//
-//                                    });
+//                                    MarkerOptions markerOptions = new MarkerOptions();
+//                                    markerOptions.position(musicLatLng);
+//                                    markerOptions.title(artist);
+//                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                        newMarker.setTag(publicEventData);
+                                        cardData.add(publicEventData);
+                                        markerOptionsArrayList.add(newMarker);
+                                        mapCardAdapter.notifyDataSetChanged();
+                                        indicator.setViewPager(viewPager);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
                         }
 
                         LatLngBounds bounds = b.build();
                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                         mGoogleMap.animateCamera(cu);
+
+                        animateMarkers();
 
 
                     }
@@ -485,7 +461,6 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                             cardPagerSize = 0;
                             cardViews.setVisibility(View.VISIBLE);
                             LatLngBounds.Builder b = new LatLngBounds.Builder();
-                            Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
                             for (int i = 0; i < restaurantArray.length(); i++) {
 
@@ -512,50 +487,33 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                                 publicEventData.put("Place Name", restaurantName);
                                 cardPagerSize++;
 
+                                Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
-                                final MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions.position(restaurantLatLng);
-                                markerOptions.title(restaurantName);
-                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
-                                markers.put(restaurantName, markerOptions);
-                                markerOptionsArrayList.add(markerOptions);
+                                Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                        .position(restaurantLatLng)
+                                        .title(restaurantName)
+                                        .icon(BitmapDescriptorFactory
+                                                .fromBitmap(bitmap)));
+
+//                                    MarkerOptions markerOptions = new MarkerOptions();
+//                                    markerOptions.position(musicLatLng);
+//                                    markerOptions.title(artist);
+//                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+
+                                newMarker.setTag(publicEventData);
+
+
+//                                final MarkerOptions markerOptions = new MarkerOptions();
+//                                markerOptions.position(restaurantLatLng);
+//                                markerOptions.title(restaurantName);
+//                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+//                                mGoogleMap.addMarker(markerOptions)
+//                                        .setTag(publicEventData);
                                 cardData.add(publicEventData);
+                                markerOptionsArrayList.add(newMarker);
                                 mapCardAdapter.notifyDataSetChanged();
                                 indicator.setViewPager(viewPager);
 
-
-//                                mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//                                    @Override
-//                                    public void onInfoWindowClick(Marker marker) {
-//
-//                                        final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
-//
-//                                            cardTitle.setText(data.get("Name"));
-//                                            cardDescription.setText(data.get("Description"));
-//                                            cardLocation.setText(data.get("Location"));
-//                                            cardView.setVisibility(View.VISIBLE);
-//
-//                                        fab.setOnClickListener(new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View v) {
-//
-//
-//                                                Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
-//                                                i.putExtra("Location", data.get("Location"));
-//                                                i.putExtra("Category", data.get("Category"));
-//                                                i.putExtra("Event Type", "Public");
-//                                                i.putExtra("Food Details", data.get("Description"));
-//                                                i.putExtra("Lat",restaurantLat);
-//                                                i.putExtra("Lng",restaurantLng);
-//                                                i.putExtra("Place Name",restaurantName);
-//                                                getContext().startActivity(i);
-//                                            }
-//                                        });
-//
-//                                    }
-//
-//                                });
 
                                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
@@ -567,6 +525,8 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                             LatLngBounds bounds = b.build();
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                             mGoogleMap.animateCamera(cu);
+                            animateMarkers();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -590,22 +550,43 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                 return params;
             }
         };
+//        cardViews.setVisibility(View.VISIBLE);
         return req;
-
     }
 
+
     public void animateMarkers() {
+        Marker one = markerOptionsArrayList.get(viewPager.getCurrentItem());
+        one.showInfoWindow();
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(one.getPosition()));
 
-        MarkerOptions oldMarker = markerOptionsArrayList.get(viewPager.getCurrentItem());
-        for (int i = 0; i < markerOptionsArrayList.size(); i++){
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (position!=cardPagerSize) {
+                    position+=1;
+                }
+                else{
+                    position=0;
+                }
+                Marker oldMarker = markerOptionsArrayList.get(position);
+                oldMarker.getTag();
+                oldMarker.showInfoWindow();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(oldMarker.getPosition()));
 
-        }
-//        //oldMarker.icon()
-//        MarkerOptions newMarker = new MarkerOptions();
-//        //newMarker;
-//
-//        Animation anim = AnimationUtils.loadAnimation(this, R.animator.scale);
-//
-//        //animatedMarker.getIcon();
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
     }
 }

@@ -1,14 +1,12 @@
 package shag.com.shag.Adapters;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,7 +14,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import shag.com.shag.Activities.SelectEventDetailsActivity;
+import shag.com.shag.Activities.SelectEventDeadlineActivity;
 import shag.com.shag.R;
 
 /**
@@ -59,19 +57,19 @@ public class MapCardAdapter extends PagerAdapter {
         TextView cardDescription = (TextView) card.findViewById(R.id.tvDescription);
         TextView cardLocation = (TextView) card.findViewById(R.id.tvLocation);
         TextView cardTime = (TextView) card.findViewById(R.id.tvTime);
-        ImageView cardExit = (ImageView) card.findViewById(R.id.ivClose);
+        ImageView titleBackground = (ImageView) card.findViewById(R.id.ivBanner);
 
-        FloatingActionButton cardFab = (FloatingActionButton) card.findViewById(R.id.myFAB);
+        Button cardCreate = (Button) card.findViewById(R.id.createButton);
 
         cardTitle.setText((String) data.get("Name"));
         cardDescription.setText((String) data.get("Description"));
         cardLocation.setText((String) data.get("Location"));
         cardTime.setText((String) data.get("Time"));
 
-        cardFab.setOnClickListener(new View.OnClickListener() {
+        cardCreate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(context, SelectEventDetailsActivity.class);
+                Intent i = new Intent(context, SelectEventDeadlineActivity.class);
                 i.putExtra("Location", (String) data.get("Location"));
                 i.putExtra("Category",(String) data.get("Category"));
                 i.putExtra("Event Type", "Public");
@@ -82,22 +80,7 @@ public class MapCardAdapter extends PagerAdapter {
             }
         });
 
-        cardExit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                card.animate()
-                        .translationY(card.getHeight())
-                        .alpha(0.0f)
-                        .setDuration(300)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                            }
-                        });
 
-            }
-        });
 
         //to container add layout instead of button
         container.addView(card);
