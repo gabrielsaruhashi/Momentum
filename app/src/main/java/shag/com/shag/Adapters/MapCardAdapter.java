@@ -27,10 +27,10 @@ public class MapCardAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private Context context;
 
-    @Override
-    public float getPageWidth (int position) {
-        return 0.93f;
-    }
+//    @Override
+//    public float getPageWidth (int position) {
+//        return 0.93f;
+//    }
     @Override
     public int getCount() {
         return cardData.size();

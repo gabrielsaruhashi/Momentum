@@ -110,6 +110,8 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         viewPager = (ViewPager) findViewById(R.id.pagerMapCards);
         viewPager.setAdapter(mapCardAdapter);
         viewPager.setOffscreenPageLimit(3);
+//        viewPager.setClipToPadding(false);
+//        viewPager.setPageMargin(12);
 
         indicator = (CircleIndicator) findViewById(R.id.indicator);
         indicator.setViewPager(viewPager);
@@ -563,12 +565,12 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (position!=cardPagerSize-1) {
-                    position+=1;
-                }
-                else{
-                    position=0;
-                }
+//                if (position!=cardPagerSize) {
+//                    position+=1;
+//                }
+//                else{
+//                    position=0;
+//                }
                 Marker marker = markerOptionsArrayList.get(position);
                 marker.getTag();
                 marker.showInfoWindow();

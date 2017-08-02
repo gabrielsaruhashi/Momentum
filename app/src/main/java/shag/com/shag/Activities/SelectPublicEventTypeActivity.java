@@ -53,7 +53,7 @@ public class SelectPublicEventTypeActivity extends AppCompatActivity {
         music = (ImageView) findViewById(R.id.ivMusic);
 
         Glide.with(this).load("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png").into(food);
-        Glide.with(this).load("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png").into(food);
+        Glide.with(this).load("http://maps.google.com/mapfiles/ms/icons/yellow-dot.png").into(music);
 
         food.setOnClickListener(new View.OnClickListener() {
             @Override
