@@ -1,6 +1,9 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
 import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
@@ -95,7 +98,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
-        holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
+        if (event.getEventOwner() != null) {
+            holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
+        }
 
         //TODO: change categories
         if (event.getCategory().equals("Chill")) {
@@ -110,25 +115,27 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Party")) {
             colorId = R.color.party_color;
-            holder.ivCategory.setImageResource(R.drawable.ic_party);
+            holder.ivCategory.setImageResource(R.drawable.ic_party1);
             holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
             holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Food")) {
             colorId = R.color.food_color;
-            holder.ivCategory.setImageResource(R.drawable.ic_food);
-            holder.ivCategory.setBackgroundResource(colorId);
-            holder.ivCategoryBar.setBackgroundResource(R.color.food_color);
+            holder.ivCategory.setImageResource(R.drawable.ic_food1);
+            holder.ivCategory.setBackgroundResource(R.drawable.food_circle);
+            holder.ivCategoryBar.setBackgroundResource(colorId);
         } else if (event.getCategory().equals("Music")) {
             colorId = R.color.music_color;
-            holder.ivCategory.setImageResource(R.drawable.ic_music);
+            holder.ivCategory.setImageResource(R.drawable.ic_music1);
             holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
             holder.ivCategoryBar.setBackgroundResource(colorId);
         } else {
             colorId = R.color.misc_color;
-            holder.ivCategory.setImageResource(R.drawable.ic_misc);
+            holder.ivCategory.setImageResource(R.drawable.ic_misc1);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
             holder.ivCategoryBar.setBackgroundResource(colorId);
         }
+        ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.WHITE);
+        holder.ivCategory.setColorFilter(filter);
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));

@@ -16,6 +16,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
@@ -24,7 +25,7 @@ import shag.com.shag.R;
  * Created by gabesaruhashi on 7/14/17.
  */
 
-public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder>{
+public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHolder> {
 
     private List<Message> mMessages;
     private Context mContext;
@@ -52,38 +53,62 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         Message message = mMessages.get(position);
 
         // TODO alter this logic to use the sender's info pointer, not the id
-        final boolean isMe = message.getSenderId()!= null && message.getSenderId().equals(mUserId);
-
+        final boolean isMe = message.getSenderId() != null && message.getSenderId().equals(mUserId);
+        boolean showPic = true;
+        String messageBody = message.getBody();
         if (isMe) {
-            holder.imageMe.setVisibility(View.VISIBLE);
-            holder.imageOther.setVisibility(View.INVISIBLE);
-            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.imageOther.setVisibility(View.GONE);
+            holder.theirBody.setVisibility(View.INVISIBLE);
             holder.tvOtherName.setVisibility(View.GONE);
+            holder.myBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.myBody.setText(messageBody);
+            showPic = false;
         } else {
+            holder.myBody.setVisibility(View.INVISIBLE);
             holder.imageOther.setVisibility(View.VISIBLE);
-            holder.imageMe.setVisibility(View.INVISIBLE);
-            holder.body.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            holder.theirBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             holder.tvOtherName.setVisibility(View.VISIBLE);
+            holder.theirBody.setText(messageBody);
+
             if (message.getSenderName() != null) {
-                holder.tvOtherName.setText(message.getSenderName());
-                Log.i("DEBUG_NAME", message.getSenderName());
+                //check if they sent a message previously
+                if (checkDisplayName(message, position)) {
+                    String name = message.getSenderName();
+                    String firstName = name;
+                    if (name.indexOf(" ") > 0) {
+                        firstName = name.substring(0, name.indexOf(" "));
+                    }
+                    holder.tvOtherName.setText(firstName);
+                    Log.i("DEBUG_NAME", message.getSenderName());
+
+                } else {
+                    //they sent the last message, don't show name and pic again
+                    showPic = false;
+                    holder.tvOtherName.setVisibility(View.GONE);
+                }
             }
         }
 
-        final ImageView profileView = isMe ? holder.imageMe : holder.imageOther;
-        //Glide.with(mContext).load(getProfileUrl(message.getSenderId())).into(profileView);
-
-        if (message.getSenderProfileImageUrl() == null) {
-            // generate a unique, random gravatar
-            Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
-                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
+        if (showPic) {
+            if (message.getSenderProfileImageUrl() == null) {
+                // generate a unique, random gravatar
+                Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
+                        .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(holder.imageOther);
+            } else {
+                if (isMe) {
+                    holder.tvOtherName.setVisibility(View.INVISIBLE);
+                } else {
+                    Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
+                            .bitmapTransform(new CropCircleTransformation(mContext)).into(holder.imageOther);
+                }
+            }
         } else {
-            Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
-                    .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(profileView);
+            if (isMe) {
+                holder.imageOther.setVisibility(View.GONE);
+            } else {
+                holder.imageOther.setVisibility(View.INVISIBLE);
+            }
         }
-
-        String messageBody = message.getBody();
-        holder.body.setText(messageBody);
     }
 
     // Create a gravatar image based on the hash value obtained from userId
@@ -107,16 +132,33 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imageOther;
-        ImageView imageMe;
-        TextView body;
+        //ImageView imageMe;
+        TextView theirBody;
         TextView tvOtherName;
+        TextView myBody;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            imageOther = (ImageView)itemView.findViewById(R.id.ivProfileOther);
-            imageMe = (ImageView)itemView.findViewById(R.id.ivProfileMe);
-            body = (TextView)itemView.findViewById(R.id.tvBody);
+            imageOther = (ImageView) itemView.findViewById(R.id.ivProfileOther);
+            //imageMe = (ImageView) itemView.findViewById(R.id.ivProfileMe);
+            theirBody = (TextView) itemView.findViewById(R.id.tvTheirBody);
+            myBody = (TextView) itemView.findViewById(R.id.tvMyBody);
             tvOtherName = (TextView) itemView.findViewById(R.id.tvOtherName);
         }
+
+    }
+
+    public boolean checkDisplayName(Message message, int position) {
+        //it's the first message we're displaying (at the top), should show name
+        if (position == mMessages.size() - 1) {
+            return true;
+        }
+
+        Message previous = mMessages.get(position + 1);
+        if (previous.getSenderId().equals(message.getSenderId())) {
+            return false;
+        }
+
+        return true;
     }
 }

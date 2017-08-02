@@ -3,43 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:layout_margin="4dp">
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp">
 
     <ImageView
         android:id="@+id/ivProfileOther"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:contentDescription="@string/profile_other"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:src="@mipmap/ic_launcher" />
+        android:src="@mipmap/ic_launcher"
+        android:layout_below="@+id/tvOtherName"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/tvOtherName"
         android:layout_width="wrap_content"
         android:layout_height="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="16dp"
         android:layout_toRightOf="@id/ivProfileOther"
-        android:layout_marginLeft="4dp"
-        android:text="ShaggyNoName" />
+        android:text="ShaggyNoName"
+        android:textColor="@color/medium_gray" />
 
+    <!--
     <ImageView
         android:id="@+id/ivProfileMe"
         android:contentDescription="@string/profile_me"
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:src="@mipmap/ic_launcher"
-        android:layout_alignParentRight="true"/>
+        android:layout_alignParentRight="true"
+        android:visibility="gone"/>!-->
 
     <TextView
-        android:id="@+id/tvBody"
-        android:layout_width="match_parent"
+        android:id="@+id/tvTheirBody"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/tvOtherName"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_toLeftOf="@id/ivProfileMe"
+        android:maxWidth="240dp"
         android:layout_toRightOf="@id/ivProfileOther"
+        android:layout_marginLeft="8dp"
         android:layout_weight="1"
-        android:autoLink="map|web|phone"
-        android:textSize="18sp" />
+        android:background="@drawable/text_bubble1"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvMyBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOtherName"
+        android:layout_alignParentRight="true"
+        android:maxWidth="240dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:background="@drawable/text_bubble1"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
 
 
 
