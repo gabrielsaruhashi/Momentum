@@ -53,25 +53,30 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         // TODO alter this logic to use the sender's info pointer, not the id
         final boolean isMe = message.getSenderId() != null && message.getSenderId().equals(mUserId);
-        boolean showPic = true;
         String messageBody = message.getBody();
         if (isMe) {
-            holder.imageOther.setVisibility(View.GONE);
-            holder.theirBody.setVisibility(View.INVISIBLE);
-            holder.tvOtherName.setVisibility(View.GONE);
-            //holder.myBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
+            holder.theirBody.setVisibility(View.GONE);
+            holder.myBody.setVisibility(View.VISIBLE);
             holder.myBody.setText(messageBody);
-            showPic = false;
+            if (checkDisplayName(message, position)) {
+                //i did not send the last message, show a little space between my message and previous
+                holder.tvOtherName.setVisibility(View.INVISIBLE);
+                holder.imageOther.setVisibility(View.GONE);
+            } else {
+                //i did send the last message, show no space
+                holder.tvOtherName.setVisibility(View.GONE);
+                holder.imageOther.setVisibility(View.GONE);
+            }
         } else {
-            holder.myBody.setVisibility(View.INVISIBLE);
-            holder.imageOther.setVisibility(View.VISIBLE);
-            //holder.theirBody.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            holder.tvOtherName.setVisibility(View.VISIBLE);
+            holder.myBody.setVisibility(View.GONE);
+            holder.theirBody.setVisibility(View.VISIBLE);
             holder.theirBody.setText(messageBody);
 
             if (message.getSenderName() != null) {
                 //check if they sent a message previously
                 if (checkDisplayName(message, position)) {
+                    holder.imageOther.setVisibility(View.VISIBLE);
+                    holder.tvOtherName.setVisibility(View.VISIBLE);
                     String name = message.getSenderName();
                     String firstName = name;
                     if (name.indexOf(" ") > 0) {
@@ -80,32 +85,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                     holder.tvOtherName.setText(firstName);
                     Log.i("DEBUG_NAME", message.getSenderName());
 
+                    if (message.getSenderProfileImageUrl() == null) {
+                        // generate a unique, random gravatar
+                        Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
+                                .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(holder.imageOther);
+                    } else {
+                        Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
+                                .bitmapTransform(new CropCircleTransformation(mContext)).into(holder.imageOther);
+                    }
+
                 } else {
                     //they sent the last message, don't show name and pic again
-                    showPic = false;
                     holder.tvOtherName.setVisibility(View.GONE);
+                    holder.imageOther.setVisibility(View.VISIBLE);
                 }
-            }
-        }
-
-        if (showPic) {
-            if (message.getSenderProfileImageUrl() == null) {
-                // generate a unique, random gravatar
-                Glide.with(mContext).load(getProfileUrl(message.getSenderId())).centerCrop()
-                        .bitmapTransform(new RoundedCornersTransformation(mContext, 30, 0)).into(holder.imageOther);
-            } else {
-                if (isMe) {
-                    holder.tvOtherName.setVisibility(View.INVISIBLE);
-                } else {
-                    Glide.with(mContext).load(message.getSenderProfileImageUrl()).centerCrop()
-                            .bitmapTransform(new CropCircleTransformation(mContext)).into(holder.imageOther);
-                }
-            }
-        } else {
-            if (isMe) {
-                holder.imageOther.setVisibility(View.GONE);
-            } else {
-                holder.imageOther.setVisibility(View.INVISIBLE);
             }
         }
     }
@@ -147,17 +140,20 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
     }
 
+    //to determine whether to show the other user's name above a message
     public boolean checkDisplayName(Message message, int position) {
         //it's the first message we're displaying (at the top), should show name
         if (position == mMessages.size() - 1) {
             return true;
         }
 
+        //if the message right before this came from the same user, don't show name
         Message previous = mMessages.get(position + 1);
         if (previous.getSenderId().equals(message.getSenderId())) {
             return false;
         }
 
+        //otherwise, show name
         return true;
     }
 }

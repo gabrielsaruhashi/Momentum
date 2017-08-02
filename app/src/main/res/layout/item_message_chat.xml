@@ -15,16 +15,6 @@
         android:layout_below="@+id/tvOtherName"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:id="@+id/tvOtherName"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_toRightOf="@id/ivProfileOther"
-        android:text="ShaggyNoName"
-        android:textColor="@color/medium_gray" />
-
     <!--
     <ImageView
         android:id="@+id/ivProfileMe"
@@ -48,6 +38,17 @@
         android:textAlignment="textStart"
         android:textColor="@color/black"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvOtherName"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:text="ShaggyNoName"
+        android:textColor="@color/medium_gray" />
 
     <TextView
         android:id="@+id/tvMyBody"
