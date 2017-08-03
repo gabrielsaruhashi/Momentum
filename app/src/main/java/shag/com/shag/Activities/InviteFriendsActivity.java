@@ -57,8 +57,6 @@ public class InviteFriendsActivity extends AppCompatActivity {
 
     }
 
-
-
     private void setupViews()  {
         // get all contacts
         listContacts = new ContactFetcher(this).fetchAll();
@@ -152,7 +150,7 @@ public class InviteFriendsActivity extends AppCompatActivity {
         }, new IntentFilter(SMS_DELIVERED));
         String messageBody = "Hey " + contact.name + " ! " +
                 eventOwnerName + " wants to know if you're down to " + eventDescription +
-                ". Download Shaggy at the Google Play Store to join the chat.";
+                ". If'd like to join, reply this text with the following code " + eventId;
 
         try {
             SmsManager.getDefault().sendTextMessage(contact.numbers.get(0).number, null, messageBody, sentPendingIntent, deliveredPendingIntent);
