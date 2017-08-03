@@ -5,12 +5,21 @@
     >
 
     <item
-        android:id="@+id/miEventReady"
-        android:icon="@drawable/ic_event_ready"
-        android:onClick="onEventReady"
+    android:id="@+id/miEventReady"
+    android:icon="@drawable/ic_event_ready"
+    android:onClick="onEventReady"
+    android:title="Item"
+    app:showAsAction="always"
+    android:visible="false"/>
+
+
+    <item
+        android:id="@+id/miInviteFriends"
+        android:icon="@drawable/ic_group_add"
+        android:onClick="onInviteFriends"
         android:title="Item"
         app:showAsAction="always"
-        android:visible="false"/>
+        android:visible="true"/>
 
 
 </menu>

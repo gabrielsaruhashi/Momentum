@@ -1181,6 +1181,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         context.startActivity(i);
     }
 
+    public void onInviteFriends(MenuItem menuItem) {
+        Intent i = new Intent(context, InviteFriendsActivity.class);
+        i.putExtra("eventId", parseEvent.getEventId());
+        context.startActivity(i);
+    }
+
     public JsonObjectRequest getFoodRequest(String foodType, String lat, String lng) {
         // Pass second argument as "null" for GET requests
         String url = "https://developers.zomato.com/api/v2.1/search?q=";

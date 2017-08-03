@@ -119,7 +119,8 @@
         <activity
             android:name=".Activities.ChatListActivity"
             android:label="@string/title_activity_chat_list"
-            android:theme="@style/newTheme"></activity>
+            android:theme="@style/newTheme" />
+        <activity android:name=".Activities.InviteFriendsActivity"></activity>
     </application>
 
 </manifest>
