@@ -9,7 +9,7 @@
         android:layout_width="@dimen/feed_line_width"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:background="@color/colorAccent"
+        android:background="@color/gradient_end"
         android:layout_marginLeft="@dimen/feed_line_margin_left"/>
 
     <android.support.v4.widget.SwipeRefreshLayout

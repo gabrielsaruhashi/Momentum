@@ -8,6 +8,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -159,6 +161,38 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 //            loadUserIntoIndex(participants, 4, holder.ivFriend3);
 //        }
 
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        query.include("User_event_owner");
+        query.include("last_message_sent");
+        try {
+            Event e = (Event) query.get(event.getObjectId());
+            Message m = (Message) e.getLastMessageSent();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            holder.tvLastMessage.setVisibility(View.VISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.VISIBLE);
+            Message lastMessage = event.getParseObject("last_message_sent").fetch();
+            if (lastMessage.getBody() == null) {
+                throw new NullPointerException();
+            }
+            holder.tvLastMessage.setText(lastMessage.getSenderName() + ": " + lastMessage.getBody());
+
+            String rawTime = (lastMessage.getCreatedDate().toString());
+            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
+        } catch (NullPointerException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        } catch (IllegalStateException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        } catch (ParseException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Override
@@ -192,6 +226,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         ImageView ivCategoryBar;
         @BindView(R.id.ivMap)
         ImageView ivMap;
+        @BindView(R.id.tvLastMessageTime)
+        TextView tvLastMessageTime;
+        @BindView(R.id.tvLastMessage)
+        TextView tvLastMessage;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -533,6 +571,32 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         }
 
         return R.color.misc_color;
+    }
+
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+
+            relativeDate = relativeDate.replace(" seconds", "s");
+            relativeDate = relativeDate.replace(" second", "s");
+            relativeDate = relativeDate.replace(" minutes", "m");
+            relativeDate = relativeDate.replace(" minute", "m");
+            relativeDate = relativeDate.replace(" hours", "h");
+            relativeDate = relativeDate.replace(" hour", "h");
+            relativeDate = relativeDate.replace(" ago", "");
+
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
     }
 
 }
