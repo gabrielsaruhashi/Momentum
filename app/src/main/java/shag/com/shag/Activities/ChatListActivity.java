@@ -24,7 +24,6 @@ public class ChatListActivity extends AppCompatActivity implements ChatListFragm
 
         chatListFragment = (ChatListFragment) getSupportFragmentManager().findFragmentById(R.id.chatListFragment);
         toolbarTextView = (TextView) findViewById(R.id.tvToolbarText);
-        toolbarTextView.setText("Your Chats");
 
     }
     // add number of chats to toolbar
