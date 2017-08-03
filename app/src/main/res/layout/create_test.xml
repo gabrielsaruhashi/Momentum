@@ -1,135 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="shag.com.shag.Activities.SelectEventDetailsActivity"
-    android:weightSum="1">
-
-    <TextView
-        android:id="@+id/tvCategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_weight="0.07" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-
-    <EditText
-        android:id="@+id/tvDescriptionInput"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignStart="@+id/tvDescription"
-        android:layout_below="@+id/tvDescription"
-        android:background="@null"
-        android:gravity="top"
-        android:hint="Required 5 characters"
-        android:inputType="textMultiLine"
-        android:padding="8dp"
-        android:textAppearance="@android:style/TextAppearance.Small"
-        android:textSize="16dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="53dp" />
-
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Deadline To Join"
-        android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+    tools:context="shag.com.shag.Activities.SelectPublicEventTypeActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="32dp"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
         android:weightSum="1"
-        android:layout_weight="0.07">
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
-        <!--<Button-->
-            <!--android:id="@+id/bt30"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_weight=".1667"-->
-            <!--android:text="30 M" />-->
-        <Button
-            android:id="@+id/bt30"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            android:textColor="@color/white"
-            style="@style/AppTheme.Button"
-            android:text="30 M" />
+        <android.support.v7.widget.CardView
+            android:id="@+id/ivFood"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_margin="24dp"
+            android:layout_weight=".5"
+            tools:layout_editor_absoluteX="-4dp"
+            app:srcCompat="@android:drawable/screen_background_dark"
+            tools:layout_editor_absoluteY="38dp" />
 
-        <Button
-            android:id="@+id/bt1"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            style="@style/AppTheme.Button"
-            android:textColor="@color/white"
-            android:text="1 Hr"/>
+        <android.support.v7.widget.CardView
+            android:id="@+id/ivMusic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="24dp"
+            android:layout_weight=".5"
+            tools:layout_editor_absoluteX="-4dp"
+            tools:layout_editor_absoluteY="38dp">
 
-        <Button
-            android:id="@+id/bt2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            style="@style/AppTheme.Button"
-            android:textColor="@color/white"
-            android:text="2 Hr" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:srcCompat="@mipmap/ic_concerts"
+                />
+        </android.support.v7.widget.CardView>
 
-        <Button
-            android:id="@+id/bt3"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            style="@style/AppTheme.Button"
-            android:textColor="@color/white"
-            android:text="3 Hr"/>
-        <Button
-            android:id="@+id/bt6"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            style="@style/AppTheme.Button"
-            android:textColor="@color/white"
-            android:text="6 Hr"/>
-        <Button
-            android:id="@+id/bt12"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight=".1667"
-            style="@style/AppTheme.Button"
-            android:textColor="@color/white"
-            android:text="12 Hr"/>
+
+
+
+
     </LinearLayout>
+</RelativeLayout>
 
-    <Button
-        android:id="@+id/btNext"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:elevation="2dp"
-        android:text="Create Event"
-        android:textAlignment="center"
-        tools:layout_editor_absoluteX="280dp"
-        tools:layout_editor_absoluteY="460dp" />
-
-
-</LinearLayout>
