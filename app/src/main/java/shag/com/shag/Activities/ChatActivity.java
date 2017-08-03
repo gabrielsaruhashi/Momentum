@@ -374,10 +374,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
+                    polls.add(object);
 
-                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                        polls.add(object);
-                    }
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -389,6 +390,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     });
                 }
+                String newEventId = object.getEventId();
+                polls.add(object);
+
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
             }
         });
 
@@ -404,7 +421,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
                 String newEventId = object.getEventId();
                 if (eventId.equals(newEventId)) {
-                    polls.set(pos, object);
+                    //reconstruct new list
+                    polls.remove(pos);
+
+                    ArrayList<Poll> newPollList = new ArrayList<Poll>();
+                    newPollList.addAll(polls);
+                    newPollList.add(pos,object);
+
+                    polls.clear();
+                    polls.addAll(newPollList);
+                    //polls.set(pos, object);
 
                 }
                 // RecyclerView updates need to be run on the UI thread
@@ -412,7 +438,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rvPolls.invalidate();
+                        //rvPolls.invalidate();
                         pollAdapter.notifyDataSetChanged();
                         //pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
