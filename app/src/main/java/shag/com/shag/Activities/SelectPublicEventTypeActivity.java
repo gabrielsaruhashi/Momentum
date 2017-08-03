@@ -7,9 +7,11 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +31,11 @@ public class SelectPublicEventTypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_public_event_type);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(0xFFFFFFFF);
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -62,7 +69,9 @@ public class SelectPublicEventTypeActivity extends AppCompatActivity {
                     });
         }
         food = (ImageView) findViewById(R.id.ivFood);
+        Glide.with(this).load("http://i.imgur.com/e9KNTNT.png").centerCrop().into(food);
         music = (ImageView) findViewById(R.id.ivMusic);
+        Glide.with(this).load("http://i.imgur.com/J0V4352.png").centerCrop().into(music);
 
 
         food.setOnClickListener(new View.OnClickListener() {
