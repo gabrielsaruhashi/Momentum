@@ -46,6 +46,7 @@ public class Event extends ParseObject implements Parcelable {
     public boolean isRecommendationMade;
     public String time;
     public ParseObject lastMessageSent;
+    public String eventTime;
 
 
     //CONSTRUCTORS
@@ -63,6 +64,15 @@ public class Event extends ParseObject implements Parcelable {
     public void setLastMessageSent(ParseObject message) {
         this.lastMessageSent = message;
         put("last_message_sent", message);
+    }
+
+    public void setEventTimeString(String time) {
+        this.eventTime = time;
+        put("event_time_string", time);
+    }
+
+    public String getEventTimeString() {
+        return getString("event_time_string");
     }
 
     public ArrayList<String> getParticipantsFacebookIds() {

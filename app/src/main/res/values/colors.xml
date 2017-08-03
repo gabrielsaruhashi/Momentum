@@ -7,6 +7,7 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="medium_gray">#b0bec5</color>
+    <color name="selected_gray">#909ca3</color>
 
 
     <!-- Memories Page Colors -->
