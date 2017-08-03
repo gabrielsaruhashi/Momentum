@@ -593,6 +593,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // add message to arraylist
                 mMessages.add(0, message);
                 mAdapter.notifyItemInserted(0);
+                rvChat.scrollToPosition(0);
                 parseEvent.setLastMessageSent(message);
                 try {
                     parseEvent.save(); //TODO: in background or...?
