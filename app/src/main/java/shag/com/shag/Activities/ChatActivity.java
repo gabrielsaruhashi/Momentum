@@ -18,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -560,6 +562,24 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
 
+        btSend.setEnabled(false);
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    btSend.setEnabled(true);
+                } else {
+                    btSend.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
         // associate the LayoutManager with the RecylcerView
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
         // display the newest posts ordered from oldest to newest
@@ -996,6 +1016,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         if (timeWinner != null) {
                             Date date = convertStringToDate(timeWinner);
                             eventDb.put("event_time", date);
+                            eventDb.put("event_time_string", timeWinner);
                         }
                         if (locationWinner != null) {
                             Double lat = locationWinner.getLatitude();

@@ -23,6 +23,7 @@ import com.parse.ParseUser;
 import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -175,11 +176,14 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
                         //event.setRelevance(calculateEventRelevance(event));
+                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
+                            events.add(event);
+                        }
                     }
                     // sort events based on relevance
                     //Collections.sort(eventsList, new RelevanceComparator());
 
-                    events.addAll(eventsList);
+                    //events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
 
                     //TODO: move this somewhere else, it is currently over-sorting
