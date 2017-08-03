@@ -30,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.RequestFuture;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -66,6 +67,7 @@ import shag.com.shag.Adapters.MapCardAdapter;
 import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.R;
 
+import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 import static shag.com.shag.R.id.map;
 
@@ -137,6 +139,10 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         }
 
 }
+
+    public interface VolleyCallback{
+        void onSuccess(String result);
+    }
 
     //CREATING CLIENT
     protected synchronized void buildGoogleApiClient() {
@@ -262,6 +268,20 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
+    }
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
     }
 
     @Override
@@ -427,20 +447,6 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
     }
 
 
-    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
-        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            drawable = (DrawableCompat.wrap(drawable)).mutate();
-        }
-
-        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
-                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-
-        return bitmap;
-    }
 
 
     //ZOMATO API
@@ -487,6 +493,12 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                                 publicEventData.put("Lat", restaurantLat);
                                 publicEventData.put("Lng", restaurantLng);
                                 publicEventData.put("Place Name", restaurantName);
+
+                                VolleyRequest.getInstance(getApplicationContext())
+                                        .addToRequestQueue(onFindPhotoReference(restaurantLat.toString(),
+                                                restaurantLng.toString(),restaurantName,"restaurant", publicEventData, i));
+
+
                                 cardPagerSize++;
 
                                 Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
@@ -556,6 +568,92 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         return req;
     }
 
+    //GOOGLE PICTURE API
+    public JsonObjectRequest onFindPhotoReference(String lat, String lng, String placeName,
+                                                  String placeType, final HashMap<String,Object> data, final int position){
+
+        final String photo = "";
+        String googleUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?";
+        String location = "location=" + lat + "," + lng;
+        String radius = "&radius=500";
+        String type = "&type=" + placeType;
+        String keyword = "&keyword=" + placeName.replaceAll(" ", "");
+        String apikey = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        final ArrayList<Object> photoInfo = new ArrayList<>();
+
+        RequestFuture<JSONObject> future = RequestFuture.newFuture();
+        JsonObjectRequest request = new JsonObjectRequest(URL, new JSONObject(), future, future);
+        mRequestQueue.add(request);
+
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, googleUrl+location+radius+type+keyword+apikey, null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("response", "aww yeah");
+                        try {
+                            JSONArray placeArray = response.getJSONArray("results");
+                            JSONObject firstPlace = placeArray.getJSONObject(0);
+                            JSONObject firstPhoto = firstPlace.getJSONArray("photos").getJSONObject(0);
+                            int height=firstPhoto.getInt("height");
+                            int width=firstPhoto.getInt("width");
+                            String photoReference=firstPhoto.getString("photo_reference");
+                            photoInfo.add(height);
+                            photoInfo.add(width);
+                            photoInfo.add(photoReference);
+
+                            String googleUrl = "https://maps.googleapis.com/maps/api/place/photo?";
+                            String maxHeight = "maxheight="+photoInfo.get(0);
+                            String photoRef = "&photoreference="+photoInfo.get(2);
+                            String apikey = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+                            String photoUrl = googleUrl+maxHeight+photoRef+apikey;
+                            //add new data to hashmap
+                            data.put("Photo", photoUrl);
+
+                            //build a new list
+                            cardData.remove(position);
+                            ArrayList<HashMap<String,Object>> newList = new ArrayList<>();
+                            newList.addAll(cardData);
+                            newList.add(position,data);
+
+                            cardData.clear();
+                            cardData.addAll(newList);
+
+                            mapCardAdapter.notifyDataSetChanged();
+                            //mapCardAdapter.notifyI();
+
+
+                            //String photo =findFirstPhoto(photoInfo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        Log.e("response", volleyError.toString());
+                    }
+                });
+        return req;
+
+    }
+
+    private String findFirstPhoto(ArrayList<Object> photoInfo) {
+        String googleUrl = "https://maps.googleapis.com/maps/api/place/photo?";
+        String maxHeight = "maxheight="+photoInfo.get(0);
+        String maxWidth = "maxwidth="+photoInfo.get(1);
+        String photoReference = "&photoreference="+photoInfo.get(2);
+        String apikey = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        String photoUrl = googleUrl+maxHeight+maxWidth+photoReference+apikey;
+
+        return photoUrl;
+
+    }
 
     public void animateMarkers() {
         Marker one = markerOptionsArrayList.get(viewPager.getCurrentItem());
@@ -591,4 +689,6 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
 
 
     }
+
+
 }

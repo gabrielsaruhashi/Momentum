@@ -66,7 +66,6 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
     private int[] btn_id = {R.id.bt30, R.id.bt1, R.id.bt2, R.id.bt3, R.id.bt6,R.id.bt12};
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         ParseObject.registerSubclass(Poll.class);
@@ -326,6 +325,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
 
         //if they didn't pick a deadline, auto-set 1 hour deadline
+        newEvent.setDeadline(newDate);
         if (newEvent.deadline == null) {
             newEvent.deadline = new Date();
             newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE*60);
