@@ -157,7 +157,6 @@ public class ChatListFragment extends Fragment {
                     @Override
                     public void onEvent(ParseQuery<Event> query, Event object) {
                         String newEventId = object.getEventId();
-
                         if (eventIds.contains(newEventId)) {
                             ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
                             eventQuery.include("User_event_owner");

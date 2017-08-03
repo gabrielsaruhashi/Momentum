@@ -55,14 +55,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import me.relex.circleindicator.CircleIndicator;
@@ -71,7 +69,6 @@ import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.R;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static shag.com.shag.R.id.map;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -107,53 +104,72 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
-        mRequestQueue = VolleyRequest.getInstance(this.getContext()).
-                getRequestQueue();
 
 
-        musicFab = (Button) v.findViewById(R.id.btn_Test2);
-        foodFab = (Button) v.findViewById(R.id.btn_Test3);
+//        mRequestQueue = VolleyRequest.getInstance(this.getContext()).
+//                getRequestQueue();
+//
+//
+//        musicFab = (Button) v.findViewById(R.id.btn_Test2);
+//        foodFab= (Button) v.findViewById(R.id.btn_Test3);
+//
+//
+//        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
+//        mapFrag.getMapAsync(this);
+//
+//
+//        cardViews = (RelativeLayout) v.findViewById(R.id.eventDetails);
+//        mapCardAdapter = new MapCardAdapter(getContext(), cardData);
+//        viewPager = (ViewPager) v.findViewById(R.id.pagerMapCards);
+//        viewPager.setAdapter(mapCardAdapter);
+//        viewPager.setOffscreenPageLimit(3);
+//
+//        indicator = (CircleIndicator) v.findViewById(R.id.indicator);
+//        indicator.setViewPager(viewPager);
+//
+//
+//        musicFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                try {
+//                    addresses = new ArrayList<>();
+//                    geocoder = new Geocoder(getContext(), Locale.getDefault());
+//                    addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+//                    String postalCode = addresses.get(0).getPostalCode();
+//                    onStartMusicRequest(postalCode,"20");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
+//
+//        foodFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
+//
+//            }
+//        });
+//
+////        cardExit.setOnClickListener(new View.OnClickListener() {
+////            @Override
+////            public void onClick(View v) {
+////                cardView.animate()
+////                        .translationX(cardView.getWidth())
+////                        .alpha(0.0f)
+////                        .setDuration(300)
+////                        .setListener(new AnimatorListenerAdapter() {
+////                            @Override
+////                            public void onAnimationEnd(Animator animation) {
+////                                super.onAnimationEnd(animation);
+////                                cardView.setVisibility(View.GONE);
+////                            }
+////                        });
+////
+////            }
+////        });
 
-
-        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
-        mapFrag.getMapAsync(this);
-
-
-        cardViews = (RelativeLayout) v.findViewById(R.id.eventDetails);
-        mapCardAdapter = new MapCardAdapter(getContext(), cardData);
-        viewPager = (ViewPager) v.findViewById(R.id.pagerMapCards);
-        viewPager.setClipToPadding(false);
-        viewPager.setPageMargin(12);
-        viewPager.setAdapter(mapCardAdapter);
-        viewPager.setOffscreenPageLimit(3);
-
-        indicator = (CircleIndicator) v.findViewById(R.id.indicator);
-        indicator.setViewPager(viewPager);
-
-
-        musicFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    addresses = new ArrayList<>();
-                    geocoder = new Geocoder(getContext(), Locale.getDefault());
-                    addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-                    String postalCode = addresses.get(0).getPostalCode();
-                    onStartMusicRequest(postalCode, "20");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        foodFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
-
-            }
-        });
 
         return v;
     }

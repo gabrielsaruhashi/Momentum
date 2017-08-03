@@ -137,15 +137,25 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv6h.setBackgroundColor(getResources().getColor(R.color.party_color));
                 tv12h.setBackgroundColor(getResources().getColor(R.color.party_color));
                 break;
-            case "Location":
-                color=R.color.chill_color;
-                tvCategory.setBackgroundResource(R.color.chill_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+            case "Explore":
+                color=R.color.explore_color;
+                tvCategory.setBackgroundResource(R.color.explore_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                break;
+            case "Music":
+                color=R.color.explore_color;
+                tvCategory.setBackgroundResource(R.color.explore_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
                 break;
             case "Sports":
                 color=R.color.sports_color;
@@ -157,15 +167,15 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv6h.setBackgroundColor(getResources().getColor(R.color.sports_color));
                 tv12h.setBackgroundColor(getResources().getColor(R.color.sports_color));
                 break;
-            case "Music":
-                color=R.color.music_color;
-                tvCategory.setBackgroundResource(R.color.music_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.music_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.music_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.music_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.music_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.music_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.music_color));
+            case "Chill":
+                color=R.color.chill_color;
+                tvCategory.setBackgroundResource(R.color.chill_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.chill_color));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.chill_color));
                 break;
             case "Misc":
                 color=R.color.misc_color;

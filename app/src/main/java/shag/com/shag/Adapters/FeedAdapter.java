@@ -1,12 +1,14 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,20 +25,22 @@ import com.parse.ParsePush;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
-
-import static android.content.DialogInterface.BUTTON_POSITIVE;
 
 /**
  * Created by gabesaruhashi on 7/10/17.
@@ -89,18 +93,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     public void onBindViewHolder(FeedAdapter.ViewHolder holder, int position) {
         // populate the views
         Event event = events.get(position);
+        if (!event.getIsEventPrivate()) {
+            showMap(event, holder);
+        }
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
-        holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
-
-        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
-            holder.btJoin.setText("Joined");
-
-        } else {
-            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
-            holder.btJoin.setText("Join");
+        if (event.getEventOwner() != null) {
+            holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
         }
 
         //TODO: change categories
@@ -111,17 +111,29 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
             holder.ivCategory.setBackgroundResource(R.drawable.sports_circle);
         } else if (event.getCategory().equals("Party")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_party);
+            holder.ivCategory.setImageResource(R.drawable.ic_party1);
             holder.ivCategory.setBackgroundResource(R.drawable.party_circle);
         } else if (event.getCategory().equals("Food")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_food);
+            holder.ivCategory.setImageResource(R.drawable.ic_food1);
             holder.ivCategory.setBackgroundResource(R.drawable.food_circle);
         } else if (event.getCategory().equals("Music")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_music);
+            holder.ivCategory.setImageResource(R.drawable.ic_music1);
             holder.ivCategory.setBackgroundResource(R.drawable.music_circle);
         } else {
-            holder.ivCategory.setImageResource(R.drawable.ic_misc);
+            holder.ivCategory.setImageResource(R.drawable.ic_misc1);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
+        }
+        ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.WHITE);
+        holder.ivCategoryBar.setBackgroundResource(findCorrectColor(event));
+        holder.ivCategory.setColorFilter(filter);
+
+        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
+            holder.btJoin.setText("Joined");
+
+        } else {
+            holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, findCorrectColor(event)));
+            holder.btJoin.setText("Join");
         }
 
         // get icon url
@@ -134,6 +146,52 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 .load(url)
                 .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                 .into(holder.ivProfileImage);
+
+        ArrayList<String> participants = event.getParticipantsIds();
+        //ignore index zero, which is the event owner
+        boolean isMe1 = loadUserIntoIndex(participants, 1, holder.ivFriend1);
+        boolean isMe2 = loadUserIntoIndex(participants, 2, holder.ivFriend2);
+        boolean isMe3 = loadUserIntoIndex(participants, 3, holder.ivFriend3);
+
+//        if (!isMe1) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend1);
+//        } else if (!isMe2) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend2);
+//        } else if (!isMe3) {
+//            loadUserIntoIndex(participants, 4, holder.ivFriend3);
+//        }
+
+        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        query.include("User_event_owner");
+        query.include("last_message_sent");
+        try {
+            Event e = (Event) query.get(event.getObjectId());
+            Message m = (Message) e.getLastMessageSent();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            holder.tvLastMessage.setVisibility(View.VISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.VISIBLE);
+            Message lastMessage = event.getParseObject("last_message_sent").fetch();
+            if (lastMessage.getBody() == null) {
+                throw new NullPointerException();
+            }
+            holder.tvLastMessage.setText(lastMessage.getSenderName() + ": " + lastMessage.getBody());
+
+            String rawTime = (lastMessage.getCreatedDate().toString());
+            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
+        } catch (NullPointerException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        } catch (IllegalStateException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        } catch (ParseException e) {
+            holder.tvLastMessage.setVisibility(View.INVISIBLE);
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -158,8 +216,20 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         Button btJoin;
         @BindView(R.id.ivCategory)
         ImageView ivCategory;
-        Drawable backgroundCircle;
-
+        @BindView(R.id.ivFriend1)
+        ImageView ivFriend1;
+        @BindView(R.id.ivFriend2)
+        ImageView ivFriend2;
+        @BindView(R.id.ivFriend3)
+        ImageView ivFriend3;
+        @BindView(R.id.ivCategoryBar)
+        ImageView ivCategoryBar;
+        @BindView(R.id.ivMap)
+        ImageView ivMap;
+        @BindView(R.id.tvLastMessageTime)
+        TextView tvLastMessageTime;
+        @BindView(R.id.tvLastMessage)
+        TextView tvLastMessage;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -169,7 +239,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             itemView.setOnClickListener(this);
             // set click listener for quick join shortcut
             btJoin.setOnClickListener(this);
-            backgroundCircle = ivCategory.getBackground();
         }
 
         @Override
@@ -193,7 +262,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         break;
                     // if user presses viewholder, show more details of activity
                     default:
-                        showMoreDetails(event, btJoin);
+                        //showMoreDetails(event, btJoin);
                         break;
                 }
 
@@ -211,7 +280,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         events.clear();
         notifyDataSetChanged();
     }
-
+    /*
     // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
     private void showMoreDetails(final Event event, final Button joinStatus) {
         // inflate message_item.xml view
@@ -236,7 +305,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
 
                 } else {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
+                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, colorId));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
@@ -253,11 +322,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 tvRelativeTime.setText(event.getDeadline().toString());
 
                 //TODO upload image of event owner
-                /*
+
                 Glide.with(context)
                         .load(event.user.profileImageUrl)
                         .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                        .into(ivProfileImage); */
+                        .into(ivProfileImage);
 
             }
         });
@@ -288,7 +357,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // Display the dialog
         alertDialog.show();
-    }
+    } */
 
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();
@@ -386,7 +455,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     // update UI
-                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.gradient_end));
+                    joinStatus.setBackgroundColor(ContextCompat.getColor(context, findCorrectColor(event)));
                     joinStatus.setText("Join");
 
                     // unsubscribes user from this "channel" so they no longer receive notifications
@@ -438,6 +507,96 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public void showMap(Event event, FeedAdapter.ViewHolder holder) {
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        String baseUrl = "https://maps.googleapis.com/maps/api/staticmap?";
+        String destination = "";
+        try {
+            Address destinationLocation = geocoder.getFromLocation(event.getLatitude(), event.getLongitude(), 1).get(0);
+            destination = destinationLocation.getAddressLine(0);
+            destination = destination.replace(" ", "+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        baseUrl += "center=" + destination;
+        baseUrl += "&zoom=17";
+        baseUrl += "&size=450x250";
+        baseUrl += "&markers=color:blue%7C" + destination;
+        baseUrl += "&sensor=false";
+        baseUrl += "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+
+        holder.ivMap.setVisibility(View.VISIBLE);
+        Glide.with(context)
+                .load(baseUrl)
+                .into(holder.ivMap);
+    }
+
+    public boolean loadUserIntoIndex(ArrayList<String> participants, int friendIndex, ImageView view) {
+        if (participants.size() > friendIndex) {
+            try {
+                ParseUser user = ParseUser.getQuery().get(participants.get(friendIndex));
+                //if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
+                    Glide.with(context)
+                            .load(user.getString("profile_image_url").replace("_normal", ""))
+                            .bitmapTransform(new CropCircleTransformation(context))
+                            .into(view);
+                    return true;
+               // } else {
+                //    view.setVisibility(View.GONE);
+               //     return false;
+               // }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        //load failed but should not try again
+        view.setVisibility(View.GONE);
+        return true;
+    }
+
+    public int findCorrectColor(Event event) {
+        if (event.getCategory().equals("Chill")) {
+            return R.color.chill_color;
+        } else if (event.getCategory().equals("Sports")) {
+            return R.color.sports_color;
+        } else if (event.getCategory().equals("Party")) {
+            return R.color.party_color;
+        } else if (event.getCategory().equals("Food")) {
+            return R.color.food_color;
+        } else if (event.getCategory().equals("Music")) {
+            return R.color.explore_color;
+        }
+
+        return R.color.misc_color;
+    }
+
+    public String getRelativeTimeAgo(String rawJsonDate) {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        try {
+            long dateMillis = sf.parse(rawJsonDate).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+
+            relativeDate = relativeDate.replace(" seconds", "s");
+            relativeDate = relativeDate.replace(" second", "s");
+            relativeDate = relativeDate.replace(" minutes", "m");
+            relativeDate = relativeDate.replace(" minute", "m");
+            relativeDate = relativeDate.replace(" hours", "h");
+            relativeDate = relativeDate.replace(" hour", "h");
+            relativeDate = relativeDate.replace(" ago", "");
+
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+        }
+
+        return relativeDate;
     }
 
 }
