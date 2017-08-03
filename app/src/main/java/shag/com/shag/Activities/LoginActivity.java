@@ -43,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
     String name;
     String email;
     Intent intent;
+    boolean isNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            i.putExtra("isNew", isNew);
             // initialize recent friends and facebook friends 'global/app' variable
             ParseUser currentUser = ParseUser.getCurrentUser();
             //TODO refactor this
@@ -180,6 +182,8 @@ public class LoginActivity extends AppCompatActivity {
                 else if (user.isNew()) {
                     user.getCurrentUser();
                     // user.saveInBackground();
+                    // boolean to take user to onboarding
+                    isNew = true;
 
                     // get user info
                     client.getMyInfo(new GraphRequest.Callback() {
@@ -223,5 +227,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 
 }

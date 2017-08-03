@@ -3,6 +3,7 @@ package shag.com.shag.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,8 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
+import com.ramotion.paperonboarding.PaperOnboardingFragment;
 
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
+import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -22,10 +25,21 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             R.drawable.ic_movie_roll_tape,
     };
 
+    private FragmentManager fragmentManager;
+    PaperOnboardingFragment onBoardingFragment;
+    boolean isNew;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // unwrap to see whether is new
+        isNew = getIntent().getBooleanExtra("isNew", true);
+        // if new, show onboarding dialog
+        if (isNew) {
+            showOnboardingDialog();
+        }
 
         //add ability to open a specific fragment with intent data
         int position = 0;
@@ -49,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupTabIcons();
+
     }
 
     private void setupTabIcons() {
@@ -116,4 +131,12 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public void onPageScrollStateChanged(int state) {
 
     }
+
+
+    private void showOnboardingDialog() {
+        FragmentManager fm = getSupportFragmentManager();
+        OnboardingDialogFragment onboardingDialogFragment = OnboardingDialogFragment.newInstance("Welcome!");
+        onboardingDialogFragment.show(fm, "fragment_onboarding");
+    }
+
 }
