@@ -36,6 +36,11 @@ public class InviteFriendsActivity extends AppCompatActivity {
     String eventOwnerName;
     ArrayList<String> participantsIds;
 
+    PhoneContactsAdapter adapterContacts;
+
+    // constants for permissions
+    private final static int MY_PERMISSIONS_REQUEST_SEND_SMS = 23;
+    private final static int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 24;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,14 @@ public class InviteFriendsActivity extends AppCompatActivity {
         eventOwnerName = getIntent().getStringExtra("eventOwnerName");
         participantsIds = getIntent().getStringArrayListExtra("eventParticipants");
 
+
+        setupViews();
+
+    }
+
+
+
+    private void setupViews()  {
         // get all contacts
         listContacts = new ContactFetcher(this).fetchAll();
 
@@ -54,7 +67,7 @@ public class InviteFriendsActivity extends AppCompatActivity {
         lvContacts = (ListView) findViewById(R.id.lvContacts);
         btSendInvitation = (Button) findViewById(R.id.btSendInvitation);
 
-        PhoneContactsAdapter adapterContacts = new PhoneContactsAdapter(this, listContacts);
+        adapterContacts = new PhoneContactsAdapter(this, listContacts);
         lvContacts.setAdapter(adapterContacts);
 
         // add listener for invite button
@@ -71,7 +84,6 @@ public class InviteFriendsActivity extends AppCompatActivity {
 
         toolbarTextView = (TextView) findViewById(R.id.tvToolbarText);
     }
-
 
     public void sendMessageToSelectedContacts() {
         ArrayList<PhoneContact> selectedContacts = getSelectedContacts();

@@ -1,8 +1,13 @@
 package shag.com.shag.Activities;
 
+import android.Manifest.permission;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private FragmentManager fragmentManager;
     PaperOnboardingFragment onBoardingFragment;
     boolean isNew;
+
+    // The request code used in ActivityCompat.requestPermissions()
+    // and returned in the Activity's onRequestPermissionsResult()
+    int PERMISSION_ALL = 1;
+    String[] PERMISSIONS = {android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.SEND_SMS, permission.RECEIVE_SMS, permission.READ_CALENDAR, permission.READ_EXTERNAL_STORAGE, permission.ACCESS_FINE_LOCATION} ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +73,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupTabIcons();
+
+        // check for all permissions needed
+        if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
+        }
 
     }
 
@@ -137,6 +152,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         FragmentManager fm = getSupportFragmentManager();
         OnboardingDialogFragment onboardingDialogFragment = OnboardingDialogFragment.newInstance("Welcome!");
         onboardingDialogFragment.show(fm, "fragment_onboarding");
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
 }
