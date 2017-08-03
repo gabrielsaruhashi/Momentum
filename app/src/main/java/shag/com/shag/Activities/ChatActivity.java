@@ -150,6 +150,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     Menu menu;
     ParseQuery<Poll> parseQueryPoll;
     SubscriptionHandling<Poll> pollSubscriptionHandling;
+    ParseUser currentUser;
 
     TextView tvConflict;
 
@@ -161,17 +162,20 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         //TODO check if this is working
         tvConflict = (TextView) findViewById(R.id.tvConflict);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-            }
-        };
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//
+//            }
+//        };
+        //drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        //actionBarDrawerToggle.syncState();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        currentUser = ParseUser.getCurrentUser();
 
         context = this;
 
@@ -227,7 +231,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             e.printStackTrace();
         }
         // get current user information
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUserId = currentUser.getObjectId();
 
         //set up initial polls
         //if event is new, make time and location polls
@@ -539,14 +543,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     // setup button event handler which posts the entered message to Parse
@@ -598,11 +602,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 //TODO pass the entire event object
                 message.setBody(data);
                 // save User pointer
-                message.put("User_sender", ParseUser.getCurrentUser());
+                message.put("User_sender", currentUser);
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
-                message.setSenderProfileImageUrl(ParseUser.getCurrentUser().getString("profile_image_url"));
-                message.setSenderName(ParseUser.getCurrentUser().getString("name"));
+                message.setSenderProfileImageUrl(currentUser.getString("profile_image_url"));
+                message.setSenderName(currentUser.getString("name"));
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
@@ -723,7 +727,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         timePoll.setEventId(eventId);
-        timePoll.put("Poll_creator", ParseUser.getCurrentUser());
+        timePoll.put("Poll_creator", currentUser);
         timePoll.put("poll_creator_id", currentUserId);
         timePoll.setPollType("Time");
         timePoll.setQuestion("Time of Event");
@@ -750,7 +754,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
                         //make a location poll
                         locPoll.setEventId(eventId);
-                        locPoll.put("Poll_creator", ParseUser.getCurrentUser());
+                        locPoll.put("Poll_creator", currentUser);
                         locPoll.put("poll_creator_id", currentUserId);
                         locPoll.setPollType("Location");
                         locPoll.setQuestion("Location of Event");
@@ -794,7 +798,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.setEventId(eventId);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("Poll_creator",currentUser);
         poll.setPollType("Time");
         poll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
@@ -827,7 +831,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.put("Event",eventId);
         poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("Poll_creator",currentUser);
         poll.put("poll_creator_id", currentUserId);
         poll.setPollType("Custom");
         poll.saveInBackground(new SaveCallback() {

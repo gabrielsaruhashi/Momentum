@@ -73,7 +73,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         app:headerLayout="@layout/poll_title"
-        android:layout_gravity="start"
+        android:layout_gravity="end"
         >
 
         <RelativeLayout
@@ -86,6 +86,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="Create Poll"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-smallcaps"
                 android:textSize="18sp"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
