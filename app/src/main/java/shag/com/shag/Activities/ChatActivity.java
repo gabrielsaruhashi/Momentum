@@ -413,7 +413,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     @Override
                     public void run() {
                         rvPolls.invalidate();
-                        pollAdapter.notifyItemChanged(finalPos);
+                        pollAdapter.notifyDataSetChanged();
+                        //pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
                         //pollAdapter.notifyItemChanged(1);
 
