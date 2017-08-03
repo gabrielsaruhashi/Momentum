@@ -332,6 +332,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
         // update user's category counter
         // update category counter
+        String x = category;
         int oldCounter = (int) hm.get(category).get(0);
         hm.get(category).set(0,oldCounter+1);
 

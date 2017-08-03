@@ -231,10 +231,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //if event is new, make time and location polls
         if (isEventNew) {
             try {
-                createTimeAndLocationPolls("Time");
-                if (isEventPrivate) {
-                    createTimeAndLocationPolls("Location");
-                }
+                createTimeAndLocationPolls();
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -250,11 +248,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             });
         }
+        else{
+            refreshPolls();
+
+        }
 
         // populate views, setup listeners and populate views
         //refresh messages and polls both here
         setupMessagePosting();
-        refreshPolls();
 
         // instantiate conflicting calendar events
         conflictingCalendarEvents = new ArrayList<CalendarEvent>();
@@ -667,40 +668,74 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    public void createTimeAndLocationPolls(final String type) throws ParseException {
-        final Poll poll = new Poll();
+    public void createTimeAndLocationPolls() throws ParseException {
+        final Poll timePoll = new Poll();
+        final Poll locPoll = new Poll();
+
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
-        poll.setEventId(eventId);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
-        poll.put("poll_creator_id", currentUserId);
-        poll.setPollType(type);
-        poll.setQuestion(type + " of Event");
+        timePoll.setEventId(eventId);
+        timePoll.put("Poll_creator", ParseUser.getCurrentUser());
+        timePoll.put("poll_creator_id", currentUserId);
+        timePoll.setPollType("Time");
+        timePoll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
 
-        poll.setChoices(customs);
-        poll.setScores(new HashMap<String, Integer>());
-        poll.setPeopleVoted(new ArrayList<String>());
+        timePoll.setChoices(customs);
+        timePoll.setScores(new HashMap<String, Integer>());
+        timePoll.setPeopleVoted(new ArrayList<String>());
 
-        if (poll.getPollType().equals("Location")) {
-            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
-        }
+//        if (poll.getPollType().equals("Location")) {
+//            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+//        }
 
-        poll.saveInBackground(new SaveCallback() {
+        timePoll.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put " + type + " poll on parse", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
+                    if (isEventPrivate) {
+
+                        //make a location poll
+                        locPoll.setEventId(eventId);
+                        locPoll.put("Poll_creator", ParseUser.getCurrentUser());
+                        locPoll.put("poll_creator_id", currentUserId);
+                        locPoll.setPollType("Location");
+                        locPoll.setQuestion("Location of Event");
+                        ArrayList<String> customs = new ArrayList<>();
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+
+                        locPoll.setChoices(customs);
+                        locPoll.setScores(new HashMap<String, Integer>());
+                        locPoll.setPeopleVoted(new ArrayList<String>());
+                        locPoll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+                        polls.add(locPoll);
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+                        locPoll.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+
+
+                    }
                 }
 
             }
         });
-        polls.add(poll);
-        pollAdapter.notifyItemInserted(polls.size() - 1);
+        polls.add(timePoll);
+        pollAdapter.notifyDataSetChanged();
         rvPolls.scrollToPosition(0);
         //poll.save();
 
@@ -819,13 +854,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // Execute query to fetch all POLLS from Parse asynchronously
         // this is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Poll>() {
-            public void done(List<Poll> poll, ParseException e) {
+            public void done(List<Poll> pollList, ParseException e) {
                 if (e == null) {
                     polls.clear();
                     //polls.addAll(poll);
-                    for (int i = 0; i < poll.size(); i++) {
-                        Poll tempPoll = poll.get(i);
-                        polls.add(poll.get(i));
+                    for (int i = 0; i < pollList.size(); i++) {
+                        polls.add(pollList.get(i));
                     }
                     pollAdapter.notifyDataSetChanged(); // update adapter
 
@@ -835,17 +869,20 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         mFirstLoad = false;
                     }
 
+                    if (pollList!=null && pollList.size()!=0) {
+                        findPollWinners(polls);
+                    }
+
 
                 } else {
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                findPollWinners(polls);
 
 
             }
         });
-        findPollWinners(polls);
+
     }
 
     public Date convertStringToDate(String time) {
