@@ -185,6 +185,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
                     //events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
+                    startLiveQueries();
 
                     //TODO: move this somewhere else, it is currently over-sorting
                     //Sort the events shown to user in order of soonest deadline
@@ -201,7 +202,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
 
-        startLiveQueries();
+
     }
 
     // create category dialog fragment

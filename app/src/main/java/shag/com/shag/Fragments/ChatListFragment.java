@@ -44,6 +44,7 @@ public class ChatListFragment extends Fragment {
     // user id
     String currentUserId;
     ArrayList<String> eventIds;
+    ParseUser currentUser;
 
     @Nullable
     @Override
@@ -69,7 +70,8 @@ public class ChatListFragment extends Fragment {
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUser = ParseUser.getCurrentUser();
+        currentUserId = currentUser.getObjectId();
 
         populateChatList(currentUserId);
         startLiveQueries();
@@ -152,7 +154,7 @@ public class ChatListFragment extends Fragment {
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
         String eventOwnerName = event.getEventOwnerName();
-        String currentUserName = (String) ParseUser.getCurrentUser().get("name");
+        String currentUserName = (String) currentUser.get("name");
 
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
