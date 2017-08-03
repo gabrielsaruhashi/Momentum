@@ -1,5 +1,6 @@
 package shag.com.shag.Fragments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,6 +42,9 @@ public class ChatListFragment extends Fragment {
     // user id
     String currentUserId;
     ArrayList<String> eventIds;
+    // Define the listener of the interface type
+    // listener will the activity instance containing fragment
+    private OnChatLoadListener listener;
 
     @Nullable
     @Override
@@ -73,6 +77,19 @@ public class ChatListFragment extends Fragment {
         return v;
     }
 
+    // Store the listener (activity) that will have events fired once the fragment is attached
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnChatLoadListener) {
+            listener = (OnChatLoadListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement MyListFragment.OnItemSelectedListener");
+        }
+    }
+
+
     public void populateChatList(String userId) {
 
         ParseQuery<Event> query = new ParseQuery("Event");
@@ -95,7 +112,11 @@ public class ChatListFragment extends Fragment {
                         adapter.notifyItemInserted(chats.size() - 1);
                         rvChats.smoothScrollToPosition(0);
 
+
                     }
+                    // upon chat load finish, call listener method
+                    listener.OnChatLoad(chats.size());
+
                 } else { // if there is an error
                     e.printStackTrace();
                 }
@@ -187,6 +208,12 @@ public class ChatListFragment extends Fragment {
                 adapter.notifyItemChanged(index);
             }
         });
+    }
+
+    // Define the events that the fragment will use to communicate
+    public interface OnChatLoadListener {
+        // This can be any number of events to be sent to the activity
+        public void OnChatLoad(int chatSize);
     }
 
 

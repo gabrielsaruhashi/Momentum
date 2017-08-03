@@ -21,6 +21,8 @@
 
     <uses-permission android:name="${packageName}.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".Other.ParseApplication"
@@ -113,7 +115,11 @@
 
         <activity android:name=".Activities.EventReadyActivity" />
         <activity android:name=".Activities.SelectPublicEventTypeActivity" />
-        <activity android:name=".Activities.SelectPublicMapActivity"></activity>
+        <activity android:name=".Activities.SelectPublicMapActivity" />
+        <activity
+            android:name=".Activities.ChatListActivity"
+            android:label="@string/title_activity_chat_list"
+            android:theme="@style/newTheme"></activity>
     </application>
 
 </manifest>

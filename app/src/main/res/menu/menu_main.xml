@@ -11,11 +11,13 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/miMemories"
-        android:icon="@drawable/ic_camera"
-        android:onClick="onMemoriesView"
-        android:title="Memories"
+        android:id="@+id/miChat"
+        android:icon="@drawable/ic_chat"
+        android:onClick="onChatView"
+        android:title="Chat"
         app:showAsAction="always" />
+
+
 
 
 </menu>

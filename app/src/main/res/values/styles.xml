@@ -9,12 +9,11 @@
         <item name="android:colorBackground">@color/bgTitleRight</item>
     </style>
 
-    <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+    <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/gradient_end</item>
         <item name="colorPrimaryDark">@color/material_dark_orange</item>
         <item name="colorAccent">@color/material_bright_orange</item>
     </style>
-
 
 
     <!-- styles for memories -->
@@ -34,6 +33,10 @@
         <item name="android:textColor">@color/contentBadgeTitle</item>
         <item name="android:textSize">12dp</item>
     </style>
+
+    <style name="newTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="newTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

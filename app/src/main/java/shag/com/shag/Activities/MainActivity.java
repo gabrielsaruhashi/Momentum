@@ -15,6 +15,12 @@ import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+    ViewPager viewPager;
+    TabLayout tabLayout;
+    private int[] tabIcons = {
+            R.drawable.ic_home,
+            R.drawable.ic_movie_roll_tape,
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,19 +35,27 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager(),
                 MainActivity.this));
 
         // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
 
         viewPager.setCurrentItem(position);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setupTabIcons();
     }
+
+    private void setupTabIcons() {
+        tabLayout.getTabAt(0).setIcon(tabIcons[0]);
+        tabLayout.getTabAt(1).setIcon(tabIcons[1]);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -63,9 +77,17 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         startActivity(i);
     }
 
+    /*
     public void onMemoriesView(MenuItem item) {
         //launch profile view
         Intent i = new Intent(this, MemoriesActivity.class);
+        startActivity(i);
+    } */
+
+
+    public void onChatView(MenuItem item) {
+        // launch chat activity
+        Intent i = new Intent(this, ChatListActivity.class);
         startActivity(i);
     }
 
