@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item
         PhoneContact contact = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
@@ -36,6 +38,7 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
         TextView tvName = (TextView) view.findViewById(R.id.tvName);
         TextView tvEmail = (TextView) view.findViewById(R.id.tvEmail);
         TextView tvPhone = (TextView) view.findViewById(R.id.tvPhone);
+        CheckBox checkBox = (CheckBox) view.findViewById(R.id.cbContactCheck);
         tvName.setText(contact.name);
         tvEmail.setText("");
         tvPhone.setText("");
@@ -44,7 +47,20 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
         }
         if (contact.numbers.size() > 0 && contact.numbers.get(0) != null) {
             tvPhone.setText(contact.numbers.get(0).number);
+
         }
+        // check if checkbox is selected or not
+        checkBox.setChecked(getItem(position).isSelected());
+
+        // add listener
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton vw,
+                                         boolean isChecked) {
+                getItem(position).setSelected(vw.isChecked());
+            }
+        });
+
         return view;
     }
 

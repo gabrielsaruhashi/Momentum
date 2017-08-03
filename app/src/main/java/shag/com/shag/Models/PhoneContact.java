@@ -12,6 +12,7 @@ public class PhoneContact {
     public String name;
     public ArrayList<ContactEmail> emails;
     public ArrayList<ContactPhone> numbers;
+    public boolean selected;
 
     public PhoneContact(String id, String name) {
         this.id = id;
@@ -40,6 +41,13 @@ public class PhoneContact {
 
     public void addNumber(String number, String type) {
         numbers.add(new ContactPhone(number, type));
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 }
 

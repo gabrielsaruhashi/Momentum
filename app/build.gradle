@@ -100,6 +100,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+    compile 'com.kbeanie:multipicker:1.1.31@aar' // multipicker
 }
 
 // for GMS notifications

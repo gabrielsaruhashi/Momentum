@@ -10,11 +10,28 @@
     tools:context=".Activities.InviteFriendsActivity" >
 
     <ListView
+        android:layout_marginTop="32dp"
         android:id="@+id/lvContacts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" >
     </ListView>
+
+    <EditText
+        android:id="@+id/input_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:hint="Search Contacts"
+        android:textSize="18dp" />
+
+    <Button
+        android:id="@+id/btSendInvitation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text="Send Invitation"/>
 
 </RelativeLayout>
