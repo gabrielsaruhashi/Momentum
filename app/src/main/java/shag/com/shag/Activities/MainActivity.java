@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         // unwrap to see whether is new
         isNew = getIntent().getBooleanExtra("isNew", true);
-        isNew = true;
+
         // if new, show onboarding dialog
         if (isNew) {
             showOnboardingDialog();

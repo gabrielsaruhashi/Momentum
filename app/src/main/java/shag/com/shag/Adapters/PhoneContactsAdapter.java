@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import shag.com.shag.Models.PhoneContact;
 import shag.com.shag.R;
@@ -20,8 +21,14 @@ import shag.com.shag.R;
 
 public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
 
+    ArrayList<PhoneContact> localPhoneContacts;
+    ArrayList<PhoneContact> supportLocalPhoneContacts;
+    Context context;
     public PhoneContactsAdapter(Context context, ArrayList<PhoneContact> contacts) {
         super(context, 0, contacts);
+        this.localPhoneContacts = contacts;
+        this.supportLocalPhoneContacts = localPhoneContacts;
+        this.context = context;
     }
 
     @Override
@@ -62,6 +69,23 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
         });
 
         return view;
+    }
+
+    public void filter(String charText) {
+        charText = charText.toLowerCase(Locale.getDefault());
+        clear();
+        if (charText.length() == 0) {
+            addAll(localPhoneContacts);
+        } else {
+            for (PhoneContact contact : supportLocalPhoneContacts) {
+                if (contact.name.toLowerCase(Locale.getDefault())
+                        .contains(charText)) {
+                   add(contact);
+                }
+            }
+        }
+
+        notifyDataSetChanged();
     }
 
 }

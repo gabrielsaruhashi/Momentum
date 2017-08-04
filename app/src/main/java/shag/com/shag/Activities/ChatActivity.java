@@ -105,6 +105,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     // constants
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 23;
+    private static final int INVITE_FRIENDS_ACTIVITY = 27;
     // thread
     Runnable taskToGetCalendarEvents;
     // for the adapter logic
@@ -1187,8 +1188,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         i.putExtra("eventOwnerName", parseEvent.getEventOwnerName());
         i.putExtra("eventParticipants", parseEvent.getParticipantsIds());
         i.putExtra("eventDescription", parseEvent.getDescription());
-        context.startActivity(i);
+        this.startActivityForResult(i, INVITE_FRIENDS_ACTIVITY);
     }
+
 
     public JsonObjectRequest getFoodRequest(String foodType, String lat, String lng) {
         // Pass second argument as "null" for GET requests
