@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:padding="@dimen/rv_margin_top">
 
     <TextView
         android:id="@+id/tvConflictName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TextView"
-        android:textSize="18sp"
+        android:layout_centerInParent="true"
         android:textStyle="bold"
+        android:textSize="16sp"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/ivProfileImage"
         android:layout_marginLeft="@dimen/rv_margin_left"/>
@@ -21,23 +23,41 @@
         android:layout_height="wrap_content"
         android:autoLink="all"
         android:text="TextView"
-        android:textSize="16sp"
         android:layout_marginLeft="@dimen/rv_margin_left"
         android:layout_below="@+id/tvConflictName"
-        android:layout_alignParentStart="true"
         android:layout_marginTop="4dp"/>
+
+
+    <ImageView
+        android:layout_marginTop="4dp"
+        android:id="@+id/icLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/tvDescription"
+        android:layout_below="@+id/tvDescription"
+        app:srcCompat="@drawable/ic_map_marker"
+        android:layout_alignBottom="@+id/tvLocation"
+        android:layout_toStartOf="@+id/tvEventTime" />
 
     <TextView
         android:id="@+id/tvLocation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="all"
-        android:text="TextView"
-        android:textSize="12sp"
+        android:text="Facebook Seattle"
         android:layout_below="@+id/tvDescription"
+        android:layout_toRightOf="@id/icLocation"
         android:layout_marginLeft="@dimen/rv_margin_left"
         android:layout_marginTop="4dp"/>
 
+    <ImageView
+        android:id="@+id/icClock"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvLocation"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="@dimen/rv_margin_left"
+        app:srcCompat="@drawable/ic_clock" />
 
     <TextView
         android:id="@+id/tvEventTime"
@@ -45,18 +65,13 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/tvLocation"
         android:layout_marginLeft="@dimen/rv_margin_left"
-        android:layout_marginTop="4dp"
-        android:text="TextView"
+        android:layout_marginTop="6dp"
+        android:layout_alignBottom="@id/icClock"
+        android:layout_toRightOf="@id/icClock"
+        android:fontFamily="sans-serif-smallcaps"
+        android:text="4pm - 4.30pm"
         android:textSize="12sp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btGoToCalendar"
-        android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@id/tvRelativeTime"
-        android:background="@color/colorAccent"
-        android:text="See on the calendar"
-        android:textColor="@color/white"/>
+
 </RelativeLayout>

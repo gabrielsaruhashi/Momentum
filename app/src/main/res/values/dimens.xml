@@ -22,4 +22,5 @@
     <dimen name="fab_elevation">4dp</dimen>
     <dimen name="map_margin_sides">8dp</dimen>
     <dimen name="chat_item_margin">8dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -10,13 +10,12 @@
     <!--</style>-->
     <!--newTheme was old name-->
 
-    <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+    <style name="newTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/gradient_end</item>
         <item name="colorPrimaryDark">@color/toolbar_dark</item>
         <item name="colorAccent">@color/gradient_end</item>
 
     </style>
-
 
 
     <!-- styles for memories -->

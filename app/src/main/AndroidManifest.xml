@@ -21,6 +21,9 @@
 
     <uses-permission android:name="${packageName}.permission.C2D_MESSAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:name=".Other.ParseApplication"
@@ -107,6 +110,15 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".BroadcastReceiver.SmsReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".Activities.MemoryDetailsActivity" />
 
         <receiver android:name=".Other.MyAlarm" />
@@ -114,6 +126,14 @@
         <activity android:name=".Activities.EventReadyActivity" />
         <activity android:name=".Activities.SelectPublicEventTypeActivity" />
         <activity android:name=".Activities.SelectPublicMapActivity" />
+        <activity
+            android:name=".Activities.ChatListActivity"
+            android:label="@string/title_activity_chat_list"
+            android:theme="@style/newTheme" />
+        <activity
+            android:name=".Activities.InviteFriendsActivity"
+            android:label="Invite Friends"/>
+
         <activity android:name=".Activities.SelectEventDeadlineActivity"
             android:windowSoftInputMode="stateAlwaysVisible">
         </activity>

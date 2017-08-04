@@ -108,6 +108,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     // constants
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
     private static final int MY_PERMISSIONS_REQUEST_READ_CALENDAR = 23;
+    private static final int INVITE_FRIENDS_ACTIVITY = 27;
     // thread
     Runnable taskToGetCalendarEvents;
     // for the adapter logic
@@ -310,6 +311,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                         while (cursor.moveToNext() && cursor.getPosition() < cursor.getCount() - 1);
                     }
+                    cursor.close();
+                    // cursor.close
                 }
             }
         };
@@ -1304,6 +1307,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         i.putExtra("eventId", eventFromQuery.getEventId());
         context.startActivity(i);
     }
+
+    public void onInviteFriends(MenuItem menuItem) {
+        Intent i = new Intent(context, InviteFriendsActivity.class);
+        i.putExtra("eventId", eventFromQuery.getEventId());
+        i.putExtra("eventOwnerName", eventFromQuery.getEventOwnerName());
+        i.putExtra("eventParticipants", eventFromQuery.getParticipantsIds());
+        i.putExtra("eventDescription", eventFromQuery.getDescription());
+        this.startActivityForResult(i, INVITE_FRIENDS_ACTIVITY);
+    }
+
 
     public JsonObjectRequest getFoodRequest(String foodType, String lat, String lng) {
         // Pass second argument as "null" for GET requests

@@ -46,6 +46,7 @@ public class Event extends ParseObject implements Parcelable {
     public boolean isRecommendationMade;
     public String time;
     public ParseObject lastMessageSent;
+    public ArrayList<String> outsideParticipantsPhoneNumbers;
     public String eventTime;
 
 
@@ -56,6 +57,15 @@ public class Event extends ParseObject implements Parcelable {
 
     }
     // GETTERS
+
+    public ArrayList<String> getOutsideParticipantsPhoneNumbers() {
+        return (ArrayList) get("outside_participants_phone_numbers");
+    }
+
+    public void setOutsideParticipantsPhoneNumbers(ArrayList<String> outsideParticipantsPhoneNumbers) {
+        this.outsideParticipantsPhoneNumbers = outsideParticipantsPhoneNumbers;
+        put("outside_participants_phone_numbers", outsideParticipantsPhoneNumbers);
+    }
 
     public ParseObject getLastMessageSent() {
         return getParseObject("last_message_sent");
