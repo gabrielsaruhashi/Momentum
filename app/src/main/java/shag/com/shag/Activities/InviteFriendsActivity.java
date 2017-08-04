@@ -12,8 +12,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.telephony.SmsManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import shag.com.shag.Adapters.PhoneContactsAdapter;
 import shag.com.shag.Models.PhoneContact;
@@ -70,28 +67,6 @@ public class InviteFriendsActivity extends AppCompatActivity {
     }
 
     private void setupViews()  {
-        // searchbar
-        edtSearch = (EditText) findViewById(R.id.input_search);
-
-        edtSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // When user changed the Text
-                String text = edtSearch.getText().toString()
-                        .toLowerCase(Locale.getDefault());
-                adapterContacts.filter(text);
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
 
         // get all contacts
         listContacts = new ContactFetcher(this).fetchAll();
