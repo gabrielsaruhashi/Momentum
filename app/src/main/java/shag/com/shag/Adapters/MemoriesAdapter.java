@@ -54,7 +54,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
         viewHolder.ivCoverPicture.setAdjustViewBounds(true);
         Glide.with(mContext)
-                .load(memory.getCoverPictureUrl() != null ? memory.getCoverPictureUrl() : "http://www.comedycentral.co.uk/sites/default/files/styles/image-w-1200-h-600-scale-crop/public/mtv_uk/arc/2014/05/27/f8bf5a4f-0745-45e6-b57a-3cc95f1bd3cf.jpg?itok=neQ-BYZn")
+                .load(memory.getCoverPictureUrl() != null ? memory.getCoverPictureUrl() : "http://i.imgur.com/Gwb6TqH.png")
                 .centerCrop()
                 .into(viewHolder.ivCoverPicture);
 
