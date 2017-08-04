@@ -9,9 +9,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 
 import com.ramotion.paperonboarding.PaperOnboardingFragment;
 import com.ramotion.paperonboarding.PaperOnboardingPage;
+import com.ramotion.paperonboarding.listeners.PaperOnboardingOnRightOutListener;
 
 import java.util.ArrayList;
 
@@ -50,15 +52,20 @@ public class OnboardingDialogFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Fetch arguments from bundle and set title
-        String title = getArguments().getString("title");
-        getDialog().setTitle(title);
+        getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
         // Convert the fragment into the onboarding procedure
         fragmentManager = getChildFragmentManager();
         final PaperOnboardingFragment onBoardingFragment = PaperOnboardingFragment.newInstance(getDataForOnboarding());
-
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, onBoardingFragment);
         fragmentTransaction.commit();
+
+        onBoardingFragment.setOnRightOutListener(new PaperOnboardingOnRightOutListener() {
+            @Override
+            public void onRightOut() {
+                getDialog().dismiss();
+            }
+        });
 
     }
 
@@ -67,9 +74,9 @@ public class OnboardingDialogFragment extends DialogFragment {
         PaperOnboardingPage scr1 = new PaperOnboardingPage("Private Feed", "Check what your friends are up to",
                 Color.parseColor("#678FB4"), R.drawable.ic_person, R.drawable.ic_chat);
         PaperOnboardingPage scr2 = new PaperOnboardingPage("Explore", "Discover what is going on around you, and invite your friends to explore with you",
-                Color.parseColor("#65B0B4"), R.drawable.ic_globe, R.drawable.ic_map_marker);
+                Color.parseColor("#65B0B4"), R.drawable.ic_globe_white, R.drawable.ic_map_marker_white);
         PaperOnboardingPage scr3 = new PaperOnboardingPage("Memories", "Make these moments last forever by sharing pictures of all the events",
-                Color.parseColor("#9B90BC"), R.drawable.ic_movie_roll_tape, R.drawable.ic_camera);
+                Color.parseColor("#9B90BC"), R.drawable.ic_cute_photos, R.drawable.ic_camera);
 
         ArrayList<PaperOnboardingPage> elements = new ArrayList<>();
         elements.add(scr1);
