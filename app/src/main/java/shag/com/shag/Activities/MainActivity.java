@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private FragmentManager fragmentManager;
     PaperOnboardingFragment onBoardingFragment;
-    boolean isNew;
+    static boolean isNew;
 
     // The request code used in ActivityCompat.requestPermissions()
     // and returned in the Activity's onRequestPermissionsResult()

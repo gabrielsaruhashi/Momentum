@@ -10,6 +10,7 @@ public class PhoneContact {
 
     public String id;
     public String name;
+    public String photoUri;
     public ArrayList<ContactEmail> emails;
     public ArrayList<ContactPhone> numbers;
     public boolean selected;
@@ -49,5 +50,6 @@ public class PhoneContact {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
 }
 

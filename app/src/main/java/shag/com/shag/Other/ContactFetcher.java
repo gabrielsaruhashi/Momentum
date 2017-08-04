@@ -28,6 +28,7 @@ public class ContactFetcher {
         String[] projectionFields = new String[]{
                 ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME,
+                ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
         };
         ArrayList<PhoneContact> listContacts = new ArrayList<>();
         CursorLoader cursorLoader = new CursorLoader(context,

@@ -3,38 +3,42 @@
     android:layout_width="match_parent"
     android:padding="3dp"
     android:layout_height="match_parent" >
+    <ImageView
+        android:id="@+id/ivContactImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginRight="8dp"
+        android:contentDescription="@string/app_name"
+        android:scaleType="centerInside" />
 
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:text="Bob Marley"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textStyle="bold" />
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="12dp"
+        android:layout_toLeftOf="@+id/cbContactCheck"
+        android:layout_toRightOf="@+id/ivContactImage" >
 
-    <TextView
-        android:id="@+id/tvPhone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tvName"
-        android:text="(626) 336-5889"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="Bob Marley"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <TextView
-        android:id="@+id/tvEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#575757"
-        android:layout_alignBaseline="@+id/tvPhone"
-        android:layout_alignBottom="@+id/tvPhone"
-        android:paddingLeft="5dp"
-        android:layout_toRightOf="@+id/tvPhone"
-        android:layout_alignParentRight="true"
-        android:text="bob@fake.com"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <TextView
+            android:id="@+id/tvPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/tvName"
+            android:text="(626) 336-5889"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+    </RelativeLayout>
 
     <CheckBox
         android:id="@+id/cbContactCheck"
@@ -42,6 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="8dp" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"/>
 
 </RelativeLayout>

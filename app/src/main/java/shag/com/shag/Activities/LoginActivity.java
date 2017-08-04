@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -77,6 +78,16 @@ public class LoginActivity extends AppCompatActivity {
             onLoginSuccess();
 
         }
+        //TODO delete this
+        Button btContacts = (Button) findViewById(R.id.btContacts);
+        btContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, InviteFriendsActivity.class);
+                startActivity(i);
+
+            }
+        });
     }
 
     @Override

@@ -299,6 +299,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                         while (cursor.moveToNext() && cursor.getPosition() < cursor.getCount() - 1);
                     }
+                    cursor.close();
+                    // cursor.close
                 }
             }
         };
