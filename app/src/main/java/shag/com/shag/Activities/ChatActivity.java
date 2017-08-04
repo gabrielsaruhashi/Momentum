@@ -46,7 +46,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.ParseACL;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -180,7 +179,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         context = this;
 
