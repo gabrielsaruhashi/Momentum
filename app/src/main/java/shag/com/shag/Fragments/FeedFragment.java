@@ -115,7 +115,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         });
 
         // instantiate current user
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         return v;
     }

@@ -24,6 +24,7 @@ import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -66,7 +67,7 @@ public class ChatListFragment extends Fragment {
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUserId = ParseApplication.getCurrentUser().getObjectId();
 
         populateChatList(currentUserId);
         startLiveQueries();
@@ -127,7 +128,7 @@ public class ChatListFragment extends Fragment {
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
         String eventOwnerName = event.getEventOwnerName();
-        String currentUserName = (String) ParseUser.getCurrentUser().get("name");
+        String currentUserName = (String) ParseApplication.getCurrentUser().get("name");
 
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {

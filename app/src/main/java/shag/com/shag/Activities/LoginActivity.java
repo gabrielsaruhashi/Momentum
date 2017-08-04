@@ -70,8 +70,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        ParseUser me = ParseUser.getCurrentUser();
-        if (ParseUser.getCurrentUser() != null) {
+        ParseUser me = ParseApplication.getCurrentUser();
+        if (me != null) {
             //ParseUser.logOut();
             onLoginSuccess();
 
@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
         } else {
             Intent i = new Intent(context, MainActivity.class);
             // initialize recent friends and facebook friends 'global/app' variable
-            ParseUser currentUser = ParseUser.getCurrentUser();
+            ParseUser currentUser = ParseApplication.getCurrentUser();
             //TODO refactor this
             ParseApplication.getRecentFriends();
             // get additional publishing permission

@@ -40,6 +40,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -78,7 +79,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
         // instantiate id's
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         // instantiate user facebook id
         HashMap data = (HashMap) currentUser.getMap("authData");

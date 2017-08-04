@@ -56,7 +56,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_friends);
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         // instantiate friends client
         client = ParseApplication.getFacebookRestClient();
@@ -97,7 +97,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
     private void createEvent() {
         final Event newEvent = new Event();
         // populate newEvent
-        newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
+        newEvent.setEventOwnerName(ParseApplication.getCurrentUser().getString("name"));
         newEvent.setDescription(description);
                 /*newEvent.setLatLng(
                         new LatLng(47.628883, -122.342606)
@@ -162,7 +162,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<Event> query = ParseQuery.getQuery("Event");
-                                    query.whereEqualTo("event_owner_id",ParseUser.getCurrentUser().getObjectId());
+                                    query.whereEqualTo("event_owner_id",ParseApplication.getCurrentUser().getObjectId());
                                     query.orderByDescending("createdAt");
                                     query.setLimit(1);
                                     query.getFirstInBackground(new GetCallback<Event>() {

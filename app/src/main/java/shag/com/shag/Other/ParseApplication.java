@@ -58,6 +58,7 @@ public class ParseApplication extends Application {
     private static HashMap recentFriendsMap;
     private static boolean mFirstLoad;
     private static TreeSet facebookPermissionsSet;
+    private static ParseUser currentUser;
 
     @Override
     public void onCreate() {
@@ -173,8 +174,8 @@ public class ParseApplication extends Application {
 
     public static HashMap getRecentFriends() {
         // ensure user is authenticated
-        if (ParseUser.getCurrentUser().isAuthenticated()) {
-            ParseUser currentUser = ParseUser.getCurrentUser();
+        if (ParseApplication.getCurrentUser().isAuthenticated()) {
+            ParseUser currentUser = ParseApplication.getCurrentUser();
             // instantiate recent friends with last version of recent friends from the database
             //TODO add ternary operator in case user just returned
             recentFriendsMap = (currentUser.getMap("recent_friends_map") != null) ? (HashMap) currentUser.getMap("recent_friends_map") : new HashMap() ;
@@ -187,7 +188,7 @@ public class ParseApplication extends Application {
 
                 // create auxiliary list with current user id
                 List list = new ArrayList();
-                list.add(ParseUser.getCurrentUser().getObjectId());
+                list.add(ParseApplication.getCurrentUser().getObjectId());
 
                 query.whereContainedIn("participants_ids", list);
                 query.findInBackground(new FindCallback<Memory>() {
@@ -215,8 +216,8 @@ public class ParseApplication extends Application {
                                 }
                             }
                             // update user's recent friends in the database
-                            ParseUser.getCurrentUser().put("recent_friends_map", updatedRecentFriendsMap);
-                            ParseUser.getCurrentUser().saveInBackground();
+                            ParseApplication.getCurrentUser().put("recent_friends_map", updatedRecentFriendsMap);
+                            ParseApplication.getCurrentUser().saveInBackground();
                             // update local recent friends for future reference
                             recentFriendsMap = updatedRecentFriendsMap;
                         }
@@ -255,6 +256,14 @@ public class ParseApplication extends Application {
         }
 
         return facebookPermissionsSet;
+    }
+
+    public static ParseUser getCurrentUser() {
+        if (currentUser == null) {
+            currentUser = ParseUser.getCurrentUser();
+        }
+
+        return currentUser;
     }
 
 }

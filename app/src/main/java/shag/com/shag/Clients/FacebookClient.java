@@ -11,6 +11,8 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import shag.com.shag.Other.ParseApplication;
+
 
 /**
  * Created by hanapearlman on 7/10/17.
@@ -40,7 +42,7 @@ public class FacebookClient {
     }
 
     public void postFacebookAlbum(ArrayList<Integer> contributors, String albumName, GraphRequest.Callback callback) {
-        ParseUser user = ParseUser.getCurrentUser();
+        ParseUser user = ParseApplication.getCurrentUser();
         HashMap data = (HashMap) user.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
