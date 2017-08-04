@@ -1310,10 +1310,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onInviteFriends(MenuItem menuItem) {
         Intent i = new Intent(context, InviteFriendsActivity.class);
-        i.putExtra("eventId", parseEvent.getEventId());
-        i.putExtra("eventOwnerName", parseEvent.getEventOwnerName());
-        i.putExtra("eventParticipants", parseEvent.getParticipantsIds());
-        i.putExtra("eventDescription", parseEvent.getDescription());
+        i.putExtra("eventId", eventFromQuery.getEventId());
+        i.putExtra("eventOwnerName", eventFromQuery.getEventOwnerName());
+        i.putExtra("eventParticipants", eventFromQuery.getParticipantsIds());
+        i.putExtra("eventDescription", eventFromQuery.getDescription());
         this.startActivityForResult(i, INVITE_FRIENDS_ACTIVITY);
     }
 

@@ -24,6 +24,7 @@ import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+    Toolbar myToolbar;
     ViewPager viewPager;
     TabLayout tabLayout;
     private int[] tabIcons = {
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         viewPager.setCurrentItem(position);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupTabIcons();
