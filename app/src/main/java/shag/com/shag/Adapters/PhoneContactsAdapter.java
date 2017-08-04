@@ -30,15 +30,15 @@ import shag.com.shag.R;
  */
 
 public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
-
-    ArrayList<PhoneContact> localPhoneContacts;
     ArrayList<PhoneContact> supportLocalPhoneContacts;
     Context context;
+
+
     public PhoneContactsAdapter(Context context, ArrayList<PhoneContact> contacts) {
         super(context, 0, contacts);
-        this.localPhoneContacts = contacts;
-        this.supportLocalPhoneContacts = localPhoneContacts;
         this.context = context;
+        supportLocalPhoneContacts = new ArrayList<>();
+        supportLocalPhoneContacts.addAll(contacts);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
             Glide.with(context)
                     .load(photoUri)
                     .fitCenter()
-                    .bitmapTransform(new RoundedCornersTransformation(context, 20, 10))
+                    .bitmapTransform(new RoundedCornersTransformation(context, 30, 10))
                     .into(ivContactImage);
 
         } else { // if null, replace it with a gmail style icon
@@ -105,10 +105,11 @@ public class PhoneContactsAdapter extends ArrayAdapter<PhoneContact> {
     }
 
     public void filter(String charText) {
+
         charText = charText.toLowerCase(Locale.getDefault());
         clear();
         if (charText.length() == 0) {
-            addAll(localPhoneContacts);
+            addAll(supportLocalPhoneContacts);
         } else {
             for (PhoneContact contact : supportLocalPhoneContacts) {
                 if (contact.name.toLowerCase(Locale.getDefault())
