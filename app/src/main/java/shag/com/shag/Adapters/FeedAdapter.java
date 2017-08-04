@@ -543,7 +543,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         } else if (event.getCategory().equals("Food")) {
             return R.color.food_color;
         } else if (event.getCategory().equals("Music")) {
-            return R.color.music_color;
+            return R.color.explore_color;
         }
 
         return R.color.misc_color;

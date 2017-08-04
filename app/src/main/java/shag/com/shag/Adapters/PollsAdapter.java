@@ -154,7 +154,6 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
             final int[] choice = {3};
 
 
-
             btVote.setOnClickListener(new View.OnClickListener() {
 
                 @Override

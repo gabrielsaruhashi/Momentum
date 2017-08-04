@@ -5,44 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.SelectEventCategoryActivity">
-
-    <TextView
-        android:id="@+id/tvCategoryInstructions"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Choose a Category"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
     <LinearLayout
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
-        android:orientation="horizontal"
-        android:padding="4dp"
-        android:layout_below="@+id/tvCategoryInstructions"
+        android:orientation="vertical"
+        android:layout_below="@+id/my_toolbar"
         android:layout_above="@+id/btNext">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:weightSum="3">
+
 
             <android.support.v7.widget.CardView
-                android:id="@+id/chillCard"
+                android:id="@+id/exploreCard"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
-                app:cardBackgroundColor="@color/chill_color"
-                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@color/explore_color"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -50,28 +40,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
+
                     <ImageView
-                        android:id="@+id/chillIcon"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/exploreIcon"
+                        android:layout_width="104dp"
                         android:layout_height="104dp"
+                        android:paddingTop="4dp"
+                        android:layout_alignParentStart="true"
                         android:tint="@color/white"
-                        android:layout_centerHorizontal="true"
-                        app:srcCompat="@drawable/ic_globe"
-                        android:layout_alignParentTop="true" />
+                        app:srcCompat="@drawable/ic_noun_956258_cc" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/chillIcon"
-                        android:text="LOCATION"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:layout_toRightOf="@id/exploreIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
+                        android:text="EXPLORE"
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        />
+
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="16dp" />
+
 
             <android.support.v7.widget.CardView
                 android:id="@+id/sportsCard"
@@ -82,7 +77,6 @@
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
                 app:cardBackgroundColor="@color/sports_color"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -92,35 +86,37 @@
 
                     <ImageView
                         android:id="@+id/sportsIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="104dp"
-                        android:layout_centerHorizontal="true"
-                        app:srcCompat="@drawable/ic_sports"/>
+                        android:layout_width="104dp"
+                        android:padding="4dp"
+                        android:layout_height="88dp"
+                        app:srcCompat="@drawable/ic_sports" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/sportsIcon"
+                        android:layout_toRightOf="@id/sportsIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
                         android:text="SPORTS"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="16dp" />
+
 
             <android.support.v7.widget.CardView
-                android:id="@+id/musicCard"
+                android:id="@+id/chillCard"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
-                app:cardBackgroundColor="@color/music_color"
-                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@color/chill_color"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -129,30 +125,28 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/musicIcon"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/chillIcon"
+                        android:layout_width="104dp"
                         android:layout_height="104dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_music1" />
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:tint="@color/white"
+                        app:srcCompat="@drawable/ic_chill" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/musicIcon"
-                        android:text="MUSIC"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:layout_toRightOf="@id/chillIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
+                        android:text="CHILL"
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:weightSum="3">
 
             <android.support.v7.widget.CardView
                 android:id="@+id/foodCard"
@@ -163,7 +157,6 @@
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
                 app:cardBackgroundColor="@color/food_color"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -173,24 +166,28 @@
 
                     <ImageView
                         android:id="@+id/foodIcon"
-                        android:layout_width="wrap_content"
+                        android:layout_width="104dp"
                         android:layout_height="104dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_food1" />
+                        android:padding="4dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        app:srcCompat="@drawable/ic_food1" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/foodIcon"
+                        android:layout_toRightOf="@id/foodIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
                         android:text="FOOD"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="16dp" />
 
             <android.support.v7.widget.CardView
                 android:id="@+id/partyCard"
@@ -201,7 +198,6 @@
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
                 app:cardBackgroundColor="@color/party_color"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -211,24 +207,29 @@
 
                     <ImageView
                         android:id="@+id/partyIcon"
-                        android:layout_width="wrap_content"
+                        android:layout_width="104dp"
                         android:layout_height="104dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_party1" />
+                        android:padding="4dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        app:srcCompat="@drawable/ic_party1" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/partyIcon"
+                        android:layout_toRightOf="@id/partyIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
                         android:text="PARTY"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                        />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
 
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="16dp" />
+
 
             <android.support.v7.widget.CardView
                 android:id="@+id/miscCard"
@@ -239,7 +240,6 @@
                 android:elevation="4dp"
                 android:onClick="onSelectCategory"
                 app:cardBackgroundColor="@color/misc_color"
-                app:cardCornerRadius="4dp"
                 app:cardElevation="4dp"
                 android:foreground="?android:attr/selectableItemBackground">
 
@@ -249,22 +249,28 @@
 
                     <ImageView
                         android:id="@+id/miscIcon"
-                        android:layout_width="wrap_content"
+                        android:layout_width="104dp"
                         android:layout_height="104dp"
-                        android:layout_centerHorizontal="true"
-                        android:src="@drawable/ic_misc1" />
+                        android:padding="4dp"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        app:srcCompat="@drawable/ic_misc1" />
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:layout_below="@+id/miscIcon"
-                        android:text="MISCELLANEOUS"
-                        android:textAlignment="center"
-                        android:textColor="@color/white" />
+                        android:layout_toRightOf="@id/miscIcon"
+                        android:elevation="4dp"
+                        android:paddingLeft="16dp"
+                        android:fontFamily="sans-serif-light"
+                        android:gravity="center"
+                        android:text="MISC"
+                        android:textColor="@color/white"
+                        android:textSize="36sp"
+                         />
                 </RelativeLayout>
             </android.support.v7.widget.CardView>
         </LinearLayout>
-    </LinearLayout>
 
     <!--<ExpandableListView-->
     <!--android:id="@+id/lvCategories"-->

@@ -80,7 +80,7 @@ public class ChatListAdapter extends RecyclerView.Adapter<ChatListAdapter.ViewHo
         } else if (event.category.equals("Food")) {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.food_color));
         } else if (event.category.equals("Music")) {
-            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.music_color));
+            holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.explore_color));
         } else {
             holder.ivCategory.setBackgroundColor(ContextCompat.getColor(context, R.color.misc_color));
         }

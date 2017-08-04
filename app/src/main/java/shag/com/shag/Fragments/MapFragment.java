@@ -79,7 +79,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private RequestQueue mRequestQueue;
 
-
     CircleIndicator indicator;
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
@@ -96,6 +95,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     RelativeLayout cardViews;
     ArrayList<HashMap<String, Object>> cardData = new ArrayList<>();
     int cardPagerSize = 0;
+    HashMap<String, MarkerOptions> markers = new HashMap<>();
+    ArrayList<Marker> markerOptionsArrayList = new ArrayList<>();
 
     // inflation happens inside onCreateView
     @Nullable
@@ -103,6 +104,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
+
+
 //        mRequestQueue = VolleyRequest.getInstance(this.getContext()).
 //                getRequestQueue();
 //
@@ -172,9 +175,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-
-
-
     //CREATING CLIENT
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -189,9 +189,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     //INITIAL MAP
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
-        mGoogleMap=googleMap;
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //Initialize Google Play Services
@@ -206,8 +205,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 //Request Location Permission
                 checkLocationPermission();
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -228,10 +226,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     @Override
-    public void onConnectionSuspended(int i) {}
+    public void onConnectionSuspended(int i) {
+    }
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {}
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+    }
 
     @Override
     public void onPause() {
@@ -239,13 +239,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         //stop location updates when Activity is no longer active
         if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient,  this);
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
     }
 
 
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -261,7 +260,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,15));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
     }
 
@@ -286,7 +285,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 //Prompt the user once explanation has been shown
                                 ActivityCompat.requestPermissions(getActivity(),
                                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                                        MY_PERMISSIONS_REQUEST_LOCATION );
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
                             }
                         })
                         .create();
@@ -297,7 +296,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MY_PERMISSIONS_REQUEST_LOCATION );
+                        MY_PERMISSIONS_REQUEST_LOCATION);
             }
         }
     }
@@ -340,10 +339,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
     //JAMBASE API
     public void onStartMusicRequest(String zipcode, String radius) {
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getMusicRequest(zipcode,radius));
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getMusicRequest(zipcode, radius));
     }
 
-    public JsonObjectRequest getMusicRequest(String zipcode, String radius){
+    public JsonObjectRequest getMusicRequest(String zipcode, String radius) {
         // Pass second argument as "null" for GET requests
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
@@ -352,16 +351,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
         //Todo: take into account days under 10 (do they have a 0 before it for example Aug 3 = 03 or 3)?
         String day = cal.get(Calendar.DAY_OF_MONTH) + "";
-        int endDay =  (cal.get(Calendar.DAY_OF_MONTH) + 1);
+        int endDay = (cal.get(Calendar.DAY_OF_MONTH) + 1);
         String finalDay = endDay + "";
 
         int month = cal.get(Calendar.MONTH) + 1;
         String formattedMonth;
         if (month > 9) {
-             formattedMonth = "1" + month;
-        }
-        else {
-             formattedMonth = "0" + month;
+            formattedMonth = "1" + month;
+        } else {
+            formattedMonth = "0" + month;
 
         }
         SimpleDateFormat localDateFormat = new SimpleDateFormat("HH:mm:ss");
@@ -370,9 +368,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
         String jamBaseUrl = "http://api.jambase.com/events?";
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode+
-                "&radius="+radius+"&startDate=+"+year+"-" + formattedMonth + "-"+day+"T"+time.substring(0,2)+"%3A"+time.substring(3,5)+"%3A"+time.substring(6)
-                +"&endDate=+"+year+"-"+ formattedMonth +"-"+finalDay+"T23%3A59%3A59&page=0&api_key="+jamBaseApi, null,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, jamBaseUrl + "zipCode=" + zipcode +
+                "&radius=" + radius + "&startDate=+" + year + "-" + formattedMonth + "-" + day + "T" + time.substring(0, 2) + "%3A" + time.substring(3, 5) + "%3A" + time.substring(6)
+                + "&endDate=+" + year + "-" + formattedMonth + "-" + finalDay + "T23%3A59%3A59&page=0&api_key=" + jamBaseApi, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -383,95 +381,74 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        cardPagerSize=0;
+                        cardPagerSize = 0;
                         cardViews.setVisibility(View.VISIBLE);
                         LatLngBounds.Builder b = new LatLngBounds.Builder();
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
-                                final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
-                                final Double musicLng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
-                                final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
-                                String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
-                                String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
-                                String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
-                                String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
+                                if (eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude") != 0.0) {
+
+                                    final Double musicLat = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Latitude");
+                                    final Double musicLng = eventArray.getJSONObject(i).getJSONObject("Venue").getDouble("Longitude");
+                                    final String concertPlace = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Name");
+                                    String streetName = eventArray.getJSONObject(i).getJSONObject("Venue").getString("Address");
+                                    String city = eventArray.getJSONObject(i).getJSONObject("Venue").getString("City");
+                                    String state = eventArray.getJSONObject(i).getJSONObject("Venue").getString("StateCode");
+                                    String zipcode = eventArray.getJSONObject(i).getJSONObject("Venue").getString("ZipCode");
 
 
-                                final String locationAddress=streetName+" "+city+", "+state+ ", "+ zipcode;
+                                    final String locationAddress = streetName + " " + city + ", " + state + ", " + zipcode;
 
-                                JSONArray getArtistArray = null;
-                                try {
-                                    getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
-                                    String artist = getArtistArray.getJSONObject(0).getString("Name");
-                                    LatLng musicLatLng = new LatLng(musicLat, musicLng);
-                                    b.include(musicLatLng);
+                                    JSONArray getArtistArray = null;
+                                    try {
+                                        getArtistArray = eventArray.getJSONObject(i).getJSONArray("Artists");
+                                        String artist = getArtistArray.getJSONObject(0).getString("Name");
+                                        LatLng musicLatLng = new LatLng(musicLat, musicLng);
+                                        b.include(musicLatLng);
 
-                                    final HashMap<String,Object> publicEventData = new HashMap<>();
-                                    publicEventData.put("Name", artist);
-                                    publicEventData.put("Description", "Music Concert");
-                                    publicEventData.put("Location", locationAddress);
-                                    publicEventData.put("Category", "Music");
-                                    publicEventData.put("Lat", musicLat);
-                                    publicEventData.put("Lng", musicLng);
-                                    publicEventData.put("Place Name",concertPlace);
-                                    cardPagerSize++;
+                                        final HashMap<String, Object> publicEventData = new HashMap<>();
+                                        publicEventData.put("Name", artist);
+                                        publicEventData.put("Description", "Music Concert");
+                                        publicEventData.put("Location", locationAddress);
+                                        publicEventData.put("Category", "Music");
+                                        publicEventData.put("Lat", musicLat);
+                                        publicEventData.put("Lng", musicLng);
+                                        publicEventData.put("Place Name", concertPlace);
+                                        cardPagerSize++;
 
-                                    Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
+                                        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
-                                    MarkerOptions markerOptions = new MarkerOptions();
-                                    markerOptions.position(musicLatLng);
-                                    markerOptions.title(artist);
-                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                    mGoogleMap.addMarker(markerOptions).setTag(publicEventData);
-                                    cardData.add(publicEventData);
-                                    mapCardAdapter.notifyDataSetChanged();
-                                    indicator.setViewPager(viewPager);
+                                        Marker newMarker = mGoogleMap.addMarker(new MarkerOptions().position(musicLatLng)
+                                                .title(artist).icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
 
-//                                    mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//                                        @Override
-//                                        public void onInfoWindowClick(Marker marker) {
-//
-//                                            final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
-//
-//                                            cardTitle.setText(data.get("Name"));
-//                                            cardDescription.setText(data.get("Description"));
-//                                            cardLocation.setText(data.get("Location"));
-//
-//                                            cardView.setVisibility(View.VISIBLE);
-//
-//
-//                                            fab.setOnClickListener(new View.OnClickListener() {
-//                                                @Override
-//                                                public void onClick(View v) {
-//
-//                                                    Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
-//                                                    i.putExtra("Location", data.get("Location"));
-//                                                    i.putExtra("Category", data.get("Category"));
-//                                                    i.putExtra("Event Type", "Public");
-//                                                    i.putExtra("Lat", musicLat);
-//                                                    i.putExtra("Lng", musicLng);
-//                                                    i.putExtra("Place Name", concertPlace);
-//                                                    getContext().startActivity(i);
-//                                                }
-//                                            });
-//
-//                                        }
-//
-//                                    });
+//                                    MarkerOptions markerOptions = new MarkerOptions();
+//                                    markerOptions.position(musicLatLng);
+//                                    markerOptions.title(artist);
+//                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
+                                        newMarker.setTag(publicEventData);
+                                        cardData.add(publicEventData);
+                                        markerOptionsArrayList.add(newMarker);
+                                        mapCardAdapter.notifyDataSetChanged();
+                                        indicator.setViewPager(viewPager);
+
+
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+
                         }
 
                         LatLngBounds bounds = b.build();
                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                         mGoogleMap.animateCamera(cu);
 
+                        animateMarkers();
 
 
                     }
@@ -485,7 +462,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return req;
 
     }
-
 
 
     public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
@@ -504,17 +480,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
 
-
     //ZOMATO API
     public void onStartFoodRequest(String lat, String lng) {
-        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(lat,lng));
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(getFoodRequest(lat, lng));
     }
 
-    public JsonObjectRequest getFoodRequest(String lat, String lng){
+    public JsonObjectRequest getFoodRequest(String lat, String lng) {
         // Pass second argument as "null" for GET requests
         String zomatoUrl = "https://developers.zomato.com/api/v2.1/";
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, zomatoUrl+"geocode?lat="+lat+"&lon="+lng, null,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, zomatoUrl + "geocode?lat=" + lat + "&lon=" + lng, null,
                 new Response.Listener<JSONObject>() {
 
                     @Override
@@ -522,7 +497,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         Log.d("response", "aww yeah");
                         try {
                             JSONArray restaurantArray = response.getJSONArray("nearby_restaurants");
-                            cardPagerSize=0;
+                            cardPagerSize = 0;
                             cardViews.setVisibility(View.VISIBLE);
                             LatLngBounds.Builder b = new LatLngBounds.Builder();
 
@@ -537,7 +512,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 String streetName = restaurant.getJSONObject("location").getString("address");
                                 //String city = restaurant.getJSONObject("location").getString("city");
                                 //String zipcode = restaurant.getJSONObject("location").getString("zipcode");
-                                final String locationAddress=streetName;
+                                final String locationAddress = streetName;
 
                                 final String genre = restaurant.getString("cuisines");
 
@@ -548,54 +523,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 publicEventData.put("Category", "Food");
                                 publicEventData.put("Lat", restaurantLat);
                                 publicEventData.put("Lng", restaurantLng);
-                                publicEventData.put("Place Name",restaurantName);
+                                publicEventData.put("Place Name", restaurantName);
                                 cardPagerSize++;
 
-                                Bitmap bitmap = getBitmapFromVectorDrawable(getContext(),R.drawable.ic_map_marker);
+                                Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
-                                final MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions.position(restaurantLatLng);
-                                markerOptions.title(restaurantName);
-                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                                mGoogleMap.addMarker(markerOptions)
-                                        .setTag(publicEventData);
+                                Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                        .position(restaurantLatLng)
+                                        .title(restaurantName)
+                                        .icon(BitmapDescriptorFactory
+                                                .fromBitmap(bitmap)));
+
+//                                    MarkerOptions markerOptions = new MarkerOptions();
+//                                    markerOptions.position(musicLatLng);
+//                                    markerOptions.title(artist);
+//                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+
+                                newMarker.setTag(publicEventData);
+
+
+//                                final MarkerOptions markerOptions = new MarkerOptions();
+//                                markerOptions.position(restaurantLatLng);
+//                                markerOptions.title(restaurantName);
+//                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+//                                mGoogleMap.addMarker(markerOptions)
+//                                        .setTag(publicEventData);
                                 cardData.add(publicEventData);
+                                markerOptionsArrayList.add(newMarker);
                                 mapCardAdapter.notifyDataSetChanged();
                                 indicator.setViewPager(viewPager);
 
-
-
-//                                mGoogleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-//                                    @Override
-//                                    public void onInfoWindowClick(Marker marker) {
-//
-//                                        final HashMap<String,String> data=(HashMap<String, String>) marker.getTag();
-//
-//                                            cardTitle.setText(data.get("Name"));
-//                                            cardDescription.setText(data.get("Description"));
-//                                            cardLocation.setText(data.get("Location"));
-//                                            cardView.setVisibility(View.VISIBLE);
-//
-//                                        fab.setOnClickListener(new View.OnClickListener() {
-//                                            @Override
-//                                            public void onClick(View v) {
-//
-//
-//                                                Intent i = new Intent(getContext(), SelectEventDetailsActivity.class);
-//                                                i.putExtra("Location", data.get("Location"));
-//                                                i.putExtra("Category", data.get("Category"));
-//                                                i.putExtra("Event Type", "Public");
-//                                                i.putExtra("Food Details", data.get("Description"));
-//                                                i.putExtra("Lat",restaurantLat);
-//                                                i.putExtra("Lng",restaurantLng);
-//                                                i.putExtra("Place Name",restaurantName);
-//                                                getContext().startActivity(i);
-//                                            }
-//                                        });
-//
-//                                    }
-//
-//                                });
 
                                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                                     @Override
@@ -607,6 +564,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             LatLngBounds bounds = b.build();
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                             mGoogleMap.animateCamera(cu);
+                            animateMarkers();
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -634,4 +593,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return req;
     }
 
+    public void animateMarkers() {
+        Marker one = markerOptionsArrayList.get(viewPager.getCurrentItem());
+        one.showInfoWindow();
+        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(one.getPosition()));
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                Marker oldMarker = markerOptionsArrayList.get(position);
+                oldMarker.showInfoWindow();
+                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(oldMarker.getPosition()));
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+    }
 }

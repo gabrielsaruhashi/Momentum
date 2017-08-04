@@ -235,7 +235,7 @@
                 android:layout_weight="1"
                 android:elevation="4dp"
                 android:textAlignment="center"
-                app:cardBackgroundColor="@color/music_color"
+                app:cardBackgroundColor="@color/explore_color"
                 app:cardElevation="4dp"
                 app:cardUseCompatPadding="true">
 

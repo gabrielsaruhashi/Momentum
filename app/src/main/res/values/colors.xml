@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#bf988f</color>
-    <color name="colorPrimaryDark">#856a64</color>
+    <color name="colorPrimary">#395374</color>
+    <color name="colorPrimaryDark">#283a50</color>
     <color name="colorAccent">#595775</color>
-    <color name="burnt_orange">#ff4632</color>
+    <color name="burnt_orange">#C8C8A9</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="medium_gray">#b0bec5</color>
@@ -21,19 +21,27 @@
     <color name="bgContent">@color/white</color>
     <color name="contentDividerLine">#e0e0e0</color>
 
-    <color name="chill_color">#1ACCAC</color>
-    <color name="sports_color">#857FF1</color>
-    <color name="music_color">#99497D</color>
+    <color name="explore_color">#1ACCAC</color>
+    <color name="sports_color">#0090C1</color>
+    <color name="chill_color">#857FF1</color>
     <color name="party_color">#D33F70</color>
-    <color name="misc_color">#0090C1</color>
-    <color name="food_color">#DB5461</color>
+    <color name="misc_color">#DB5461</color>
+    <color name="food_color">#99497D</color>
+
 
     <color name="orange">#F3A183</color>
+
+
 
     <color name="gradient_start">#395374</color>
     <color name="gradient_end">#395374</color>
     <color name="material_dark_orange">#FFBF360C</color>
     <color name="material_bright_orange">#EC6F66</color>
+
+    <color name="gradient_start3">#0B5351</color>
+    <color name="gradient_end3">#00A9A5</color>
+    <color name="gradient_start4">#661040</color>
+    <color name="gradient_end4">#2A757F</color>
 
     <!--if we go with option 2 for the gradient, here are color options!-->
     <color name="gradient_start_2">#978897</color>

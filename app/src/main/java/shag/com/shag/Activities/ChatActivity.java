@@ -163,17 +163,20 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         //TODO check if this is working
         tvConflict = (TextView) findViewById(R.id.tvConflict);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-
-            }
-        };
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//
+//            }
+//        };
+        //drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        //actionBarDrawerToggle.syncState();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        currentUser = ParseUser.getCurrentUser();
 
         context = this;
 
@@ -235,14 +238,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         currentUserId = currentUser.getObjectId();
         currentUser.setACL(new ParseACL(currentUser));
 
+
         //set up initial polls
         //if event is new, make time and location polls
         if (isEventNew) {
             try {
-                createTimeAndLocationPolls("Time");
-                if (isEventPrivate) {
-                    createTimeAndLocationPolls("Location");
-                }
+                createTimeAndLocationPolls();
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -258,11 +260,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             });
         }
+        else{
+            refreshPolls();
+
+        }
 
         // populate views, setup listeners and populate views
         //refresh messages and polls both here
         setupMessagePosting();
-        refreshPolls();
 
         // instantiate conflicting calendar events
         conflictingCalendarEvents = new ArrayList<CalendarEvent>();
@@ -381,10 +386,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
+                    polls.add(object);
 
-                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                        polls.add(object);
-                    }
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -396,6 +402,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     });
                 }
+                String newEventId = object.getEventId();
+                polls.add(object);
+
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
             }
         });
 
@@ -411,7 +433,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
                 String newEventId = object.getEventId();
                 if (eventId.equals(newEventId)) {
-                    polls.set(pos, object);
+                    //reconstruct new list
+                    polls.remove(pos);
+
+                    ArrayList<Poll> newPollList = new ArrayList<Poll>();
+                    newPollList.addAll(polls);
+                    newPollList.add(pos,object);
+
+                    polls.clear();
+                    polls.addAll(newPollList);
+                    //polls.set(pos, object);
 
                 }
                 // RecyclerView updates need to be run on the UI thread
@@ -419,8 +450,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rvPolls.invalidate();
-                        pollAdapter.notifyItemChanged(finalPos);
+                        //rvPolls.invalidate();
+                        pollAdapter.notifyDataSetChanged();
+                        //pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
                         //pollAdapter.notifyItemChanged(1);
 
@@ -517,14 +549,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     // setup button event handler which posts the entered message to Parse
@@ -659,6 +691,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     }
                 });
+
             }
         });
 
@@ -705,40 +738,75 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    public void createTimeAndLocationPolls(final String type) throws ParseException {
-        final Poll poll = new Poll();
+    public void createTimeAndLocationPolls() throws ParseException {
+        final Poll timePoll = new Poll();
+        final Poll locPoll = new Poll();
+
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
-        poll.setEventId(eventId);
-        poll.put("Poll_creator", currentUser);
-        poll.put("poll_creator_id", currentUserId);
-        poll.setPollType(type);
-        poll.setQuestion(type + " of Event");
+
+        timePoll.setEventId(eventId);
+        timePoll.put("Poll_creator", currentUser);
+        timePoll.put("poll_creator_id", currentUserId);
+        timePoll.setPollType("Time");
+        timePoll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
 
-        poll.setChoices(customs);
-        poll.setScores(new HashMap<String, Integer>());
-        poll.setPeopleVoted(new ArrayList<String>());
+        timePoll.setChoices(customs);
+        timePoll.setScores(new HashMap<String, Integer>());
+        timePoll.setPeopleVoted(new ArrayList<String>());
 
-        if (poll.getPollType().equals("Location")) {
-            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
-        }
+//        if (poll.getPollType().equals("Location")) {
+//            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+//        }
 
-        poll.saveInBackground(new SaveCallback() {
+        timePoll.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put " + type + " poll on parse", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
+                    if (isEventPrivate) {
+
+                        //make a location poll
+                        locPoll.setEventId(eventId);
+                        locPoll.put("Poll_creator", currentUser);
+                        locPoll.put("poll_creator_id", currentUserId);
+                        locPoll.setPollType("Location");
+                        locPoll.setQuestion("Location of Event");
+                        ArrayList<String> customs = new ArrayList<>();
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+
+                        locPoll.setChoices(customs);
+                        locPoll.setScores(new HashMap<String, Integer>());
+                        locPoll.setPeopleVoted(new ArrayList<String>());
+                        locPoll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+                        polls.add(locPoll);
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+                        locPoll.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+
+
+                    }
                 }
 
             }
         });
-        polls.add(poll);
-        pollAdapter.notifyItemInserted(polls.size() - 1);
+        polls.add(timePoll);
+        pollAdapter.notifyDataSetChanged();
         rvPolls.scrollToPosition(0);
         //poll.save();
 
@@ -749,7 +817,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.setEventId(eventId);
-        poll.put("Poll_creator", currentUser);
+        poll.put("Poll_creator",currentUser);
         poll.setPollType("Time");
         poll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
@@ -783,6 +851,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.put("Poll_creator", currentUser);
+
         poll.put("poll_creator_id", currentUserId);
         poll.setPollType("Custom");
         poll.saveInBackground(new SaveCallback() {
@@ -857,13 +926,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // Execute query to fetch all POLLS from Parse asynchronously
         // this is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Poll>() {
-            public void done(List<Poll> poll, ParseException e) {
+            public void done(List<Poll> pollList, ParseException e) {
                 if (e == null) {
                     polls.clear();
                     //polls.addAll(poll);
-                    for (int i = 0; i < poll.size(); i++) {
-                        Poll tempPoll = poll.get(i);
-                        polls.add(poll.get(i));
+                    for (int i = 0; i < pollList.size(); i++) {
+                        polls.add(pollList.get(i));
                     }
                     pollAdapter.notifyDataSetChanged(); // update adapter
 
@@ -873,17 +941,20 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         mFirstLoad = false;
                     }
 
+                    if (pollList!=null && pollList.size()!=0) {
+                        findPollWinners(polls);
+                    }
+
 
                 } else {
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                findPollWinners(polls);
 
 
             }
         });
-        findPollWinners(polls);
+
     }
 
     public Date convertStringToDate(String time) {
