@@ -116,7 +116,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         imageAdapter = new ImageAdapter(this, pictures);
 
         // for shared animation
-
         sliderAdapter = new ImageSliderAdapter(MemoryDetailsActivity.this, pictures);
 
         // get gridview
@@ -332,7 +331,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
             // retrieve a collection of selected images
             ClipData clipData = data.getClipData();
-
+            final ArrayList<ParseFile> userUploadedPictures = new ArrayList<>();
             // iterate over these images
             if (clipData != null ) {
                 for (int i = 0; i < clipData.getItemCount(); i++) {
@@ -345,35 +344,40 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
                         // save uploaded picture to the cloud as a parsefile
                         final ParseFile file = new ParseFile("image.JPEG", image);
+
+                        // add to array
+                        userUploadedPictures.add(file);
+
                         // keep track of files uploaded by user
                         userPicturesIds.add(file.getName());
 
                         file.saveInBackground();
 
-                        // update database
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                        query.getInBackground(memoryId, new GetCallback<ParseObject>() {
-                             @Override
-                             public void done(ParseObject updatedMemory, ParseException e) {
-                                 if (e == null) {
-                                     // update pictures
-                                     // update local array
-                                     pictures.add(file);
-                                     imageAdapter.notifyDataSetChanged();
-                                     sliderAdapter.notifyDataSetChanged();
-                                     indicator.setViewPager(mPager);
-
-                                     updatedMemory.put("pictures_parse_files", pictures);
-                                     updatedMemory.saveInBackground();
-                                 } else {
-                                     e.getMessage();
-                                 }
-                             }
-                         });
                     } catch (IOException e) {
                         e.getMessage();
                     }
                 }
+
+                // after going through all the picture, update database
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
+                query.getInBackground(memoryId, new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject updatedMemory, ParseException e) {
+                        if (e == null) {
+                            // update pictures
+                            // update local array
+                            pictures.addAll(userUploadedPictures);
+                            imageAdapter.notifyDataSetChanged();
+                            sliderAdapter.notifyDataSetChanged();
+                            indicator.setViewPager(mPager);
+
+                            updatedMemory.put("pictures_parse_files", pictures);
+                            updatedMemory.saveInBackground();
+                        } else {
+                            e.getMessage();
+                        }
+                    }
+                });
         }
 
         } else if (resultCode == Activity.RESULT_CANCELED) { // in case user cancels selection
