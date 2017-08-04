@@ -74,6 +74,7 @@ import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Other.DataParser;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -181,7 +182,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         friendNames = new ArrayList<>();
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
         for (String id : participantsLocations.keySet()) {
-            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
+            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
                 ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
                 try {
                     ParseUser friend = queryForUser.get(id);
@@ -282,7 +283,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         //put location in db and get friends on map if event details have been defined
         //put current user location in db
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
+        participantsLocations.put(ParseApplication.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
         parseEvent.setParticipantsLocations(participantsLocations);
 
         parseEvent.saveInBackground();
@@ -611,13 +612,13 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         }
         Message m = new Message();
         m.setSenderId("InuSHuTqkn");
-        m.setBody(ParseUser.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
+        m.setBody(ParseApplication.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
         m.setEventId(eventId);
         m.setSenderName("Shaggy");
         try {
             m.save();
             HashMap<String, String> payload = new HashMap<>();
-            payload.put("customData", ParseUser.getCurrentUser().get("name") + " is on the way!");
+            payload.put("customData", ParseApplication.getCurrentUser().get("name") + " is on the way!");
             payload.put("title", "New message in channel");
             payload.put("channelID", eventId);
             payload.put("senderID", "InuSHuTqkn");
@@ -643,7 +644,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
         int i = 0;
         for (String id : participantsLocations.keySet()) {
-            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
+            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
                 ParseGeoPoint point = participantsLocations.get(id);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.title(friendNames.get(i));
