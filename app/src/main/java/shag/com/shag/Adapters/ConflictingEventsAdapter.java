@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -61,7 +60,6 @@ public class ConflictingEventsAdapter extends RecyclerView.Adapter<ConflictingEv
         @BindView(R.id.tvConflictName) TextView tvConflictName;
         @BindView(R.id.tvDescription) TextView tvDescription;
         @BindView(R.id.tvLocation) TextView tvLocation;
-        @BindView(R.id.btGoToCalendar) Button btGoToCalendar;
         @BindView(R.id.tvEventTime) TextView tvEventTime;
 
         public ViewHolder(View itemView) {

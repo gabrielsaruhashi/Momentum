@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -43,6 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     String name;
     String email;
     Intent intent;
+    boolean isNew;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,16 @@ public class LoginActivity extends AppCompatActivity {
             onLoginSuccess();
 
         }
+        //TODO delete this
+        Button btContacts = (Button) findViewById(R.id.btContacts);
+        btContacts.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, InviteFriendsActivity.class);
+                startActivity(i);
+
+            }
+        });
     }
 
     @Override
@@ -108,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         } else {
             Intent i = new Intent(context, MainActivity.class);
+            i.putExtra("isNew", isNew);
             // initialize recent friends and facebook friends 'global/app' variable
             ParseUser currentUser = ParseApplication.getCurrentUser();
             //TODO refactor this
@@ -180,6 +193,8 @@ public class LoginActivity extends AppCompatActivity {
                 else if (user.isNew()) {
                     user.getCurrentUser();
                     // user.saveInBackground();
+                    // boolean to take user to onboarding
+                    isNew = true;
 
                     // get user info
                     client.getMyInfo(new GraphRequest.Callback() {
@@ -223,5 +238,8 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
+
+
 
 }
