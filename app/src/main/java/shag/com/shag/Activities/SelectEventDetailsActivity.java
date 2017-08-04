@@ -64,7 +64,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_details);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
         category = getIntent().getStringExtra("Category");
         //public or private
         eventType = getIntent().getStringExtra("Event Type");
@@ -129,7 +129,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
     private void createEvent() {
         final Event newEvent = new Event();
         // populate newEvent
-        newEvent.setEventOwnerName(currentUser.getString("name"));
+        newEvent.setEventOwnerName(ParseApplication.getCurrentUser().getString("name"));
         newEvent.setDescription(etDescription.getText().toString());
 
         //TODO what is this friends at event for
@@ -149,10 +149,11 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
 
         //  upon creating, save event owner's id to participant list
-        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUser.getObjectId()));
+        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(ParseApplication.getCurrentUser().getObjectId()));
         newEvent.setParticipantsIds(initialParticipantsIds);
         //  upon creating, save event owner's facebook id to participant list
-        HashMap data = (HashMap) currentUser.getMap("authData");
+        HashMap data = (HashMap) ParseApplication.getCurrentUser().getMap("authData");
+
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         ArrayList<String> initialParticipantsFbIds = new ArrayList<String>();
@@ -161,7 +162,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
 
         // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
-        newEvent.setEventOwnerId(currentUser.getObjectId());
+        newEvent.setEventOwnerId(ParseApplication.getCurrentUser().getObjectId());
 
 
         //if they didn't pick a deadline, auto-set 1 hour deadline
@@ -224,6 +225,8 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
+        ParseObject currentUser = ParseApplication.getCurrentUser();
+
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
@@ -259,7 +262,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("event_owner_id",currentUser.getObjectId());
+                                query.whereEqualTo("event_owner_id",ParseApplication.getCurrentUser().getObjectId());
                                 query.orderByDescending("createdAt");
                                 query.setLimit(1);
                                 query.getFirstInBackground(new GetCallback<ParseObject>() {

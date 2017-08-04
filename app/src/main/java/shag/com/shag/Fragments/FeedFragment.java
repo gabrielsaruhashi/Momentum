@@ -116,7 +116,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         });
 
         // instantiate current user
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         return v;
     }
@@ -175,6 +175,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     //TODO see if it is possible to improve this logic
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
+                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
+                            events.add(event);
+                        }
                         //event.setRelevance(calculateEventRelevance(event));
                         if (event.getDeadline().getTime() > (new Date()).getTime()) {
                             events.add(event);
@@ -183,7 +186,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     // sort events based on relevance
                     //Collections.sort(eventsList, new RelevanceComparator());
 
-                    //events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
                     startLiveQueries();
 

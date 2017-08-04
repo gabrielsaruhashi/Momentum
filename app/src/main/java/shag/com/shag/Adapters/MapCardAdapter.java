@@ -31,7 +31,7 @@ public class MapCardAdapter extends PagerAdapter {
     private LayoutInflater inflater;
     private Context context;
 
-//    @Override
+    //    @Override
 //    public float getPageWidth (int position) {
 //        return 0.93f;
 //    }

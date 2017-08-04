@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import shag.com.shag.Other.ParseApplication;
+
 /**
  * Created by samrabelachew on 7/20/17.
  */
@@ -64,7 +66,7 @@ public class Poll extends ParseObject implements Parcelable {
 
 
     public void setPollCreator() {
-        put("Poll_creator", ParseUser.getCurrentUser());
+        put("Poll_creator", ParseApplication.getCurrentUser());
     }
 
 

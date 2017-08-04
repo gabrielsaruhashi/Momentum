@@ -76,7 +76,6 @@
         android:layout_marginTop="18dp"
         android:layout_below="@+id/ibWalk"
         android:layout_alignStart="@+id/tvPick" />
-
     <Button
         android:id="@+id/btDrive"
         android:layout_width="wrap_content"
@@ -85,7 +84,6 @@
         android:layout_toRightOf="@+id/btWalk"
         android:onClick="getDrivingDirections"
         android:text="Drive" />
-
     <Button
         android:id="@+id/btTransit"
         android:layout_width="wrap_content"
@@ -94,7 +92,6 @@
         android:layout_toRightOf="@+id/btDrive"
         android:onClick="getTransitDirections"
         android:text="Transit" />
-
     <Button
         android:id="@+id/btBike"
         android:layout_width="wrap_content"

@@ -43,6 +43,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -81,7 +82,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
         // instantiate id's
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         // instantiate user facebook id
         HashMap data = (HashMap) currentUser.getMap("authData");
@@ -268,12 +269,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
-
         Log.i("DEBUGSHOW", event.participantsIds.toString());
-
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
-
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -281,38 +279,30 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
-
                 } else {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, colorId));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
-
                 // get views
                 TextView tvEventOwnerName = (TextView) alertDialog.findViewById(R.id.tvEventOwnerName);
                 TextView tvBody = (TextView) alertDialog.findViewById(R.id.tvBody);
                 TextView tvRelativeTime = (TextView) alertDialog.findViewById(R.id.tvRelativeTime);
                 ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
-
                 // populate views
                 tvEventOwnerName.setText('@' + event.getEventOwnerName());
                 tvBody.setText(event.getDescription());
                 tvRelativeTime.setText(event.getDeadline().toString());
-
                 //TODO upload image of event owner
-
                 Glide.with(context)
                         .load(event.user.profileImageUrl)
                         .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                         .into(ivProfileImage);
-
             }
         });
-
         // Configure dialog button (OK)
         alertDialog.setButton(BUTTON_POSITIVE, "Join",
                 new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //TODO get current user
@@ -324,7 +314,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         }
                     }
                 });
-
         // Configure dialog button (Cancel)
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new DialogInterface.OnClickListener() {
@@ -332,7 +321,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         dialog.cancel();
                     }
                 });
-
         // Display the dialog
         alertDialog.show();
     } */
@@ -543,7 +531,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         } else if (event.getCategory().equals("Food")) {
             return R.color.food_color;
         } else if (event.getCategory().equals("Music")) {
-            return R.color.explore_color;
+            return R.color.music_color;
         }
 
         return R.color.misc_color;

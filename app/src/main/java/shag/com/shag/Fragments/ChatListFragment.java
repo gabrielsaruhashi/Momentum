@@ -27,6 +27,7 @@ import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -70,7 +71,7 @@ public class ChatListFragment extends Fragment {
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
         currentUserId = currentUser.getObjectId();
 
         populateChatList(currentUserId);

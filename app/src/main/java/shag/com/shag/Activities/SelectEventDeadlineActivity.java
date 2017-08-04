@@ -76,7 +76,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         myToolbar.setTitleTextColor(0xFFFFFFFF);
         tvCategory = (TextView) findViewById(R.id.tvCategory);
 
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
         category = getIntent().getStringExtra("Category");
         //public or private
         eventType = getIntent().getStringExtra("Event Type");
@@ -107,6 +107,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
         Button tv12h = (Button) findViewById(R.id.bt12);
         setListenerForTime(tv12h, 720);
+
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
         tvCategory.setText(category);
@@ -221,19 +222,19 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             }
         });
 
-            makeEventButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (makeEventButton.isEnabled()) {
+        makeEventButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (makeEventButton.isEnabled()) {
 
-                        createEvent();
-                        Intent i = new Intent(SelectEventDeadlineActivity.this, MainActivity.class);
-                        startActivity(i);
-                    }
-
-
+                    createEvent();
+                    Intent i = new Intent(SelectEventDeadlineActivity.this, MainActivity.class);
+                    startActivity(i);
                 }
-            });
+
+
+            }
+        });
 
 
     }
@@ -289,7 +290,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
     private void createEvent() {
         final Event newEvent = new Event();
         // populate newEvent
-        newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
+        newEvent.setEventOwnerName(currentUser.getString("name"));
         newEvent.setDescription(etDescription.getText().toString());
 
         //TODO what is this friends at event for
@@ -309,10 +310,10 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
 
         //  upon creating, save event owner's id to participant list
-        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(ParseUser.getCurrentUser().getObjectId()));
+        ArrayList<String> initialParticipantsIds = new ArrayList<String>(Arrays.asList(currentUser.getObjectId()));
         newEvent.setParticipantsIds(initialParticipantsIds);
         //  upon creating, save event owner's facebook id to participant list
-        HashMap data = (HashMap) ParseUser.getCurrentUser().getMap("authData");
+        HashMap data = (HashMap) currentUser.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         ArrayList<String> initialParticipantsFbIds = new ArrayList<String>();
@@ -321,7 +322,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
 
         // newEvent.setEventOwnerId(Long.parseLong(getCurrentUser().getObjectId(), 36));
-        newEvent.setEventOwnerId(ParseUser.getCurrentUser().getObjectId());
+        newEvent.setEventOwnerId(currentUser.getObjectId());
 
 
         //if they didn't pick a deadline, auto-set 1 hour deadline
@@ -386,7 +387,6 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
-        ParseObject currentUser = ParseUser.getCurrentUser();
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
@@ -422,7 +422,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("event_owner_id", ParseUser.getCurrentUser().getObjectId());
+                                query.whereEqualTo("event_owner_id",currentUser.getObjectId());
                                 query.orderByDescending("createdAt");
                                 query.setLimit(1);
                                 query.getFirstInBackground(new GetCallback<ParseObject>() {
