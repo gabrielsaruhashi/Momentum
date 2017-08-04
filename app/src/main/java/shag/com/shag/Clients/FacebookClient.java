@@ -8,7 +8,6 @@ import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import shag.com.shag.Other.ParseApplication;
@@ -48,7 +47,7 @@ public class FacebookClient {
         String userFacebookId = (String) facebookData.get("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);
-        params.putIntegerArrayList("contributors", contributors);
+        params.putIntArray("contributors", contributors);
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
                 callback).executeAsync();
     }

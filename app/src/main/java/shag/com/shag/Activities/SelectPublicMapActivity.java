@@ -145,6 +145,10 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         void onSuccess(String result);
     }
 
+    public interface VolleyCallback{
+        void onSuccess(String result);
+    }
+
     //CREATING CLIENT
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
@@ -696,6 +700,4 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
 
 
     }
-
-
 }

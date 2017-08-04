@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#478978</color>
-    <color name="colorPrimaryDark">#478978</color>
+    <color name="colorPrimary">#395374</color>
+    <color name="colorPrimaryDark">#283a50</color>
     <color name="colorAccent">#595775</color>
     <color name="burnt_orange">#C8C8A9</color>
     <color name="white">#ffffff</color>
@@ -54,5 +54,9 @@
     <color name="option5">#EBC778</color>
     <color name="option6">#F3A183</color>
     <color name="toolbar_dark">#283a50</color>
+
+
+    <!-- Gabe's swatch -->
+
 
 </resources>

@@ -671,3 +671,4 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 }
+

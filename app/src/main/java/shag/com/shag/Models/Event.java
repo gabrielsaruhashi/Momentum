@@ -66,6 +66,15 @@ public class Event extends ParseObject implements Parcelable {
         put("last_message_sent", message);
     }
 
+    public void setEventTimeString(String time) {
+        this.eventTime = time;
+        put("event_time_string", time);
+    }
+
+    public String getEventTimeString() {
+        return getString("event_time_string");
+    }
+
     public ArrayList<String> getParticipantsFacebookIds() {
         return (ArrayList) get("participants_facebook_ids");
     }

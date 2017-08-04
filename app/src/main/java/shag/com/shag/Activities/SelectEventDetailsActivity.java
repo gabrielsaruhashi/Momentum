@@ -153,6 +153,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         newEvent.setParticipantsIds(initialParticipantsIds);
         //  upon creating, save event owner's facebook id to participant list
         HashMap data = (HashMap) ParseApplication.getCurrentUser().getMap("authData");
+
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         ArrayList<String> initialParticipantsFbIds = new ArrayList<String>();
@@ -225,6 +226,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
         ParseObject currentUser = ParseApplication.getCurrentUser();
+
         newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 

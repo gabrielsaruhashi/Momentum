@@ -143,5 +143,5 @@ public class SelectPublicEventTypeActivity extends AppCompatActivity {
             }
         }
     }
-
 }
+

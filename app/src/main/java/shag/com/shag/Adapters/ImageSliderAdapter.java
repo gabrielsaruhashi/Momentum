@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 
@@ -50,6 +51,11 @@ public class ImageSliderAdapter extends PagerAdapter {
                 .findViewById(R.id.image);
         // myImage.setImageResource(images.get(position));
 
+        Glide.with(context)
+                .load(images.get(position).getUrl())
+                .fitCenter()
+                .into(myImage);
+        /*
         // convert parse file to bitmap
         final Bitmap bm = bitmapConverterFromParseFile(images.get(position));
 
@@ -59,7 +65,7 @@ public class ImageSliderAdapter extends PagerAdapter {
         } else {
             // if image was not converted correctly, set it with an error icon
             myImage.setImageResource(R.drawable.ic_error_outline);
-        }
+        } */
 
         // the inflated view is added to the ViewPager using addView() is returned
         view.addView(myImageLayout, 0);

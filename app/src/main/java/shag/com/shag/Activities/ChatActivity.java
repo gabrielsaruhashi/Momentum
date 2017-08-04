@@ -46,6 +46,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseACL;
 import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
@@ -163,20 +164,23 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         //TODO check if this is working
         tvConflict = (TextView) findViewById(R.id.tvConflict);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
+      currentUser = ParseApplication.getCurrentUser();
 
-            }
-        };
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//
+//            }
+//        };
+        //drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        //actionBarDrawerToggle.syncState();
 
-        currentUser = ParseApplication.getCurrentUser();
-
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        currentUser = ParseUser.getCurrentUser();
 
         context = this;
 
@@ -217,6 +221,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         query.include("User_event_owner");
         query.include("last_message_sent");
+
         try {
             eventFromQuery = (Event) query.get(eventId);
             //if so, user has just opened a push notification, need to query for more info
@@ -380,10 +385,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
+                    polls.add(object);
 
-                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                        polls.add(object);
-                    }
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -395,6 +401,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     });
                 }
+                String newEventId = object.getEventId();
+                polls.add(object);
+
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
             }
         });
 
@@ -410,7 +432,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
                 String newEventId = object.getEventId();
                 if (eventId.equals(newEventId)) {
-                    polls.set(pos, object);
+                    //reconstruct new list
+                    polls.remove(pos);
+
+                    ArrayList<Poll> newPollList = new ArrayList<Poll>();
+                    newPollList.addAll(polls);
+                    newPollList.add(pos,object);
+
+                    polls.clear();
+                    polls.addAll(newPollList);
+                    //polls.set(pos, object);
 
                 }
                 // RecyclerView updates need to be run on the UI thread
@@ -418,7 +449,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rvPolls.invalidate();
+                        //rvPolls.invalidate();
                         pollAdapter.notifyDataSetChanged();
                         //pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
@@ -517,14 +548,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     // setup button event handler which posts the entered message to Parse
@@ -539,6 +570,24 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // set adapter
         mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
+
+        btSend.setEnabled(false);
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    btSend.setEnabled(true);
+                } else {
+                    btSend.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
 
         // associate the LayoutManager with the RecylcerView
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
@@ -713,6 +762,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
+
         timePoll.setEventId(eventId);
         timePoll.put("Poll_creator", currentUser);
         timePoll.put("poll_creator_id", currentUserId);
