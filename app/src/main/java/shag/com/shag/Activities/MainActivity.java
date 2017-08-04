@@ -79,7 +79,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setupTabIcons();
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        //setupTabIcons();
 
         // check for all permissions needed
         if(!hasPermissions(this, PERMISSIONS)){
@@ -91,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
     }
 
 

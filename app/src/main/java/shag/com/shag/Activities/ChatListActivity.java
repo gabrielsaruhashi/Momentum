@@ -21,6 +21,7 @@ public class ChatListActivity extends AppCompatActivity implements ChatListFragm
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(0xFFFFFFFF);
 
         chatListFragment = (ChatListFragment) getSupportFragmentManager().findFragmentById(R.id.chatListFragment);
         toolbarTextView = (TextView) findViewById(R.id.tvToolbarText);
