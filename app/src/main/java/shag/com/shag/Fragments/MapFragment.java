@@ -169,7 +169,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 public View getInfoContents(Marker marker) {
                                     // Getting view from the layout file info_window_layout
 
-                                    View v = getActivity().getLayoutInflater().inflate(R.layout.item_memory_info_window, null);
+                                    View v = getActivity().getLayoutInflater().inflate(R.layout.item_info_window_layout, null);
 
                                     // Getting the position from the marker
                                     LatLng latLng = marker.getPosition();
@@ -240,7 +240,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             public View getInfoContents(Marker marker) {
                 // Getting view from the layout file info_window_layout
 
-                View v = getActivity().getLayoutInflater().inflate(R.layout.item_memory_info_window, null);
+                View v = getActivity().getLayoutInflater().inflate(R.layout.item_info_window_layout, null);
 
                 // Getting the position from the marker
                 LatLng latLng = marker.getPosition();
