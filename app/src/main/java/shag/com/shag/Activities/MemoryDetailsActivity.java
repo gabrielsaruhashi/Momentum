@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +11,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -72,14 +72,16 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private String memoryId;
     private int initialNumberOfPictures;
     // slideshow components
-    private static ViewPager mPager;
-    private static int currentSliderPage = 0;
+    private ViewPager mPager;
+    private int currentSliderPage = 0;
     CircleIndicator indicator;
     private TreeSet facebookPermissionsSet;
     private ArrayList<String> participantsIds;
     private ArrayList<String> participantsFacebookIds;
     private long facebookAlbumId;
     private ArrayList<String> userPicturesIds;
+    private Handler handler;
+    private Runnable Update;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +114,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         // set adapters
         imageAdapter = new ImageAdapter(this, pictures);
+
+        // for shared animation
+
         sliderAdapter = new ImageSliderAdapter(MemoryDetailsActivity.this, pictures);
 
         // get gridview
@@ -143,18 +148,20 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // instantiate facebook album id
         facebookAlbumId =  Long.valueOf(memory.getFacebookAlbumId());
 
+        // check if user already gave publishing permissions
+        if (!facebookPermissionsSet.contains("publish_actions")) {
+            // if not, get additional publishing permission
+            LoginManager.getInstance().logInWithPublishPermissions(
+                    MemoryDetailsActivity.this,
+                    Arrays.asList("publish_actions"));
+        }
+
         //TODO if album already exists, just add photo
         // add listener to facebook share
         btFacebookShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // check if user already gave publishing permissions
-                if (!facebookPermissionsSet.contains("publish_actions")) {
-                    // if not, get additional publishing permission
-                    LoginManager.getInstance().logInWithPublishPermissions(
-                            MemoryDetailsActivity.this,
-                            Arrays.asList("publish_actions"));
-                }
+
 
                 // instantiate arraylist of participants facebook id
                 participantsFacebookIds = memory.getParticipantsFacebookIds();
@@ -163,6 +170,12 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
             }
         });
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+        myToolbar.setTitle(memory.getMemoryName());
+
+
     }
 
     public void setupLiveQuery() {
@@ -204,6 +217,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                 public void run() {
                                     imageAdapter.notifyDataSetChanged();
                                     sliderAdapter.notifyDataSetChanged();
+                                    indicator.setViewPager(mPager);
 
                                 }
                             });
@@ -215,7 +229,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     }
     public void createFacebookAlbum() {
         // on click create album, create new album and share pics
-        ArrayList<Integer> contributors = getIntegerArray(participantsFacebookIds);
+        ArrayList<Integer> contributorsArrayList = getIntegerArray(participantsFacebookIds);
+        int[] contributors =  toIntArray(contributorsArrayList);
+
         // if album hasnt been created yet
         if (facebookAlbumId == 0) {
             fbClient.postFacebookAlbum(contributors, memory.getMemoryName(), new GraphRequest.Callback() {
@@ -284,8 +300,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         indicator.setViewPager(mPager);
 
         // Auto start of viewpager
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
+        handler = new Handler();
+        Update = new Runnable() {
             public void run() {
                 // when the slider page goes through all the pictures in the array
                 if (currentSliderPage >= pictures.size()) {
@@ -293,6 +309,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 }
                 // move to next image
                 mPager.setCurrentItem(currentSliderPage++, true);
+                Log.i("Debug_Page", ""+currentSliderPage);
             }
         };
         Timer swipeTimer = new Timer();
@@ -395,7 +412,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             // query for the event, and update it with the last picture uploaded
             // if user hasnt yet created an album, but has uploaded pictures
             if (facebookAlbumId == 0 && pictures.size() > 0) {
-                memory.setCoverPictureUrl(pictures.get(pictures.size() - 1).getUrl());
+                memory.setCoverPictureUrl(pictures.get(0).getUrl());
                 memory.saveInBackground();
             } else if (facebookAlbumId != 0) { // else query for the facebook pictures, and get the one that has the most amount of likes
                 fbClient.getAlbumPhotos(facebookAlbumId, new GraphRequest.Callback() {
@@ -409,6 +426,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             // support variables
                             String mostLikesUrl = new String();
                             int mostLikes = 0;
+                            int mostLikesIndex = 0;
                             int totalNumberOfFacebookLikes = 0;
 
                             // iterate through the pictures array
@@ -424,30 +442,43 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                                 }
 
 
-                                // if pic has any likes, add to the likes counter and check if it is the most populatr
+                                // if pic has any likes, add to the likes counter and check if it is more popular
                                 if (likes != null ) {
                                     int numberOfLikes = likes.getJSONArray("data").length();
 
                                     totalNumberOfFacebookLikes += numberOfLikes;
                                     // check if current picture has more likes
                                     if (numberOfLikes > mostLikes) {
+                                        // save the highest number of likes
                                         mostLikes = numberOfLikes;
-                                        // get the pictures
+                                        // get the picture
                                         mostLikesUrl = pictureData.getJSONArray("images").getJSONObject(0).getString("source");
+                                        mostLikesIndex = i;
                                     }
                                 }
                             }
 
                             // at the end of the for loop, update total number of facebook likes and cover picture
                             memory.setTotalFacebookLikes(totalNumberOfFacebookLikes);
+
                             if (mostLikesUrl != null) { // ensure that the url is valid
                                 memory.setCoverPictureUrl(mostLikesUrl);
+                                // reorder memories, so that the one with most likes becomes the first element
+                                ParseFile mostLikedPicture = pictures.get(mostLikesIndex);
+                                pictures.remove(mostLikesIndex);
+                                pictures.add(0, mostLikedPicture);
+
+                                // save the new pictures array
+                                memory.setPicturesParseFiles(pictures);
+
                             } else {
-                                // if there are no images with most likes, just set it to be the last picture added
-                                memory.setCoverPictureUrl(pictures.get(pictures.size() - 1).getUrl());
+                                // if there are no images with most likes, just set it to be the first picture added
+                                memory.setCoverPictureUrl(pictures.get(0).getUrl());
                             }
                             // save
                             memory.saveInBackground();
+
+                            handler.removeCallbacks(Update);
 
                         } catch (JSONException e) {
                             e.getMessage();
@@ -459,18 +490,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         }
 
     }
-    // creates a bitmap from parsefile data
-    private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
 
-        try {
-            byte[] bitmapdata = parseFile.getData();
-            Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
-            return bm;
-        } catch (ParseException e) {
-            e.getMessage();
-        }
-        return null;
-    }
 
     // helper to return an arraylist of integers with the name of the contributors
     private ArrayList<Integer> getIntegerArray(ArrayList<String> stringArray) {
@@ -485,6 +505,18 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
             }
         }
         return result;
+    }
+
+    int[] toIntArray(ArrayList<Integer> list){
+        int[] ret = new int[list.size()];
+        for(int i = 0;i < ret.length;i++)
+            ret[i] = list.get(i);
+        return ret;
+    }
+
+    @Override
+    public void onBackPressed() {
+        supportFinishAfterTransition();
     }
 
 

@@ -8,7 +8,6 @@ import com.facebook.GraphRequest;
 import com.facebook.HttpMethod;
 import com.parse.ParseUser;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -39,14 +38,14 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
-    public void postFacebookAlbum(ArrayList<Integer> contributors, String albumName, GraphRequest.Callback callback) {
+    public void postFacebookAlbum(int[] contributors, String albumName, GraphRequest.Callback callback) {
         ParseUser user = ParseUser.getCurrentUser();
         HashMap data = (HashMap) user.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");
         String userFacebookId = (String) facebookData.get("id");
         Bundle params = new Bundle();
         params.putString("name", albumName);
-        params.putIntegerArrayList("contributors", contributors);
+        params.putIntArray("contributors", contributors);
         new GraphRequest(AccessToken.getCurrentAccessToken(), "/"+ userFacebookId + "/albums", params, HttpMethod.POST,
                 callback).executeAsync();
     }

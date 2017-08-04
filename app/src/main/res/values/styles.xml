@@ -14,6 +14,7 @@
         <item name="colorPrimary">@color/gradient_end</item>
         <item name="colorPrimaryDark">@color/toolbar_dark</item>
         <item name="colorAccent">@color/gradient_end</item>
+
     </style>
 
 
