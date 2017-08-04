@@ -37,7 +37,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     // The request code used in ActivityCompat.requestPermissions()
     // and returned in the Activity's onRequestPermissionsResult()
     int PERMISSION_ALL = 1;
-    String[] PERMISSIONS = {android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.SEND_SMS, permission.RECEIVE_SMS, permission.READ_CALENDAR, permission.READ_EXTERNAL_STORAGE, permission.ACCESS_FINE_LOCATION} ;
+    String[] PERMISSIONS = {android.Manifest.permission.READ_CONTACTS, android.Manifest.permission.SEND_SMS, permission.RECEIVE_SMS,
+            permission.READ_CALENDAR, permission.READ_EXTERNAL_STORAGE, permission.ACCESS_FINE_LOCATION,
+            permission.ACCESS_COARSE_LOCATION} ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
