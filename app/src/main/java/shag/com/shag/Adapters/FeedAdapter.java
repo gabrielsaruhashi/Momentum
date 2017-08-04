@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.R;
@@ -123,9 +126,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.ivCategory.setImageResource(R.drawable.ic_misc1);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
         }
-        ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.WHITE);
+        ColorFilter filterWhite = new LightingColorFilter(Color.BLACK, Color.WHITE);
         holder.ivCategoryBar.setBackgroundResource(findCorrectColor(event));
-        holder.ivCategory.setColorFilter(filter);
+        holder.ivCategory.setColorFilter(filterWhite);
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
@@ -161,38 +164,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 //            loadUserIntoIndex(participants, 4, holder.ivFriend3);
 //        }
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        query.include("User_event_owner");
-        query.include("last_message_sent");
-        try {
-            Event e = (Event) query.get(event.getObjectId());
-            Message m = (Message) e.getLastMessageSent();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            holder.tvLastMessage.setVisibility(View.VISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.VISIBLE);
-            Message lastMessage = event.getParseObject("last_message_sent").fetch();
-            if (lastMessage.getBody() == null) {
-                throw new NullPointerException();
-            }
-            holder.tvLastMessage.setText(lastMessage.getSenderName() + ": " + lastMessage.getBody());
-
-            String rawTime = (lastMessage.getCreatedDate().toString());
-            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
-        } catch (NullPointerException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        } catch (IllegalStateException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        } catch (ParseException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        }
-
+        showLastMessage(event, holder);
     }
 
     @Override
@@ -230,6 +202,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView tvLastMessageTime;
         @BindView(R.id.tvLastMessage)
         TextView tvLastMessage;
+        @BindView(R.id.icRightArrow)
+        ImageView icRightArrow;
+        @BindView(R.id.ivDivider) ImageView ivDivider;
+        @BindView(R.id.rlChatInfo)
+        RelativeLayout rlChatInfo;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -253,11 +230,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 // set up switch to manage the different click listeners
                 switch (v.getId()) {
                     case R.id.btJoin:
-                        //TODO replace gabriel
                         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                             removeEvent(currentUser.getObjectId(), event, btJoin);
+                            //onBindViewHolder(this, position);
                         } else {
                             joinEvent(currentUser.getObjectId(), event, btJoin);
+                            //onBindViewHolder(this, position);
                         }
                         break;
                     // if user presses viewholder, show more details of activity
@@ -409,8 +387,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     ParsePush.subscribeInBackground(event.getEventId());
 
                     sendJoinedMessage(event.getEventId());
-
-
                 } else {
                     e.getMessage();
                 }
@@ -539,15 +515,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             try {
                 ParseUser user = ParseUser.getQuery().get(participants.get(friendIndex));
                 //if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
-                    Glide.with(context)
-                            .load(user.getString("profile_image_url").replace("_normal", ""))
-                            .bitmapTransform(new CropCircleTransformation(context))
-                            .into(view);
-                    return true;
-               // } else {
+                Glide.with(context)
+                        .load(user.getString("profile_image_url").replace("_normal", ""))
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(view);
+                return true;
+                // } else {
                 //    view.setVisibility(View.GONE);
-               //     return false;
-               // }
+                //     return false;
+                // }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -599,4 +575,42 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         return relativeDate;
     }
 
+    public void showLastMessage(final Event event, ViewHolder holder) {
+        ArrayList<String> participants = event.getParticipantsIds();
+        if (!participants.contains(currentUser.getObjectId())) {
+            holder.ivDivider.setVisibility(View.GONE);
+            holder.rlChatInfo.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.icRightArrow.setColorFilter(ContextCompat.getColor(context, findCorrectColor(event)));
+        holder.ivDivider.setVisibility(View.VISIBLE);
+        holder.rlChatInfo.setVisibility(View.VISIBLE);
+
+        try {
+            Message lastMessage = event.getParseObject("last_message_sent").fetch();
+            if (lastMessage.getBody() == null) {
+                throw new NullPointerException();
+            }
+            String name = lastMessage.getSenderName();
+            name = name.substring(0, name.indexOf(" "));
+            holder.tvLastMessage.setText(name + ": " + lastMessage.getBody());
+
+            String rawTime = (lastMessage.getCreatedDate().toString());
+            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
+        } catch (Exception e) {
+            holder.tvLastMessage.setText("Tap to chat");
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        }
+
+        holder.rlChatInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("event_id", event.getEventId());
+                intent.putExtra("participants_ids", event.getParticipantsIds());
+                context.startActivity(intent);
+            }
+        });
+    }
 }
