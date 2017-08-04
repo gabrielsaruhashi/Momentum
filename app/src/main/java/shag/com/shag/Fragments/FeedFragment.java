@@ -17,10 +17,13 @@ import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseLiveQueryClient;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -113,7 +116,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         });
 
         // instantiate current user
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         return v;
     }
@@ -164,6 +167,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         ParseQuery<Event> query = new ParseQuery("Event");
         query.whereContainedIn("event_owner_fb_id", facebookFriendsIds);
         query.include("User_event_owner");
+        query.include("last_message_sent");
         query.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> eventsList, ParseException e) {
@@ -171,13 +175,16 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     //TODO see if it is possible to improve this logic
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
+                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
+                            events.add(event);
+                        }
                         //event.setRelevance(calculateEventRelevance(event));
                     }
                     // sort events based on relevance
                     //Collections.sort(eventsList, new RelevanceComparator());
 
-                    events.addAll(eventsList);
                     adapter.notifyDataSetChanged();
+                    startLiveQueries();
 
                     //TODO: move this somewhere else, it is currently over-sorting
                     //Sort the events shown to user in order of soonest deadline
@@ -193,6 +200,8 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                 }
             }
         });
+
+
     }
 
     // create category dialog fragment
@@ -265,6 +274,48 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         // return the coefficient Raw Interest / Total Interest if total interest > 0
         return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
+    }
+
+    public void startLiveQueries() {
+        final ArrayList<String> eventIds = new ArrayList<>();
+        for (Event event : events) {
+            eventIds.add(event.getEventId());
+        }
+
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+        ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
+        SubscriptionHandling<Event> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+        // Listen for CREATE events
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new
+                SubscriptionHandling.HandleEventCallback<Event>() {
+                    @Override
+                    public void onEvent(ParseQuery<Event> query, Event object) {
+                        String newEventId = object.getEventId();
+                        if (eventIds.contains(newEventId)) {
+                            ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
+                            eventQuery.include("User_event_owner");
+                            eventQuery.include("last_message_sent");
+                            try {
+                                Event event = eventQuery.get(newEventId);
+                                int index = eventIds.indexOf(newEventId);
+                                events.set(index, event);
+                                itemChanged(index);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+    }
+
+    //execute adapter refresh on ui thread
+    public void itemChanged(final int index) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyItemChanged(index);
+            }
+        });
     }
 
 

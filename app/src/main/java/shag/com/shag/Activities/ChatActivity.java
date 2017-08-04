@@ -18,6 +18,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -82,6 +84,7 @@ import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -90,7 +93,7 @@ import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 public class ChatActivity extends AppCompatActivity implements CreatePollDialogFragment.CreatePollFragmentListener,
         TimePickerFragment.TimePickerFragmentListener, DatePickerFragment.DatePickerFragmentListener,
         PollsAdapter.TimeButtonsInterface, PollsAdapter.LocationButtonsInterface, PollsAdapter.ConflictTextViewInterface,
-    PollsAdapter.EventReadyCheckInterface {
+        PollsAdapter.EventReadyCheckInterface {
 
     static final String TAG = "DEBUG_CHAT";
     static final int MAX_CHAT_MESSAGES_TO_SHOW = 50;
@@ -137,12 +140,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     private String timeWinner;
     private ParseGeoPoint locationWinner;
-    private ParseObject eventFromQuery;
+    private Event eventFromQuery;
     private String favFood;
 
     // ONLY use these variables when opening push notification
     boolean openedPush;
-    private Event parseEvent;
     // for calendar integration
     private ArrayList<CalendarEvent> calendarEvents;
     private ArrayList<CalendarEvent> conflictingCalendarEvents;
@@ -152,6 +154,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     TextView tvConflict;
 
+    ParseUser currentUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,17 +164,23 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         //TODO check if this is working
         tvConflict = (TextView) findViewById(R.id.tvConflict);
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
+      currentUser = ParseApplication.getCurrentUser();
 
-            }
-        };
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//
+//            }
+//        };
+        //drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        //actionBarDrawerToggle.syncState();
+
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        currentUser = ParseApplication.getCurrentUser();
 
         context = this;
 
@@ -209,15 +219,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //finding out if this is the first time the event has been creating
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
+        query.include("User_event_owner");
+        query.include("last_message_sent");
+
         try {
-            eventFromQuery = query.get(eventId);
+            eventFromQuery = (Event) query.get(eventId);
             //if so, user has just opened a push notification, need to query for more info
             if (chatParticipantsIds == null) {
                 openedPush = true;
                 chatParticipantsIds = (ArrayList) eventFromQuery.getList("participants_id");
                 chatParticipantsIds.add("InuSHuTqkn");  //adding shaggy
             }
-            parseEvent = (Event) eventFromQuery;
 
             isEventNew = eventFromQuery.getBoolean("is_first_created");
             isEventPrivate = eventFromQuery.getBoolean("is_event_private");
@@ -226,16 +238,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             e.printStackTrace();
         }
         // get current user information
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUserId = currentUser.getObjectId();
 
         //set up initial polls
         //if event is new, make time and location polls
         if (isEventNew) {
             try {
-                createTimeAndLocationPolls("Time");
-                if (isEventPrivate) {
-                    createTimeAndLocationPolls("Location");
-                }
+                createTimeAndLocationPolls();
+
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -250,12 +260,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     }
                 }
             });
+        } else {
+            refreshPolls();
+
         }
 
         // populate views, setup listeners and populate views
         //refresh messages and polls both here
         setupMessagePosting();
-        refreshPolls();
 
         // instantiate conflicting calendar events
         conflictingCalendarEvents = new ArrayList<CalendarEvent>();
@@ -345,23 +357,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
                 SubscriptionHandling.HandleEventCallback<Message>() {
                     @Override
-                    public void onEvent(ParseQuery<Message> query, Message object) {
+                    public void onEvent(ParseQuery<Message> query, final Message object) {
                         String senderId = object.getSenderId();
                         String newEventId = object.getEventId();
 
                         if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                            mMessages.add(0, object);
+                            // RecyclerView updates need to be run on the UI thread
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMessages.add(0, object);
+                                    mAdapter.notifyDataSetChanged();
+                                    rvChat.scrollToPosition(0);
+
+                                }
+                            });
                         }
-
-                        // RecyclerView updates need to be run on the UI thread
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mAdapter.notifyDataSetChanged();
-                                rvChat.scrollToPosition(0);
-
-                            }
-                        });
                     }
 
 
@@ -376,10 +387,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
+                    polls.add(object);
 
-                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-                        polls.add(object);
-                    }
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -391,6 +403,22 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                     });
                 }
+                String newEventId = object.getEventId();
+                polls.add(object);
+
+//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+//                        polls.add(object);
+//                    }
+
+                // RecyclerView updates need to be run on the UI thread
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+
+                    }
+                });
             }
         });
 
@@ -406,7 +434,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
                 String newEventId = object.getEventId();
                 if (eventId.equals(newEventId)) {
-                    polls.set(pos, object);
+                    //reconstruct new list
+                    polls.remove(pos);
+
+                    ArrayList<Poll> newPollList = new ArrayList<Poll>();
+                    newPollList.addAll(polls);
+                    newPollList.add(pos,object);
+
+                    polls.clear();
+                    polls.addAll(newPollList);
+                    //polls.set(pos, object);
 
                 }
                 // RecyclerView updates need to be run on the UI thread
@@ -414,8 +451,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        rvPolls.invalidate();
-                        pollAdapter.notifyItemChanged(finalPos);
+                        //rvPolls.invalidate();
+                        pollAdapter.notifyDataSetChanged();
+                        //pollAdapter.notifyItemChanged(finalPos);
                         rvPolls.scrollToPosition(0);
                         //pollAdapter.notifyItemChanged(1);
 
@@ -512,14 +550,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+//            return true;
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
 
     // setup button event handler which posts the entered message to Parse
@@ -535,11 +573,49 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
 
+        btSend.setEnabled(false);
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    btSend.setEnabled(true);
+                } else {
+                    btSend.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {}
+        });
+
         // associate the LayoutManager with the RecylcerView
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
         // display the newest posts ordered from oldest to newest
         linearLayoutManager.setReverseLayout(true);
         rvChat.setLayoutManager(linearLayoutManager);
+
+        btSend.setEnabled(false);
+        etMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.length() > 0) {
+                    btSend.setEnabled(true);
+                } else {
+                    btSend.setEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
 
         // when send button is clicked, create message object on Parse
         btSend.setOnClickListener(new View.OnClickListener() {
@@ -553,11 +629,11 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 //TODO pass the entire event object
                 message.setBody(data);
                 // save User pointer
-                message.put("User_sender", ParseUser.getCurrentUser());
+                message.put("User_sender", currentUser);
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
-                message.setSenderProfileImageUrl(ParseUser.getCurrentUser().getString("profile_image_url"));
-                message.setSenderName(ParseUser.getCurrentUser().getString("name"));
+                message.setSenderProfileImageUrl(currentUser.getString("profile_image_url"));
+                message.setSenderName(currentUser.getString("name"));
 
                 message.saveInBackground(new SaveCallback() {
                     @Override
@@ -584,46 +660,58 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
                                     Toast.LENGTH_SHORT).show();
 
+                            etMessage.setText(null);
+                            // add message to arraylist
+
+                            eventFromQuery.setLastMessageSent(message);
+                            eventFromQuery.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        Log.i("CHATACTIVITY", "All good");
+                                        mMessages.add(0, message);
+                                        mAdapter.notifyItemInserted(0);
+                                        rvChat.scrollToPosition(0);
+
+                                        if (data.equalsIgnoreCase("hi Shaggy")) {
+                                            final Message m = new Message();
+                                            m.setSenderId("InuSHuTqkn");
+                                            m.setBody("Hi! My name is Shaggy");
+                                            m.setEventId(eventId);
+                                            m.setSenderName("Shaggy");
+                                            try {
+                                                m.save();
+
+                                                eventFromQuery.setLastMessageSent(m);
+                                                eventFromQuery.saveInBackground(new SaveCallback() {
+                                                    @Override
+                                                    public void done(ParseException e) {
+                                                        if (e == null) {
+                                                            Log.i("CHATACTIVITY", "All good");
+                                                            mMessages.add(0, m);
+                                                            mAdapter.notifyItemInserted(0);
+                                                            rvChat.scrollToPosition(0);
+                                                        } else {
+                                                            e.printStackTrace();
+                                                        }
+                                                    }
+                                                });
+                                            } catch (ParseException exception) {
+                                                exception.printStackTrace();
+                                            }
+
+                                        }
+                                    } else {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            });
+
                         } else {
                             Log.e(TAG, "Failed to save message", e);
                         }
                     }
                 });
-
-                etMessage.setText(null);
-                // add message to arraylist
-                mMessages.add(0, message);
-                mAdapter.notifyItemInserted(0);
-                parseEvent.setLastMessageSent(message);
-                try {
-                    parseEvent.save(); //TODO: in background or...?
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
-                }
-
-
-                if (data.equalsIgnoreCase("hi Shaggy")) {
-                    Message m = new Message();
-                    m.setSenderId("InuSHuTqkn");
-                    m.setBody("Hi! My name is Shaggy");
-                    m.setEventId(eventId);
-                    m.setSenderName("Shaggy");
-                    try {
-                        m.save();
-
-                        parseEvent.setLastMessageSent(m);
-                        try {
-                            parseEvent.save(); //TODO: in background or...?
-                        } catch (ParseException ex) {
-                            ex.printStackTrace();
-                        }
-
-                        mAdapter.notifyItemInserted(0);
-                    } catch (ParseException exception) {
-                        exception.printStackTrace();
-                    }
-
-                }
             }
         });
 
@@ -670,40 +758,74 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     }
 
 
-    public void createTimeAndLocationPolls(final String type) throws ParseException {
-        final Poll poll = new Poll();
+    public void createTimeAndLocationPolls() throws ParseException {
+        final Poll timePoll = new Poll();
+        final Poll locPoll = new Poll();
+
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
-        poll.setEventId(eventId);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
-        poll.put("poll_creator_id", currentUserId);
-        poll.setPollType(type);
-        poll.setQuestion(type + " of Event");
+
+        timePoll.setEventId(eventId);
+        timePoll.put("Poll_creator", currentUser);
+        timePoll.put("poll_creator_id", currentUserId);
+        timePoll.setPollType("Time");
+        timePoll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
         customs.add("Custom");
 
-        poll.setChoices(customs);
-        poll.setScores(new HashMap<String, Integer>());
-        poll.setPeopleVoted(new ArrayList<String>());
+        timePoll.setChoices(customs);
+        timePoll.setScores(new HashMap<String, Integer>());
+        timePoll.setPeopleVoted(new ArrayList<String>());
 
-        if (poll.getPollType().equals("Location")) {
-            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
-        }
+//        if (poll.getPollType().equals("Location")) {
+//            poll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+//        }
 
-        poll.saveInBackground(new SaveCallback() {
+        timePoll.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put " + type + " poll on parse", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
+                    if (isEventPrivate) {
+
+                        //make a location poll
+                        locPoll.setEventId(eventId);
+                        locPoll.put("Poll_creator", currentUser);
+                        locPoll.put("poll_creator_id", currentUserId);
+                        locPoll.setPollType("Location");
+                        locPoll.setQuestion("Location of Event");
+                        ArrayList<String> customs = new ArrayList<>();
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+                        customs.add("Custom");
+
+                        locPoll.setChoices(customs);
+                        locPoll.setScores(new HashMap<String, Integer>());
+                        locPoll.setPeopleVoted(new ArrayList<String>());
+                        locPoll.setLocationOptions(new HashMap<String, ParseGeoPoint>());
+                        polls.add(locPoll);
+                        pollAdapter.notifyDataSetChanged();
+                        rvPolls.scrollToPosition(0);
+                        locPoll.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
+
+                            }
+                        });
+
+
+                    }
                 }
 
             }
         });
-        polls.add(poll);
-        pollAdapter.notifyItemInserted(polls.size() - 1);
+        polls.add(timePoll);
+        pollAdapter.notifyDataSetChanged();
         rvPolls.scrollToPosition(0);
         //poll.save();
 
@@ -714,7 +836,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
         poll.setEventId(eventId);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("Poll_creator", currentUser);
         poll.setPollType("Time");
         poll.setQuestion("Time of Event");
         ArrayList<String> customs = new ArrayList<>();
@@ -747,7 +869,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         //poll.put("Event",eventId);
         poll.setEventId(eventId);
         //poll.put("Event", chatEvent);
-        poll.put("Poll_creator", ParseUser.getCurrentUser());
+        poll.put("Poll_creator", currentUser);
         poll.put("poll_creator_id", currentUserId);
         poll.setPollType("Custom");
         poll.saveInBackground(new SaveCallback() {
@@ -822,13 +944,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // Execute query to fetch all POLLS from Parse asynchronously
         // this is equivalent to a SELECT query with SQL
         query.findInBackground(new FindCallback<Poll>() {
-            public void done(List<Poll> poll, ParseException e) {
+            public void done(List<Poll> pollList, ParseException e) {
                 if (e == null) {
                     polls.clear();
                     //polls.addAll(poll);
-                    for (int i = 0; i < poll.size(); i++) {
-                        Poll tempPoll = poll.get(i);
-                        polls.add(poll.get(i));
+                    for (int i = 0; i < pollList.size(); i++) {
+                        polls.add(pollList.get(i));
                     }
                     pollAdapter.notifyDataSetChanged(); // update adapter
 
@@ -838,17 +959,19 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         mFirstLoad = false;
                     }
 
+                    if (pollList != null && pollList.size() != 0) {
+                        findPollWinners(polls);
+                    }
+
 
                 } else {
                     Log.e("poll", "Error Loading Polls" + e);
                 }
 
-                findPollWinners(polls);
-
 
             }
         });
-        findPollWinners(polls);
+
     }
 
     public Date convertStringToDate(String time) {
@@ -934,6 +1057,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         if (timeWinner != null) {
                             Date date = convertStringToDate(timeWinner);
                             eventDb.put("event_time", date);
+                            eventDb.put("event_time_string", timeWinner);
                         }
                         if (locationWinner != null) {
                             Double lat = locationWinner.getLatitude();
@@ -1180,7 +1304,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     public void onEventReady(MenuItem menuItem) {
         Intent i = new Intent(context, EventReadyActivity.class);
-        i.putExtra("eventId", parseEvent.getEventId());
+        i.putExtra("eventId", eventFromQuery.getEventId());
         context.startActivity(i);
     }
 
@@ -1250,41 +1374,42 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
             m.setEventId(eventId);
             m.setSenderName("Shaggy");
-            try {
-                m.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        String token = "";
-                        try {
-                            //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
-                            token = InstanceID.getInstance(context)
-                                    .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                            Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        HashMap<String, String> payload = new HashMap<>();
-                        payload.put("customData", m.getBody());
-                        payload.put("title", "New message in channel");
-                        payload.put("channelID", eventId);
-                        payload.put("senderID", currentUserId);
-                        payload.put("token", token);
+            m.saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    String token = "";
+                    try {
+                        //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
+                        token = InstanceID.getInstance(context)
+                                .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                        Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
-                });
-                m.save();
+                    HashMap<String, String> payload = new HashMap<>();
+                    payload.put("customData", m.getBody());
+                    payload.put("title", "New message in channel");
+                    payload.put("channelID", eventId);
+                    payload.put("senderID", currentUserId);
+                    payload.put("token", token);
 
-                parseEvent.setLastMessageSent(m);
-                try {
-                    parseEvent.save(); //TODO: in background or...?
-                } catch (ParseException ex) {
-                    ex.printStackTrace();
+                    eventFromQuery.setLastMessageSent(m);
+                    eventFromQuery.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                Log.i("CHATACTIVITY", "All good");
+                            } else {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                    mAdapter.notifyItemInserted(0);
+                    rvChat.smoothScrollToPosition(0);
                 }
+            });
 
-                mAdapter.notifyItemInserted(0);
-                rvChat.smoothScrollToPosition(0);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
         }
         refreshMessages();
         refreshPolls();

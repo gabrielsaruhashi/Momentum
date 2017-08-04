@@ -5,7 +5,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="shag.com.shag.Fragments.MapFragment">
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="150dp"
@@ -17,7 +24,7 @@
             android:id="@+id/map"
             android:name="com.google.android.gms.maps.SupportMapFragment"
             android:layout_width="match_parent"
-            android:layout_height="320dp"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             tools:context="com.example.mapwithmarker.MapsMarkerActivity" />
@@ -28,49 +35,40 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="0.89"
         android:animateLayoutChanges="true"
         android:orientation="horizontal">
 
-        <FrameLayout
+
+        <RelativeLayout
+            android:id="@+id/eventDetails"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="180dp"
+            android:visibility="invisible"
+            android:paddingTop="12dp">
 
-            <LinearLayout
+            <android.support.v4.view.ViewPager
+                android:id="@+id/pagerMapCards"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.42"
-                android:gravity="center"
-                android:orientation="horizontal">
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp" />
 
 
-            </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/eventDetails"
-                android:layout_width="match_parent"
-                android:layout_height="180dp"
-                android:visibility="invisible">
+        </RelativeLayout>
 
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/pagerMapCards"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="8dp" />
-
-                <me.relex.circleindicator.CircleIndicator
-                    android:id="@+id/indicator"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_alignParentBottom="true"
-                    android:gravity="bottom" />
-
-            </RelativeLayout>
-        </FrameLayout>
 
     </LinearLayout>
+    <me.relex.circleindicator.CircleIndicator
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:gravity="bottom" >
+
+
+    </me.relex.circleindicator.CircleIndicator>
 </LinearLayout>

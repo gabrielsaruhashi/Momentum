@@ -4,7 +4,7 @@
         android:shape="oval"
         android:layout_centerInParent="true">
         <solid
-            android:color="@color/party_color"/>
+            android:color="@color/food_color"/>
         <size
             android:width="48dp"
             android:height="48dp"/>

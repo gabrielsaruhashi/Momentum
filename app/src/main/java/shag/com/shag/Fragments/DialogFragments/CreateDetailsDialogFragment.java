@@ -90,7 +90,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
         // initialize client
         facebookClient = ParseApplication.getFacebookRestClient();
         // get current user id
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         return inflater.inflate(R.layout.fragment_create_details, container, false);
     }
@@ -132,7 +132,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             @Override
             public void onClick(View v) {
                 // populate newEvent
-                newEvent.setEventOwnerName(ParseUser.getCurrentUser().getString("name"));
+                newEvent.setEventOwnerName(ParseApplication.getCurrentUser().getString("name"));
                 newEvent.setDescription(etDescription.getText().toString());
                 /*newEvent.setLatLng(
                         new LatLng(47.628883, -122.342606)

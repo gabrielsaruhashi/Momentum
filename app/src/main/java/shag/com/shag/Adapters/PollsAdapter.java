@@ -23,7 +23,6 @@ import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +33,7 @@ import butterknife.ButterKnife;
 import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
 import shag.com.shag.Models.Poll;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
@@ -154,7 +154,6 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
             final int[] choice = {3};
 
 
-
             btVote.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -174,7 +173,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 ArrayList<String> peopleWhoVoted = (ArrayList<String>) object.get("people_voted");
 
                                 poll.updateScores(scoring, choices.get(choice[0]));
-                                poll.updatePeopleVoted(peopleWhoVoted, ParseUser.getCurrentUser().getObjectId());
+                                poll.updatePeopleVoted(peopleWhoVoted, ParseApplication.getCurrentUser().getObjectId());
 
                                 //update local object
                                 //poll.updateScores(poll.getScores(), poll.getChoices().get(choice[0]));
@@ -185,7 +184,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                                 rButton2.setText(poll.getChoices().get(2) + ": " + poll.getScores().get(poll.getChoices().get(2)));
                                 rButton3.setText(poll.getChoices().get(3) + ": " + poll.getScores().get(poll.getChoices().get(3)));
 
-                                if (poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())) {
+                                if (poll.getPeopleVoted().contains(ParseApplication.getCurrentUser().getObjectId())) {
                                     btVote.setText("Voted");
                                     btVote.setEnabled(false);
                                 }
@@ -250,7 +249,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
         Poll poll = polls.get(position);
         holder.tvQuestion.setText(poll.getQuestion());
         List<String> peeps = poll.getPeopleVoted();
-        String me = ParseUser.getCurrentUser().getObjectId();
+        String me = ParseApplication.getCurrentUser().getObjectId();
         createOnTextClick(holder.tvSet0, selectedPosition,0);
         createOnTextClick(holder.tvSet1, selectedPosition,1);
         createOnTextClick(holder.tvSet2, selectedPosition,2);
@@ -303,7 +302,7 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
 
 
         //if user hasn't voted
-        if (!poll.getPeopleVoted().contains(ParseUser.getCurrentUser().getObjectId())) {
+        if (!poll.getPeopleVoted().contains(ParseApplication.getCurrentUser().getObjectId())) {
             holder.rButton0.setText(poll.getChoices().get(0));
             holder.rButton1.setText(poll.getChoices().get(1));
 

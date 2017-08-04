@@ -13,11 +13,14 @@ import android.view.ViewGroup;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,6 +28,7 @@ import shag.com.shag.Adapters.ChatListAdapter;
 import shag.com.shag.Models.Chat;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -45,6 +49,7 @@ public class ChatListFragment extends Fragment {
     // Define the listener of the interface type
     // listener will the activity instance containing fragment
     private OnChatLoadListener listener;
+    ParseUser currentUser;
 
     @Nullable
     @Override
@@ -70,7 +75,8 @@ public class ChatListFragment extends Fragment {
                 DividerItemDecorator(rvChats.getContext(), DividerItemDecorator.VERTICAL_LIST);
         rvChats.addItemDecoration(itemDecoration);
         // instantiate current user id
-        currentUserId = ParseUser.getCurrentUser().getObjectId();
+        currentUser = ParseApplication.getCurrentUser();
+        currentUserId = currentUser.getObjectId();
 
         populateChatList(currentUserId);
         startLiveQueries();
@@ -97,10 +103,32 @@ public class ChatListFragment extends Fragment {
         list.add(userId);
         query.whereContainedIn("participants_id", list);
         query.include("User_event_owner");
+        query.include("last_message_sent");
         query.findInBackground(new FindCallback<Event>() {
             @Override
             public void done(List<Event> eventsList, ParseException e) {
                 if (e == null) {
+                    Collections.sort(eventsList, new Comparator<Event>() {
+                        @Override
+                        public int compare(Event event, Event t1) {
+                            if (event.getLastMessageSent() == null && t1.getLastMessageSent() != null) {
+                                return 1;
+                            }
+
+                            if (event.getLastMessageSent() != null && t1.getLastMessageSent() == null) {
+                                return -1;
+                            }
+
+                            if (event.getLastMessageSent() == null && t1.getLastMessageSent() == null) {
+                                return 0;
+                            }
+
+                            ParseObject first = event.getLastMessageSent();
+                            ParseObject second = t1.getLastMessageSent();
+                            return -1 *first.getCreatedAt().compareTo(second.getCreatedAt());
+                        }
+                    });
+
                     for (Event event : eventsList) {
 
                         // get chat's info to later populate view
@@ -148,7 +176,7 @@ public class ChatListFragment extends Fragment {
         // get event info
         int participantsNumber = event.getParticipantsIds().size();
         String eventOwnerName = event.getEventOwnerName();
-        String currentUserName = (String) ParseUser.getCurrentUser().get("name");
+        String currentUserName = (String) currentUser.get("name");
 
         // create chat title
         if (Objects.equals(eventOwnerName, currentUserName)) {
@@ -178,7 +206,6 @@ public class ChatListFragment extends Fragment {
                     @Override
                     public void onEvent(ParseQuery<Event> query, Event object) {
                         String newEventId = object.getEventId();
-
                         if (eventIds.contains(newEventId)) {
                             ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
                             eventQuery.include("User_event_owner");
@@ -187,8 +214,12 @@ public class ChatListFragment extends Fragment {
                                 Event event = eventQuery.get(newEventId);
                                 Chat chat = getChatInfoFromEvent(event);
                                 int index = eventIds.indexOf(newEventId);
-                                chats.set(index, chat);
-                                itemChanged(index);
+                                chats.remove(index);
+                                eventIds.remove(index);
+                                chats.add(0, chat);
+                                eventIds.add(0, newEventId);
+                                //chats.set(index, chat);
+                                itemChanged(0);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -205,7 +236,7 @@ public class ChatListFragment extends Fragment {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                adapter.notifyItemChanged(index);
+                adapter.notifyDataSetChanged();
             }
         });
     }

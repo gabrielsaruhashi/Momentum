@@ -6,10 +6,20 @@
     android:layout_height="match_parent"
     tools:context="shag.com.shag.Activities.MemoryDetailsActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="54dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -36,6 +46,7 @@
             android:layout_width="match_parent"
             android:layout_height="150dp">
             <android.support.v4.view.ViewPager
+                android:transitionName="memoryDetail"
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -55,20 +66,18 @@
             android:text="PHOTOS"
             android:textColor="@color/medium_gray"
             android:layout_marginLeft="@dimen/rv_margin_left"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginTop="12dp" />
 
         <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="12dp"
             android:id="@+id/gridview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:numColumns="3"
-            android:verticalSpacing="4dp"
-            android:horizontalSpacing="10dp"
-            android:stretchMode="columnWidth"
+            android:verticalSpacing="2dp"
+            android:horizontalSpacing="1dp"
             android:gravity="center"
-            android:layout_marginBottom="80dp"/>
+            android:layout_marginBottom="40dp"/>
 
     </LinearLayout>
 

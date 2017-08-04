@@ -4,7 +4,7 @@
         android:shape="oval"
         android:layout_centerInParent="true">
         <solid
-            android:color="@color/music_color"/>
+            android:color="@color/explore_color"/>
         <size
             android:width="48dp"
             android:height="48dp"/>
