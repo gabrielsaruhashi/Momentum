@@ -5,10 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,14 +16,13 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -36,6 +34,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -50,6 +49,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,12 +69,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import me.relex.circleindicator.CircleIndicator;
-import shag.com.shag.Adapters.MapCardAdapter;
 import shag.com.shag.Clients.VolleyRequest;
+import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Memory;
 import shag.com.shag.R;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
+import static shag.com.shag.R.id.map;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback,
@@ -79,24 +86,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private RequestQueue mRequestQueue;
 
-    CircleIndicator indicator;
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
+    ParseUser currentUser;
     Marker mCurrLocationMarker;
-    Button musicFab;
-    Button foodFab;
-    Geocoder geocoder;
-    List<Address> addresses;
-    MapCardAdapter mapCardAdapter;
-    ViewPager viewPager;
-    RelativeLayout cardViews;
-    ArrayList<HashMap<String, Object>> cardData = new ArrayList<>();
-    int cardPagerSize = 0;
-    HashMap<String, MarkerOptions> markers = new HashMap<>();
-    ArrayList<Marker> markerOptionsArrayList = new ArrayList<>();
+    private FusedLocationProviderClient mFusedLocationClient;
+    Location currentLocation;
 
     // inflation happens inside onCreateView
     @Nullable
@@ -105,73 +103,206 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         // inflate the layout
         View v = inflater.inflate(R.layout.fragment_map, container, false);
 
+        currentUser = ParseUser.getCurrentUser();
 
-//        mRequestQueue = VolleyRequest.getInstance(this.getContext()).
-//                getRequestQueue();
-//
-//
-//        musicFab = (Button) v.findViewById(R.id.btn_Test2);
-//        foodFab= (Button) v.findViewById(R.id.btn_Test3);
-//
-//
-//        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
-//        mapFrag.getMapAsync(this);
-//
-//
-//        cardViews = (RelativeLayout) v.findViewById(R.id.eventDetails);
-//        mapCardAdapter = new MapCardAdapter(getContext(), cardData);
-//        viewPager = (ViewPager) v.findViewById(R.id.pagerMapCards);
-//        viewPager.setAdapter(mapCardAdapter);
-//        viewPager.setOffscreenPageLimit(3);
-//
-//        indicator = (CircleIndicator) v.findViewById(R.id.indicator);
-//        indicator.setViewPager(viewPager);
-//
-//
-//        musicFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                try {
-//                    addresses = new ArrayList<>();
-//                    geocoder = new Geocoder(getContext(), Locale.getDefault());
-//                    addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
-//                    String postalCode = addresses.get(0).getPostalCode();
-//                    onStartMusicRequest(postalCode,"20");
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        });
-//
-//        foodFab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onStartFoodRequest(mLastLocation.getLatitude() + "", mLastLocation.getLongitude() + "");
-//
-//            }
-//        });
-//
-////        cardExit.setOnClickListener(new View.OnClickListener() {
-////            @Override
-////            public void onClick(View v) {
-////                cardView.animate()
-////                        .translationX(cardView.getWidth())
-////                        .alpha(0.0f)
-////                        .setDuration(300)
-////                        .setListener(new AnimatorListenerAdapter() {
-////                            @Override
-////                            public void onAnimationEnd(Animator animation) {
-////                                super.onAnimationEnd(animation);
-////                                cardView.setVisibility(View.GONE);
-////                            }
-////                        });
-////
-////            }
-////        });
+        mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
+        mapFrag.getMapAsync(this);
+
+        populateMap();
 
 
         return v;
+    }
+
+    private void populateMap() {
+        //query for all events of a user
+        ParseQuery<Memory> query = ParseQuery.getQuery("Memory");
+        //include objects in event
+        query.whereEqualTo("participants_id", currentUser.getObjectId());
+        //limit query to all memories a user is a participant in
+        //query.whereContainedIn("participants_id", currentUser.getObjectId());
+        query.findInBackground(new FindCallback<Memory>() {
+            @Override
+            public void done(List<Memory> memoriesList, ParseException e) {
+                if (e == null) {
+                    Log.d("memory", "Retrieved " + memoriesList.size() + " scores");
+                    //when Memories are retrieved, begin finding events tied to them
+                    findAssociatedEvent(memoriesList);
+                } else {
+                    Log.d("memory", "Error: " + e.getMessage());
+                }
+            }
+        });
+        //obtain their location and first photo in memories
+        //iterate through this and create markers
+
+        //TESTING
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            currentLocation = location;
+
+                            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                                @Override
+                                public View getInfoWindow(Marker marker) {
+                                    return null;
+                                }
+
+                                @Override
+                                public View getInfoContents(Marker marker) {
+                                    // Getting view from the layout file info_window_layout
+
+                                    View v = getActivity().getLayoutInflater().inflate(R.layout.item_memory_info_window, null);
+
+                                    // Getting the position from the marker
+                                    LatLng latLng = marker.getPosition();
+
+                                    ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory) ;
+                                    ivPhoto.setBackgroundResource(R.drawable.ic_camera);
+                                    //Glide.with(getActivity()).load(marker.getTag()).centerCrop().into(ivPhoto);
+
+                                    // Getting reference to the TextView to set longitude
+                                    TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
+
+                                    // Setting the longitude
+                                    tvLng.setText("Longitude:"+ latLng.longitude);
+
+                                    // Returning the view containing InfoWindow contents
+                                    return v;
+
+                                }
+
+
+                            });
+                            //Place current location marker
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            MarkerOptions markerOptions = new MarkerOptions();
+                            markerOptions.position(latLng);
+                            //markerOptions.title("Current Position");
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                            Marker marker = mGoogleMap.addMarker(markerOptions);
+                            String url = "http://i.imgur.com/Gwb6TqH.png";
+                            marker.setTag(url);
+                            marker.showInfoWindow();
+
+
+                            // mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+
+                        }
+                    }
+                });
+
+
+
+
+
+
+        //move map camera
+        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+    }
+    private Bitmap bitmapConverterFromParseFile(ParseFile parseFile) {
+
+        try {
+            byte[] bitmapdata = parseFile.getData();
+            Bitmap bm = BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.length);
+            return bm;
+        } catch (ParseException e) {
+            e.getMessage();
+        }
+        return null;
+    }
+    private void findAssociatedEvent(List<Memory> memoriesList) {
+        mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+            @Override
+            public View getInfoWindow(Marker marker) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {
+                // Getting view from the layout file info_window_layout
+
+                View v = getActivity().getLayoutInflater().inflate(R.layout.item_memory_info_window, null);
+
+                // Getting the position from the marker
+                LatLng latLng = marker.getPosition();
+
+                ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory) ;
+                ivPhoto.setBackgroundResource(R.drawable.ic_camera);
+                //Glide.with(getActivity()).load(marker.getTag()).centerCrop().into(ivPhoto);
+
+                // Getting reference to the TextView to set longitude
+                TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
+
+                // Setting the longitude
+                tvLng.setText("Longitude:"+ latLng.longitude);
+
+                // Returning the view containing InfoWindow contents
+                return v;
+
+            }
+
+
+        });
+        for(final Memory memory : memoriesList){
+            String associatedEvent = memory.getString("event_id");
+            //query for associated event to get text info (time)
+            ParseQuery<Event> eventQuery = ParseQuery.getQuery("Event");
+            eventQuery.getInBackground(associatedEvent, new GetCallback<Event>() {
+                @Override
+                public void done(Event object, ParseException e) {
+                    if (e == null) {
+                        Double lat = object.getDouble("latitude");
+                        Double lng = object.getDouble("longitude");
+                        Date timeOfEvent = object.getDate("event_time");
+                        String readableTime = new SimpleDateFormat("dd/MM/yyyy").format(timeOfEvent);
+                        ArrayList<ParseFile> pictures = (ArrayList<ParseFile>) memory.get("pictures_parse_files");
+                        //if we made it this far, let's create a marker
+                        if (pictures!=null) {
+
+                            LatLng latLng = new LatLng(lat, lng);
+                            MarkerOptions markerOptions = new MarkerOptions();
+                            markerOptions.position(latLng);
+                            //markerOptions.title("Current Position");
+                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+                            Marker marker = mGoogleMap.addMarker(markerOptions);
+
+                            final Bitmap bm = bitmapConverterFromParseFile(pictures.get(0));
+                            if (bm != null) {
+                                marker.setTag(bm);
+                            }
+                            marker.showInfoWindow();
+
+
+
+                        }
+
+                    } else {
+                        // something went wrong
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
 
@@ -381,8 +512,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        cardPagerSize = 0;
-                        cardViews.setVisibility(View.VISIBLE);
+//                        cardPagerSize = 0;
+//                        cardViews.setVisibility(View.VISIBLE);
                         LatLngBounds.Builder b = new LatLngBounds.Builder();
                         for (int i = 0; i < eventArray.length(); i++) {
                             try {
@@ -414,7 +545,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                         publicEventData.put("Lat", musicLat);
                                         publicEventData.put("Lng", musicLng);
                                         publicEventData.put("Place Name", concertPlace);
-                                        cardPagerSize++;
+                                        //cardPagerSize++;
 
                                         Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
@@ -426,11 +557,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 //                                    markerOptions.title(artist);
 //                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 
-                                        newMarker.setTag(publicEventData);
-                                        cardData.add(publicEventData);
-                                        markerOptionsArrayList.add(newMarker);
-                                        mapCardAdapter.notifyDataSetChanged();
-                                        indicator.setViewPager(viewPager);
+//                                        newMarker.setTag(publicEventData);
+//                                        cardData.add(publicEventData);
+//                                        markerOptionsArrayList.add(newMarker);
+//                                        mapCardAdapter.notifyDataSetChanged();
+//                                        indicator.setViewPager(viewPager);
 
 
                                     } catch (JSONException e) {
@@ -448,7 +579,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                         mGoogleMap.animateCamera(cu);
 
-                        animateMarkers();
+                        // animateMarkers();
 
 
                     }
@@ -497,8 +628,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                         Log.d("response", "aww yeah");
                         try {
                             JSONArray restaurantArray = response.getJSONArray("nearby_restaurants");
-                            cardPagerSize = 0;
-                            cardViews.setVisibility(View.VISIBLE);
+//                            cardPagerSize = 0;
+//                            cardViews.setVisibility(View.VISIBLE);
                             LatLngBounds.Builder b = new LatLngBounds.Builder();
 
                             for (int i = 0; i < restaurantArray.length(); i++) {
@@ -524,7 +655,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                 publicEventData.put("Lat", restaurantLat);
                                 publicEventData.put("Lng", restaurantLng);
                                 publicEventData.put("Place Name", restaurantName);
-                                cardPagerSize++;
+                                // cardPagerSize++;
 
                                 Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
 
@@ -548,10 +679,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 //                                markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
 //                                mGoogleMap.addMarker(markerOptions)
 //                                        .setTag(publicEventData);
-                                cardData.add(publicEventData);
-                                markerOptionsArrayList.add(newMarker);
-                                mapCardAdapter.notifyDataSetChanged();
-                                indicator.setViewPager(viewPager);
+//                                cardData.add(publicEventData);
+//                                markerOptionsArrayList.add(newMarker);
+//                                mapCardAdapter.notifyDataSetChanged();
+//                                indicator.setViewPager(viewPager);
 
 
                                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -564,7 +695,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             LatLngBounds bounds = b.build();
                             CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, 5);
                             mGoogleMap.animateCamera(cu);
-                            animateMarkers();
+                            //animateMarkers();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -593,31 +724,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         return req;
     }
 
-    public void animateMarkers() {
-        Marker one = markerOptionsArrayList.get(viewPager.getCurrentItem());
-        one.showInfoWindow();
-        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(one.getPosition()));
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Marker oldMarker = markerOptionsArrayList.get(position);
-                oldMarker.showInfoWindow();
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(oldMarker.getPosition()));
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
-
-    }
+//    public void animateMarkers() {
+//        Marker one = markerOptionsArrayList.get(viewPager.getCurrentItem());
+//        one.showInfoWindow();
+//        mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(one.getPosition()));
+//
+//        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//            @Override
+//            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//                Marker oldMarker = markerOptionsArrayList.get(position);
+//                oldMarker.showInfoWindow();
+//                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(oldMarker.getPosition()));
+//
+//            }
+//
+//            @Override
+//            public void onPageSelected(int position) {
+//
+//            }
+//
+//            @Override
+//            public void onPageScrollStateChanged(int state) {
+//
+//            }
+//        });
+//
+//
+//    }
 }
