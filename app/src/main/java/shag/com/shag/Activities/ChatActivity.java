@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.graphics.PorterDuff;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.CalendarContract;
@@ -26,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -100,7 +102,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     Context context;
     EditText etMessage;
-    Button btSend;
+    ImageButton btSend;
     ArrayList<View> timeButtons;
     ArrayList<View> locationButtons;
     int viewPosition;
@@ -311,7 +313,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                         while (cursor.moveToNext() && cursor.getPosition() < cursor.getCount() - 1);
                     }
-                    cursor.close();
+                    //cursor.close();
                     // cursor.close
                 }
             }
@@ -564,7 +566,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     void setupMessagePosting() {
         // find the text field and button
         etMessage = (EditText) findViewById(R.id.etMessage);
-        btSend = (Button) findViewById(R.id.btSend);
+        btSend = (ImageButton) findViewById(R.id.btSend);
         rvChat = (RecyclerView) findViewById(R.id.rvChat);
         mMessages = new ArrayList<>();
         mFirstLoad = true;
@@ -573,7 +575,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         mAdapter = new MessagesAdapter(ChatActivity.this, currentUserId, mMessages);
         rvChat.setAdapter(mAdapter);
 
+        btSend.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.deselected_gray), PorterDuff.Mode.MULTIPLY);
+
         btSend.setEnabled(false);
+
         etMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -582,8 +587,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() > 0) {
                     btSend.setEnabled(true);
+                    btSend.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.medium_gray), PorterDuff.Mode.MULTIPLY);
                 } else {
                     btSend.setEnabled(false);
+                    btSend.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.deselected_gray), PorterDuff.Mode.MULTIPLY);
                 }
             }
 

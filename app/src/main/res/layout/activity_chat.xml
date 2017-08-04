@@ -36,10 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:paddingBottom="10dp"
-            android:paddingLeft="0dp"
-            android:paddingRight="0dp"
-            android:paddingTop="5dp">
+            android:paddingBottom="12dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="4dp">
 
             <EditText
                 android:id="@+id/etMessage"
@@ -53,17 +53,15 @@
                 android:textSize="14dp"
                 android:inputType="textShortMessage" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/btSend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
                 android:layout_alignParentRight="true"
                 android:gravity="center"
-                android:paddingRight="10dp"
-                android:text="@string/message_send"
+                android:src="@drawable/ic_rocket"
                 android:textSize="18sp">
-
-            </Button>
+            </ImageButton>
         </RelativeLayout>
 
     </RelativeLayout>

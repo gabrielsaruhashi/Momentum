@@ -419,6 +419,29 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                                 Log.d("DEBUG", "EI");
                                 //Toast.makeText(getContext(), "Successfully created event on Parse",
                                 //Toast.LENGTH_SHORT).show();
+                                final Message m = new Message();
+                                m.setSenderId("InuSHuTqkn");
+                                m.setBody("Hi! My name is Shaggy. Welcome to the chat! Swipe left to fill out" +
+                                        " polls and plan your hangout!");
+                                m.setEventId(newEvent.getObjectId());
+                                m.setSenderName("Shaggy");
+                                try {
+                                    m.save();
+
+                                    newEvent.setLastMessageSent(m);
+                                    newEvent.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Log.i("SELECTEVENTDEADLINE", "All good");
+                                            } else {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                } catch (ParseException exception) {
+                                    exception.printStackTrace();
+                                }
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");

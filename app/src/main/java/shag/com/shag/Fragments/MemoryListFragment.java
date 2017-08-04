@@ -19,6 +19,7 @@ import java.util.List;
 
 import shag.com.shag.Adapters.MemoriesAdapter;
 import shag.com.shag.Models.Memory;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -53,7 +54,7 @@ public class MemoryListFragment extends Fragment {
         lvMemories.setAdapter(mAdapter);
 
         // instantiate current user
-        currentUser = ParseUser.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
         // populate memory
         populateMemories();

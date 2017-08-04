@@ -109,7 +109,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         //TODO: change categories
         if (event.getCategory().equals("Chill")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_chill);
+            holder.ivCategory.setImageResource(R.drawable.ic_iying_down);
             holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
         } else if (event.getCategory().equals("Sports")) {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
