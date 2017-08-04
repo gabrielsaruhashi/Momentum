@@ -107,6 +107,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
         Button tv12h = (Button) findViewById(R.id.bt12);
         setListenerForTime(tv12h, 720);
+
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
         tvCategory.setText(category);
@@ -421,7 +422,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("event_owner_id", currentUser.getObjectId());
+                                query.whereEqualTo("event_owner_id",currentUser.getObjectId());
                                 query.orderByDescending("createdAt");
                                 query.setLimit(1);
                                 query.getFirstInBackground(new GetCallback<ParseObject>() {

@@ -111,7 +111,7 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         mapCardAdapter = new MapCardAdapter(getContext(), cardData);
         viewPager = (ViewPager) findViewById(R.id.pagerMapCards);
         viewPager.setAdapter(mapCardAdapter);
-        viewPager.setOffscreenPageLimit(3);
+//        viewPager.setOffscreenPageLimit(3);
 //        viewPager.setClipToPadding(false);
 //        viewPager.setPageMargin(12);
 
@@ -397,6 +397,10 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                                         publicEventData.put("Lat", musicLat);
                                         publicEventData.put("Lng", musicLng);
                                         publicEventData.put("Place Name", concertPlace);
+                                        VolleyRequest.getInstance(getApplicationContext())
+                                                .addToRequestQueue(onFindPhotoReference(musicLat.toString(),
+                                                        musicLng.toString(),concertPlace,"performance", publicEventData, i));
+
                                         cardPagerSize++;
 
                                         Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
@@ -612,17 +616,19 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
                             data.put("Photo", photoUrl);
 
                             //build a new list
-                            cardData.remove(position);
-                            ArrayList<HashMap<String,Object>> newList = new ArrayList<>();
-                            newList.addAll(cardData);
-                            newList.add(position,data);
+                            int x =position;
+                            if (position<cardData.size()) {
+                                cardData.remove(position);
+                                ArrayList<HashMap<String, Object>> newList = new ArrayList<>();
+                                newList.addAll(cardData);
+                                newList.add(position, data);
 
-                            cardData.clear();
-                            cardData.addAll(newList);
+                                cardData.clear();
+                                cardData.addAll(newList);
 
-                            mapCardAdapter.notifyDataSetChanged();
-                            //mapCardAdapter.notifyI();
-
+                                mapCardAdapter.notifyDataSetChanged();
+                                //mapCardAdapter.notifyI();
+                            }
 
                             //String photo =findFirstPhoto(photoInfo);
                         } catch (JSONException e) {
