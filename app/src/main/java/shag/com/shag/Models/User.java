@@ -6,7 +6,6 @@ import android.os.Parcelable;
 
 import com.parse.ParseObject;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -25,15 +24,15 @@ public class User implements Parcelable {
     // for retrieving facebook data
     public static User fromJson(JSONObject json) {
         User user = new User();
-        try {
-            user.setFbUserID(json.getLong("id"));
-            user.setName(json.getString("name"));
-            JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
-            user.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            user.setFbUserID(json.getLong("id"));
+//            user.setName(json.getString("name"));
+//            JSONObject pictureData = json.getJSONObject("picture").getJSONObject("data");
+//            user.imageUrl = pictureData.getString("url"); //this might be it's own endpoint??
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         return user;
     }
 

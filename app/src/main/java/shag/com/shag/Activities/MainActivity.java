@@ -2,7 +2,6 @@ package shag.com.shag.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +11,6 @@ import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
 
-import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -30,16 +28,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         }
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager(),
-                MainActivity.this));
-        //viewPager.setOffscreenPageLimit(3);
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-        viewPager.setCurrentItem(position);
+//        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+//        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager(),
+//                MainActivity.this));
+//        //viewPager.setOffscreenPageLimit(3);
+//
+//        // Give the TabLayout the ViewPager
+//        TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
+//        tabLayout.setupWithViewPager(viewPager);
+//
+//        viewPager.setCurrentItem(position);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
