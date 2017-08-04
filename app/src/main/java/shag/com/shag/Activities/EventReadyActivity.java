@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,6 +22,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +74,6 @@ import shag.com.shag.Clients.VolleyRequest;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Other.DataParser;
-import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -93,6 +94,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     Activity activity;
     LatLng mDestination;
     Date timeOfEvent;
+    String timeOfEventAsString;
     Geocoder geocoder;
     LatLngBounds.Builder bounds;
     String baseUrl = "https://maps.googleapis.com/maps/api/directions/json?";
@@ -104,14 +106,18 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     TextView tvTime;
     RelativeLayout rlDirectionsInfo;
     String launchMapsUrl = "https://www.google.com/maps/dir/?api=1";
-    String ETA;
+    String walkTime;
+    String transitTime;
+    String driveTime;
+    String bikeTime;
     String eventId;
     Event parseEvent;
+    String currentselected;
     boolean firstOpen;
     List<Marker> markerList = new ArrayList<Marker>();
     ArrayList<String> friendNames;
+    Button btSendEta;
 
-    ParseUser currentUser;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -135,6 +141,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             parseEvent = (Event) query.get(eventId);
             mDestination = new LatLng(parseEvent.getLatitude(), parseEvent.getLongitude());
             timeOfEvent = parseEvent.getTimeOfEvent();
+            timeOfEventAsString = parseEvent.getEventTimeString();
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -148,7 +155,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         bounds = new LatLngBounds.Builder();
 
         tvDestination.setText(parseEvent.getLocation());
-        tvTime.setText(timeOfEvent.toString());
+        tvTime.setText(timeOfEventAsString);
 
 
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
@@ -171,11 +178,10 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                     }
                 });
 
-        currentUser = ParseApplication.getCurrentUser();
         friendNames = new ArrayList<>();
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
         for (String id : participantsLocations.keySet()) {
-            if (!id.equals(currentUser.getObjectId())) {
+            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
                 ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
                 try {
                     ParseUser friend = queryForUser.get(id);
@@ -185,6 +191,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                 }
             }
         }
+
+        btSendEta = (Button) findViewById(R.id.btGo);
+        btSendEta.setEnabled(false);
     }
 
     @Override
@@ -236,7 +245,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
         MarkerOptions destinationMarkerOptions = new MarkerOptions();
         destinationMarkerOptions.position(mDestination);
-        destinationMarkerOptions.title("Destination");
+        destinationMarkerOptions.title(parseEvent.getLocation());
         destinationMarkerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mGoogleMap.addMarker(destinationMarkerOptions);
     }
@@ -273,7 +282,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         //put location in db and get friends on map if event details have been defined
         //put current user location in db
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        participantsLocations.put(ParseApplication.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
+        participantsLocations.put(ParseUser.getCurrentUser().getObjectId(), new ParseGeoPoint(latLng.latitude, latLng.longitude));
         parseEvent.setParticipantsLocations(participantsLocations);
 
         parseEvent.saveInBackground();
@@ -285,7 +294,12 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             firstOpen = false;
             bounds.include(mDestination);
             bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 75)); //TODO: 75 might not work for diff distances
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100)); //TODO: 75 might not work for diff distances
+
+            getDirections("walking", false);
+            getDirections("driving", false);
+            getDirections("bicycling", false);
+            getDirections("transit", false);
         }
     }
 
@@ -362,63 +376,82 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getWalkingDirections(View view) {
-        getDirections("walking");
+        currentselected = "walking";
+        deselectOtherViews();
+        Button bt = (Button) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        getDirections("walking", true);
     }
 
     public void getDrivingDirections(View view) {
-        getDirections("driving");
+        currentselected = "driving";
+        deselectOtherViews();
+        Button bt = (Button) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        getDirections("driving", true);
     }
 
     public void getTransitDirections(View view) {
-        getDirections("transit");
+        currentselected = "transit";
+        deselectOtherViews();
+        Button bt = (Button) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        getDirections("transit", true);
     }
 
     public void getBikingDirections(View view) {
-        getDirections("bicycling");
+        deselectOtherViews();
+        currentselected = "biking";
+        Button bt = (Button) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        getDirections("bicycling", true);
     }
 
-    public void getDirections(final String mode) {
-            String origin = "";
-            String destination = "";
-            try {
-                Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-                origin = currentLocation.getAddressLine(0);
-                origin = origin.replace(" ", "+");
+    public void getDirections(final String mode, final boolean showOnMap) {
+        String origin = "";
+        String destination = "";
+        try {
+            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
+            origin = currentLocation.getAddressLine(0);
+            origin = origin.replace(" ", "+");
 
-                Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-                destination = destinationLocation.getAddressLine(0);
-                destination = destination.replace(" ", "+");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            baseUrl += "&origin=" + origin;
-            launchMapsUrl += "&origin=" + origin;
-            baseUrl += "&destination=" + destination;
-            launchMapsUrl += "&destination=" + destination;
-            baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-            launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
-            //END TODO
+            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+            destination = destinationLocation.getAddressLine(0);
+            destination = destination.replace(" ", "+");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        baseUrl += "&origin=" + origin;
+        launchMapsUrl += "&origin=" + origin;
+        baseUrl += "&destination=" + destination;
+        launchMapsUrl += "&destination=" + destination;
+        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+        //END TODO
 
-            String url = baseUrl + "&mode=" + mode;
-            url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
-            launchMapsUrl += "&travelmode=" + mode;
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            String instructions = response.toString();
-                            populateInfoFromJson(response, mode);
+        String url = baseUrl + "&mode=" + mode;
+        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        launchMapsUrl += "&travelmode=" + mode;
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        String instructions = response.toString();
+                        populateInfoFromJson(response, mode);
+                        if (showOnMap) {
                             FetchUrl fetchUrl = new FetchUrl();
                             fetchUrl.execute(instructions);
+                            rlDirectionsInfo.setVisibility(View.VISIBLE);
                         }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    VolleyLog.e("Error: ", error.getMessage());
-                }
-            });
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
 
-            VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
@@ -536,11 +569,28 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             if (summary.equals("")) {
                 summary = "Public Transportation";
             }
-            ETA = duration;
 
-            rlDirectionsInfo.setVisibility(View.VISIBLE);
-            tvSummary.setText(summary);
-            tvDuration.setText(duration);
+            if (mode.equals("walking")) {
+                walkTime = duration;
+                Button bt = (Button) findViewById(R.id.ibWalk);
+                bt.setText(walkTime);
+            } else if (mode.equals("driving")) {
+                driveTime = duration;
+                Button bt = (Button) findViewById(R.id.ibDrive);
+                bt.setText(driveTime);
+            } else if (mode.equals("transit")) {
+                transitTime = duration;
+                Button bt = (Button) findViewById(R.id.ibTransit);
+                bt.setText(transitTime);
+            } else {
+                bikeTime = duration;
+                Button bt = (Button) findViewById(R.id.ibBike);
+                bt.setText(bikeTime);
+            }
+
+            //rlDirectionsInfo.setVisibility(View.VISIBLE);
+            //tvSummary.setText(summary);
+            //tvDuration.setText(duration);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -549,15 +599,25 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void sendAnEta(View view) {
+        String ETA = "";
+        if (currentselected.equals("walking")) {
+            ETA = walkTime;
+        } else if (currentselected.equals("driving")) {
+            ETA = driveTime;
+        } else if (currentselected.equals("transit")) {
+            ETA = transitTime;
+        } else {
+            ETA = bikeTime;
+        }
         Message m = new Message();
         m.setSenderId("InuSHuTqkn");
-        m.setBody(ParseApplication.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
+        m.setBody(ParseUser.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
         m.setEventId(eventId);
         m.setSenderName("Shaggy");
         try {
             m.save();
             HashMap<String, String> payload = new HashMap<>();
-            payload.put("customData", ParseApplication.getCurrentUser().get("name") + " is on the way!");
+            payload.put("customData", ParseUser.getCurrentUser().get("name") + " is on the way!");
             payload.put("title", "New message in channel");
             payload.put("channelID", eventId);
             payload.put("senderID", "InuSHuTqkn");
@@ -583,7 +643,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
         int i = 0;
         for (String id : participantsLocations.keySet()) {
-            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
+            if (!id.equals(ParseUser.getCurrentUser().getObjectId())) {
                 ParseGeoPoint point = participantsLocations.get(id);
                 MarkerOptions markerOptions = new MarkerOptions();
                 markerOptions.title(friendNames.get(i));
@@ -594,5 +654,19 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             }
             i++;
         }
+    }
+
+    public void deselectOtherViews() {
+        Button btWalk = (Button) findViewById(R.id.ibWalk);
+        btWalk.getBackground().clearColorFilter();
+        Button btDrive = (Button) findViewById(R.id.ibDrive);
+        btDrive.getBackground().clearColorFilter();
+        Button btBike = (Button) findViewById(R.id.ibBike);
+        btBike.getBackground().clearColorFilter();
+        Button btTransit = (Button) findViewById(R.id.ibTransit);
+        btTransit.getBackground().clearColorFilter();
+
+        btSendEta.setEnabled(true);
+
     }
 }

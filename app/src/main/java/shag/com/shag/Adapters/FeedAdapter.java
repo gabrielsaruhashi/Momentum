@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LightingColorFilter;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -38,9 +40,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
-import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -79,7 +81,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
         // instantiate id's
-        currentUser = ParseApplication.getCurrentUser();
+        currentUser = ParseUser.getCurrentUser();
 
         // instantiate user facebook id
         HashMap data = (HashMap) currentUser.getMap("authData");
@@ -124,9 +126,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             holder.ivCategory.setImageResource(R.drawable.ic_misc1);
             holder.ivCategory.setBackgroundResource(R.drawable.misc_circle);
         }
-        ColorFilter filter = new LightingColorFilter(Color.BLACK, Color.WHITE);
+        ColorFilter filterWhite = new LightingColorFilter(Color.BLACK, Color.WHITE);
         holder.ivCategoryBar.setBackgroundResource(findCorrectColor(event));
-        holder.ivCategory.setColorFilter(filter);
+        holder.ivCategory.setColorFilter(filterWhite);
 
         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
             holder.btJoin.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
@@ -162,38 +164,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 //            loadUserIntoIndex(participants, 4, holder.ivFriend3);
 //        }
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        query.include("User_event_owner");
-        query.include("last_message_sent");
-        try {
-            Event e = (Event) query.get(event.getObjectId());
-            Message m = (Message) e.getLastMessageSent();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            holder.tvLastMessage.setVisibility(View.VISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.VISIBLE);
-            Message lastMessage = event.getParseObject("last_message_sent").fetch();
-            if (lastMessage.getBody() == null) {
-                throw new NullPointerException();
-            }
-            holder.tvLastMessage.setText(lastMessage.getSenderName() + ": " + lastMessage.getBody());
-
-            String rawTime = (lastMessage.getCreatedDate().toString());
-            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
-        } catch (NullPointerException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        } catch (IllegalStateException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        } catch (ParseException e) {
-            holder.tvLastMessage.setVisibility(View.INVISIBLE);
-            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
-        }
-
+        showLastMessage(event, holder);
     }
 
     @Override
@@ -231,6 +202,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView tvLastMessageTime;
         @BindView(R.id.tvLastMessage)
         TextView tvLastMessage;
+        @BindView(R.id.icRightArrow)
+        ImageView icRightArrow;
+        @BindView(R.id.ivDivider) ImageView ivDivider;
+        @BindView(R.id.rlChatInfo)
+        RelativeLayout rlChatInfo;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -254,11 +230,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 // set up switch to manage the different click listeners
                 switch (v.getId()) {
                     case R.id.btJoin:
-                        //TODO replace gabriel
                         if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                             removeEvent(currentUser.getObjectId(), event, btJoin);
+                            //onBindViewHolder(this, position);
                         } else {
                             joinEvent(currentUser.getObjectId(), event, btJoin);
+                            //onBindViewHolder(this, position);
                         }
                         break;
                     // if user presses viewholder, show more details of activity
@@ -291,12 +268,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         // set message_item.xml to AlertDialog builder
         alertDialogBuilder.setView(messageView);
-
         Log.i("DEBUGSHOW", event.participantsIds.toString());
-
         // Create alert dialog
         final AlertDialog alertDialog = alertDialogBuilder.create();
-
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
@@ -304,38 +278,30 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 if (isAlreadyInterested(currentUser.getObjectId(), event)) {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
-
                 } else {
                     alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, colorId));
                     alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
                 }
                 alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
-
                 // get views
                 TextView tvEventOwnerName = (TextView) alertDialog.findViewById(R.id.tvEventOwnerName);
                 TextView tvBody = (TextView) alertDialog.findViewById(R.id.tvBody);
                 TextView tvRelativeTime = (TextView) alertDialog.findViewById(R.id.tvRelativeTime);
                 ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
-
                 // populate views
                 tvEventOwnerName.setText('@' + event.getEventOwnerName());
                 tvBody.setText(event.getDescription());
                 tvRelativeTime.setText(event.getDeadline().toString());
-
                 //TODO upload image of event owner
-
                 Glide.with(context)
                         .load(event.user.profileImageUrl)
                         .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
                         .into(ivProfileImage);
-
             }
         });
-
         // Configure dialog button (OK)
         alertDialog.setButton(BUTTON_POSITIVE, "Join",
                 new DialogInterface.OnClickListener() {
-
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         //TODO get current user
@@ -347,7 +313,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         }
                     }
                 });
-
         // Configure dialog button (Cancel)
         alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
                 new DialogInterface.OnClickListener() {
@@ -355,7 +320,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         dialog.cancel();
                     }
                 });
-
         // Display the dialog
         alertDialog.show();
     } */
@@ -410,8 +374,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     ParsePush.subscribeInBackground(event.getEventId());
 
                     sendJoinedMessage(event.getEventId());
-
-
                 } else {
                     e.getMessage();
                 }
@@ -540,15 +502,15 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             try {
                 ParseUser user = ParseUser.getQuery().get(participants.get(friendIndex));
                 //if (!user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())) {
-                    Glide.with(context)
-                            .load(user.getString("profile_image_url").replace("_normal", ""))
-                            .bitmapTransform(new CropCircleTransformation(context))
-                            .into(view);
-                    return true;
-               // } else {
+                Glide.with(context)
+                        .load(user.getString("profile_image_url").replace("_normal", ""))
+                        .bitmapTransform(new CropCircleTransformation(context))
+                        .into(view);
+                return true;
+                // } else {
                 //    view.setVisibility(View.GONE);
-               //     return false;
-               // }
+                //     return false;
+                // }
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -568,7 +530,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         } else if (event.getCategory().equals("Food")) {
             return R.color.food_color;
         } else if (event.getCategory().equals("Music")) {
-            return R.color.explore_color;
+            return R.color.music_color;
         }
 
         return R.color.misc_color;
@@ -600,4 +562,42 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         return relativeDate;
     }
 
+    public void showLastMessage(final Event event, ViewHolder holder) {
+        ArrayList<String> participants = event.getParticipantsIds();
+        if (!participants.contains(currentUser.getObjectId())) {
+            holder.ivDivider.setVisibility(View.GONE);
+            holder.rlChatInfo.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.icRightArrow.setColorFilter(ContextCompat.getColor(context, findCorrectColor(event)));
+        holder.ivDivider.setVisibility(View.VISIBLE);
+        holder.rlChatInfo.setVisibility(View.VISIBLE);
+
+        try {
+            Message lastMessage = event.getParseObject("last_message_sent").fetch();
+            if (lastMessage.getBody() == null) {
+                throw new NullPointerException();
+            }
+            String name = lastMessage.getSenderName();
+            name = name.substring(0, name.indexOf(" "));
+            holder.tvLastMessage.setText(name + ": " + lastMessage.getBody());
+
+            String rawTime = (lastMessage.getCreatedDate().toString());
+            holder.tvLastMessageTime.setText(getRelativeTimeAgo(rawTime));
+        } catch (Exception e) {
+            holder.tvLastMessage.setText("Tap to chat");
+            holder.tvLastMessageTime.setVisibility(View.INVISIBLE);
+        }
+
+        holder.rlChatInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ChatActivity.class);
+                intent.putExtra("event_id", event.getEventId());
+                intent.putExtra("participants_ids", event.getParticipantsIds());
+                context.startActivity(intent);
+            }
+        });
+    }
 }

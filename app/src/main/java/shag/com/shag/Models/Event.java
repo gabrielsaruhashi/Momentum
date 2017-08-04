@@ -46,6 +46,7 @@ public class Event extends ParseObject implements Parcelable {
     public boolean isRecommendationMade;
     public String time;
     public ParseObject lastMessageSent;
+    public String eventTime;
 
 
     //CONSTRUCTORS
@@ -118,6 +119,15 @@ public class Event extends ParseObject implements Parcelable {
     public ParseGeoPoint getParseGeoPoint() {
         ParseGeoPoint toReturn = getParseGeoPoint("parse_geo_point");
         return toReturn;
+    }
+
+    public void setEventTimeString(String time) {
+        this.eventTime = time;
+        put("event_time_string", time);
+    }
+
+    public String getEventTimeString() {
+        return getString("event_time_string");
     }
 
     public ArrayList<String> getParticipantsIds() {
