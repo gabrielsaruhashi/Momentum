@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         // if new, show onboarding dialog
         if (isNew) {
             showOnboardingDialog();
+            isNew = false;
         }
 
         //add ability to open a specific fragment with intent data

@@ -24,6 +24,7 @@ import shag.com.shag.Models.Event;
 public class SmsReceiver extends BroadcastReceiver {
 
     private String TAG = SmsReceiver.class.getSimpleName();
+    ArrayList<String> participantsPhoneNumbers;
 
     public SmsReceiver() {
     }

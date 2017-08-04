@@ -53,7 +53,7 @@ public class OnboardingDialogFragment extends DialogFragment {
         String title = getArguments().getString("title");
         getDialog().setTitle(title);
         // Convert the fragment into the onboarding procedure
-        fragmentManager = getFragmentManager();
+        fragmentManager = getChildFragmentManager();
         final PaperOnboardingFragment onBoardingFragment = PaperOnboardingFragment.newInstance(getDataForOnboarding());
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
