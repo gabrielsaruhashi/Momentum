@@ -350,16 +350,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
                 SubscriptionHandling.HandleEventCallback<Message>() {
                     @Override
-                    public void onEvent(ParseQuery<Message> query, Message object) {
+                    public void onEvent(ParseQuery<Message> query, final Message object) {
                         String senderId = object.getSenderId();
                         String newEventId = object.getEventId();
 
                         if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
-                            mMessages.add(0, object);
                             // RecyclerView updates need to be run on the UI thread
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    mMessages.add(0, object);
                                     mAdapter.notifyDataSetChanged();
                                     rvChat.scrollToPosition(0);
 
