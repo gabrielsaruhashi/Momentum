@@ -122,7 +122,6 @@ public class LoginActivity extends AppCompatActivity {
             Intent i = new Intent(context, MainActivity.class);
             i.putExtra("isNew", isNew);
             // initialize recent friends and facebook friends 'global/app' variable
-            ParseUser currentUser = ParseApplication.getCurrentUser();
             //TODO refactor this
             ParseApplication.getRecentFriends();
             // get additional publishing permission
@@ -227,6 +226,7 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginSuccess();
                 } else {
                     user.getCurrentUser();
+                    isNew = false;
                     //TODO what is this line below for?
                     user.saveInBackground();
                     Log.d("MyApp", "User logged in through Facebook!");

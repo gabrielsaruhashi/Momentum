@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_main);
 
         // unwrap to see whether is new
-        isNew = getIntent().getBooleanExtra("isNew", true);
+        isNew = getIntent().getBooleanExtra("isNew", false);
 
         // if new, show onboarding dialog
         if (isNew) {

@@ -1,6 +1,7 @@
 package shag.com.shag.Activities;
 
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
@@ -21,10 +22,11 @@ public class ChatListActivity extends AppCompatActivity implements ChatListFragm
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(0xFFFFFFFF);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
         chatListFragment = (ChatListFragment) getSupportFragmentManager().findFragmentById(R.id.chatListFragment);
         toolbarTextView = (TextView) findViewById(R.id.tvToolbarText);
+        toolbarTextView.setTextColor(ContextCompat.getColor(this, R.color.white));
 
     }
     // add number of chats to toolbar

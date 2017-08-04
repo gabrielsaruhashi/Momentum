@@ -3,6 +3,7 @@ package shag.com.shag.Activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -73,7 +74,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_event_deadline);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(0xFFFFFFFF);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         tvCategory = (TextView) findViewById(R.id.tvCategory);
 
         currentUser = ParseApplication.getCurrentUser();
