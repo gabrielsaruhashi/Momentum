@@ -55,13 +55,12 @@
 
             <ImageButton
                 android:id="@+id/btSend"
-                android:layout_width="56dp"
+                android:layout_width="72dp"
                 android:layout_height="56dp"
                 android:layout_alignParentRight="true"
                 android:gravity="center"
                 android:src="@drawable/ic_rocket"
-                android:textSize="18sp">
-            </ImageButton>
+                android:textSize="18sp"></ImageButton>
         </RelativeLayout>
 
     </RelativeLayout>

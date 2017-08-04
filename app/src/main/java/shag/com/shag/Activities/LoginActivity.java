@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         ParseUser me = ParseApplication.getCurrentUser();
-        if (me != null) {
+        if (me != null && me.isAuthenticated()) {
             //ParseUser.logOut();
             onLoginSuccess();
 
