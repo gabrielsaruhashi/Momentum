@@ -40,7 +40,7 @@ public class FacebookClient {
                 callback).executeAsync();
     }
 
-    public void postFacebookAlbum(ArrayList<Integer> contributors, String albumName, GraphRequest.Callback callback) {
+    public void postFacebookAlbum(int[] contributors, String albumName, GraphRequest.Callback callback) {
         ParseUser user = ParseApplication.getCurrentUser();
         HashMap data = (HashMap) user.getMap("authData");
         HashMap facebookData = (HashMap) data.get("facebook");

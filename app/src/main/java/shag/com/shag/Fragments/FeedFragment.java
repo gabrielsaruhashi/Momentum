@@ -179,9 +179,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                             events.add(event);
                         }
                         //event.setRelevance(calculateEventRelevance(event));
-                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
-                            events.add(event);
-                        }
                     }
                     // sort events based on relevance
                     //Collections.sort(eventsList, new RelevanceComparator());
