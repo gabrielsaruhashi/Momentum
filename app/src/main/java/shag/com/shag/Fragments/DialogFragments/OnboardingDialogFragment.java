@@ -45,8 +45,6 @@ public class OnboardingDialogFragment extends DialogFragment {
         return inflater.inflate(R.layout.fragment_onboarding, container);
     }
 
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
