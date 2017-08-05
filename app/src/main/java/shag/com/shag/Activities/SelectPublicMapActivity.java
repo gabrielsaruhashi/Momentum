@@ -225,7 +225,8 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+        Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
 

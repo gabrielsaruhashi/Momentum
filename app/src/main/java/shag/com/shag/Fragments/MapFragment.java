@@ -176,10 +176,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                             final Double lng = event.getDouble("longitude");
                             final String timeOfEvent = event.getString("event_time_string");
                             LatLng latLng = new LatLng(lat, lng);
-
+                            Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
                             Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
                                     .position(latLng)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
 
 //                                    MarkerOptions markerOptions = new MarkerOptions();
 //                                    markerOptions.position(musicLatLng);
