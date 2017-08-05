@@ -335,7 +335,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         // include user pointer
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
 
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
@@ -393,7 +393,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         // include user pointer
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
 
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {

@@ -222,7 +222,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         //finding out if this is the first time the event has been creating
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
         query.include("last_message_sent");
 
         try {

@@ -388,7 +388,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
-        newEvent.put("User_event_owner", currentUser);
+        //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 /* delete later - decided not to use chatId
