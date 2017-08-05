@@ -1,9 +1,12 @@
-package shag.com.shag.Activities;
+package shag.com.shag.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.parse.FindCallback;
@@ -19,25 +22,26 @@ import shag.com.shag.Models.Memory;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-public class MemoriesActivity extends AppCompatActivity {
-    Context context;
+/**
+ * Created by gabesaruhashi on 7/14/17.
+ */
 
+public class MemoryBookList extends Fragment {
+
+    Context context;
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
-    ParseUser currentUser;
     ListView lvMemories;
 
+    ParseUser currentUser;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memories);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        context = this;
-
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        // inflate the layout
+        View v = inflater.inflate(R.layout.fragment_memory_book_list, container, false);
         // get our list view
-        lvMemories = (ListView) findViewById(R.id.lvMainList);
+        lvMemories = (ListView) v.findViewById(R.id.lvMainList);
 
         // instantiate memories and set adapter
         memories = new ArrayList<Memory>();
@@ -59,22 +63,12 @@ public class MemoriesActivity extends AppCompatActivity {
 
         // instantiate current user
         currentUser = ParseApplication.getCurrentUser();
-
-
-        // populate memory
         populateMemories();
-        /*
-        // set on click event listener to list view
-        lvMemories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                // toggle clicked cell state
-                ((FoldingCell) view).toggle(false);
-                // register in adapter that state for selected cell is toggled
-                mAdapter.registerToggle(pos);
-            }
-        }); */
+
+        return v;
     }
+
+
 
     private void populateMemories() {
         ParseQuery<Memory> query = ParseQuery.getQuery("Memory");
@@ -88,16 +82,16 @@ public class MemoriesActivity extends AppCompatActivity {
         query.findInBackground(new FindCallback<Memory>() {
             @Override
             public void done(List<Memory> objects, ParseException e) {
-            if (e == null) {
-                memories.clear();
-                memories.addAll(objects);
-                mAdapter.notifyDataSetChanged();
+                if (e == null) {
+                    memories.clear();
+                    memories.addAll(objects);
+                    mAdapter.notifyDataSetChanged();
 
 
-            } else {
-                e.getMessage();
-            }
-        };
+                } else {
+                    e.getMessage();
+                }
+            };
     /*
     ArrayList<ParseObject> memoriesList = (ArrayList) currentUser.getList("Memories_list");
     //for (ParseObject memory : memoriesList) {
@@ -122,8 +116,10 @@ public class MemoriesActivity extends AppCompatActivity {
                 rvMemories.smoothScrollToPosition(0);
             }
         });*/
-    });
+        });
 
 
     }
+
+
 }

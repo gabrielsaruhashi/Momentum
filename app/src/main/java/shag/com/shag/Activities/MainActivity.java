@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setupTabIcons();
 
         // check for all permissions needed
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     /*
     public void onMemoriesView(MenuItem item) {
         //launch profile view
-        Intent i = new Intent(this, MemoriesActivity.class);
+        Intent i = new Intent(this, MemoriesFragment.class);
         startActivity(i);
     } */
 

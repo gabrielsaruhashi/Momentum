@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -131,7 +130,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     private String currentUserId;
 
     private DrawerLayout drawerLayout;
-    private ActionBarDrawerToggle actionBarDrawerToggle;
     private Button submitPoll;
     private boolean isEventNew;
     private boolean isEventPrivate;
@@ -177,7 +175,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
         currentUser = ParseApplication.getCurrentUser();
@@ -311,7 +309,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         }
                         while (cursor.moveToNext() && cursor.getPosition() < cursor.getCount() - 1);
                     }
-                    cursor.close();
+                    //cursor.close();
                     // cursor.close
                 }
             }

@@ -23,6 +23,7 @@
             tools:context="com.example.mapwithmarker.MapsMarkerActivity"
             android:layout_weight="0.95" />
 
+
     </LinearLayout>
 
 

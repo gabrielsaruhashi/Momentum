@@ -3,7 +3,10 @@ package shag.com.shag.Fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,46 +21,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shag.com.shag.Adapters.MemoriesAdapter;
+import shag.com.shag.Adapters.MemoryFragmentPagerAdapter;
 import shag.com.shag.Models.Memory;
-import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-/**
- * Created by gabesaruhashi on 8/2/17.
- */
+public class MemoriesFragment extends Fragment {
 
-public class MemoryListFragment extends Fragment {
+    ViewPager mViewPager;
+    TabLayout tabLayout;
+    private FragmentManager fragmentManager;
+
     Context context;
-
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
     ListView lvMemories;
 
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_memory_book_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_memories, container, false);
 
         // get our list view
-        lvMemories = (ListView) v.findViewById(R.id.lvMainList);
+        //lvMemories = (ListView) v.findViewById(R.id.lvMainList);
         context = getContext();
 
-        // instantiate memories and set adapter
-        memories = new ArrayList<Memory>();
+        mViewPager = (ViewPager) v.findViewById(R.id.view_pager);
+        mViewPager.setAdapter(new MemoryFragmentPagerAdapter(getFragmentManager(), context));
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tabber);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        // set adapter
-        mAdapter = new MemoriesAdapter(context, memories);
-
-        // set elements to adapter
-        lvMemories.setAdapter(mAdapter);
-
-        // instantiate current user
-        currentUser = ParseApplication.getCurrentUser();
-
-        // populate memory
-        populateMemories();
+        tabLayout.setSelectedTabIndicatorHeight(2);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_food);
 
         return v;
     }
@@ -74,16 +73,16 @@ public class MemoryListFragment extends Fragment {
         query.findInBackground(new FindCallback<Memory>() {
             @Override
             public void done(List<Memory> objects, ParseException e) {
-                if (e == null) {
-                    memories.clear();
-                    memories.addAll(objects);
-                    mAdapter.notifyDataSetChanged();
+            if (e == null) {
+                memories.clear();
+                memories.addAll(objects);
+                mAdapter.notifyDataSetChanged();
 
 
-                } else {
-                    e.getMessage();
-                }
-            };
+            } else {
+                e.getMessage();
+            }
+        };
     /*
     ArrayList<ParseObject> memoriesList = (ArrayList) currentUser.getList("Memories_list");
     //for (ParseObject memory : memoriesList) {
@@ -108,7 +107,7 @@ public class MemoryListFragment extends Fragment {
                 rvMemories.smoothScrollToPosition(0);
             }
         });*/
-        });
+    });
 
 
     }
