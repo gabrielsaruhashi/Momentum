@@ -61,7 +61,6 @@ public class ImageAdapter extends BaseAdapter {
         final String imageUrl = memoryPictures.get(position).getUrl();
         Glide.with(mContext)
                 .load(imageUrl)
-                .override(110, 110)
                 .centerCrop()
                 .into(ivImage);
 
@@ -69,7 +68,7 @@ public class ImageAdapter extends BaseAdapter {
         final String uploaderPicture = userImageUrls.get(position);
         Glide.with(mContext)
                 .load(uploaderPicture)
-                .fitCenter()
+                .centerCrop()
                 .bitmapTransform(new CropCircleTransformation(mContext))
                 .into(ivUploaderPicture);
 
