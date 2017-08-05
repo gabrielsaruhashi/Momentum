@@ -1,6 +1,5 @@
 package shag.com.shag.Adapters;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,7 +15,7 @@ import com.parse.ParseFile;
 
 import java.util.ArrayList;
 
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import shag.com.shag.R;
 
 /**
@@ -53,9 +52,6 @@ public class ImageAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = LayoutInflater.from(mContext).
                     inflate(R.layout.item_memory_detail_gridview, parent, false);
-            // get current item to be displayed
-            ClipData.Item currentItem = (ClipData.Item) getItem(position);
-
         }
 
         ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
@@ -65,15 +61,16 @@ public class ImageAdapter extends BaseAdapter {
         final String imageUrl = memoryPictures.get(position).getUrl();
         Glide.with(mContext)
                 .load(imageUrl)
+                .override(110, 110)
+                .centerCrop()
                 .into(ivImage);
 
         // populate user uploader picture
         final String uploaderPicture = userImageUrls.get(position);
         Glide.with(mContext)
                 .load(uploaderPicture)
-                .override(120, 120)
                 .fitCenter()
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 10))
+                .bitmapTransform(new CropCircleTransformation(mContext))
                 .into(ivUploaderPicture);
 
         // upon click, initiate dialog fragment through interface

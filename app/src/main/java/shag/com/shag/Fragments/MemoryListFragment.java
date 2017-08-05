@@ -159,13 +159,15 @@ public class MemoryListFragment extends Fragment {
 
 
     public void changeCoverPictureUrl(Intent data) {
-        int position = data.getIntExtra("position", 0);
-        String newCoverPictureUrl = data.getStringExtra("pictureCoverUrl");
+        if (data != null) {
+            int position = data.getIntExtra("position", 0);
+            String newCoverPictureUrl = data.getStringExtra("pictureCoverUrl");
 
-        Memory memory = memories.get(position);
-        memory.setCoverPictureUrl(newCoverPictureUrl);
-        mAdapter.notifyDataSetChanged();
+            Memory memory = memories.get(position);
+            memory.setCoverPictureUrl(newCoverPictureUrl);
+            mAdapter.notifyDataSetChanged();
 
-        Toast.makeText(context, "Your album was updated!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Your album was updated!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

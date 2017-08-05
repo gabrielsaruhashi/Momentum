@@ -14,8 +14,8 @@
 
     <ImageView
         android:id="@+id/ivUploaderPicture"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_margin="4dp"
         android:layout_alignBottom="@+id/ivImage"
         android:layout_alignEnd="@+id/ivImage"

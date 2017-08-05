@@ -180,7 +180,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                         if (event.getDeadline().getTime() > (new Date()).getTime()) {
                             events.add(event);
                         }
-                        event.setRelevance(calculateEventRelevance(event));
+                        event.setRelevance(calculateEventRelevance(event, currentUser));
                         Log.i("FEED_RELEVANCE", event.getDescription() + " has relevance: " + event.getRelevance());
                     }
                     // sort events based on relevance
