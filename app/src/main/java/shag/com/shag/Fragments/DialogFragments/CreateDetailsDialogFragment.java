@@ -164,7 +164,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                 hm.put(category, oldCounter + 1);
                 currentUser.put("categories_tracker", hm);
 
-                newEvent.put("User_event_owner", currentUser);
+                //newEvent.put("User_event_owner", currentUser);
                 Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 FacebookClient client = ParseApplication.getFacebookRestClient();

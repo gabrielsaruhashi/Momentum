@@ -58,12 +58,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             isNew = false;
         }
 
-        //add ability to open a specific fragment with intent data
-        int position = 0;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            position = extras.getInt("viewpager_position");
-        }
+        int position = getIntent().getIntExtra("viewpager_position", 0);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -80,7 +75,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setupTabIcons();
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        //setupTabIcons();
 
         // check for all permissions needed
         if(!hasPermissions(this, PERMISSIONS)){
@@ -92,7 +88,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
     }
 
 
