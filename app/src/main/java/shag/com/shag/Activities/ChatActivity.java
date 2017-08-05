@@ -1114,8 +1114,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     public void onBackPressed() {
         //need to re-load chats if user opened a push
         if (openedPush) {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("viewpager_position", 2);
+            Intent intent = new Intent(this, ChatListActivity.class);
             context.startActivity(intent);
         } else {
             super.onBackPressed(); //otherwise follow regular life cycle

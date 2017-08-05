@@ -109,10 +109,14 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 jsonObject = new JSONObject(jsonData);
                 String eventID = jsonObject.getString("event_id");
+                String title = jsonObject.getString("title");
                 if (eventID != null) {
                     Intent i = new Intent(context, ChatActivity.class);
-                    //TODO ad
                     i.putExtra("event_id", eventID);
+                    context.startActivity(i);
+                } else if (title.equals("Event Reminder")) {
+                    Intent i = new Intent(context, MainActivity.class);
+                    i.putExtra("viewpager_position", 1);
                     context.startActivity(i);
                 }
             } catch (JSONException e) {

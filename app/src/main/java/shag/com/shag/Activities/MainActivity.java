@@ -57,12 +57,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             isNew = false;
         }
 
-        //add ability to open a specific fragment with intent data
-        int position = 0;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            position = extras.getInt("viewpager_position");
-        }
+        int position = getIntent().getIntExtra("viewpager_position", 0);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = (ViewPager) findViewById(R.id.viewpager);
