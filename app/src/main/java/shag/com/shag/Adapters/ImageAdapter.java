@@ -71,7 +71,9 @@ public class ImageAdapter extends BaseAdapter {
         final String uploaderPicture = userImageUrls.get(position);
         Glide.with(mContext)
                 .load(uploaderPicture)
-                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .override(120, 120)
+                .fitCenter()
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 25, 10))
                 .into(ivUploaderPicture);
 
         // upon click, initiate dialog fragment through interface

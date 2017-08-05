@@ -120,7 +120,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         pictures = memory.getPicturesParseFiles();
 
         // instantiate userImageUrls. If there are no picture, instantiate new array list
-        userImageUrls = (pictures == null) ? new ArrayList<String>() : memory.getUserImageUrls();
+        userImageUrls = (pictures == null || pictures.size() == 0) ?
+                new ArrayList<String>() : memory.getUserImageUrls();
 
         // support variable to check whether user added pictures
         initialNumberOfPictures = pictures.size();
