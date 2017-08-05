@@ -21,6 +21,7 @@ import com.ramotion.paperonboarding.PaperOnboardingFragment;
 
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
+import shag.com.shag.Fragments.MemoryListFragment;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -129,6 +130,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         startActivity(i);
     }
 
+    // on activity result for memory list fragment
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+        memoryListFragment.changeCoverPictureUrl(data);
+    }
 
     @Override
     protected void onDestroy() {

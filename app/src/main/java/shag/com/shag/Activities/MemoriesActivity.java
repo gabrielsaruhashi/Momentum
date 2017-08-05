@@ -19,6 +19,9 @@ import shag.com.shag.Models.Memory;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
+/* NOT BEING USED
+* */
+
 public class MemoriesActivity extends AppCompatActivity {
     Context context;
 
@@ -75,6 +78,8 @@ public class MemoriesActivity extends AppCompatActivity {
             }
         }); */
     }
+
+
 
     private void populateMemories() {
         ParseQuery<Memory> query = ParseQuery.getQuery("Memory");

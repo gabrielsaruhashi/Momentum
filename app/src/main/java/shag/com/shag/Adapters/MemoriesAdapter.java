@@ -32,6 +32,7 @@ import shag.com.shag.R;
 public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     private Context mContext;
+    private final static int REQUEST_OPEN_MEMORIES = 10;
 
 
     public MemoriesAdapter(Context context, List<Memory> objects) {
@@ -40,7 +41,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
     }
 
     @Override
-    public View getView(int position, final View convertView, ViewGroup parent) {
+    public View getView(final int position, final View convertView, ViewGroup parent) {
         final Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
         View contactView = inflater.inflate(R.layout.cell_title_layout, parent, false);
@@ -63,20 +64,22 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
                 .centerCrop()
                 .into(viewHolder.ivCoverPicture);
 
+        // set on click listener to open detailed view of memory
         contactView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(mContext, MemoryDetailsActivity.class);
                 i.putExtra(Memory.class.getSimpleName(), memory.getMemoryId());
+                // pass position to update the right memory when detail activity finishes
+                i.putExtra("position", position);
                 ActivityOptionsCompat options = ActivityOptionsCompat.
                         makeSceneTransitionAnimation((Activity) mContext, (View) viewHolder.ivCoverPicture, "memoryDetail");
-                mContext.startActivity(i, options.toBundle());
+                ((Activity) mContext).startActivityForResult(i, REQUEST_OPEN_MEMORIES, options.toBundle());
             }
         });
 
         // if participants
         ArrayList<String> participants = memory.getParticipantsIds();
-
 
         if (participants.size() > 1) {
             try {
@@ -125,17 +128,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     // View lookup cache
     public class ViewHolder {
-        /*
-        ImageView ivMemoryBannerPicture;
-        TextView tvMemoryName;
-        TextView vPalette;
-        Button btnAccessMemory;
-        ImageView ivTitle;
 
-        // dummy data
-        ImageView fakeFriend1;
-        ImageView fakeFriend2;
-        ImageView fakeFriend3; */
 
         @BindView(R.id.tvMemoryName) TextView tvMemoryName;
         @BindView(R.id.ivCoverPicture) ImageView ivCoverPicture;

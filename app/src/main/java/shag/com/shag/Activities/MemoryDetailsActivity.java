@@ -82,6 +82,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private ArrayList<String> userPicturesIds;
     private Handler handler;
     private Runnable Update;
+    private int adapterPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // TODO pass entire memory instead
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
+        adapterPosition = getIntent().getIntExtra("position", 0);
 
         // instantiate client and facebook permission set
         fbClient = ParseApplication.getFacebookRestClient();
@@ -109,6 +111,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         participantsIds = memory.getParticipantsIds();
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
+        // support variable to check whether user added pictures
+        initialNumberOfPictures = pictures.size();
         // initialize user pictures for the parse live query
         userPicturesIds = new ArrayList<String>();
 
@@ -415,9 +419,16 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
             // query for the event, and update it with the last picture uploaded
             // if user hasnt yet created an album, but has uploaded pictures
-            if (facebookAlbumId == 0 && pictures.size() > 0) {
+            if (facebookAlbumId == 0 && pictures.size() > 0 && memory.getCoverPictureUrl() == null) {
                 memory.setCoverPictureUrl(pictures.get(0).getUrl());
                 memory.saveInBackground();
+                // return intent to update local memory album
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("pictureCoverUrl",pictures.get(0).getUrl());
+                returnIntent.putExtra("position", adapterPosition);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+
             } else if (facebookAlbumId != 0) { // else query for the facebook pictures, and get the one that has the most amount of likes
                 fbClient.getAlbumPhotos(facebookAlbumId, new GraphRequest.Callback() {
                     @Override
@@ -482,6 +493,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             // save
                             memory.saveInBackground();
 
+                            // stop counter thread (not working rn)
                             handler.removeCallbacks(Update);
 
                         } catch (JSONException e) {
@@ -520,6 +532,14 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
     @Override
     public void onBackPressed() {
+        if (memory.getCoverPictureUrl() == null && memory.getPicturesParseFiles().size() > 0) {
+            // return intent to update local memory album
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("pictureCoverUrl",pictures.get(0).getUrl());
+            returnIntent.putExtra("position", adapterPosition);
+            setResult(Activity.RESULT_OK, returnIntent);
+        }
+
         supportFinishAfterTransition();
     }
 
