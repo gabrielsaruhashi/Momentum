@@ -75,7 +75,7 @@
         <activity android:name=".Activities.UserProfileActivity" />
         <activity android:name=".Activities.SettingsActivity" />
         <activity android:name=".Activities.ChatActivity" />
-        <activity android:name=".Activities.MemoriesActivity" />
+        <activity android:name=".Fragments.MemoriesFragment" />
         <activity android:name=".Activities.PublicEventDetailsActivity" />
         <activity
             android:name=".Activities.SelectEventCategoryActivity"

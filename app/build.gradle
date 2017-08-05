@@ -70,7 +70,9 @@ dependencies {
     // folding effect for memories
     // circle indicator for slideshow
 
-
+    // multipicker
+    // onboarding
+    // gmail style icon
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -101,12 +103,12 @@ dependencies {
     compile 'org.jcodec:jcodec-android:0.1.9'
     compile 'me.relex:circleindicator:1.2.2@aar'
     compile 'com.google.guava:guava:22.0-android'
+    compile 'com.kbeanie:multipicker:1.1.31@aar'
+    compile 'com.ramotion.paperonboarding:paper-onboarding:1.1.1'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
-    compile 'com.kbeanie:multipicker:1.1.31@aar' // multipicker
-    compile 'com.ramotion.paperonboarding:paper-onboarding:1.1.1' // onboarding
-    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1' // gmail style icon
 }
 
 // for GMS notifications
