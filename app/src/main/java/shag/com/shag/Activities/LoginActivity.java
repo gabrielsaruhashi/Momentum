@@ -206,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject userJSON = response.getJSONObject();
                             // initialize properties for new user
                             try {
+                                fbUid = userJSON.getLong("id");
                                 name = userJSON.getString("name");
                                 // fbUid = userJSON.getLong("id");
                                 profileImageUrl = userJSON.getJSONObject("picture")
@@ -215,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             CustomUser newCustomUser = new CustomUser(user);
+                            newCustomUser.setSomeLong("fbid", fbUid);
                             newCustomUser.setSomeString("name", name);
                             newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                             newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());

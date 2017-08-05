@@ -233,10 +233,10 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     }
 
     // returns the relevance of a specific event in the timeline
-    public Double calculateEventRelevance(Event event) {
+    public static Double calculateEventRelevance(Event event, ParseUser user) {
         // get relevant information for recommendation algorithm
-        HashMap<String, Integer> recentFriendsMap = ParseApplication.getRecentFriends();
-        HashMap<String, List<Object>> categoriesTracker = (HashMap) currentUser.getMap("categories_tracker");
+        HashMap<String, Integer> recentFriendsMap = (HashMap) user.getMap("recent_friends_map");
+        HashMap<String, List<Object>> categoriesTracker = (HashMap) user.getMap("categories_tracker");
 
         // get the chill coefficient based on the user's profile
         Double chillCoefficient = getChillCoefficient(event.getCategory(), categoriesTracker);
@@ -245,7 +245,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         return relevanceCoefficient;
     }
 
-    public Double getChillCoefficient(String input, HashMap<String, List<Object>> hm) {
+    public static Double getChillCoefficient(String input, HashMap<String, List<Object>> hm) {
 
         // get the raw counter for the specific input key, if it exists
         int rawInterest = (hm.get(input).get(0) != null) ? (int) hm.get(input).get(0) : 0;
@@ -262,7 +262,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         return (totalCounter > 0) ? rawInterest / totalCounter : Double.valueOf(0);
     }
 
-    public Double getClosenessCoefficient(String input, HashMap hm) {
+    public static Double getClosenessCoefficient(String input, HashMap hm) {
         // get the raw counter for the specific input key, if it exists
         int rawInterest = (hm.get(input) != null) ? (int) hm.get(input) : 0;
         double totalCounter = 0;

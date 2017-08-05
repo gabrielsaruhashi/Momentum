@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
@@ -148,7 +147,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // load user profile image using glide
         Glide.with(context)
                 .load(url)
-                .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                .bitmapTransform(new CropCircleTransformation(context))
                 .into(holder.ivProfileImage);
 
         ArrayList<String> participants = event.getParticipantsIds();
