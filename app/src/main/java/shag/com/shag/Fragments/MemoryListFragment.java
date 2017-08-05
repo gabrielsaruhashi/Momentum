@@ -77,12 +77,8 @@ public class MemoryListFragment extends Fragment {
 
         ParseQuery<Memory> parseQuery = ParseQuery.getQuery(Memory.class);
         // create the query condition
-        //TODO fix this query
-        /*
-        List list = new ArrayList();
-        list.add(currentUser.getObjectId());
-        parseQuery.whereContainedIn("participants_ids", list);
-        */
+        //parseQuery.whereContainedIn("participants_ids", Arrays.asList(currentUser.getObjectId()));
+
 
 
         // Connect to Parse server
@@ -93,7 +89,7 @@ public class MemoryListFragment extends Fragment {
                 SubscriptionHandling.HandleEventCallback<Memory>() {
                     @Override
                     public void onEvent(ParseQuery<Memory> query, final Memory object) {
-
+                        if (object.getParticipantsIds().contains(currentUser.getObjectId())) {
                             getActivity().runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -103,6 +99,7 @@ public class MemoryListFragment extends Fragment {
 
                                 }
                             });
+                        }
                     }
 
 
@@ -123,7 +120,7 @@ public class MemoryListFragment extends Fragment {
             public void done(List<Memory> objects, ParseException e) {
                 if (e == null) {
                     memories.clear();
-                    memories.addAll(objects);
+                    memories.addAll(0, objects);
                     mAdapter.notifyDataSetChanged();
 
 

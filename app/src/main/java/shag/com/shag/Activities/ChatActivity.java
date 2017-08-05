@@ -161,10 +161,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        setupLiveQueires();
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         //TODO check if this is working
         tvConflict = (TextView) findViewById(R.id.tvConflict);
-      currentUser = ParseApplication.getCurrentUser();
+        currentUser = ParseApplication.getCurrentUser();
 
 //        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close) {
 //            public void onDrawerOpened(View drawerView) {
@@ -337,7 +339,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 recommendRestaurant();
             }
 
-            setupLiveQueires();
+
         }
     }
 
@@ -352,6 +354,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // Connect to Parse server
         SubscriptionHandling<Message> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
 
         // Listen for CREATE events
         subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new
@@ -384,14 +387,15 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
             @Override
             public void onEvent(ParseQuery<Poll> query, Poll object) {
+                Log.i("LIVEQUERY_POLL_CREATE", object.getQuestion() + "from: " + object.getObjectId());
                 String senderId = (String) object.get("poll_creator_id");
                 if (senderId != null) {
                     String newEventId = object.getEventId();
                     polls.add(object);
 
-//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-//                        polls.add(object);
-//                    }
+                if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+                   polls.add(object);
+                }
 
                     // RecyclerView updates need to be run on the UI thread
                     runOnUiThread(new Runnable() {
@@ -406,9 +410,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 String newEventId = object.getEventId();
                 polls.add(object);
 
-//                    if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
-//                        polls.add(object);
-//                    }
+                   if (!senderId.equals(currentUserId) && eventId.equals(newEventId)) {
+                        polls.add(object);
+                   }
 
                 // RecyclerView updates need to be run on the UI thread
                 runOnUiThread(new Runnable() {
@@ -426,6 +430,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         pollSubscriptionHandling.handleEvent(SubscriptionHandling.Event.UPDATE, new SubscriptionHandling.HandleEventCallback<Poll>() {
             @Override
             public void onEvent(ParseQuery<Poll> query, Poll object) {
+                Log.i("LIVEQUERY_POLL_UPDATE", object.getQuestion() + "from: " + object.getObjectId());
+
                 int pos = -1;
                 if (object.getPollType().equals("Time")) {
                     pos = 0;
@@ -462,6 +468,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             }
 
         });
+
 
     }
 
