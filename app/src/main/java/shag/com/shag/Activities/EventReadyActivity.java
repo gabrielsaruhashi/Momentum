@@ -652,8 +652,8 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                 markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 Marker marker = mGoogleMap.addMarker(markerOptions);
                 markerList.add(marker);
+                i++;
             }
-            i++;
         }
     }
 
