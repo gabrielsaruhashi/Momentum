@@ -22,9 +22,7 @@ import shag.com.shag.Models.Memory;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-/**
- * Created by gabesaruhashi on 7/14/17.
- */
+
 
 public class MemoryBookList extends Fragment {
 

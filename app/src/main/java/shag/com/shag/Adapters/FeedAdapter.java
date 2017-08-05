@@ -39,7 +39,6 @@ import java.util.concurrent.TimeUnit;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Activities.ChatActivity;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
@@ -109,7 +108,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         //TODO: change categories
         if (event.getCategory().equals("Chill")) {
-            holder.ivCategory.setImageResource(R.drawable.ic_chill);
+            holder.ivCategory.setImageResource(R.drawable.ic_iying_down);
             holder.ivCategory.setBackgroundResource(R.drawable.chill_circle);
         } else if (event.getCategory().equals("Sports")) {
             holder.ivCategory.setImageResource(R.drawable.ic_sports);
@@ -148,7 +147,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // load user profile image using glide
         Glide.with(context)
                 .load(url)
-                .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
+                .bitmapTransform(new CropCircleTransformation(context))
                 .into(holder.ivProfileImage);
 
         ArrayList<String> participants = event.getParticipantsIds();
@@ -335,7 +334,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         // include user pointer
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
 
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {
@@ -393,7 +392,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // specify which class to query
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
         // include user pointer
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
 
         // return object with specific id
         query.getInBackground(event.getEventId(), new GetCallback<ParseObject>() {

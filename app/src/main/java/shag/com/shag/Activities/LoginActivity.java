@@ -73,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         ParseUser me = ParseApplication.getCurrentUser();
-        if (me != null) {
+        if (me != null && me.isAuthenticated()) {
             //ParseUser.logOut();
             onLoginSuccess();
 
@@ -109,10 +109,14 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 jsonObject = new JSONObject(jsonData);
                 String eventID = jsonObject.getString("event_id");
+                String title = jsonObject.getString("title");
                 if (eventID != null) {
                     Intent i = new Intent(context, ChatActivity.class);
-                    //TODO ad
                     i.putExtra("event_id", eventID);
+                    context.startActivity(i);
+                } else if (title.equals("Event Reminder")) {
+                    Intent i = new Intent(context, MainActivity.class);
+                    i.putExtra("viewpager_position", 1);
                     context.startActivity(i);
                 }
             } catch (JSONException e) {
@@ -122,7 +126,6 @@ public class LoginActivity extends AppCompatActivity {
             Intent i = new Intent(context, MainActivity.class);
             i.putExtra("isNew", isNew);
             // initialize recent friends and facebook friends 'global/app' variable
-            ParseUser currentUser = ParseApplication.getCurrentUser();
             //TODO refactor this
             ParseApplication.getRecentFriends();
             // get additional publishing permission
@@ -203,6 +206,7 @@ public class LoginActivity extends AppCompatActivity {
                             JSONObject userJSON = response.getJSONObject();
                             // initialize properties for new user
                             try {
+                                fbUid = userJSON.getLong("id");
                                 name = userJSON.getString("name");
                                 // fbUid = userJSON.getLong("id");
                                 profileImageUrl = userJSON.getJSONObject("picture")
@@ -212,6 +216,7 @@ public class LoginActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             CustomUser newCustomUser = new CustomUser(user);
+                            newCustomUser.setSomeLong("fbid", fbUid);
                             newCustomUser.setSomeString("name", name);
                             newCustomUser.setSomeString("profile_image_url", profileImageUrl);
                             newCustomUser.setSomeStringArray("memories_ids", new ArrayList<String>());
@@ -227,6 +232,7 @@ public class LoginActivity extends AppCompatActivity {
                     onLoginSuccess();
                 } else {
                     user.getCurrentUser();
+                    isNew = false;
                     //TODO what is this line below for?
                     user.saveInBackground();
                     Log.d("MyApp", "User logged in through Facebook!");

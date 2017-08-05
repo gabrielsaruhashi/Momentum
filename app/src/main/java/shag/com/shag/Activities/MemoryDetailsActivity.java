@@ -82,6 +82,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private ArrayList<String> userPicturesIds;
     private Handler handler;
     private Runnable Update;
+    private int adapterPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // TODO pass entire memory instead
         // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
+        adapterPosition = getIntent().getIntExtra("position", 0);
 
         // instantiate client and facebook permission set
         fbClient = ParseApplication.getFacebookRestClient();
@@ -109,6 +111,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         participantsIds = memory.getParticipantsIds();
         // initialize pictures, adapter and gridView
         pictures = memory.getPicturesParseFiles();
+        // support variable to check whether user added pictures
+        initialNumberOfPictures = pictures.size();
         // initialize user pictures for the parse live query
         userPicturesIds = new ArrayList<String>();
 
@@ -116,7 +120,6 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         imageAdapter = new ImageAdapter(this, pictures);
 
         // for shared animation
-
         sliderAdapter = new ImageSliderAdapter(MemoryDetailsActivity.this, pictures);
 
         // get gridview
@@ -332,7 +335,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
             // retrieve a collection of selected images
             ClipData clipData = data.getClipData();
-
+            final ArrayList<ParseFile> userUploadedPictures = new ArrayList<>();
             // iterate over these images
             if (clipData != null ) {
                 for (int i = 0; i < clipData.getItemCount(); i++) {
@@ -345,35 +348,40 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
                         // save uploaded picture to the cloud as a parsefile
                         final ParseFile file = new ParseFile("image.JPEG", image);
+
+                        // add to array
+                        userUploadedPictures.add(file);
+
                         // keep track of files uploaded by user
                         userPicturesIds.add(file.getName());
 
                         file.saveInBackground();
 
-                        // update database
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
-                        query.getInBackground(memoryId, new GetCallback<ParseObject>() {
-                             @Override
-                             public void done(ParseObject updatedMemory, ParseException e) {
-                                 if (e == null) {
-                                     // update pictures
-                                     // update local array
-                                     pictures.add(file);
-                                     imageAdapter.notifyDataSetChanged();
-                                     sliderAdapter.notifyDataSetChanged();
-                                     indicator.setViewPager(mPager);
-
-                                     updatedMemory.put("pictures_parse_files", pictures);
-                                     updatedMemory.saveInBackground();
-                                 } else {
-                                     e.getMessage();
-                                 }
-                             }
-                         });
                     } catch (IOException e) {
                         e.getMessage();
                     }
                 }
+
+                // after going through all the picture, update database
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Memory");
+                query.getInBackground(memoryId, new GetCallback<ParseObject>() {
+                    @Override
+                    public void done(ParseObject updatedMemory, ParseException e) {
+                        if (e == null) {
+                            // update pictures
+                            // update local array
+                            pictures.addAll(userUploadedPictures);
+                            imageAdapter.notifyDataSetChanged();
+                            sliderAdapter.notifyDataSetChanged();
+                            indicator.setViewPager(mPager);
+
+                            updatedMemory.put("pictures_parse_files", pictures);
+                            updatedMemory.saveInBackground();
+                        } else {
+                            e.getMessage();
+                        }
+                    }
+                });
         }
 
         } else if (resultCode == Activity.RESULT_CANCELED) { // in case user cancels selection
@@ -411,9 +419,16 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
             // query for the event, and update it with the last picture uploaded
             // if user hasnt yet created an album, but has uploaded pictures
-            if (facebookAlbumId == 0 && pictures.size() > 0) {
+            if (facebookAlbumId == 0 && pictures.size() > 0 && memory.getCoverPictureUrl() == null) {
                 memory.setCoverPictureUrl(pictures.get(0).getUrl());
                 memory.saveInBackground();
+                // return intent to update local memory album
+                Intent returnIntent = new Intent();
+                returnIntent.putExtra("pictureCoverUrl",pictures.get(0).getUrl());
+                returnIntent.putExtra("position", adapterPosition);
+                setResult(Activity.RESULT_OK, returnIntent);
+                finish();
+
             } else if (facebookAlbumId != 0) { // else query for the facebook pictures, and get the one that has the most amount of likes
                 fbClient.getAlbumPhotos(facebookAlbumId, new GraphRequest.Callback() {
                     @Override
@@ -478,6 +493,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             // save
                             memory.saveInBackground();
 
+                            // stop counter thread (not working rn)
                             handler.removeCallbacks(Update);
 
                         } catch (JSONException e) {
@@ -516,6 +532,14 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
     @Override
     public void onBackPressed() {
+        if (memory.getCoverPictureUrl() == null && memory.getPicturesParseFiles().size() > 0) {
+            // return intent to update local memory album
+            Intent returnIntent = new Intent();
+            returnIntent.putExtra("pictureCoverUrl",pictures.get(0).getUrl());
+            returnIntent.putExtra("position", adapterPosition);
+            setResult(Activity.RESULT_OK, returnIntent);
+        }
+
         supportFinishAfterTransition();
     }
 

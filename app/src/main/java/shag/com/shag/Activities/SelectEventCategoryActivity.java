@@ -2,6 +2,7 @@ package shag.com.shag.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -22,7 +23,7 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(0xFFFFFFFF);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
 
     }

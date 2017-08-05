@@ -102,7 +102,7 @@ public class ChatListFragment extends Fragment {
         List list = new ArrayList();
         list.add(userId);
         query.whereContainedIn("participants_id", list);
-        query.include("User_event_owner");
+        //query.include("User_event_owner");
         query.include("last_message_sent");
         query.findInBackground(new FindCallback<Event>() {
             @Override
@@ -208,7 +208,7 @@ public class ChatListFragment extends Fragment {
                         String newEventId = object.getEventId();
                         if (eventIds.contains(newEventId)) {
                             ParseQuery<Event> eventQuery = ParseQuery.getQuery(Event.class);
-                            eventQuery.include("User_event_owner");
+                            //eventQuery.include("User_event_owner");
                             eventQuery.include("last_message_sent");
                             try {
                                 Event event = eventQuery.get(newEventId);

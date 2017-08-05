@@ -147,7 +147,14 @@ public class Event extends ParseObject implements Parcelable {
     // TODO Fix this
     public ParseUser getEventOwner() {
         //return User.fromParseObject(getParseObject("event_owner_name"));
-        return getParseUser("User_event_owner");
+        //return getParseUser("User_event_owner");
+        try {
+            ParseUser owner = ParseUser.getQuery().get(getEventOwnerId());
+            return owner;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public Date getTimeOfEvent() {
@@ -268,6 +275,10 @@ public class Event extends ParseObject implements Parcelable {
         put("event_owner_id", eventOwnerId);
     }
 
+    public String getEventOwnerId() {
+        return getString("event_owner_id");
+    }
+
     //TODO: when this is called, update alarm to 24 hours after timeOfEvent
     public void setTimeOfEvent(Date timeOfEvent) {
         this.timeOfEvent = timeOfEvent;
@@ -366,13 +377,13 @@ public class Event extends ParseObject implements Parcelable {
 
         // fetch event owner
         //TODO this runs slowly, try to figure out how to make it faster (this is also why chats take so long)
-        try {
-            ParseObject user = object.getParseObject("User_event_owner").fetch();
-            // user found! Convert it to a user model
-            User eventOwner = User.fromParseObject(user);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            //ParseObject user = object.getParseObject("User_event_owner").fetch();
+//            // user found! Convert it to a user model
+//            //User eventOwner = User.fromParseObject(user);
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
 
         return event;
     }

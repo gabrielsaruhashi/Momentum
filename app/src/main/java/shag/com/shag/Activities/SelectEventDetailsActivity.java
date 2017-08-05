@@ -227,7 +227,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
         ParseObject currentUser = ParseApplication.getCurrentUser();
 
-        newEvent.put("User_event_owner", currentUser);
+        //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 /* delete later - decided not to use chatId

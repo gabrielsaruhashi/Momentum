@@ -20,6 +20,7 @@ import com.ramotion.paperonboarding.PaperOnboardingFragment;
 
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
+import shag.com.shag.Fragments.MemoryListFragment;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
@@ -48,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         setContentView(R.layout.activity_main);
 
         // unwrap to see whether is new
-        isNew = getIntent().getBooleanExtra("isNew", true);
+        isNew = getIntent().getBooleanExtra("isNew", false);
 
         // if new, show onboarding dialog
         if (isNew) {
@@ -56,12 +57,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             isNew = false;
         }
 
-        //add ability to open a specific fragment with intent data
-        int position = 0;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            position = extras.getInt("viewpager_position");
-        }
+        int position = getIntent().getIntExtra("viewpager_position", 0);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -78,12 +74,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+
         // check for all permissions needed
         if(!hasPermissions(this, PERMISSIONS)){
             ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
 
     }
+
 
 
 
@@ -121,6 +119,14 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         startActivity(i);
     }
 
+    // on activity result for memory list fragment
+    // change cover picture of memory album
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+        memoryListFragment.changeCoverPictureUrl(data);
+    }
 
     @Override
     protected void onDestroy() {
