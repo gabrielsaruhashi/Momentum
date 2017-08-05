@@ -279,6 +279,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
                                             Bundle bundle = new Bundle();
                                             bundle.putString("eventId", object.getObjectId());
                                             bundle.putString("eventDescription", newEvent.description);
+                                            bundle.putString("eventCategory", newEvent.category);
                                             new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
                                             // }
                                         }

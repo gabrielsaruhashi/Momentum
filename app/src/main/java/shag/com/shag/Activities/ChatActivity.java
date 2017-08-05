@@ -80,6 +80,7 @@ import shag.com.shag.Fragments.DialogFragments.DatePickerFragment;
 import shag.com.shag.Fragments.DialogFragments.TimePickerFragment;
 import shag.com.shag.Models.CalendarEvent;
 import shag.com.shag.Models.Event;
+import shag.com.shag.Models.Memory;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.DividerItemDecorator;
@@ -124,17 +125,18 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     // the adapter wired to the new view
     PollsAdapter pollAdapter;
 
+    private DrawerLayout drawerLayout;
+
     // for the chat views
     private String eventId;
     private ArrayList<String> chatParticipantsIds;
     private String currentUserId;
 
-    private DrawerLayout drawerLayout;
     private Button submitPoll;
     private boolean isEventNew;
     private boolean isEventPrivate;
     private boolean isRecommendationMade;
-
+    private String locationWinnerName;
 
     private String timeWinner;
     private ParseGeoPoint locationWinner;
@@ -253,12 +255,28 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
                 public void done(ParseObject eventDb, ParseException e) {
                     if (e == null) {
+
                         eventDb.put("is_first_created", isEventNew);
                         eventDb.saveInBackground();
                     }
                 }
             });
         } else {
+
+            ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+            eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+                public void done(ParseObject eventDb, ParseException e) {
+                    if (e == null) {
+                        if (eventDb.get("location")!=null) {
+
+                            locationWinnerName = (String) eventDb.get("location");
+                            locationWinner = new ParseGeoPoint(eventDb.getDouble("latitude"), eventDb.getDouble("longitude"));
+                            refreshPolls();
+
+                        }
+                    }
+                }
+            });
             refreshPolls();
 
         }
@@ -334,6 +352,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 });
                 recommendRestaurant();
             }
+
+
+
 
             setupLiveQueires();
         }
@@ -1037,6 +1058,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         if (eachPoll.getScores().get(key) == max) {
                             Map<String, ParseGeoPoint> places = eachPoll.getLocationOptions();
                             placeName = key;
+                            locationWinnerName=placeName;
                             locationWinner = places.get(key);
                             break;
                         }
@@ -1048,7 +1070,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         }
         if (timeWinner != null || locationWinner != null) {
             ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
-            final String finalPlaceName = placeName;
+            if (placeName!=null){
+                locationWinnerName=placeName;
+            }
             eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
                 public void done(ParseObject eventDb, ParseException e) {
                     if (e == null) {
@@ -1060,7 +1084,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         if (locationWinner != null) {
                             Double lat = locationWinner.getLatitude();
                             Double lng = locationWinner.getLongitude();
-                            eventDb.put("location", finalPlaceName);
+                            eventDb.put("location", locationWinnerName);
                             eventDb.put("latitude", lat);
                             eventDb.put("longitude", lng);
                         }
@@ -1440,6 +1464,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         if (timeWinner != null && locationWinner != null) {
             MenuItem mi = menu.findItem(R.id.miEventReady);
             mi.setVisible(true);
+            ParseQuery<Memory> memoryParseQuery = ParseQuery.getQuery("Memory");
+            memoryParseQuery.whereEqualTo("event_id",eventId);
+            memoryParseQuery.findInBackground(new FindCallback<Memory>() {
+                @Override
+                public void done(List<Memory> objects, ParseException e) {
+                    Memory memory = objects.get(0);
+                    memory.setLocation(locationWinnerName);
+                    memory.saveInBackground();
+                }
+            });
         }
     }
 }

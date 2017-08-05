@@ -9,9 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.ImageSpan;
 
 import shag.com.shag.Fragments.MapFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
@@ -22,7 +19,6 @@ import shag.com.shag.Fragments.MemoryListFragment;
 
 public class MemoryFragmentPagerAdapter extends FragmentPagerAdapter {
     final int PAGE_COUNT = 2;
-    private String tabTitles[] = new String[] { "Books", "Map" };
     private Context context;
     private MemoryListFragment memoryBook;
     private MapFragment mapFragment;
@@ -51,25 +47,7 @@ public class MemoryFragmentPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
-    @Override
-    public CharSequence getPageTitle(int position) {
 
-        // generate title based on item postion
-
-
-        SpannableStringBuilder sb = new SpannableStringBuilder("   " + tabTitles[position]); // space added before text for convenience
-        try {
-            myDrawable.setBounds(0, 0, myDrawable.getIntrinsicWidth(), myDrawable.getIntrinsicHeight());
-            ImageSpan span = new ImageSpan(myDrawable);
-            sb.setSpan(span, 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // TODO: handle exception
-        }
-        return sb;
-
-        //return tabTitles[position];
-    }
 
     private MapFragment getMapInstance() {
         if (mapFragment == null) {

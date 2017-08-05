@@ -1,6 +1,10 @@
 package shag.com.shag.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -55,8 +59,12 @@ public class MemoriesFragment extends Fragment {
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         tabLayout.setSelectedTabIndicatorHeight(2);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_camera);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_food);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_cute_photos);
+
+        Drawable mapIcon = getResources().getDrawable( R.drawable.ic_map );
+        ColorFilter filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
+        mapIcon.setColorFilter(filter);
+        tabLayout.getTabAt(1).setIcon(mapIcon);
 
         return v;
     }

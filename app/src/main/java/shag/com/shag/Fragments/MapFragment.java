@@ -42,9 +42,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseQuery;
@@ -98,6 +96,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     }
 
     private void populateMap() {
+
+
         //query for all events of a user
         ParseQuery<Event> query = ParseQuery.getQuery("Event");
         //include objects in event
@@ -135,63 +135,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            currentLocation = location;
-                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                            MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(latLng);
-                            //markerOptions.title("Current Position");
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                            Marker marker = mGoogleMap.addMarker(markerOptions);
-                            String url = "http://i.imgur.com/Gwb6TqH.png";
-                            marker.setTag(url);
-                            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                                @Override
-                                public View getInfoWindow(Marker marker) {
-                                    return null;
-                                }
-
-                                @Override
-                                public View getInfoContents(Marker marker) {
-                                    // Getting view from the layout file info_window_layout
-
-                                    View v = getActivity().getLayoutInflater().inflate(R.layout.item_info_window_layout, null);
-
-                                    // Getting the position from the marker
-                                    LatLng latLng = marker.getPosition();
-
-                                    ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory) ;
-                                    Glide.with(getActivity()).load(marker.getTag()).centerCrop().into(ivPhoto);
-
-                                    // Getting reference to the TextView to set longitude
-                                    TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
-
-                                    // Setting the longitude
-                                    tvLng.setText("Longitude:"+ latLng.longitude);
-
-                                    // Returning the view containing InfoWindow contents
-                                    return v;
-
-                                }
-
-
-                            });
-                            //Place current location marker
-
-                            marker.showInfoWindow();
-
-
-                            // mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-                        }
-                    }
-                });
 
 
 
@@ -215,35 +158,46 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private void findAssociatedEvent(List<Event> eventsList) {
 
         for(final Event event : eventsList){
-            final Double lat = event.getDouble("latitude");
-            final Double lng = event.getDouble("longitude");
-            final String timeOfEvent = event.getString("event_time_string");
-            String associatedEvent = event.getString("event_id");
+
+            String associatedEvent = event.getObjectId();
             //query for associated event to get text info (time)
 
             ParseQuery<Memory> memoryQuery = ParseQuery.getQuery("Memory");
-            memoryQuery.getInBackground(associatedEvent, new GetCallback<Memory>() {
+            memoryQuery.whereEqualTo("event_id", associatedEvent);
+            memoryQuery.findInBackground(new FindCallback<Memory>() {
                 @Override
-                public void done(Memory object, ParseException e) {
+                public void done(List<Memory> objects, ParseException e) {
                     if (e == null) {
 
-                        ArrayList<ParseFile> pictures = (ArrayList<ParseFile>) event.get("pictures_parse_files");
+                        ArrayList<ParseFile> pictures = (ArrayList<ParseFile>) objects.get(0).getPicturesParseFiles();
                         //if we made it this far, let's create a marker
-                        if (pictures!=null) {
-
+                        if (pictures!=null && pictures.size()!=0) {
+                            final Double lat = event.getDouble("latitude");
+                            final Double lng = event.getDouble("longitude");
+                            final String timeOfEvent = event.getString("event_time_string");
                             LatLng latLng = new LatLng(lat, lng);
-                            MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(latLng);
-                            //markerOptions.title("Current Position");
-                            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
-                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-                            Marker marker = mGoogleMap.addMarker(markerOptions);
+                            Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
 
-                            final Bitmap bm = bitmapConverterFromParseFile(pictures.get(0));
-                            if (bm != null) {
-                                marker.setTag(bm);
-                            }
+//                                    MarkerOptions markerOptions = new MarkerOptions();
+//                                    markerOptions.position(musicLatLng);
+//                                    markerOptions.title(artist);
+//                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
+                            ArrayList<Object> info = new ArrayList<Object>();
+                            info.add(pictures.get(0).getUrl());
+                            info.add(timeOfEvent);
+                            newMarker.setTag(info);
+
+//                            MarkerOptions markerOptions = new MarkerOptions();
+//                            markerOptions.position(latLng);
+//                            //markerOptions.title("Current Position");
+//
+//                            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//                            Marker marker = mGoogleMap.addMarker(markerOptions);
+//                            marker.setTag(pictures.get(0).getUrl());
+
                             mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                                 @Override
                                 public View getInfoWindow(Marker marker) {
@@ -260,13 +214,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                                     LatLng latLng = marker.getPosition();
 
                                     ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory) ;
-                                    Glide.with(getActivity()).load(marker.getTag()).centerCrop().into(ivPhoto);
+                                    final ArrayList<Object> data = (ArrayList<Object>) marker.getTag();
+                                    final String imageUrl = (String) data.get(0);
+
+                                    Glide.with(getActivity()).load(imageUrl).centerCrop().into(ivPhoto);
 
                                     // Getting reference to the TextView to set longitude
                                     TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
 
                                     // Setting the longitude
-                                    tvLng.setText(timeOfEvent);
+                                    tvLng.setText((String) data.get(1));
 
                                     // Returning the view containing InfoWindow contents
                                     return v;
@@ -276,8 +233,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
                             });
 
-                            marker.showInfoWindow();
-
+                            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                @Override
+                                public boolean onMarkerClick(Marker marker) {
+                                    marker.showInfoWindow();
+                                    return false;
+                                }
+                            });
 
 
                         }
@@ -288,6 +250,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                     }
                 }
             });
+
         }
     }
 
@@ -362,18 +325,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 
 
     public void onLocationChanged(Location location) {
-        mLastLocation = location;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
-        }
+//        mLastLocation = location;
+//        if (mCurrLocationMarker != null) {
+//            mCurrLocationMarker.remove();
+//        }
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+//        MarkerOptions markerOptions = new MarkerOptions();
+//        markerOptions.position(latLng);
+//        markerOptions.title("Current Position");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
+//        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
 
         //move map camera
