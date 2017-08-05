@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
     // on activity result for memory list fragment
+    // change cover picture of memory album
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
