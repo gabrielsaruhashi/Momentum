@@ -175,7 +175,7 @@ public class ParseApplication extends Application {
     public static HashMap getRecentFriends() {
         // ensure user is authenticated
         if (ParseApplication.getCurrentUser().isAuthenticated()) {
-            ParseUser currentUser = ParseApplication.getCurrentUser();
+            final ParseUser currentUser = ParseApplication.getCurrentUser();
             // instantiate recent friends with last version of recent friends from the database
             //TODO add ternary operator in case user just returned
             recentFriendsMap = (currentUser.getMap("recent_friends_map") != null) ? (HashMap) currentUser.getMap("recent_friends_map") : new HashMap() ;
@@ -205,13 +205,14 @@ public class ParseApplication extends Application {
                                 ArrayList<String> participantsIds = (ArrayList) memory.getParticipantsIds();
 
                                 for (String participantId : participantsIds) {
-
-                                    // if key already exists, just add to the key counter
-                                    if (updatedRecentFriendsMap.containsKey(participantId)) {
-                                        int counter = (int) updatedRecentFriendsMap.get(participantId);
-                                        updatedRecentFriendsMap.put(participantId, counter + 1);
-                                    } else { // else create key
-                                        updatedRecentFriendsMap.put(participantId, 1);
+                                    if (!participantId.equals(currentUser.getObjectId())) {
+                                        // if key already exists, just add to the key counter
+                                        if (updatedRecentFriendsMap.containsKey(participantId)) {
+                                            int counter = (int) updatedRecentFriendsMap.get(participantId);
+                                            updatedRecentFriendsMap.put(participantId, counter + 1);
+                                        } else { // else create key
+                                            updatedRecentFriendsMap.put(participantId, 1);
+                                        }
                                     }
                                 }
                             }

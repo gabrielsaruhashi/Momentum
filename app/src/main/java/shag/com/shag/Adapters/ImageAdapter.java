@@ -1,12 +1,13 @@
 package shag.com.shag.Adapters;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -14,6 +15,9 @@ import com.parse.ParseException;
 import com.parse.ParseFile;
 
 import java.util.ArrayList;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+import shag.com.shag.R;
 
 /**
  * Created by gabesaruhashi on 7/18/17.
@@ -23,11 +27,13 @@ public class ImageAdapter extends BaseAdapter {
     private Context mContext;
     private ArrayList<ParseFile> memoryPictures;
     private ImageZoomAdapterCallback callback;
+    private ArrayList<String> userImageUrls;
 
 
-    public ImageAdapter(Context c, ArrayList<ParseFile> memoryPictures) {
+    public ImageAdapter(Context c, ArrayList<ParseFile> memoryPictures, ArrayList<String> uploaderPictures) {
         mContext = c;
         this.memoryPictures = memoryPictures;
+        this.userImageUrls = uploaderPictures;
     }
 
     public int getCount() {
@@ -44,24 +50,32 @@ public class ImageAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(final int position, View convertView, ViewGroup parent) {
-        final ImageView imageView;
         if (convertView == null) {
-            // if it's not recycled, initialize some attributes
-            imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(475, 475));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            //imageView.setPadding(8, 8, 8, 8);
-        } else {
-            imageView = (ImageView) convertView;
+            convertView = LayoutInflater.from(mContext).
+                    inflate(R.layout.item_memory_detail_gridview, parent, false);
+            // get current item to be displayed
+            ClipData.Item currentItem = (ClipData.Item) getItem(position);
+
         }
 
+        ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+        ImageView ivUploaderPicture = (ImageView) convertView.findViewById(R.id.ivUploaderPicture);
+
+        // populate main image
         final String imageUrl = memoryPictures.get(position).getUrl();
         Glide.with(mContext)
                 .load(imageUrl)
-                .into(imageView);
+                .into(ivImage);
+
+        // populate user uploader picture
+        final String uploaderPicture = userImageUrls.get(position);
+        Glide.with(mContext)
+                .load(uploaderPicture)
+                .bitmapTransform(new RoundedCornersTransformation(mContext, 15, 0))
+                .into(ivUploaderPicture);
 
         // upon click, initiate dialog fragment through interface
-        imageView.setOnClickListener(new View.OnClickListener() {
+        convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (callback != null) {
@@ -95,7 +109,7 @@ public class ImageAdapter extends BaseAdapter {
             }
         }); */
         // TODO return with glide
-        return imageView;
+        return convertView;
     }
 
     // creates a bitmap from parsefile data

@@ -28,6 +28,7 @@ import com.parse.ParseFile;
 import com.parse.ParseLiveQueryClient;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 import com.parse.SubscriptionHandling;
 
 import org.json.JSONArray;
@@ -83,14 +84,19 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
     private Handler handler;
     private Runnable Update;
     private int adapterPosition;
+    private ArrayList<String> userImageUrls;
+    private ParseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_memory_details);
         ButterKnife.bind(this);
-        // TODO pass entire memory instead
-        // memory = getIntent().getParcelableExtra(Memory.class.getSimpleName());
+
+        // instantiate current user
+        currentUser = ParseApplication.getCurrentUser();
+
+        // unwrap intents
         memoryId = getIntent().getStringExtra(Memory.class.getSimpleName());
         adapterPosition = getIntent().getIntExtra("position", 0);
 
@@ -110,14 +116,20 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
         // initialize participantsIds
         participantsIds = memory.getParticipantsIds();
         // initialize pictures, adapter and gridView
+
         pictures = memory.getPicturesParseFiles();
+
+        // instantiate userImageUrls. If there are no picture, instantiate new array list
+        userImageUrls = (pictures == null) ? new ArrayList<String>() : memory.getUserImageUrls();
+
         // support variable to check whether user added pictures
         initialNumberOfPictures = pictures.size();
+
         // initialize user pictures for the parse live query
         userPicturesIds = new ArrayList<String>();
 
         // set adapters
-        imageAdapter = new ImageAdapter(this, pictures);
+        imageAdapter = new ImageAdapter(this, pictures, userImageUrls);
 
         // for shared animation
         sliderAdapter = new ImageSliderAdapter(MemoryDetailsActivity.this, pictures);
@@ -352,6 +364,9 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                         // add to array
                         userUploadedPictures.add(file);
 
+                        // save user profile picture to array
+                        userImageUrls.add(currentUser.getString("profile_image_url"));
+
                         // keep track of files uploaded by user
                         userPicturesIds.add(file.getName());
 
@@ -376,6 +391,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                             indicator.setViewPager(mPager);
 
                             updatedMemory.put("pictures_parse_files", pictures);
+                            // update senders
+                            updatedMemory.put("user_image_urls", userImageUrls);
                             updatedMemory.saveInBackground();
                         } else {
                             e.getMessage();

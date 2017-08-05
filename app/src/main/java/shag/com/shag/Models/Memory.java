@@ -31,6 +31,7 @@ public class Memory extends ParseObject implements Parcelable {
     private String coverPictureUrl;
     private int totalFacebookLikes;
     private int indexOfLastPictureShared;
+    private ArrayList<String> userImageUrls;
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -121,6 +122,15 @@ public class Memory extends ParseObject implements Parcelable {
 
     // GETTERS & SETTERS
 
+
+    public ArrayList<String> getUserImageUrls() {
+        return (ArrayList) getList("user_image_urls");
+    }
+
+    public void setUserImageUrls(ArrayList<String> userImageUrls) {
+        this.userImageUrls = userImageUrls;
+        put("user_image_urls", userImageUrls);
+    }
 
     public int getTotalFacebookLikes() {
         return getInt("total_facebook_likes");

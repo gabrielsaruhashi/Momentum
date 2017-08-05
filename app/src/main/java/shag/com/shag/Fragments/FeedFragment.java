@@ -23,6 +23,7 @@ import com.parse.ParseUser;
 import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
+import shag.com.shag.Other.RelevanceComparator;
 import shag.com.shag.R;
 
 /**
@@ -178,23 +180,17 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                         if (event.getDeadline().getTime() > (new Date()).getTime()) {
                             events.add(event);
                         }
-                        //event.setRelevance(calculateEventRelevance(event));
+                        event.setRelevance(calculateEventRelevance(event));
+                        Log.i("FEED_RELEVANCE", event.getDescription() + " has relevance: " + event.getRelevance());
                     }
                     // sort events based on relevance
-                    //Collections.sort(eventsList, new RelevanceComparator());
+                    Collections.sort(eventsList, new RelevanceComparator());
+                    // put in descending oreder
+                    Collections.reverse(eventsList);
 
                     adapter.notifyDataSetChanged();
                     startLiveQueries();
 
-                    //TODO: move this somewhere else, it is currently over-sorting
-                    //Sort the events shown to user in order of soonest deadline
-                    /*
-                    Collections.sort(events, new Comparator<Event>() {
-                        @Override
-                        public int compare(Event event, Event t1) {
-                            return event.deadline.compareTo(t1.deadline);
-                        }
-                    }); */
                 } else {
                     Log.d("feedfragment", "Error: " + e.getMessage());
                 }
