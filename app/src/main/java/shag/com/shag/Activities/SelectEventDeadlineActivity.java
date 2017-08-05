@@ -3,6 +3,7 @@ package shag.com.shag.Activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -17,7 +18,9 @@ import android.widget.Toast;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.parse.FindCallback;
 import com.parse.GetCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
@@ -35,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import shag.com.shag.Clients.FacebookClient;
+import shag.com.shag.Fragments.FeedFragment;
 import shag.com.shag.Models.Event;
 import shag.com.shag.Models.Message;
 import shag.com.shag.Models.Poll;
@@ -48,7 +52,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
     public final static int MILLISECONDS_IN_MINUTE = 60000;
     Button makeEventButton;
-    Date newDate = new Date(new Date().getTime()+MILLISECONDS_IN_MINUTE*60);
+    Date newDate = new Date(new Date().getTime() + MILLISECONDS_IN_MINUTE * 60);
     EditText etDescription;
     String category;
     String eventType;
@@ -63,7 +67,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
     private Button[] btn = new Button[4];
     private Button btn_unfocus;
-    private int[] btn_id = {R.id.bt30, R.id.bt1, R.id.bt2, R.id.bt3, R.id.bt6,R.id.bt12};
+    private int[] btn_id = {R.id.bt30, R.id.bt1, R.id.bt2, R.id.bt3, R.id.bt6, R.id.bt12};
 
 
     @Override
@@ -73,7 +77,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_event_deadline);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(0xFFFFFFFF);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         tvCategory = (TextView) findViewById(R.id.tvCategory);
 
         currentUser = ParseApplication.getCurrentUser();
@@ -81,12 +85,12 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         //public or private
         eventType = getIntent().getStringExtra("Event Type");
         //if public get the name, and LatLng of place
-        if (eventType.equals("Public")){
-            placeName=getIntent().getStringExtra("Place Name");
-            eventLat=getIntent().getDoubleExtra("Lat",0.0);
-            eventLng=getIntent().getDoubleExtra("Lng",0.0);
+        if (eventType.equals("Public")) {
+            placeName = getIntent().getStringExtra("Place Name");
+            eventLat = getIntent().getDoubleExtra("Lat", 0.0);
+            eventLng = getIntent().getDoubleExtra("Lng", 0.0);
             //if food category, find the restaurant details
-            if(category.equals("Food")) {
+            if (category.equals("Food")) {
                 foodDescription = getIntent().getStringExtra("Food Details");
             }
         }
@@ -116,9 +120,9 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         btn_unfocus = tv30;
 
 
-        switch (category){
+        switch (category) {
             case "Food":
-                color=R.color.food_color;
+                color = R.color.food_color;
                 tvCategory.setBackgroundResource(R.color.food_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.food_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.food_color));
@@ -128,7 +132,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.food_color));
                 break;
             case "Party":
-                color=R.color.party_color;
+                color = R.color.party_color;
                 tvCategory.setBackgroundResource(R.color.party_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.party_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.party_color));
@@ -138,7 +142,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.party_color));
                 break;
             case "Explore":
-                color=R.color.explore_color;
+                color = R.color.explore_color;
                 tvCategory.setBackgroundResource(R.color.explore_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
@@ -148,7 +152,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
                 break;
             case "Music":
-                color=R.color.explore_color;
+                color = R.color.explore_color;
                 tvCategory.setBackgroundResource(R.color.explore_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
@@ -158,7 +162,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
                 break;
             case "Sports":
-                color=R.color.sports_color;
+                color = R.color.sports_color;
                 tvCategory.setBackgroundResource(R.color.sports_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.sports_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.sports_color));
@@ -168,7 +172,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.sports_color));
                 break;
             case "Chill":
-                color=R.color.chill_color;
+                color = R.color.chill_color;
                 tvCategory.setBackgroundResource(R.color.chill_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.chill_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.chill_color));
@@ -178,7 +182,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 tv12h.setBackgroundColor(getResources().getColor(R.color.chill_color));
                 break;
             case "Misc":
-                color=R.color.misc_color;
+                color = R.color.misc_color;
                 tvCategory.setBackgroundResource(R.color.misc_color);
                 tv30.setBackgroundColor(getResources().getColor(R.color.misc_color));
                 tv1h.setBackgroundColor(getResources().getColor(R.color.misc_color));
@@ -201,7 +205,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(s.toString().trim().length()==0){
+                if (s.toString().trim().length() == 0) {
                     makeEventButton.setEnabled(false);
                 } else {
                     makeEventButton.setEnabled(true);
@@ -243,38 +247,37 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (view.getId()){
-                    case R.id.bt30 :
+                switch (view.getId()) {
+                    case R.id.bt30:
                         setFocus(btn_unfocus, tv);
                         break;
 
-                    case R.id.bt1 :
+                    case R.id.bt1:
                         setFocus(btn_unfocus, tv);
                         break;
 
-                    case R.id.bt2 :
+                    case R.id.bt2:
                         setFocus(btn_unfocus, tv);
                         break;
 
-                    case R.id.bt3 :
+                    case R.id.bt3:
                         setFocus(btn_unfocus, tv);
                         break;
-                    case R.id.bt6 :
+                    case R.id.bt6:
                         setFocus(btn_unfocus, tv);
                         break;
 
-                    case R.id.bt12 :
+                    case R.id.bt12:
                         setFocus(btn_unfocus, tv);
                         break;
 
 
                 }
-                newDate.setTime((new Date()).getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
+                newDate.setTime((new Date()).getTime() + minToDeadline * MILLISECONDS_IN_MINUTE);
                 Toast.makeText(SelectEventDeadlineActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
 
             }
         });
-
 
 
     }
@@ -298,13 +301,12 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         newEvent.setFriendsAtEvent(new ArrayList<Long>());
 
         //if public, set the location and lat long
-        if (eventType.equals("Public")){
+        if (eventType.equals("Public")) {
             newEvent.setLocation(placeName);
             newEvent.setLatitude(eventLat);
             newEvent.setLongitude(eventLng);
             newEvent.setIsEventPrivate(false);
-        }
-        else{
+        } else {
             newEvent.setIsEventPrivate(true);
         }
 
@@ -329,7 +331,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         newEvent.setDeadline(newDate);
         if (newEvent.deadline == null) {
             newEvent.deadline = new Date();
-            newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE*60);
+            newEvent.deadline.setTime(new Date().getTime() + MILLISECONDS_IN_MINUTE * 60);
             newEvent.setDeadline(newEvent.deadline);
         }
 
@@ -339,15 +341,15 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
         newEvent.setCategory(category);
 
-        HashMap<String,List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
+        HashMap<String, List<Object>> hm = (HashMap) currentUser.getMap("categories_tracker");
 
         // update user's category counter
         // update category counter
         String x = category;
         int oldCounter = (int) hm.get(category).get(0);
-        hm.get(category).set(0,oldCounter+1);
+        hm.get(category).set(0, oldCounter + 1);
 
-        if (foodDescription!=null){
+        if (foodDescription != null) {
             //get list of sub categories
             List<String> foodApiSubcategories = Arrays.asList(foodDescription.split(", "));
             //get food data object
@@ -356,22 +358,22 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             HashMap<String, Integer> foodSubCategoryMap = (HashMap<String, Integer>) foodData.get(1);
 
             //for each of the found food types
-            for (String foodType : foodApiSubcategories){
+            for (String foodType : foodApiSubcategories) {
                 //if that food type is not already in the map
-                if (foodSubCategoryMap.get(foodType)!=null){
+                if (foodSubCategoryMap.get(foodType) != null) {
                     //get points and increment by one
                     int foodSubCategoryPoints = foodSubCategoryMap.get(foodType);
-                    foodSubCategoryPoints +=1;
+                    foodSubCategoryPoints += 1;
                     //reset key to include incremented value
-                    foodSubCategoryMap.put(foodType,foodSubCategoryPoints);
-                    foodData.set(1,foodSubCategoryMap);
+                    foodSubCategoryMap.put(foodType, foodSubCategoryPoints);
+                    foodData.set(1, foodSubCategoryMap);
                     hm.put("Food", foodData);
 
                 }
                 //if food type is not in map
-                else{
-                    foodSubCategoryMap.put(foodType,1);
-                    hm.get("Food").set(1,foodSubCategoryMap);
+                else {
+                    foodSubCategoryMap.put(foodType, 1);
+                    hm.get("Food").set(1, foodSubCategoryMap);
                 }
             }
         }
@@ -387,7 +389,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
-        newEvent.put("User_event_owner", currentUser);
+        //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 /* delete later - decided not to use chatId
@@ -397,10 +399,6 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 eventChat.setChatId(chatId);
                 //TODO make chat be a nested object. it is not working rn
                 // newEvent.setEventChat(eventChat); */
-
-
-
-
 
 
         FacebookClient client = ParseApplication.getFacebookRestClient();
@@ -415,14 +413,39 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                     newEvent.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
-                            if(e == null) {
+                            if (e == null) {
                                 Log.d("DEBUG", "EI");
                                 //Toast.makeText(getContext(), "Successfully created event on Parse",
                                 //Toast.LENGTH_SHORT).show();
+                                notifyRecommendedFriends(newEvent);
+
+                                final Message m = new Message();
+                                m.setSenderId("InuSHuTqkn");
+                                m.setBody("Hi! My name is Shaggy. Welcome to the chat! Swipe left to fill out" +
+                                        " polls and plan your hangout!");
+                                m.setEventId(newEvent.getObjectId());
+                                m.setSenderName("Shaggy");
+                                try {
+                                    m.save();
+
+                                    newEvent.setLastMessageSent(m);
+                                    newEvent.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                Log.i("SELECTEVENTDEADLINE", "All good");
+                                            } else {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                } catch (ParseException exception) {
+                                    exception.printStackTrace();
+                                }
 
                                 // send back to pick category dialog after being saved
                                 ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-                                query.whereEqualTo("event_owner_id",currentUser.getObjectId());
+                                query.whereEqualTo("event_owner_id", currentUser.getObjectId());
                                 query.orderByDescending("createdAt");
                                 query.setLimit(1);
                                 query.getFirstInBackground(new GetCallback<ParseObject>() {
@@ -459,6 +482,34 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         });
 
 
+    }
 
+    public void notifyRecommendedFriends(final Event event) {
+        final ArrayList<Long> friendFbIds = ParseApplication.getFacebookFriends();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        //query.whereEqualTo("id", fbId);
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    for (int i = 0; i < objects.size(); i++) {
+                        ParseUser friend = objects.get(i);
+                        Long friendFacebookId = friend.getLong("fbid");
+                        if (friendFbIds.contains(friendFacebookId)) {
+                            Double relevance = FeedFragment.calculateEventRelevance(event, friend);
+                            if (relevance > .5) {
+                                //send push notification to all friends with high interest
+                                HashMap<String, String> payload = new HashMap<>();
+                                payload.put("userId", friend.getObjectId());
+                                payload.put("friendName", friend.getUsername());
+                                ParseCloud.callFunctionInBackground("pushRecommendedEventNotification", payload);
+                            }
+                        }
+                    }
+                } else {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

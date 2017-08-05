@@ -8,6 +8,7 @@
     <color name="black">#000000</color>
     <color name="medium_gray">#b0bec5</color>
     <color name="selected_gray">#909ca3</color>
+    <color name="deselected_gray">#d2dfe7</color>
 
 
     <!-- Memories Page Colors -->

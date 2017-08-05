@@ -127,7 +127,7 @@ public class SelectEventFriendsActivity extends AppCompatActivity {
         hm.put(category, oldCounter + 1);
         currentUser.put("categories_tracker", hm);
 
-        newEvent.put("User_event_owner", currentUser);
+        //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
 
                 /* delete later - decided not to use chatId

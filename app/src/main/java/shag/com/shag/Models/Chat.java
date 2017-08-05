@@ -93,10 +93,10 @@ public class Chat {
 
         // fetch event owner
         try {
-            ParseObject user = object.getParseObject("User_event_owner").fetch();
+            //ParseObject user = object.getParseObject("User_event_owner").fetch();
             event.lastMessageSent = object.getParseObject("last_message_sent").fetch();
             // user found! Convert it to a user model
-            event.setEventOwner(user); // setting event owner
+            //event.setEventOwner(user); // setting event owner
         } catch (ParseException e) {
             e.printStackTrace();
         }
