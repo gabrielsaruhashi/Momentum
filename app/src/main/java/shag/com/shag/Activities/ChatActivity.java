@@ -1257,11 +1257,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         int btn;
-        Poll poll = polls.get(viewPosition);
-        final List<String> choices = poll.getChoices();
-        final Map<String, Integer> scores = poll.getScores();
-        final Map<String, ParseGeoPoint> locOptions = poll.getLocationOptions();
 
         //button values are hidden in code
         if (requestCode - 0 == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
@@ -1279,6 +1276,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+
+                Poll poll = polls.get(viewPosition);
+                final List<String> choices = poll.getChoices();
+                final Map<String, Integer> scores = poll.getScores();
+                final Map<String, ParseGeoPoint> locOptions = poll.getLocationOptions();
+
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 Log.i(TAG, "Place: " + place.getName());
                 LatLng loc = place.getLatLng();
@@ -1308,6 +1311,25 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     scores.put(rButton3.getText().toString(), 0);
                 }
 
+                final ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
+
+                pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
+                    public void done(ParseObject pollDb, ParseException e) {
+                        if (e == null) {
+                            pollDb.put("choices", choices);
+                            pollDb.put("scores", scores);
+                            pollDb.put("location_options", locOptions);
+                            try {
+                                pollDb.save();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+
+
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 // TODO: Handle the error.
@@ -1317,22 +1339,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // The user canceled the operation.
             }
         }
-        final ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
 
-        pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
-            public void done(ParseObject pollDb, ParseException e) {
-                if (e == null) {
-                    pollDb.put("choices", choices);
-                    pollDb.put("scores", scores);
-                    pollDb.put("location_options", locOptions);
-                    try {
-                        pollDb.save();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     public void onEventReady(MenuItem menuItem) {
