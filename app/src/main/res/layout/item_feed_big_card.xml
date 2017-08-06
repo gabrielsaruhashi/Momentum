@@ -39,7 +39,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:background="@drawable/misc_circle"
-                    android:elevation="4dp"/>
+                    android:elevation="6dp"/>
 
             </RelativeLayout>
 
@@ -66,9 +66,29 @@
                     android:layout_marginTop="16dp"
                     android:layout_toRightOf="@+id/ivProfileImage"
                     android:fontFamily="sans-serif-light"
+                    android:textColor="@color/black"
                     android:text="TextView"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivFire"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tvEventOwnerName"
+                    android:layout_toRightOf="@id/ivProfileImage"
+                    android:layout_marginLeft="8dp"
+                    app:srcCompat="@drawable/ic_flame" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_below="@id/tvEventOwnerName"
+                    android:layout_toRightOf="@id/ivFire"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:layout_marginTop="4dp"
+                    android:textStyle="bold"
+                    android:text="Popular"/>
 
                 <TextView
                     android:id="@+id/tvBody"
@@ -77,6 +97,7 @@
                     android:layout_alignEnd="@+id/btJoin"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/ivProfileImage"
+                    android:textColor="@color/black"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="8dp"
                     android:autoLink="all"
