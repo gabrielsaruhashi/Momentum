@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
@@ -58,12 +57,10 @@ public class MemoryListFragment extends Fragment {
         // set adapter
         mAdapter = new MemoriesAdapter(context, memories);
 
-        // set item decoration
-        rvMemories.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         // set elements to adapter
         rvMemories.setAdapter(mAdapter);
         // Set layout manager to position the items
-        rvMemories.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvMemories.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
 
         // instantiate current user
         currentUser = ParseApplication.getCurrentUser();

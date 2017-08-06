@@ -20,7 +20,7 @@
         app:viewpager_logo="@layout/header_logo"
         app:viewpager_logoMarginTop="50dp"
         app:viewpager_color="@color/colorPrimary"
-        app:viewpager_headerHeight="150dp"
+        app:viewpager_headerHeight="120dp"
         app:viewpager_headerAlpha="1.0"
         app:viewpager_hideLogoWithFade="false"
         app:viewpager_hideToolbarAndTitle="true"
