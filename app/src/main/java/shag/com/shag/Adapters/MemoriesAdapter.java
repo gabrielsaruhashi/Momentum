@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -33,6 +34,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
 
     private Context mContext;
     private final static int REQUEST_OPEN_MEMORIES = 10;
+    int color=-1;
 
 
     public MemoriesAdapter(Context context, List<Memory> objects) {
@@ -51,6 +53,41 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         final Memory memory = getItem(position);
 
         // populate views
+        String category = memory.getCategory();
+        if (category!=null) {
+            switch (category) {
+                case "Food":
+                    color = R.color.food_color;
+
+                    break;
+                case "Party":
+                    color = R.color.party_color;
+
+                    break;
+                case "Explore":
+                    color = R.color.explore_color;
+
+                    break;
+                case "Music":
+                    color = R.color.explore_color;
+
+                    break;
+                case "Sports":
+                    color = R.color.sports_color;
+                    break;
+                case "Chill":
+                    color = R.color.chill_color;
+
+                    break;
+                case "Misc":
+                    color = R.color.misc_color;
+                    break;
+
+            }
+        }
+        if (color!=-1) {
+            viewHolder.colorColumn.setBackgroundResource(color);
+        }
         viewHolder.tvMemoryName.setText(memory.getMemoryName());
 
         if (memory.getPicturesParseFiles() != null && memory.getPicturesParseFiles().size() != 0) {
@@ -140,6 +177,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         @BindView(R.id.ivFriend1) ImageView ivFriend1;
         @BindView(R.id.ivFriend2) ImageView ivFriend2;
         @BindView(R.id.ivFriend3) ImageView ivFriend3;
+        @BindView(R.id.colorColumn) RelativeLayout colorColumn;
 
         public ViewHolder(View view) {
             ButterKnife.bind(this, view);

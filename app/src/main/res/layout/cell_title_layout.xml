@@ -31,7 +31,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
                 android:layout_weight="20"
-                android:background="@color/sports_color"
+                android:background="@color/white"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -48,7 +48,6 @@
                     android:id="@+id/ivTransparencyBackground"
                     android:layout_width="350dp"
                     android:layout_height="350dp"
-                    android:layout_centerHorizontal="true"
                     app:srcCompat="@color/black" />
 
                 <ImageView
@@ -56,7 +55,6 @@
                     android:layout_width="350dp"
                     android:layout_height="350dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginEnd="10dp"
                     android:alpha="0.7"
                     android:transitionName="memoryDetail" />
 

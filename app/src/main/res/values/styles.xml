@@ -14,6 +14,8 @@
         <item name="colorPrimary">@color/gradient_end</item>
         <item name="colorPrimaryDark">@color/toolbar_dark</item>
         <item name="colorAccent">@color/gradient_end</item>
+        <item name="android:windowActivityTransitions">true</item>
+
 
     </style>
 
@@ -23,27 +25,37 @@
         <item name="android:alpha">0.5</item>
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">12dp</item>
+        <item name="android:windowActivityTransitions">true</item>
+
     </style>
 
     <style name="ContentImageBadgeText" parent="newTheme">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">20dp</item>
         <item name="android:textStyle">bold</item>
+        <item name="android:windowActivityTransitions">true</item>
+
     </style>
 
     <style name="ContentMainBadgeTitle" parent="newTheme">
         <item name="android:textColor">@color/contentBadgeTitle</item>
         <item name="android:textSize">12dp</item>
+        <item name="android:windowActivityTransitions">true</item>
+
     </style>
 
     <!-- styles for buttons -->
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/chill_color</item>
         <item name="android:textColor">@color/white</item>
+        <item name="android:windowContentTransitions">true</item>
+
     </style>
 
     <style name="AppTheme.Button.Pressed" parent="Widget.AppCompat.Button.Borderless.Colored">
         <item name="colorButtonNormal">@color/white</item>
         <item name="android:textColor">@color/chill_color</item>
+        <item name="android:windowContentTransitions">true</item>
+
     </style>
 </resources>

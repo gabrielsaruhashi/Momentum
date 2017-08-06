@@ -31,7 +31,9 @@ public class Memory extends ParseObject implements Parcelable {
     private String coverPictureUrl;
     private int totalFacebookLikes;
     private int indexOfLastPictureShared;
+    private ArrayList<String> userImageUrls;
     private String location;
+    private String category;
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -39,12 +41,17 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
 
-    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId, final ArrayList<String> facebookIds) {
+
+
+    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId,
+                  final ArrayList<String> facebookIds, String category) {
         // set values
         setMemoryName(eventDescription);
         setParticipantsIds(participantsIds);
         setEventId(eventId);
         setParticipantsFacebookIds(facebookIds);
+        setCategory(category);
+
         picturesParseFiles = new ArrayList<ParseFile>();
         setPicturesParseFiles(picturesParseFiles);
 
@@ -111,6 +118,14 @@ public class Memory extends ParseObject implements Parcelable {
     // GETTERS & SETTERS
 
 
+    public ArrayList<String> getUserImageUrls() {
+        return (ArrayList) getList("user_image_urls");
+    }
+
+    public void setUserImageUrls(ArrayList<String> userImageUrls) {
+        this.userImageUrls = userImageUrls;
+        put("user_image_urls", userImageUrls); }
+      
     public String getLocation() {
         return getString("location");
     }
@@ -118,6 +133,7 @@ public class Memory extends ParseObject implements Parcelable {
     public void setLocation(String location) {
         this.location = location;
         put("location", location);
+
     }
 
     public int getTotalFacebookLikes() {
@@ -137,7 +153,14 @@ public class Memory extends ParseObject implements Parcelable {
         this.coverPictureUrl = coverPictureUrl;
         put("cover_picture", coverPictureUrl);
     }
+    public String getCategory() {
+        return getString("category");
+    }
 
+    public void setCategory(String category) {
+        this.category = category;
+        put("category", category);
+    }
     public int getIndexOfLastPictureShared() {
         return getInt("index_of_last_picture_shared");
     }

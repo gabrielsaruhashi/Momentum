@@ -37,6 +37,7 @@
         android:maxWidth="240dp"
         android:textAlignment="textStart"
         android:textColor="@color/black"
+        android:autoLink="web"
         android:textSize="14sp" />
 
     <TextView
@@ -62,6 +63,7 @@
         android:maxWidth="240dp"
         android:textAlignment="textStart"
         android:textColor="@color/black"
+        android:autoLink="web|phone|email|map"
         android:textSize="14sp" />
 
 
