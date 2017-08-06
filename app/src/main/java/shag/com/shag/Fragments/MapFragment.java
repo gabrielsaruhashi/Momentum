@@ -89,8 +89,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
 
-        // populateMap();
-
 
         return v;
     }
@@ -168,27 +166,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 @Override
                 public void done(List<Memory> objects, ParseException e) {
                     if (e == null) {
-
-                        ArrayList<ParseFile> pictures = (ArrayList<ParseFile>) objects.get(0).getPicturesParseFiles();
                         //if we made it this far, let's create a marker
-                        if (pictures!=null && pictures.size()!=0) {
-                            final Double lat = event.getDouble("latitude");
-                            final Double lng = event.getDouble("longitude");
-                            final String timeOfEvent = event.getString("event_time_string");
-                            LatLng latLng = new LatLng(lat, lng);
-                            Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
-                            Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
-                                    .position(latLng)
-                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+                        if (objects.size()!=0) {
+                            ArrayList<ParseFile> pictures = (ArrayList<ParseFile>) objects.get(0).getPicturesParseFiles();
+                            if (pictures != null && pictures.size() != 0) {
+                                final Double lat = event.getDouble("latitude");
+                                final Double lng = event.getDouble("longitude");
+                                final String timeOfEvent = event.getString("event_time_string");
+                                LatLng latLng = new LatLng(lat, lng);
+                                Bitmap bitmap = getBitmapFromVectorDrawable(getContext(), R.drawable.ic_map_marker);
+                                Marker newMarker = mGoogleMap.addMarker(new MarkerOptions()
+                                        .position(latLng)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
 
 //                                    MarkerOptions markerOptions = new MarkerOptions();
 //                                    markerOptions.position(musicLatLng);
 //                                    markerOptions.title(artist);
 //                                    markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));
-                            ArrayList<Object> info = new ArrayList<Object>();
-                            info.add(pictures.get(0).getUrl());
-                            info.add(timeOfEvent);
-                            newMarker.setTag(info);
+                                ArrayList<Object> info = new ArrayList<Object>();
+                                info.add(pictures.get(0).getUrl());
+                                info.add(timeOfEvent);
+                                newMarker.setTag(info);
 
 //                            MarkerOptions markerOptions = new MarkerOptions();
 //                            markerOptions.position(latLng);
@@ -198,52 +196,52 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
 //                            Marker marker = mGoogleMap.addMarker(markerOptions);
 //                            marker.setTag(pictures.get(0).getUrl());
 
-                            mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-                                @Override
-                                public View getInfoWindow(Marker marker) {
-                                    return null;
-                                }
+                                mGoogleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                                    @Override
+                                    public View getInfoWindow(Marker marker) {
+                                        return null;
+                                    }
 
-                                @Override
-                                public View getInfoContents(Marker marker) {
-                                    // Getting view from the layout file info_window_layout
+                                    @Override
+                                    public View getInfoContents(Marker marker) {
+                                        // Getting view from the layout file info_window_layout
 
-                                    View v = getActivity().getLayoutInflater().inflate(R.layout.item_info_window_layout, null);
+                                        View v = getActivity().getLayoutInflater().inflate(R.layout.item_info_window_layout, null);
 
-                                    // Getting the position from the marker
-                                    LatLng latLng = marker.getPosition();
+                                        // Getting the position from the marker
+                                        LatLng latLng = marker.getPosition();
 
-                                    ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory) ;
-                                    final ArrayList<Object> data = (ArrayList<Object>) marker.getTag();
-                                    final String imageUrl = (String) data.get(0);
+                                        ImageView ivPhoto = (ImageView) v.findViewById(R.id.ivMemory);
+                                        final ArrayList<Object> data = (ArrayList<Object>) marker.getTag();
+                                        final String imageUrl = (String) data.get(0);
 
-                                    Glide.with(getActivity()).load(imageUrl).centerCrop().into(ivPhoto);
+                                        Glide.with(getActivity()).load(imageUrl).centerCrop().into(ivPhoto);
 
-                                    // Getting reference to the TextView to set longitude
-                                    TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
+                                        // Getting reference to the TextView to set longitude
+                                        TextView tvLng = (TextView) v.findViewById(R.id.tvDate);
 
-                                    // Setting the longitude
-                                    tvLng.setText((String) data.get(1));
+                                        // Setting the longitude
+                                        tvLng.setText((String) data.get(1));
 
-                                    // Returning the view containing InfoWindow contents
-                                    return v;
+                                        // Returning the view containing InfoWindow contents
+                                        return v;
 
-                                }
-
-
-                            });
-
-                            mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                                @Override
-                                public boolean onMarkerClick(Marker marker) {
-                                    marker.showInfoWindow();
-                                    return false;
-                                }
-                            });
+                                    }
 
 
+                                });
+
+                                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                                    @Override
+                                    public boolean onMarkerClick(Marker marker) {
+                                        marker.showInfoWindow();
+                                        return false;
+                                    }
+                                });
+
+
+                            }
                         }
-
                     } else {
                         // something went wrong
                         e.printStackTrace();
@@ -303,6 +301,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
         }
+        populateMap();
+
     }
 
     @Override
@@ -317,10 +317,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     public void onPause() {
         super.onPause();
 
-        //stop location updates when Activity is no longer active
-        if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
+//        //stop location updates when Activity is no longer active
+//        if (mGoogleApiClient != null) {
+//            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//        }
     }
 
 

@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -62,8 +62,14 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
     double eventLng;
     String placeName;
     TextView tvCategory;
+
+    ImageView genericIcon;
+    TextView genericName;
+
     PlaceAutocompleteFragment autocompleteFragment;
     int color;
+    boolean isSelected = false;
+    Toolbar myToolbar;
 
     private Button[] btn = new Button[4];
     private Button btn_unfocus;
@@ -75,16 +81,11 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         ParseObject.registerSubclass(Poll.class);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_event_deadline);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        tvCategory = (TextView) findViewById(R.id.tvCategory);
-
-        currentUser = ParseApplication.getCurrentUser();
         category = getIntent().getStringExtra("Category");
-        //public or private
         eventType = getIntent().getStringExtra("Event Type");
-        //if public get the name, and LatLng of place
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+
         if (eventType.equals("Public")) {
             placeName = getIntent().getStringExtra("Place Name");
             eventLat = getIntent().getDoubleExtra("Lat", 0.0);
@@ -94,6 +95,25 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                 foodDescription = getIntent().getStringExtra("Food Details");
             }
         }
+
+        if (eventType.equals("Private")) {
+            //genericIcon = (ImageView) findViewById(R.id.genericIcon);
+            genericName = (TextView) findViewById(R.id.genericName);
+            genericName.setText(category);
+
+//            genericIcon.setImageResource(getIntent().getIntExtra("Icon",-1));
+
+            setSupportActionBar(myToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+
+//        tvCategory = (TextView) findViewById(R.id.tvCategory);
+
+        currentUser = ParseApplication.getCurrentUser();
+        //public or private
+        //if public get the name, and LatLng of place
+
         Button tv30 = (Button) findViewById(R.id.bt30);
         setListenerForTime(tv30, 30);
 
@@ -114,8 +134,8 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
         etDescription = (EditText) findViewById(R.id.tvDescriptionInput);
 
-        tvCategory.setText(category);
-        tvCategory.setTextColor(Color.WHITE);
+//        tvCategory.setText(category);
+//        tvCategory.setTextColor(Color.WHITE);
 
         btn_unfocus = tv30;
 
@@ -123,76 +143,83 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         switch (category) {
             case "Food":
                 color = R.color.food_color;
-                tvCategory.setBackgroundResource(R.color.food_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.food_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.food_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.food_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.food_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.food_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.food_color));
+//                tvCategory.setBackgroundResource(R.color.food_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Party":
                 color = R.color.party_color;
-                tvCategory.setBackgroundResource(R.color.party_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.party_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.party_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.party_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.party_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.party_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.party_color));
+//                tvCategory.setBackgroundResource(R.color.party_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Explore":
                 color = R.color.explore_color;
-                tvCategory.setBackgroundResource(R.color.explore_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+//                tvCategory.setBackgroundResource(R.color.explore_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Music":
                 color = R.color.explore_color;
-                tvCategory.setBackgroundResource(R.color.explore_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.explore_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.explore_color));
+//                tvCategory.setBackgroundResource(R.color.explore_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Sports":
                 color = R.color.sports_color;
-                tvCategory.setBackgroundResource(R.color.sports_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.sports_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.sports_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.sports_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.sports_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.sports_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.sports_color));
+//                tvCategory.setBackgroundResource(R.color.sports_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Chill":
                 color = R.color.chill_color;
-                tvCategory.setBackgroundResource(R.color.chill_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.chill_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.chill_color));
+//                tvCategory.setBackgroundResource(R.color.chill_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
             case "Misc":
                 color = R.color.misc_color;
-                tvCategory.setBackgroundResource(R.color.misc_color);
-                tv30.setBackgroundColor(getResources().getColor(R.color.misc_color));
-                tv1h.setBackgroundColor(getResources().getColor(R.color.misc_color));
-                tv2h.setBackgroundColor(getResources().getColor(R.color.misc_color));
-                tv3h.setBackgroundColor(getResources().getColor(R.color.misc_color));
-                tv6h.setBackgroundColor(getResources().getColor(R.color.misc_color));
-                tv12h.setBackgroundColor(getResources().getColor(R.color.misc_color));
+//                tvCategory.setBackgroundResource(R.color.misc_color);
+                tv30.setBackgroundColor(getResources().getColor(R.color.white));
+                tv1h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv2h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv3h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv6h.setBackgroundColor(getResources().getColor(R.color.white));
+                tv12h.setBackgroundColor(getResources().getColor(R.color.white));
                 break;
 
         }
+
+        tv30.setTextColor(getResources().getColor(color));
+        tv1h.setTextColor(getResources().getColor(color));
+        tv2h.setTextColor(getResources().getColor(color));
+        tv3h.setTextColor(getResources().getColor(color));
+        tv6h.setTextColor(getResources().getColor(color));
+        tv12h.setTextColor(getResources().getColor(color));
 
 
         makeEventButton = (Button) findViewById(R.id.btMakeEvent);
@@ -200,12 +227,13 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         makeEventButton.setTextColor(Color.WHITE);
         makeEventButton.setEnabled(false);
 
+
         etDescription.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if (s.toString().trim().length() == 0) {
+                if (s.toString().trim().length() == 0 || isSelected == false) {
                     makeEventButton.setEnabled(false);
                 } else {
                     makeEventButton.setEnabled(true);
@@ -217,11 +245,21 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count,
                                           int after) {
+                if (s.toString().trim().length() == 0 || isSelected == false) {
+                    makeEventButton.setEnabled(false);
+                } else {
+                    makeEventButton.setEnabled(true);
+                }
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if (s.toString().trim().length() == 0 || isSelected == false) {
+                    makeEventButton.setEnabled(false);
+                } else {
+                    makeEventButton.setEnabled(true);
+                }
 
             }
         });
@@ -247,34 +285,52 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isSelected=true;
                 switch (view.getId()) {
                     case R.id.bt30:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
 
                     case R.id.bt1:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
 
                     case R.id.bt2:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
 
                     case R.id.bt3:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
                     case R.id.bt6:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
 
                     case R.id.bt12:
                         setFocus(btn_unfocus, tv);
+                        if (etDescription.getText().toString().length()!=0){
+                            makeEventButton.setEnabled(true);
+                        }
                         break;
 
 
                 }
                 newDate.setTime((new Date()).getTime() + minToDeadline * MILLISECONDS_IN_MINUTE);
-                Toast.makeText(SelectEventDeadlineActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -283,10 +339,10 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
     }
 
     private void setFocus(Button btn_unfocus, Button btn_focus) {
-        btn_unfocus.setTextColor(Color.WHITE);
-        btn_unfocus.setBackgroundColor(getResources().getColor(color));
-        btn_focus.setTextColor(color);
-        btn_focus.setBackgroundColor(Color.WHITE);
+        btn_unfocus.setTextColor(getResources().getColor(color));
+        btn_unfocus.setBackgroundColor(Color.WHITE);
+        btn_focus.setTextColor(Color.WHITE);
+        btn_focus.setBackgroundColor(getResources().getColor(color));
         this.btn_unfocus = btn_focus;
     }
 
@@ -462,6 +518,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                                             Bundle bundle = new Bundle();
                                             bundle.putString("eventId", object.getObjectId());
                                             bundle.putString("eventDescription", newEvent.description);
+                                            bundle.putString("category", newEvent.category);
                                             new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
                                             // }
                                         }

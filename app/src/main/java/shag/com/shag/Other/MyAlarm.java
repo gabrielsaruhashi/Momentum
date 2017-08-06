@@ -67,7 +67,8 @@ public class MyAlarm extends BroadcastReceiver {
                     // TODO only save if more than two participants (owner and Shaggy)
                     ArrayList<String> participantIds = event.getParticipantsIds();
                     ArrayList<String> facebookIds = event.getParticipantsFacebookIds();
-                    new Memory(extras.getString("eventDescription"), participantIds, extras.getString("eventId"), facebookIds);
+                    new Memory(extras.getString("eventDescription"), participantIds, extras.getString("eventId"),
+                            facebookIds, extras.getString("category"));
                 } else {
                     Log.e("MyAlarm error", "Error Loading Messages" + e);
                 }

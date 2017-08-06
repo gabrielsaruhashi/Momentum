@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,6 +10,7 @@
     android:weightSum="1"
 
     >
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
@@ -17,26 +18,29 @@
         android:background="@drawable/gradient_bar"
         android:elevation="@dimen/toolbar_elevation"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
-    <TextView
-        android:id="@+id/tvCategory"
-        android:layout_width="match_parent"
-        android:layout_height="12dp"
-        android:layout_weight="0.07"
-        android:text="Category"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
+        <TextView
+            android:id="@+id/genericName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/sportsIcon"
+            android:elevation="4dp"
+            android:paddingLeft="16dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:text="EXPLORE"
+            android:transitionName="nameTransition"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            />
+    </android.support.v7.widget.Toolbar>
 
     <EditText
         android:id="@+id/tvDescriptionInput"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:layout_alignStart="@+id/tvDescription"
-        android:layout_below="@+id/tvDescription"
         android:background="@null"
         android:gravity="top"
         android:hint="Required: What do ya wanna do?"
@@ -45,22 +49,29 @@
         android:textAppearance="@android:style/TextAppearance.Small"
         android:textSize="16dp"
         tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="53dp" />
+        tools:layout_editor_absoluteY="53dp"
+        android:layout_below="@+id/my_toolbar"
+        android:layout_alignParentStart="true" />
 
 
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="match_parent"
+
+    <Button
+        android:id="@+id/btMakeEvent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Deadline To Join"
-        android:textAllCaps="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:elevation="2dp"
+        android:text="Create Event"
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        tools:layout_editor_absoluteX="280dp"
+        tools:layout_editor_absoluteY="460dp" />
 
     <LinearLayout
+        android:id="@+id/btRow"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/btMakeEvent"
         android:orientation="horizontal"
         android:weightSum="1"
         android:layout_weight="0.07">
@@ -138,20 +149,22 @@
             android:textColor="@color/white"
             android:text="12 Hr"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvDeadlineToJoin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Deadline To Join"
+        android:textAllCaps="true"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:layout_above="@id/btRow"
+        android:layout_alignParentStart="true" />
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="2dp" />
-    <Button
-        android:id="@+id/btMakeEvent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:elevation="2dp"
-        android:text="Create Event"
-        android:textAlignment="center"
-        tools:layout_editor_absoluteX="280dp"
-        tools:layout_editor_absoluteY="460dp" />
 
 
-</LinearLayout>
+
+</RelativeLayout>
