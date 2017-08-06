@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.text.SpannableStringBuilder;
 
 import shag.com.shag.Fragments.FeedFragment;
+import shag.com.shag.Fragments.MemoriesFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
 
 /**
@@ -20,6 +21,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     private Context context;
     private FeedFragment feedFragment;
     private MemoryListFragment memoryListFragment;
+    private MemoriesFragment memoriesFragment;
     Drawable myDrawable;
 
     public MainFragmentPagerAdapter(FragmentManager fm, Context context) {
@@ -38,8 +40,8 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
             feedFragment = getFeedInstance();
             return feedFragment;
         } else if (position == 1) {
-            memoryListFragment = getMemoryListInstance();
-            return memoryListFragment;
+            memoriesFragment = getMemoriesFragmentInstance();
+            return memoriesFragment;
         } else {
             return null;
         }
@@ -83,12 +85,12 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
         return feedFragment;
     }
 
-    private MemoryListFragment getMemoryListInstance() {
-        if (memoryListFragment == null) {
-            memoryListFragment = new MemoryListFragment();
+    private MemoriesFragment getMemoriesFragmentInstance() {
+        if (memoriesFragment == null) {
+            memoriesFragment = new MemoriesFragment();
         }
 
-        return memoryListFragment;
+        return memoriesFragment;
     }
 
 }

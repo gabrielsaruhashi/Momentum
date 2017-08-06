@@ -1,9 +1,19 @@
-package shag.com.shag.Activities;
+package shag.com.shag.Fragments;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.LightingColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.parse.FindCallback;
@@ -15,71 +25,49 @@ import java.util.ArrayList;
 import java.util.List;
 
 import shag.com.shag.Adapters.MemoriesAdapter;
+import shag.com.shag.Adapters.MemoryFragmentPagerAdapter;
 import shag.com.shag.Models.Memory;
-import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-/* NOT BEING USED
-* */
+public class MemoriesFragment extends Fragment {
 
-public class MemoriesActivity extends AppCompatActivity {
+    ViewPager mViewPager;
+    TabLayout tabLayout;
+    private FragmentManager fragmentManager;
+
     Context context;
-
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
     ListView lvMemories;
 
 
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_memories);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        context = this;
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_memories, container, false);
 
         // get our list view
-        lvMemories = (ListView) findViewById(R.id.lvMainList);
+        //lvMemories = (ListView) v.findViewById(R.id.lvMainList);
+        context = getContext();
 
-        // instantiate memories and set adapter
-        memories = new ArrayList<Memory>();
+        mViewPager = (ViewPager) v.findViewById(R.id.view_pager);
+        mViewPager.setAdapter(new MemoryFragmentPagerAdapter(getFragmentManager(), context));
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tabber);
+        tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
-        /*
-        // add custom btn handler to first list item
-        memories.get(0).setRequestBtnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "CUSTOM HANDLER FOR FIRST BUTTON", Toast.LENGTH_SHORT).show();
-            }
-        }); */
+        tabLayout.setSelectedTabIndicatorHeight(2);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_cute_photos);
 
-        // set adapter
-        mAdapter = new MemoriesAdapter(context, memories);
+        Drawable mapIcon = getResources().getDrawable( R.drawable.ic_map );
+        ColorFilter filter = new LightingColorFilter( Color.WHITE, Color.WHITE);
+        mapIcon.setColorFilter(filter);
+        tabLayout.getTabAt(1).setIcon(mapIcon);
 
-        // set elements to adapter
-        lvMemories.setAdapter(mAdapter);
-
-        // instantiate current user
-        currentUser = ParseApplication.getCurrentUser();
-
-
-        // populate memory
-        populateMemories();
-        /*
-        // set on click event listener to list view
-        lvMemories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                // toggle clicked cell state
-                ((FoldingCell) view).toggle(false);
-                // register in adapter that state for selected cell is toggled
-                mAdapter.registerToggle(pos);
-            }
-        }); */
+        return v;
     }
-
-
 
     private void populateMemories() {
         ParseQuery<Memory> query = ParseQuery.getQuery("Memory");

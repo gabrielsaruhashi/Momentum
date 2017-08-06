@@ -164,7 +164,7 @@ public class ChatListFragment extends Fragment {
         chat.setChatParticipantsIds(event.getParticipantsIds());
 
         // add shaggy bot
-        chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
+            chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
 
         // get icon url
         if (event.getEventOwner() != null) {

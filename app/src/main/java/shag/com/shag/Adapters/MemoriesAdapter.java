@@ -57,6 +57,9 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
             viewHolder.tvPhotoCount.setText("" + memory.getPicturesParseFiles().size());
         }
 
+        if (memory.getLocation() != null) {
+            viewHolder.tvLocation.setText(memory.getLocation());
+        }
 
         viewHolder.ivCoverPicture.setAdjustViewBounds(true);
         Glide.with(mContext)
@@ -133,6 +136,7 @@ public class MemoriesAdapter extends ArrayAdapter<Memory> {
         @BindView(R.id.tvMemoryName) TextView tvMemoryName;
         @BindView(R.id.ivCoverPicture) ImageView ivCoverPicture;
         @BindView(R.id.tvPhotoCount) TextView tvPhotoCount;
+        @BindView(R.id.tvLocation) TextView tvLocation;
         @BindView(R.id.ivFriend1) ImageView ivFriend1;
         @BindView(R.id.ivFriend2) ImageView ivFriend2;
         @BindView(R.id.ivFriend3) ImageView ivFriend3;
