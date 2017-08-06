@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="@dimen/cardMarginVertical"
+        android:layout_marginLeft="@dimen/cardMarginHorizontal"
+        android:layout_marginRight="@dimen/cardMarginHorizontal"
+        android:layout_marginTop="@dimen/cardMarginVertical"
+        app:cardCornerRadius="2dp"
+        app:cardElevation="4dp"
+        app:cardPreventCornerOverlap="false"
+        app:contentPadding="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/rlHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/ivCategoryBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="38dp"
+                    android:background="@color/black" />
+
+                <ImageView
+                    android:id="@+id/ivCategory"
+                    android:layout_centerInParent="true"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/misc_circle"
+                    android:elevation="4dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/ivProfileImage"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    app:srcCompat="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/tvEventOwnerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_toRightOf="@+id/ivProfileImage"
+                    android:fontFamily="sans-serif-light"
+                    android:text="TextView"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvBody"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignEnd="@+id/btJoin"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/ivProfileImage"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="8dp"
+                    android:autoLink="all"
+                    android:fontFamily="sans-serif-light"
+                    android:text="TextView"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tvExpiresText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tvEventOwnerName"
+                    android:layout_alignBottom="@+id/tvEventOwnerName"
+                    android:layout_toStartOf="@+id/tvRelativeTime"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Expires in "
+                    android:textAllCaps="true"
+                    android:textSize="10sp" />
+
+                <TextView
+                    android:id="@+id/tvRelativeTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tvExpiresText"
+                    android:layout_alignBottom="@+id/tvExpiresText"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="8dp"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="TXT"
+                    android:textAllCaps="true"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ivFriend1"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignTop="@+id/btJoin"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toLeftOf="@+id/ivFriend2" />
+
+                <ImageView
+                    android:id="@+id/ivFriend2"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignTop="@+id/btJoin"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toLeftOf="@+id/ivFriend3" />
+
+                <ImageView
+                    android:id="@+id/ivFriend3"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_alignTop="@+id/btJoin"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toLeftOf="@+id/btJoin" />
+
+                <Button
+                    android:id="@+id/btJoin"
+                    android:layout_width="64dp"
+                    android:layout_height="28dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/ivMap"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/colorAccent"
+                    android:fontFamily="sans-serif-smallcaps"
+                    android:text="Join"
+                    android:textColor="@color/white" />
+
+                <ImageView
+                    android:id="@+id/ivMap"
+                    android:layout_width="225dp"
+                    android:layout_height="125dp"
+                    android:layout_alignLeft="@+id/tvBody"
+                    android:layout_marginLeft="8dp"
+                    android:layout_below="@id/tvBody"
+                    android:background="@color/black"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp"/>
+
+                <ImageView
+                    android:id="@+id/ivDivider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/medium_gray"
+                    android:layout_below="@id/btJoin"
+                    android:visibility="gone"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ivDivider"
+                    android:id="@+id/rlChatInfo"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvLastMessageTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/icRightArrow"
+                        android:fontFamily="sans-serif-smallcaps"
+                        android:text="Textview"
+                        android:textColor="@color/medium_gray"
+                        android:textSize="12sp"/>
+
+                    <TextView
+                        android:id="@+id/tvLastMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@id/tvLastMessageTime"
+                        android:ellipsize="end"
+                        android:fontFamily="sans-serif-light"
+                        android:maxLines="1"
+                        android:text="Textview"/>
+
+                    <ImageView
+                        android:id="@+id/icRightArrow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        app:srcCompat="@drawable/ic_right_arrow"/>
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+</FrameLayout>

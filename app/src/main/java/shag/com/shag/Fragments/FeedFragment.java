@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseLiveQueryClient;
@@ -24,7 +25,6 @@ import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,7 +33,6 @@ import shag.com.shag.Adapters.FeedAdapter;
 import shag.com.shag.Clients.FacebookClient;
 import shag.com.shag.Fragments.DialogFragments.PickCategoryDialogFragment;
 import shag.com.shag.Models.Event;
-import shag.com.shag.Other.DividerItemDecorator;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.Other.RelevanceComparator;
 import shag.com.shag.R;
@@ -70,14 +69,16 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         // initialize recycler view
         rvEvents = (RecyclerView) v.findViewById(R.id.rvEvents);
 
+        // setup rvEvents
+        rvEvents.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         // attach the adapter to the RecyclerView
         rvEvents.setAdapter(adapter);
         // Set layout manager to position the items
         rvEvents.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // add line divider decorator
-        RecyclerView.ItemDecoration itemDecoration = new
-                DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
+        //RecyclerView.ItemDecoration itemDecoration = new
+                //DividerItemDecorator(rvEvents.getContext(), DividerItemDecorator.VERTICAL_LIST);
         //rvEvents.addItemDecoration(itemDecoration);
 
 
@@ -121,6 +122,11 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
         currentUser = ParseApplication.getCurrentUser();
 
         return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
     }
 
     public void fetchTimelineAsync(int page) {
@@ -177,16 +183,17 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     //TODO see if it is possible to improve this logic
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
-                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
+
+                        //if (event.getDeadline().getTime() > (new Date()).getTime()) {
                             events.add(event);
-                        }
+                        //}
                         event.setRelevance(calculateEventRelevance(event, currentUser));
                         Log.i("FEED_RELEVANCE", event.getDescription() + " has relevance: " + event.getRelevance());
                     }
                     // sort events based on relevance
-                    Collections.sort(eventsList, new RelevanceComparator());
+                    Collections.sort(events, new RelevanceComparator());
                     // put in descending oreder
-                    Collections.reverse(eventsList);
+                    Collections.reverse(events);
 
                     adapter.notifyDataSetChanged();
                     startLiveQueries();

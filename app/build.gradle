@@ -109,6 +109,12 @@ dependencies {
     testCompile 'junit:junit:4.12'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     annotationProcessor 'org.parceler:parceler:1.1.6'
+
+    compile 'com.github.florent37:materialviewpager:1.2.1'
+
+    //dependencies
+    compile 'com.flaviofaria:kenburnsview:1.0.7'
+    compile 'com.jpardogo.materialtabstrip:library:1.1.0'
 }
 
 // for GMS notifications
