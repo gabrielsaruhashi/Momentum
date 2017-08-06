@@ -1258,6 +1258,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+
+        // added check for Invite Friends Request Code
+        if (requestCode == INVITE_FRIENDS_ACTIVITY) {
+            // Do nothing
+        }
+
         int btn;
 
         //button values are hidden in code

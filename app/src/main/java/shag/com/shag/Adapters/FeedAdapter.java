@@ -97,7 +97,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // populate the views
         Event event = events.get(position);
         if (!event.getIsEventPrivate()) {
-            showMap(event, holder);
+            //showMap(event, holder);
         }
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
