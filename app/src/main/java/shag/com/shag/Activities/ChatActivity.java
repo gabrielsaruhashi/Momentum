@@ -732,6 +732,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                             }
 
                                         }
+                                        else if (data.equalsIgnoreCase("get food rec")) {
+                                            recommendRestaurant();
+                                        }
                                     } else {
                                         e.printStackTrace();
                                     }
@@ -1382,7 +1385,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             JSONObject restaurant = restaurantArray.getJSONObject(0).getJSONObject("restaurant");
                             String restaurantName = restaurant.getString("name");
                             String address = restaurant.getJSONObject("location").getString("address");
-                            callShaggyForResponse("Recommendation", restaurantName + " @ " + address);
+                            callShaggyForResponse("Recommendation", restaurantName, address);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1408,15 +1411,17 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         return req;
     }
 
-    private void callShaggyForResponse(String type, String body) {
+    private void callShaggyForResponse(String type, String restaurantName, String address) {
 
         if (type.equals("Recommendation")) {
             final Message m = new Message();
             m.setSenderId("InuSHuTqkn");
             if (favFood == null) {
-                m.setBody("Hey! Feel free to start looking for restaurants. Why not try out " + body);
+                m.setBody("Hey! Feel free to start looking for restaurants. Why not try out "
+                        + restaurantName + " @" + address);
             } else {
-                m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out " + body);
+                m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "
+                        + restaurantName + " @" + address);
             }
             m.setEventId(eventId);
             m.setSenderName("Shaggy Bot");
