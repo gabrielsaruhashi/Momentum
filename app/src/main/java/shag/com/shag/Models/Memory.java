@@ -118,7 +118,7 @@ public class Memory extends ParseObject implements Parcelable {
 
     public void setUserImageUrls(ArrayList<String> userImageUrls) {
         this.userImageUrls = userImageUrls;
-        put("user_image_urls", userImageUrls);
+        put("user_image_urls", userImageUrls); }
       
     public String getLocation() {
         return getString("location");
