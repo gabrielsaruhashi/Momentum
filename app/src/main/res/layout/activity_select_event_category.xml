@@ -46,11 +46,13 @@
                     android:layout_width="104dp"
                     android:layout_height="104dp"
                     android:paddingTop="4dp"
+                    android:transitionName="iconTransition"
                     android:layout_alignParentStart="true"
                     android:tint="@color/white"
                     app:srcCompat="@drawable/ic_noun_956258_cc" />
 
                 <TextView
+                    android:id="@+id/exploreName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/exploreIcon"
@@ -58,6 +60,7 @@
                     android:paddingLeft="16dp"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
+                    android:transitionName="nameTransition"
                     android:text="EXPLORE"
                     android:textColor="@color/white"
                     android:textSize="36sp"
@@ -88,10 +91,12 @@
                     android:id="@+id/sportsIcon"
                     android:layout_width="104dp"
                     android:padding="4dp"
+                    android:transitionName="iconTransition"
                     android:layout_height="88dp"
                     app:srcCompat="@drawable/ic_sports" />
 
                 <TextView
+                    android:id="@+id/sportsName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/sportsIcon"
@@ -100,6 +105,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:text="SPORTS"
+                    android:transitionName="nameTransition"
                     android:textColor="@color/white"
                     android:textSize="36sp"
                     />
@@ -130,10 +136,12 @@
                     android:layout_height="104dp"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
+                    android:transitionName="iconTransition"
                     android:tint="@color/white"
                     app:srcCompat="@drawable/ic_iying_down" />
 
                 <TextView
+                    android:id="@+id/chillName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/chillIcon"
@@ -141,6 +149,7 @@
                     android:paddingLeft="16dp"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
+                    android:transitionName="nameTransition"
                     android:text="CHILL"
                     android:textColor="@color/white"
                     android:textSize="36sp"
@@ -169,11 +178,13 @@
                     android:layout_width="104dp"
                     android:layout_height="104dp"
                     android:padding="4dp"
+                    android:transitionName="iconTransition"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     app:srcCompat="@drawable/ic_food1" />
 
                 <TextView
+                    android:id="@+id/foodName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/foodIcon"
@@ -182,6 +193,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:text="FOOD"
+                    android:transitionName="nameTransition"
                     android:textColor="@color/white"
                     android:textSize="36sp"
                     />
@@ -210,11 +222,13 @@
                     android:layout_width="104dp"
                     android:layout_height="104dp"
                     android:padding="4dp"
+                    android:transitionName="iconTransition"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     app:srcCompat="@drawable/ic_party1" />
 
                 <TextView
+                    android:id="@+id/partyName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/partyIcon"
@@ -223,6 +237,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:text="PARTY"
+                    android:transitionName="nameTransition"
                     android:textColor="@color/white"
                     android:textSize="36sp"
                     />
@@ -252,11 +267,13 @@
                     android:layout_width="104dp"
                     android:layout_height="104dp"
                     android:padding="4dp"
+                    android:transitionName="iconTransition"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     app:srcCompat="@drawable/ic_misc1" />
 
                 <TextView
+                    android:id="@+id/miscName"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_toRightOf="@id/miscIcon"
@@ -265,6 +282,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:text="MISC"
+                    android:transitionName="nameTransition"
                     android:textColor="@color/white"
                     android:textSize="36sp"
                     />

@@ -707,9 +707,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                         if (data.equalsIgnoreCase("hi Shaggy")) {
                                             final Message m = new Message();
                                             m.setSenderId("InuSHuTqkn");
-                                            m.setBody("Hi! My name is Shaggy");
+                                            m.setBody("Hi! My name is Shaggy Bot");
                                             m.setEventId(eventId);
-                                            m.setSenderName("Shaggy");
+                                            m.setSenderName("Shaggy Bot");
                                             try {
                                                 m.save();
 
@@ -731,6 +731,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                                 exception.printStackTrace();
                                             }
 
+                                        }
+                                        else if (data.equalsIgnoreCase("get food rec")) {
+                                            recommendRestaurant();
                                         }
                                     } else {
                                         e.printStackTrace();
@@ -1258,16 +1261,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
+
         // added check for Invite Friends Request Code
         if (requestCode == INVITE_FRIENDS_ACTIVITY) {
             // Do nothing
         }
 
         int btn;
-        Poll poll = polls.get(viewPosition);
-        final List<String> choices = poll.getChoices();
-        final Map<String, Integer> scores = poll.getScores();
-        final Map<String, ParseGeoPoint> locOptions = poll.getLocationOptions();
 
         //button values are hidden in code
         if (requestCode - 0 == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
@@ -1285,6 +1285,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+
+                Poll poll = polls.get(viewPosition);
+                final List<String> choices = poll.getChoices();
+                final Map<String, Integer> scores = poll.getScores();
+                final Map<String, ParseGeoPoint> locOptions = poll.getLocationOptions();
+
                 Place place = PlaceAutocomplete.getPlace(this, data);
                 Log.i(TAG, "Place: " + place.getName());
                 LatLng loc = place.getLatLng();
@@ -1314,6 +1320,25 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     scores.put(rButton3.getText().toString(), 0);
                 }
 
+                final ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
+
+                pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
+                    public void done(ParseObject pollDb, ParseException e) {
+                        if (e == null) {
+                            pollDb.put("choices", choices);
+                            pollDb.put("scores", scores);
+                            pollDb.put("location_options", locOptions);
+                            try {
+                                pollDb.save();
+                            } catch (ParseException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+
+
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(this, data);
                 // TODO: Handle the error.
@@ -1323,22 +1348,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 // The user canceled the operation.
             }
         }
-        final ParseQuery<ParseObject> pollQuery = ParseQuery.getQuery("Poll");
 
-        pollQuery.getInBackground(poll.getPollId(), new GetCallback<ParseObject>() {
-            public void done(ParseObject pollDb, ParseException e) {
-                if (e == null) {
-                    pollDb.put("choices", choices);
-                    pollDb.put("scores", scores);
-                    pollDb.put("location_options", locOptions);
-                    try {
-                        pollDb.save();
-                    } catch (ParseException e1) {
-                        e1.printStackTrace();
-                    }
-                }
-            }
-        });
     }
 
     public void onEventReady(MenuItem menuItem) {
@@ -1375,7 +1385,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             JSONObject restaurant = restaurantArray.getJSONObject(0).getJSONObject("restaurant");
                             String restaurantName = restaurant.getString("name");
                             String address = restaurant.getJSONObject("location").getString("address");
-                            callShaggyForResponse("Recommendation", restaurantName + " @ " + address);
+                            callShaggyForResponse("Recommendation", restaurantName, address);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -1401,18 +1411,21 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         return req;
     }
 
-    private void callShaggyForResponse(String type, String body) {
+    private void callShaggyForResponse(String type, String restaurantName, String address) {
 
         if (type.equals("Recommendation")) {
             final Message m = new Message();
             m.setSenderId("InuSHuTqkn");
             if (favFood == null) {
-                m.setBody("Hey! Feel free to start looking for restaurants. Why not try out " + body);
+                String newAddress = address.substring(0,address.length()-6);
+                m.setBody("Hey! Feel free to start looking for restaurants. Why not try out "
+                        + restaurantName + " @" + address.substring(0,address.length()-6));
             } else {
-                m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out " + body);
+                m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "
+                        + restaurantName + " @" + address.substring(0,address.length()-6));
             }
             m.setEventId(eventId);
-            m.setSenderName("Shaggy");
+            m.setSenderName("Shaggy Bot");
             m.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {

@@ -33,6 +33,7 @@ public class Memory extends ParseObject implements Parcelable {
     private int indexOfLastPictureShared;
     private ArrayList<String> userImageUrls;
     private String location;
+    private String category;
 
     //needs to implement empty constructor to be a Parse Object
     public Memory() {
@@ -40,12 +41,17 @@ public class Memory extends ParseObject implements Parcelable {
     }
 
 
-    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId, final ArrayList<String> facebookIds) {
+
+
+    public Memory(String eventDescription, final ArrayList<String> participantsIds, final String eventId,
+                  final ArrayList<String> facebookIds, String category) {
         // set values
         setMemoryName(eventDescription);
         setParticipantsIds(participantsIds);
         setEventId(eventId);
         setParticipantsFacebookIds(facebookIds);
+        setCategory(category);
+
         picturesParseFiles = new ArrayList<ParseFile>();
         setPicturesParseFiles(picturesParseFiles);
 
@@ -147,7 +153,14 @@ public class Memory extends ParseObject implements Parcelable {
         this.coverPictureUrl = coverPictureUrl;
         put("cover_picture", coverPictureUrl);
     }
+    public String getCategory() {
+        return getString("category");
+    }
 
+    public void setCategory(String category) {
+        this.category = category;
+        put("category", category);
+    }
     public int getIndexOfLastPictureShared() {
         return getInt("index_of_last_picture_shared");
     }
