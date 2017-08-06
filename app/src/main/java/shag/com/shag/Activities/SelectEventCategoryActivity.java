@@ -67,24 +67,24 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
             if (pickedCategory.equals("Explore")) {
                 i = new Intent(SelectEventCategoryActivity.this, SelectPublicEventTypeActivity.class);
                 i.putExtra("Event Type", "Public");
-                Pair<View, String> p1 = Pair.create((View)genericIcon, "iconTransition");
+//                Pair<View, String> p1 = Pair.create((View)genericIcon, "iconTransition");
                 Pair<View, String> p2 = Pair.create((View)genericName, "nameTransition");
                 ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(this, p1, p2);
+                        makeSceneTransitionAnimation(this, p2);
                 i.putExtra("Category", pickedCategory);
-                i.putExtra("Icon", iconResource);
+//                i.putExtra("Icon", iconResource);
                 startActivity(i, options.toBundle());
 
             }
             else {
                 i = new Intent(SelectEventCategoryActivity.this, SelectEventDeadlineActivity.class);
                 i.putExtra("Event Type", "Private");
-                Pair<View, String> p1 = Pair.create((View)genericIcon, "iconTransition");
+                //                Pair<View, String> p1 = Pair.create((View)genericIcon, "iconTransition");
                 Pair<View, String> p2 = Pair.create((View)genericName, "nameTransition");
                 ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(this, p1, p2);
+                        makeSceneTransitionAnimation(this, p2);
                 i.putExtra("Category", pickedCategory);
-                i.putExtra("Icon", iconResource);
+//                i.putExtra("Icon", iconResource);
                 startActivity(i, options.toBundle());
 
             }

@@ -1417,11 +1417,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             final Message m = new Message();
             m.setSenderId("InuSHuTqkn");
             if (favFood == null) {
+                String newAddress = address.substring(0,address.length()-6);
                 m.setBody("Hey! Feel free to start looking for restaurants. Why not try out "
-                        + restaurantName + " @" + address);
+                        + restaurantName + " @" + address.substring(0,address.length()-6));
             } else {
                 m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "
-                        + restaurantName + " @" + address);
+                        + restaurantName + " @" + address.substring(0,address.length()-6));
             }
             m.setEventId(eventId);
             m.setSenderName("Shaggy Bot");

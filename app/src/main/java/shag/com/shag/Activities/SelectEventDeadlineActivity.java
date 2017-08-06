@@ -97,11 +97,11 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         }
 
         if (eventType.equals("Private")) {
-            genericIcon = (ImageView) findViewById(R.id.genericIcon);
+            //genericIcon = (ImageView) findViewById(R.id.genericIcon);
             genericName = (TextView) findViewById(R.id.genericName);
             genericName.setText(category);
 
-            genericIcon.setImageResource(getIntent().getIntExtra("Icon",-1));
+//            genericIcon.setImageResource(getIntent().getIntExtra("Icon",-1));
 
             setSupportActionBar(myToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);

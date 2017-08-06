@@ -13,14 +13,7 @@
         android:elevation="@dimen/toolbar_elevation"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
-        <ImageView
-            android:id="@+id/genericIcon"
-            android:layout_width="104dp"
-            android:padding="4dp"
-            android:transitionName="iconTransition"
-            android:tint="@color/white"
-            android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_noun_956258_cc" />
+
         <TextView
             android:id="@+id/genericName"
             android:layout_width="wrap_content"
