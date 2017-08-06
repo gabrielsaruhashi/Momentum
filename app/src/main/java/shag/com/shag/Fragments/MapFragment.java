@@ -89,7 +89,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapFrag = (SupportMapFragment) getChildFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
 
-        populateMap();
+        // populateMap();
 
 
         return v;

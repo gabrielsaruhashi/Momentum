@@ -688,8 +688,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             payload.put("token", token);
 
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
-                            Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
-                                    Toast.LENGTH_SHORT).show();
 
                             etMessage.setText(null);
                             // add message to arraylist
