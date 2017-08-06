@@ -53,6 +53,10 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
             else {
                 i = new Intent(SelectEventCategoryActivity.this, SelectEventDeadlineActivity.class);
                 i.putExtra("Event Type", "Private");
+//                i.putExtra(SelectEventDeadlineActivity.EXTRA_CONTACT, contact);
+//                ActivityOptionsCompat options = ActivityOptionsCompat.
+//                        makeSceneTransitionAnimation(this, (View)ivProfile, "profile");
+//                startActivityy(intent, options.toBundle());
             }
             i.putExtra("Category", pickedCategory);
             startActivity(i);

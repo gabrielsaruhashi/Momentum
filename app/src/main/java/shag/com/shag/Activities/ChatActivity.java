@@ -707,9 +707,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                         if (data.equalsIgnoreCase("hi Shaggy")) {
                                             final Message m = new Message();
                                             m.setSenderId("InuSHuTqkn");
-                                            m.setBody("Hi! My name is Shaggy");
+                                            m.setBody("Hi! My name is Shaggy Bot");
                                             m.setEventId(eventId);
-                                            m.setSenderName("Shaggy");
+                                            m.setSenderName("Shaggy Bot");
                                             try {
                                                 m.save();
 
@@ -1413,7 +1413,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out " + body);
             }
             m.setEventId(eventId);
-            m.setSenderName("Shaggy");
+            m.setSenderName("Shaggy Bot");
             m.saveInBackground(new SaveCallback() {
                 @Override
                 public void done(ParseException e) {

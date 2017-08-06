@@ -88,6 +88,7 @@
                     android:id="@+id/sportsIcon"
                     android:layout_width="104dp"
                     android:padding="4dp"
+                    android:transitionName="icon"
                     android:layout_height="88dp"
                     app:srcCompat="@drawable/ic_sports" />
 

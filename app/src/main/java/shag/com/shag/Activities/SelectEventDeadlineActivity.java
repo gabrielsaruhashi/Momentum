@@ -462,6 +462,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                                             Bundle bundle = new Bundle();
                                             bundle.putString("eventId", object.getObjectId());
                                             bundle.putString("eventDescription", newEvent.description);
+                                            bundle.putString("category", newEvent.category);
                                             new MyAlarm(getContext(), bundle, newEvent.getTimeOfEvent().getTime());
                                             // }
                                         }
