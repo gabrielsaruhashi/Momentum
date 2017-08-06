@@ -67,8 +67,13 @@ public class SelectEventCategoryActivity extends AppCompatActivity {
             if (pickedCategory.equals("Explore")) {
                 i = new Intent(SelectEventCategoryActivity.this, SelectPublicEventTypeActivity.class);
                 i.putExtra("Event Type", "Public");
+                Pair<View, String> p1 = Pair.create((View)genericIcon, "iconTransition");
+                Pair<View, String> p2 = Pair.create((View)genericName, "nameTransition");
+                ActivityOptionsCompat options = ActivityOptionsCompat.
+                        makeSceneTransitionAnimation(this, p1, p2);
                 i.putExtra("Category", pickedCategory);
-                startActivity(i);
+                i.putExtra("Icon", iconResource);
+                startActivity(i, options.toBundle());
 
             }
             else {

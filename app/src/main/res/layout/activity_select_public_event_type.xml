@@ -12,7 +12,31 @@
         android:background="@drawable/gradient_bar"
         android:elevation="@dimen/toolbar_elevation"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
+        <ImageView
+            android:id="@+id/genericIcon"
+            android:layout_width="104dp"
+            android:padding="4dp"
+            android:transitionName="iconTransition"
+            android:tint="@color/white"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/ic_noun_956258_cc" />
+        <TextView
+            android:id="@+id/genericName"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/sportsIcon"
+            android:elevation="4dp"
+            android:paddingLeft="16dp"
+            android:fontFamily="sans-serif-light"
+            android:gravity="center"
+            android:textAllCaps="true"
+            android:text="EXPLORE"
+            android:transitionName="nameTransition"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            />
+    </android.support.v7.widget.Toolbar>
     <LinearLayout
         android:id="@+id/verticalLayout"
         android:layout_below="@+id/my_toolbar"
