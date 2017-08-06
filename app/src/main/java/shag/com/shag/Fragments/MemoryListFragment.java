@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
@@ -37,7 +38,7 @@ public class MemoryListFragment extends Fragment {
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
-    ListView lvMemories;
+    RecyclerView rvMemories;
 
     private final static int REQUEST_OPEN_MEMORIES = 10;
 
@@ -48,7 +49,7 @@ public class MemoryListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_memory_book_list, container, false);
 
         // get our list view
-        lvMemories = (ListView) v.findViewById(R.id.lvMainList);
+        rvMemories = (RecyclerView) v.findViewById(R.id.rvMemoriesList);
         context = getContext();
 
         // instantiate memories and set adapter
@@ -57,11 +58,12 @@ public class MemoryListFragment extends Fragment {
         // set adapter
         mAdapter = new MemoriesAdapter(context, memories);
 
+        // set item decoration
+        rvMemories.addItemDecoration(new MaterialViewPagerHeaderDecorator());
         // set elements to adapter
-        lvMemories.setAdapter(mAdapter);
-
-        //
-        lvMemories.addItemDecoration(new MaterialViewPagerHeaderDecorator());
+        rvMemories.setAdapter(mAdapter);
+        // Set layout manager to position the items
+        rvMemories.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // instantiate current user
         currentUser = ParseApplication.getCurrentUser();
@@ -99,7 +101,7 @@ public class MemoryListFragment extends Fragment {
                                 public void run() {
                                     memories.add(0, object);
                                     mAdapter.notifyDataSetChanged();
-                                    lvMemories.smoothScrollToPosition(0);
+                                    rvMemories.smoothScrollToPosition(0);
 
                                 }
                             });
