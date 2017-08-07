@@ -35,6 +35,7 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -685,8 +686,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             payload.put("token", token);
 
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
-                            Toast.makeText(ChatActivity.this, "Successfully created message on Parse",
-                                    Toast.LENGTH_SHORT).show();
 
                             etMessage.setText(null);
                             // add message to arraylist
@@ -1408,60 +1407,106 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         return req;
     }
 
-    private void callShaggyForResponse(String type, String restaurantName, String address) {
+    private void callShaggyForResponse(String type, final String restaurantName, final String address) {
 
         if (type.equals("Recommendation")) {
-            final Message m = new Message();
-            m.setSenderId("InuSHuTqkn");
-            if (favFood == null) {
-                String newAddress = address.substring(0,address.length()-6);
-                m.setBody("Looking for recommendations? Try out "
-                        + restaurantName + " @" + address.substring(0,address.length()-6));
-            } else {
-                m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "
-                        + restaurantName + " @" + address.substring(0,address.length()-6));
-            }
-            m.setEventId(eventId);
-            m.setSenderName("Shaggy Bot");
-            m.saveInBackground(new SaveCallback() {
+            final String googleUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+            String givenAddress = "address=" + address.replaceAll(" ", "");
+            ;
+            final String api = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+
+
+            JsonObjectRequest reqDestination = new JsonObjectRequest(Request.Method.GET, googleUrl + givenAddress + api,
+                    null, new Response.Listener<JSONObject>() {
                 @Override
-                public void done(ParseException e) {
-                    String token = "";
+                public void onResponse(JSONObject response) {
+                    JSONArray resultArray = null;
+                    JSONObject firstAddress = null;
+                    String formattedAddress = "";
+
                     try {
-                        //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
-                        token = InstanceID.getInstance(context)
-                                .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                        Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    }
-                    HashMap<String, String> payload = new HashMap<>();
-                    payload.put("customData", m.getBody());
-                    payload.put("title", "New message in channel");
-                    payload.put("channelID", eventId);
-                    payload.put("senderID", currentUserId);
-                    payload.put("token", token);
+                        resultArray = response.getJSONArray("results");
+                        firstAddress = resultArray.getJSONObject(0);
+                        formattedAddress = firstAddress.getString("formatted_address");
 
-                    eventFromQuery.setLastMessageSent(m);
-                    eventFromQuery.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                Log.i("CHATACTIVITY", "All good");
-                            } else {
-                                e.printStackTrace();
-                            }
+
+                        final Message m = new Message();
+                        m.setSenderId("InuSHuTqkn");
+
+                        if (favFood == null) {
+                            m.setBody("Hey! Looking for recommendations? Try out "
+                                    + restaurantName + " @ " + formattedAddress);
+                        } else {
+                            m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "
+                                    + restaurantName + " @ " + formattedAddress);
                         }
-                    });
+                        m.setEventId(eventId);
+                        m.setSenderName("Shaggy Bot");
+                        m.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                String token = "";
+                                try {
+                                    //TODO: find a way to get the instance ID and filter out poster from receivers, io exception
+                                    token = InstanceID.getInstance(context)
+                                            .getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                                    Log.d("DEBUG_CHAT_ACTIVITY", "token = " + token);
+                                } catch (IOException ex) {
+                                    ex.printStackTrace();
+                                }
+                                HashMap<String, String> payload = new HashMap<>();
+                                payload.put("customData", m.getBody());
+                                payload.put("title", "New message in channel");
+                                payload.put("channelID", eventId);
+                                payload.put("senderID", currentUserId);
+                                payload.put("token", token);
 
-                    mAdapter.notifyItemInserted(0);
-                    rvChat.smoothScrollToPosition(0);
+                                eventFromQuery.setLastMessageSent(m);
+                                eventFromQuery.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            Log.i("CHATACTIVITY", "All good");
+                                        } else {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+
+                                mAdapter.notifyItemInserted(0);
+                                rvChat.smoothScrollToPosition(0);
+                            }
+                        });
+
+                    refreshMessages();
+                    refreshPolls();
+
+
+
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
+
+
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    VolleyLog.e("Error: ", error.getMessage());
                 }
             });
+            VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(reqDestination);
+
 
         }
-        refreshMessages();
-        refreshPolls();
     }
 
     private void showConflictingEventsDialog() {
@@ -1503,5 +1548,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             });
         }
     }
+
+
 }
 

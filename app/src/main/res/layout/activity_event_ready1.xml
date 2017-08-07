@@ -23,8 +23,7 @@
         android:layout_centerHorizontal="true"
         tools:context="com.example.mapwithmarker.MapsMarkerActivity"
         tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="0dp"
-        />
+        tools:layout_editor_absoluteY="0dp" />
 
 
     <LinearLayout
@@ -33,9 +32,11 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/map"
         android:layout_alignRight="@+id/map"
-        android:layout_above="@+id/cvInstructionsInfo"
-        android:layout_alignBottom="@+id/map"
-        android:layout_marginBottom="8dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/my_toolbar"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:weightSum="4">
 
         <RelativeLayout
@@ -47,11 +48,13 @@
                 android:id="@+id/ibWalk"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/chill_circle"
-                android:backgroundTint="@color/deselected_gray"
                 android:layout_centerInParent="true"
+                android:background="@drawable/chill_circle"
+                android:backgroundTint="@color/white"
+                android:elevation="16dp"
                 android:onClick="getWalkingDirections"
-                android:src="@drawable/ic_walk" />
+                android:src="@drawable/ic_walk"
+                android:tint="@color/dark_gray" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -61,13 +64,15 @@
 
             <ImageView
                 android:id="@+id/ibDrive"
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:background="@drawable/chill_circle"
-                android:backgroundTint="@color/deselected_gray"
+                android:backgroundTint="@color/white"
+                android:elevation="16dp"
                 android:onClick="getDrivingDirections"
-                android:src="@drawable/ic_drive" />
+                android:src="@drawable/ic_drive"
+                android:tint="@color/dark_gray" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -78,12 +83,14 @@
             <ImageView
                 android:id="@+id/ibTransit"
                 android:layout_width="wrap_content"
-                android:layout_centerInParent="true"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:background="@drawable/chill_circle"
-                android:backgroundTint="@color/deselected_gray"
+                android:backgroundTint="@color/white"
+                android:elevation="16dp"
                 android:onClick="getTransitDirections"
-                android:src="@drawable/ic_transit" />
+                android:src="@drawable/ic_transit"
+                android:tint="@color/dark_gray" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -93,28 +100,32 @@
 
             <ImageView
                 android:id="@+id/ibBike"
-                android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
                 android:background="@drawable/chill_circle"
-                android:backgroundTint="@color/deselected_gray"
+                android:backgroundTint="@color/white"
+                android:elevation="16dp"
                 android:onClick="getBikingDirections"
-                android:src="@drawable/ic_bike" />
+                android:src="@drawable/ic_bike"
+                android:tint="@color/dark_gray" />
         </RelativeLayout>
 
 
     </LinearLayout>
 
     <android.support.v7.widget.CardView
+        android:id="@+id/cvInstructionsInfo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:id="@+id/cvInstructionsInfo"
-        android:layout_alignParentBottom="true"
+        android:layout_alignBottom="@+id/map"
+        android:layout_margin="16dp"
         android:visibility="gone">
+
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp">
 
             <TextView
                 android:id="@+id/tvFinalPlace"
@@ -124,51 +135,53 @@
                 android:layout_margin="8dp"
                 android:fontFamily="sans-serif-light"
                 android:text="PlaceName"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvFinalTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:fontFamily="sans-serif-light"
                 android:layout_margin="8dp"
+                android:fontFamily="sans-serif-light"
                 android:text="TBD"
-                android:textSize="12sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tvDurationInfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
                 android:layout_alignBottom="@+id/rlSendEta"
+                android:layout_alignParentLeft="true"
                 android:layout_marginLeft="8dp"
+                android:fontFamily="sans-serif-light"
                 android:text="Arrival in "
-                android:textSize="18dp"
-                android:fontFamily="sans-serif-light"/>
+                android:textSize="18dp" />
 
             <RelativeLayout
+                android:id="@+id/rlSendEta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:id="@+id/rlSendEta"
-                android:onClick="sendAnEta"
-                android:background="@color/deselected_gray"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/tvFinalTime">
+                android:layout_below="@id/tvFinalTime"
+                android:layout_margin="8dp"
+                android:background="@color/deselected_gray"
+                android:onClick="sendAnEta">
+
                 <TextView
+                    android:id="@+id/tvSendEta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Send ETA"
-                    android:fontFamily="sans-serif-light"
-                    android:id="@+id/tvSendEta"
                     android:layout_centerVertical="true"
-                    android:layout_margin="4dp"/>
+                    android:layout_margin="4dp"
+                    android:fontFamily="sans-serif-light"
+                    android:text="Send ETA" />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:srcCompat="@drawable/ic_right_arrow"
-                    android:layout_toRightOf="@id/tvSendEta"/>
+                    android:layout_toRightOf="@id/tvSendEta"
+                    app:srcCompat="@drawable/ic_right_arrow" />
             </RelativeLayout>
         </RelativeLayout>
 

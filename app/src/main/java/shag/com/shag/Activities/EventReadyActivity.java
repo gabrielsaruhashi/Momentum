@@ -23,8 +23,11 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.bumptech.glide.request.animation.DrawableCrossFadeViewAnimation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -121,6 +125,11 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     ArrayList<String> friendNames;
     Button btSendEta;
     CardView cvInstructionsInfo;
+    LinearLayout llTransportOptions;
+    String origin = "";
+    String destination = "";
+    String ETA;
+    boolean viewedDirections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +143,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
         tvTime = (TextView) findViewById(R.id.tvFinalTime);
         tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
+        llTransportOptions = (LinearLayout) findViewById(R.id.llTransportOptions);
 
         eventId = getIntent().getStringExtra("eventId");
 
@@ -147,8 +157,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
 
-        activity = this;
+        viewedDirections = false;
 
+        activity = this;
         mRequestQueue = VolleyRequest.getInstance(this).getRequestQueue();
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -158,6 +169,19 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDestination.setText(parseEvent.getLocation());
         tvTime.setText(timeOfEventAsString);
 
+        friendNames = new ArrayList<>();
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        for (String id : participantsLocations.keySet()) {
+            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
+                ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
+                try {
+                    ParseUser friend = queryForUser.get(id);
+                    friendNames.add(friend.getString("name"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
         ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
@@ -178,20 +202,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                         }
                     }
                 });
-
-        friendNames = new ArrayList<>();
-        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        for (String id : participantsLocations.keySet()) {
-            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
-                ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
-                try {
-                    ParseUser friend = queryForUser.get(id);
-                    friendNames.add(friend.getString("name"));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     @Override
@@ -292,9 +302,10 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             firstOpen = false;
             bounds.include(mDestination);
             bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100)); //TODO: 75 might not work for diff distances
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 300)); //TODO: 75 might not work for diff distances
 
 //            getDirections("walking", false);
+//            getDirections("driving", false);
 //            getDirections("driving", false);
 //            getDirections("bicycling", false);
 //            getDirections("transit", false);
@@ -377,7 +388,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         currentselected = "walking";
         deselectOtherViews();
         ImageView bt = (ImageView) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("walking", true);
     }
 
@@ -385,7 +396,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         currentselected = "driving";
         deselectOtherViews();
         ImageView bt = (ImageView) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("driving", true);
     }
 
@@ -393,7 +404,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         currentselected = "transit";
         deselectOtherViews();
         ImageView bt = (ImageView) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("transit", true);
     }
 
@@ -401,24 +412,149 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         deselectOtherViews();
         currentselected = "biking";
         ImageView bt = (ImageView) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("bicycling", true);
     }
 
     public void getDirections(final String mode, final boolean showOnMap) {
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
 
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
+        try {
+            List<Address> addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+            List<Address> addresses2 = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1);
+
+            if (addresses.size() > 0 && addresses2.size()>0) {
+                Address currentLocation = addresses.get(0);
+                origin = currentLocation.getAddressLine(0);
+                origin = origin.replace(" ", "+");
+
+                Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+                destination = destinationLocation.getAddressLine(0);
+                destination = destination.replace(" ", "+");
+                plotDirections(origin,destination, mode, showOnMap);
+
+            } else {
+                //do the API call
+                //set origin = a string address
+                //set destination = a string address
+
+                final String googleUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+                String latlngOrigin = "latlng="+mLastLocation.getLatitude()+","+mLastLocation.getLongitude();
+                final String latlngDestination = "latlng="+mDestination.latitude+","+mDestination.longitude;
+                final String api = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+
+
+
+
+
+                JsonObjectRequest reqOrigin = new JsonObjectRequest(Request.Method.GET, googleUrl+latlngOrigin+api,
+                        null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray resultArray = null;
+                        JSONObject firstAddress = null;
+                        String formattedAddress = "";
+                        try {
+                            resultArray = response.getJSONArray("results");
+                            firstAddress = resultArray.getJSONObject(0);
+                            formattedAddress = firstAddress.getString("formatted_address");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        formattedAddress = formattedAddress.replace(" ", "+");
+                        origin=formattedAddress;
+
+                        JsonObjectRequest reqDestination = new JsonObjectRequest(Request.Method.GET, googleUrl+latlngDestination+api,
+                                null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                JSONArray resultArray = null;
+                                JSONObject firstAddress = null;
+                                String formattedAddress = "";
+
+                                try {
+                                    resultArray = response.getJSONArray("results");
+                                    firstAddress = resultArray.getJSONObject(0);
+                                    formattedAddress = firstAddress.getString("formatted_address");
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                formattedAddress = formattedAddress.replace(" ", "+");
+                                destination=formattedAddress;
+                                plotDirections(origin,destination, mode, showOnMap);
+
+
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                VolleyLog.e("Error: ", error.getMessage());
+                            }
+                        });
+                        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(reqDestination);
+
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.e("Error: ", error.getMessage());
+                    }
+                });
+                VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(reqOrigin);
+
+
+
+
+
+
+
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+//        baseUrl += "&origin=" + origin;
+//        launchMapsUrl += "&origin=" + origin;
+//        baseUrl += "&destination=" + destination;
+//        launchMapsUrl += "&destination=" + destination;
+//        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+//        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+//        //END TODO
+//
+//        String url = baseUrl + "&mode=" + mode;
+//        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+//        launchMapsUrl += "&travelmode=" + mode;
+//        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        String instructions = response.toString();
+//                        populateInfoFromJson(response, mode);
+//                        if (showOnMap) {
+//                            FetchUrl fetchUrl = new FetchUrl();
+//                            fetchUrl.execute(instructions);
+//                            rlDirectionsInfo.setVisibility(View.VISIBLE);
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                VolleyLog.e("Error: ", error.getMessage());
+//            }
+//        });
+//
+//        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
+
+    private void plotDirections(String origin, String destination, final String mode, final boolean showOnMap) {
         baseUrl += "&origin=" + origin;
         launchMapsUrl += "&origin=" + origin;
         baseUrl += "&destination=" + destination;
@@ -440,7 +576,40 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                             FetchUrl fetchUrl = new FetchUrl();
                             fetchUrl.execute(instructions);
                             //rlDirectionsInfo.setVisibility(View.VISIBLE)
-                            cvInstructionsInfo.setVisibility(View.VISIBLE);
+                            if (viewedDirections) {
+                                Animation animation = new TranslateAnimation(0, 0, 0, 400);
+                                animation.setDuration(500);
+                                animation.setFillAfter(true);
+                                animation.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        Animation animation2 = new TranslateAnimation(0, 0, 400, 0);
+                                        animation2.setDuration(750);
+                                        animation2.setFillAfter(true);
+                                        //llTransportOptions.startAnimation(animation);
+                                        cvInstructionsInfo.startAnimation(animation2);
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                    }
+                                });
+                                //llTransportOptions.startAnimation(animation);
+                                cvInstructionsInfo.startAnimation(animation);
+                            } else {
+
+                                Animation animation = new TranslateAnimation(0, 0, 400, 0);
+                                animation.setDuration(750);
+                                animation.setFillAfter(true);
+                                //llTransportOptions.startAnimation(animation);
+                                cvInstructionsInfo.startAnimation(animation);
+                                cvInstructionsInfo.setVisibility(View.VISIBLE);
+                                viewedDirections = true;
+                            }
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -451,6 +620,37 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         });
 
         VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
+
+    private JsonObjectRequest getAddress(String address) {
+        final String[] formattedAddress = {null};
+
+        JsonObjectRequest newReq = new JsonObjectRequest(Request.Method.GET, address, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray resultArray = null;
+                JSONObject firstAddress = null;
+                try {
+                    resultArray = response.getJSONArray("results");
+                    firstAddress = resultArray.getJSONObject(0);
+                    formattedAddress[0] = firstAddress.getString("formatted_address");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                formattedAddress[0] = formattedAddress[0].replace(" ", "+");
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        return newReq;
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
@@ -565,6 +765,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             JSONArray legs = object.getJSONArray("legs");
             JSONObject step = legs.getJSONObject(0);
             String duration = step.getJSONObject("duration").getString("text");
+            ETA = duration;
             if (summary.equals("")) {
                 summary = "Public Transportation";
             }
@@ -598,16 +799,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void sendAnEta(View view) {
-        String ETA = "";
-        if (currentselected.equals("walking")) {
-            ETA = walkTime;
-        } else if (currentselected.equals("driving")) {
-            ETA = driveTime;
-        } else if (currentselected.equals("transit")) {
-            ETA = transitTime;
-        } else {
-            ETA = bikeTime;
-        }
         Message m = new Message();
         m.setSenderId("InuSHuTqkn");
         m.setBody(ParseApplication.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);

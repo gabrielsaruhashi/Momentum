@@ -90,7 +90,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
         mapFrag.getMapAsync(this);
 
 
-
         return v;
     }
 
