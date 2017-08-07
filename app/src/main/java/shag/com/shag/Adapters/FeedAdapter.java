@@ -490,6 +490,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         baseUrl += "&markers=color:blue%7C" + destination;
         baseUrl += "&sensor=false";
         baseUrl += "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+        baseUrl += "&format=png&maptype=roadmap&style=feature:landscape.man_made%7Ccolor:0xebf6fd&style=feature:" +
+                "landscape.natural%7Ccolor:0xf3fdfc&style=feature:landscape.natural.landcover%7Ccolor:0xf1fdfc&style=" +
+                "feature:landscape.natural.terrain%7Ccolor:0xf8fdf9&style=feature:poi.park%7Ccolor:0xe8fecf&style=feature:" +
+                "water%7Celement:geometry.fill%7Ccolor:0xc6eafe&size=480x360";
 
         holder.ivMap.setVisibility(View.VISIBLE);
         Glide.with(context)
