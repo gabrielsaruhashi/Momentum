@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="shag.com.shag.Fragments.MapFragment">
+    tools:context="shag.com.shag.Fragments.MapFragment"
+    android:layout_marginTop="130dp">
 
     <LinearLayout
         android:layout_width="match_parent"

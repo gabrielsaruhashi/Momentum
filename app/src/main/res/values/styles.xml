@@ -19,31 +19,6 @@
 
     </style>
 
-
-    <!-- styles for memories -->
-    <style name="ContentImageBadgeTitle" parent="newTheme">
-        <item name="android:alpha">0.5</item>
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">12dp</item>
-        <item name="android:windowActivityTransitions">true</item>
-
-    </style>
-
-    <style name="ContentImageBadgeText" parent="newTheme">
-        <item name="android:textColor">@android:color/white</item>
-        <item name="android:textSize">20dp</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:windowActivityTransitions">true</item>
-
-    </style>
-
-    <style name="ContentMainBadgeTitle" parent="newTheme">
-        <item name="android:textColor">@color/contentBadgeTitle</item>
-        <item name="android:textSize">12dp</item>
-        <item name="android:windowActivityTransitions">true</item>
-
-    </style>
-
     <!-- styles for buttons -->
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/chill_color</item>

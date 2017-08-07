@@ -213,4 +213,5 @@ public class InviteFriendsActivity extends AppCompatActivity {
         }
 
     }
+
 }

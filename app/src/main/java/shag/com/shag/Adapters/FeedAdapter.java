@@ -59,7 +59,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         this.events = events;
     }
 
-    ;
     // initialize context
     Context context;
 
@@ -67,18 +66,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     private ParseUser currentUser;
     private String userFacebookId;
 
+    // types of item list
+    static final int TYPE_HEADER = 0;
+    static final int TYPE_CELL = 1;
+
     // creates and inflates a new view; for each row, inflate the layout and cache references
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // get context and inflate view
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        // create the view using the item_feed layout
-        View feedView = inflater.inflate(R.layout.item_feed, parent, false);
-
-        // Return a new holder instance
-        FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
+        View feedView;
 
         // instantiate id's
         currentUser = ParseApplication.getCurrentUser();
@@ -88,7 +86,30 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         HashMap facebookData = (HashMap) data.get("facebook");
         userFacebookId = (String) facebookData.get("id");
 
-        return viewHolder;
+        // create the view using the item_feed layout
+        switch (viewType) {
+            case TYPE_HEADER: {
+                feedView = inflater
+                        .inflate(R.layout.item_feed_big_card, parent, false);
+
+                // Return a new holder instance
+                FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
+
+                return viewHolder;
+            }
+            default: {
+                feedView = inflater
+                        .inflate(R.layout.item_feed, parent, false);
+
+                // Return a new holder instance
+                FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
+
+                return viewHolder;
+            }
+
+        }
+
+
     }
 
     // associates an inflated view to a new item / binds the values based on the position of the element
@@ -171,6 +192,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        switch (position) {
+            case 0:
+                return TYPE_HEADER;
+            default:
+                return TYPE_CELL;
+        }
     }
 
     // creates ViewHolder class
@@ -259,71 +290,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         events.clear();
         notifyDataSetChanged();
     }
-    /*
-    // when user clicks itemView, shows more details (map, meeting time, friends that are going, etc)
-    private void showMoreDetails(final Event event, final Button joinStatus) {
-        // inflate message_item.xml view
-        View messageView = LayoutInflater.from(context).
-                inflate(R.layout.fragment_event_details, null);
-        // Create alert dialog builder
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        // set message_item.xml to AlertDialog builder
-        alertDialogBuilder.setView(messageView);
-        Log.i("DEBUGSHOW", event.participantsIds.toString());
-        // Create alert dialog
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialog) {
-                // check if user already joined the event
-                if (isAlreadyInterested(currentUser.getObjectId(), event)) {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
-                    alertDialog.getButton(BUTTON_POSITIVE).setText("Joined");
-                } else {
-                    alertDialog.getButton(BUTTON_POSITIVE).setBackgroundColor(ContextCompat.getColor(context, colorId));
-                    alertDialog.getButton(BUTTON_POSITIVE).setText("Join");
-                }
-                alertDialog.getButton(BUTTON_POSITIVE).setTextColor(ContextCompat.getColor(context, R.color.white));
-                // get views
-                TextView tvEventOwnerName = (TextView) alertDialog.findViewById(R.id.tvEventOwnerName);
-                TextView tvBody = (TextView) alertDialog.findViewById(R.id.tvBody);
-                TextView tvRelativeTime = (TextView) alertDialog.findViewById(R.id.tvRelativeTime);
-                ImageView ivProfileImage = (ImageView) alertDialog.findViewById(R.id.ivProfileImage);
-                // populate views
-                tvEventOwnerName.setText('@' + event.getEventOwnerName());
-                tvBody.setText(event.getDescription());
-                tvRelativeTime.setText(event.getDeadline().toString());
-                //TODO upload image of event owner
-                Glide.with(context)
-                        .load(event.user.profileImageUrl)
-                        .bitmapTransform(new RoundedCornersTransformation(context, 15, 0))
-                        .into(ivProfileImage);
-            }
-        });
-        // Configure dialog button (OK)
-        alertDialog.setButton(BUTTON_POSITIVE, "Join",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        //TODO get current user
-                        // if user is already interested, remove; else, join
-                        if (isAlreadyInterested(currentUser.getObjectId(), event)) {
-                            removeEvent(currentUser.getObjectId(), event, joinStatus);
-                        } else {
-                            joinEvent(currentUser.getObjectId(), event, joinStatus);
-                        }
-                    }
-                });
-        // Configure dialog button (Cancel)
-        alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        // Display the dialog
-        alertDialog.show();
-    } */
 
     public void joinEvent(final String userId, final Event event, final Button joinStatus) {
         final ArrayList<String> updatedParticipantsIds = event.getParticipantsIds();

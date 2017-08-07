@@ -301,7 +301,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 //TODO change start time
                 // 0 = January, 1 = February, ...
                 Calendar startTime = Calendar.getInstance();
-                startTime.set(2017, 00, 01, 00, 00);
+                startTime.set(2017, 8, 01, 00, 00);
                 Calendar endTime = Calendar.getInstance();
                 endTime.set(2018, 00, 01, 00, 00);
 
@@ -382,7 +382,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         String senderId = object.getSenderId();
                         String newEventId = object.getEventId();
 
-                        if (!senderId.equals(currentUserId) && newEventId.equals(eventId)) {
+                        if (senderId == null || (!senderId.equals(currentUserId) && newEventId.equals(eventId))) {
                             // RecyclerView updates need to be run on the UI thread
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -1172,12 +1172,19 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             rButton1.setText(rButton1.getText() + " @ " + time);
             choices.set(1, rButton1.getText().toString());
             scores.put(rButton1.getText().toString(), 0);
+            if (conflictsWithCalendarEvent((String) rButton1.getText())) {
+                rButton1.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            }
 
         } else if (btn == 2) {
             RadioButton rButton2 = (RadioButton) timeButtons.get(2);
             rButton2.setText(rButton2.getText() + " @ " + time);
             choices.set(2, rButton2.getText().toString());
             scores.put(rButton2.getText().toString(), 0);
+
+            if (conflictsWithCalendarEvent((String) rButton2.getText())) {
+                rButton2.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
+            }
 
         } else {
             RadioButton rButton3 = (RadioButton) timeButtons.get(3);

@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
@@ -36,10 +37,22 @@ public class MemoryListFragment extends Fragment {
     ArrayList<Memory> memories;
     MemoriesAdapter mAdapter;
     ParseUser currentUser;
-    ListView lvMemories;
+    RecyclerView rvMemories;
 
     private final static int REQUEST_OPEN_MEMORIES = 10;
+    private OnMemoryBookPositionChangedListener listener;
 
+    // Store the listener (activity) that will have events fired once the fragment is attached
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnMemoryBookPositionChangedListener) {
+            listener = (OnMemoryBookPositionChangedListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement MyListFragment.OnItemSelectedListener");
+        }
+    }
 
     @Nullable
     @Override
@@ -47,7 +60,7 @@ public class MemoryListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_memory_book_list, container, false);
 
         // get our list view
-        lvMemories = (ListView) v.findViewById(R.id.lvMainList);
+        rvMemories = (RecyclerView) v.findViewById(R.id.rvMemoriesList);
         context = getContext();
 
         // instantiate memories and set adapter
@@ -57,7 +70,9 @@ public class MemoryListFragment extends Fragment {
         mAdapter = new MemoriesAdapter(context, memories);
 
         // set elements to adapter
-        lvMemories.setAdapter(mAdapter);
+        rvMemories.setAdapter(mAdapter);
+        // Set layout manager to position the items
+        rvMemories.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
         // instantiate current user
         currentUser = ParseApplication.getCurrentUser();
@@ -95,7 +110,7 @@ public class MemoryListFragment extends Fragment {
                                 public void run() {
                                     memories.add(0, object);
                                     mAdapter.notifyDataSetChanged();
-                                    lvMemories.smoothScrollToPosition(0);
+                                    rvMemories.smoothScrollToPosition(0);
 
                                 }
                             });
@@ -157,7 +172,7 @@ public class MemoryListFragment extends Fragment {
 
     }
 
-
+    // method to dynamically change cover picture on back pressed
     public void changeCoverPictureUrl(Intent data) {
         if (data != null) {
             int position = data.getIntExtra("position", 0);
@@ -170,4 +185,11 @@ public class MemoryListFragment extends Fragment {
             Toast.makeText(context, "Your album was updated!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    // interface with main activity to dynamically change header pictures
+    public interface OnMemoryBookPositionChangedListener {
+        // This can be any number of events to be sent to the activity
+        public void changeMaterialVPListener(String imageUrl);
+    }
+
 }

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -17,6 +16,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.facebook.login.LoginManager;
+import com.github.florent37.materialviewpager.MaterialViewPager;
+import com.github.florent37.materialviewpager.header.HeaderDesign;
 import com.ramotion.paperonboarding.PaperOnboardingFragment;
 
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
@@ -24,10 +25,13 @@ import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
 import shag.com.shag.R;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
-    Toolbar myToolbar;
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
+    Toolbar toolbar;
+    MaterialViewPager mViewPager;
     ViewPager viewPager;
-    TabLayout tabLayout;
+    MaterialViewPager.Listener listener;
+    MainFragmentPagerAdapter adapterViewPager;
+
     private int[] tabIcons = {
             R.drawable.ic_home,
             R.drawable.ic_movie_roll_tape,
@@ -35,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
     private FragmentManager fragmentManager;
     PaperOnboardingFragment onBoardingFragment;
-    static boolean isNew;
+    static boolean isNewUser;
 
     // The request code used in ActivityCompat.requestPermissions()
     // and returned in the Activity's onRequestPermissionsResult()
@@ -49,32 +53,53 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // unwrap to see whether is new
-        isNew = getIntent().getBooleanExtra("isNew", false);
+        // if new user, display onboarding
+        checkIfNewUser(getIntent().getBooleanExtra("isNew", false));
 
-        // if new, show onboarding dialog
-        if (isNew) {
-            showOnboardingDialog();
-            isNew = false;
+        // get reference to material viewpager
+        mViewPager = (MaterialViewPager) findViewById(R.id.viewpager);
+
+        // get toolbar reference
+        toolbar = mViewPager.getToolbar();
+        if (toolbar != null) {
+            setSupportActionBar(toolbar);
         }
 
-        int position = getIntent().getIntExtra("viewpager_position", 0);
+        //int position = getIntent().getIntExtra("viewpager_position", 0);
+
+        // instantiate initial listener
+        listener = new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
+                }
+
+                //execute others actions if needed (ex : modify your header logo)
+
+                return null;
+            }
+        };
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager(),
-                MainActivity.this));
-        //viewPager.setOffscreenPageLimit(3);
+        viewPager = mViewPager.getViewPager();
 
-        // Give the TabLayout the ViewPager
-        tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        // instantiate and attach viewpager adapter
+        adapterViewPager = new MainFragmentPagerAdapter(getSupportFragmentManager(),
+                MainActivity.this);
+        viewPager.setAdapter(adapterViewPager);
 
-        viewPager.setCurrentItem(position);
+        mViewPager.setMaterialViewPagerListener(listener);
 
-        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
+        mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
+        mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
 
 
         // check for all permissions needed
@@ -85,7 +110,13 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     }
 
 
-
+    public void checkIfNewUser(boolean isNew) {
+        // if new, show onboarding dialog
+        if (isNew) {
+            showOnboardingDialog();
+            isNewUser = false;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,8 +157,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
-        memoryListFragment.changeCoverPictureUrl(data);
+        if (data != null) {
+            MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+            //MemoryListFragment memoryListFragment = (MemoryListFragment) viewPager.getRegistered;
+            memoryListFragment.changeCoverPictureUrl(data);
+        }
     }
 
     @Override
@@ -171,6 +205,28 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         }
         return true;
+    }
+
+
+    @Override
+    public void changeMaterialVPListener(final String imageUrl) {
+        final MaterialViewPager.Listener newListener = new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                imageUrl);
+                }
+                return null;
+            }
+        };
+        mViewPager.setMaterialViewPagerListener(newListener);
     }
 
 }

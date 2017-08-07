@@ -79,6 +79,7 @@ public class SmsReceiver extends BroadcastReceiver {
     // phone code
     public void subscribeAction(final String rawMessage, final String phoneNumber) {
 
+
         final String potentialTextBody;
         final String potentialEventId;
 
@@ -117,9 +118,6 @@ public class SmsReceiver extends BroadcastReceiver {
                         sendJoinedMessage(potentialEventId, getContactName(phoneNumber,mContext));
 
                     }
-                } else {
-                    // notify the user it is not a valid command
-                    sendMessage(phoneNumber, "Sorry, this is not a valid command. Please make sure you enter the right access code if you'd like to join the event");
                 }
             }
         });
@@ -147,6 +145,7 @@ public class SmsReceiver extends BroadcastReceiver {
         // save User pointer
         message.put("outside_sender_phone_number", phoneNumber);
         message.setEventId(eventId);
+        message.saveInBackground();
 
     }
 
@@ -178,7 +177,7 @@ public class SmsReceiver extends BroadcastReceiver {
         try {
             m.save();
             HashMap<String, String> payload = new HashMap<>();
-            payload.put("customData", senderName + " just joined the chat.");
+            payload.put("customData", "An outside who goes by the name " + senderName + " just joined the chat.");
             payload.put("title", "New message in channel");
             payload.put("channelID", eventId);
             payload.put("senderID", "InuSHuTqkn");
