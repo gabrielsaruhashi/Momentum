@@ -573,6 +573,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                         final String instructions = response.toString();
                         if (showOnMap) {
                             final FetchUrl fetchUrl = new FetchUrl();
+                            fetchUrl.execute(instructions);
                             //rlDirectionsInfo.setVisibility(View.VISIBLE)
                             if (viewedDirections) {
                                 Animation animation = new TranslateAnimation(0, 0, 0, 400);
@@ -585,7 +586,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
                                     @Override
                                     public void onAnimationEnd(Animation animation) {
-                                        fetchUrl.execute(instructions);
                                         populateInfoFromJson(response, mode);
                                         Animation animation2 = new TranslateAnimation(0, 0, 400, 0);
                                         animation2.setDuration(750);
@@ -602,7 +602,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                                 cvInstructionsInfo.startAnimation(animation);
                             } else {
                                 populateInfoFromJson(response, mode);
-                                fetchUrl.execute(instructions);
                                 Animation animation = new TranslateAnimation(0, 0, 400, 0);
                                 animation.setDuration(750);
                                 animation.setFillAfter(true);

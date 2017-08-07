@@ -819,7 +819,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
                     if (isEventPrivate) {
 
                         //make a location poll
@@ -844,7 +844,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         locPoll.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
 
                             }
                         });
@@ -887,7 +887,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put time poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put time poll on parse", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -907,7 +907,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put poll on parse", Toast.LENGTH_LONG).show();
                 }
 
             }

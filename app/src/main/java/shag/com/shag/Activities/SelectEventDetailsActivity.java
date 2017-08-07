@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -119,7 +118,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 newDate.setTime((new Date()).getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
-                Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
 
             }
         });
