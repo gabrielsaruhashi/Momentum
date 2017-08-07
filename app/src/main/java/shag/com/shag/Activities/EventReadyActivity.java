@@ -119,6 +119,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     ArrayList<String> friendNames;
     Button btSendEta;
 
+    String origin = "";
+    String destination = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,6 +161,19 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         tvDestination.setText(parseEvent.getLocation());
         tvTime.setText(timeOfEventAsString);
 
+        friendNames = new ArrayList<>();
+        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
+        for (String id : participantsLocations.keySet()) {
+            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
+                ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
+                try {
+                    ParseUser friend = queryForUser.get(id);
+                    friendNames.add(friend.getString("name"));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
         ParseQuery<Event> parseQuery = ParseQuery.getQuery(Event.class);
@@ -178,20 +194,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                         }
                     }
                 });
-
-        friendNames = new ArrayList<>();
-        HashMap<String, ParseGeoPoint> participantsLocations = (HashMap) parseEvent.getParticipantsLocations();
-        for (String id : participantsLocations.keySet()) {
-            if (!id.equals(ParseApplication.getCurrentUser().getObjectId())) {
-                ParseQuery<ParseUser> queryForUser = ParseUser.getQuery();
-                try {
-                    ParseUser friend = queryForUser.get(id);
-                    friendNames.add(friend.getString("name"));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
 
         btSendEta = (Button) findViewById(R.id.btGo);
         btSendEta.setEnabled(false);
@@ -409,19 +411,144 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void getDirections(final String mode, final boolean showOnMap) {
-        String origin = "";
-        String destination = "";
-        try {
-            Address currentLocation = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1).get(0);
-            origin = currentLocation.getAddressLine(0);
-            origin = origin.replace(" ", "+");
 
-            Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
-            destination = destinationLocation.getAddressLine(0);
-            destination = destination.replace(" ", "+");
+        try {
+            List<Address> addresses = geocoder.getFromLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+            List<Address> addresses2 = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1);
+
+            if (addresses.size() > 0 && addresses2.size()>0) {
+                Address currentLocation = addresses.get(0);
+                origin = currentLocation.getAddressLine(0);
+                origin = origin.replace(" ", "+");
+
+                Address destinationLocation = geocoder.getFromLocation(mDestination.latitude, mDestination.longitude, 1).get(0);
+                destination = destinationLocation.getAddressLine(0);
+                destination = destination.replace(" ", "+");
+                plotDirections(origin,destination, mode, showOnMap);
+
+            } else {
+                //do the API call
+                //set origin = a string address
+                //set destination = a string address
+
+                final String googleUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
+                String latlngOrigin = "latlng="+mLastLocation.getLatitude()+","+mLastLocation.getLongitude();
+                final String latlngDestination = "latlng="+mDestination.latitude+","+mDestination.longitude;
+                final String api = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+
+
+
+
+
+                JsonObjectRequest reqOrigin = new JsonObjectRequest(Request.Method.GET, googleUrl+latlngOrigin+api,
+                        null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        JSONArray resultArray = null;
+                        JSONObject firstAddress = null;
+                        String formattedAddress = "";
+                        try {
+                            resultArray = response.getJSONArray("results");
+                            firstAddress = resultArray.getJSONObject(0);
+                            formattedAddress = firstAddress.getString("formatted_address");
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        formattedAddress = formattedAddress.replace(" ", "+");
+                        origin=formattedAddress;
+
+                        JsonObjectRequest reqDestination = new JsonObjectRequest(Request.Method.GET, googleUrl+latlngDestination+api,
+                                null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                JSONArray resultArray = null;
+                                JSONObject firstAddress = null;
+                                String formattedAddress = "";
+
+                                try {
+                                    resultArray = response.getJSONArray("results");
+                                    firstAddress = resultArray.getJSONObject(0);
+                                    formattedAddress = firstAddress.getString("formatted_address");
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                formattedAddress = formattedAddress.replace(" ", "+");
+                                destination=formattedAddress;
+                                plotDirections(origin,destination, mode, showOnMap);
+
+
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                VolleyLog.e("Error: ", error.getMessage());
+                            }
+                        });
+                        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(reqDestination);
+
+
+
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        VolleyLog.e("Error: ", error.getMessage());
+                    }
+                });
+                VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(reqOrigin);
+
+
+
+
+
+
+
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
+//        baseUrl += "&origin=" + origin;
+//        launchMapsUrl += "&origin=" + origin;
+//        baseUrl += "&destination=" + destination;
+//        launchMapsUrl += "&destination=" + destination;
+//        baseUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+//        launchMapsUrl += "&arrival_time=" + (timeOfEvent.getTime() / 1000);
+//        //END TODO
+//
+//        String url = baseUrl + "&mode=" + mode;
+//        url += "&key=" + "AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
+//        launchMapsUrl += "&travelmode=" + mode;
+//        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
+//                new Response.Listener<JSONObject>() {
+//                    @Override
+//                    public void onResponse(JSONObject response) {
+//                        String instructions = response.toString();
+//                        populateInfoFromJson(response, mode);
+//                        if (showOnMap) {
+//                            FetchUrl fetchUrl = new FetchUrl();
+//                            fetchUrl.execute(instructions);
+//                            rlDirectionsInfo.setVisibility(View.VISIBLE);
+//                        }
+//                    }
+//                }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                VolleyLog.e("Error: ", error.getMessage());
+//            }
+//        });
+//
+//        VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
+
+    private void plotDirections(String origin, String destination, final String mode, final boolean showOnMap) {
         baseUrl += "&origin=" + origin;
         launchMapsUrl += "&origin=" + origin;
         baseUrl += "&destination=" + destination;
@@ -453,6 +580,37 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         });
 
         VolleyRequest.getInstance(getApplicationContext()).addToRequestQueue(request);
+    }
+
+    private JsonObjectRequest getAddress(String address) {
+        final String[] formattedAddress = {null};
+
+        JsonObjectRequest newReq = new JsonObjectRequest(Request.Method.GET, address, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                JSONArray resultArray = null;
+                JSONObject firstAddress = null;
+                try {
+                    resultArray = response.getJSONArray("results");
+                    firstAddress = resultArray.getJSONObject(0);
+                    formattedAddress[0] = firstAddress.getString("formatted_address");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                formattedAddress[0] = formattedAddress[0].replace(" ", "+");
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error: ", error.getMessage());
+            }
+        });
+
+        return newReq;
     }
 
     private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String, String>>>> {
