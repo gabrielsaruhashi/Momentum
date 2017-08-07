@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -214,7 +213,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     //Body commented out because we need the method declaration
     @Override
     public void onFinishCategoryDialog(Event createdEvent) {
-        Toast.makeText(getContext(), "Event created", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Event created", Toast.LENGTH_SHORT).show();
         /*
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);
@@ -236,7 +235,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         // get the chill coefficient based on the user's profile
         Double chillCoefficient = getChillCoefficient(event.getCategory(), categoriesTracker);
-        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwnerId(), recentFriendsMap);
         Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
         return relevanceCoefficient;
     }

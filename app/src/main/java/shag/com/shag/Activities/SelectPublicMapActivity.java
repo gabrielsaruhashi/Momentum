@@ -105,7 +105,6 @@ public class SelectPublicMapActivity extends AppCompatActivity implements OnMapR
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mRequestQueue = VolleyRequest.getInstance(this).getRequestQueue();
 

@@ -182,11 +182,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-
-        currentUser = ParseApplication.getCurrentUser();
 
         context = this;
 
@@ -821,7 +819,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put a Time poll on parse", Toast.LENGTH_LONG).show();
                     if (isEventPrivate) {
 
                         //make a location poll
@@ -846,7 +844,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         locPoll.saveInBackground(new SaveCallback() {
                             @Override
                             public void done(ParseException e) {
-                                Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
+                                //Toast.makeText(ChatActivity.this, "yay you put a loc poll on parse", Toast.LENGTH_LONG).show();
 
                             }
                         });
@@ -889,7 +887,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put time poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put time poll on parse", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -909,7 +907,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    Toast.makeText(ChatActivity.this, "yay you put poll on parse", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(ChatActivity.this, "yay you put poll on parse", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -1437,7 +1435,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         m.setSenderId("InuSHuTqkn");
 
                         if (favFood == null) {
-                            m.setBody("Hey! Feel free to start looking for restaurants. Why not try out "
+                            m.setBody("Hey! Looking for recommendations? Try out "
                                     + restaurantName + " @ " + formattedAddress);
                         } else {
                             m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "

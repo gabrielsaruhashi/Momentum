@@ -23,7 +23,6 @@
 
 
     <fragment
-        android:layout_marginTop="4dp"
         android:name="shag.com.shag.Fragments.ChatListFragment"
         android:id="@+id/chatListFragment"
         android:layout_width="match_parent"

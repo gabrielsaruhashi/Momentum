@@ -97,13 +97,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // populate the views
         Event event = events.get(position);
         if (!event.getIsEventPrivate()) {
+            //TODO: don't comment this out
             //showMap(event, holder);
         }
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
-        if (event.getEventOwner() != null) {
-            holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
+        if (event.getEventOwnerName() != null) {
+            holder.tvEventOwnerName.setText(event.getEventOwnerName());
         }
 
         //TODO: change categories
@@ -141,8 +142,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // get icon url
         String url = "";
-        if (event.getEventOwner() != null) {
-            url = event.getEventOwner().getString("profile_image_url").replace("_normal", "");
+        if (event.getEventOwnerProfileUrl()!= null) {
+            url = event.getString("event_owner_profile_url").replace("_normal", "");
         }
         // load user profile image using glide
         Glide.with(context)
@@ -563,7 +564,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     public void showLastMessage(final Event event, ViewHolder holder) {
-        ArrayList<String> participants = event.getParticipantsIds();
+        final ArrayList<String> participants = event.getParticipantsIds();
         if (!participants.contains(currentUser.getObjectId())) {
             holder.ivDivider.setVisibility(View.GONE);
             holder.rlChatInfo.setVisibility(View.GONE);
@@ -595,7 +596,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("event_id", event.getEventId());
-                intent.putExtra("participants_ids", event.getParticipantsIds());
+                ArrayList<String> participantsIds = event.getParticipantsIds();
+                participantsIds.add("InuSHuTqkn");
+                intent.putExtra("participants_ids", participantsIds);
                 context.startActivity(intent);
             }
         });

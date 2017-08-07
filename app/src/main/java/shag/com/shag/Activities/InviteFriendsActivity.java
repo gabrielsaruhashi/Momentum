@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -93,6 +94,7 @@ public class InviteFriendsActivity extends AppCompatActivity {
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 
         toolbarTextView = (TextView) findViewById(R.id.tvToolbarText);
     }

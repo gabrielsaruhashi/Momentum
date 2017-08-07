@@ -19,10 +19,15 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -118,29 +123,31 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     List<Marker> markerList = new ArrayList<Marker>();
     ArrayList<String> friendNames;
     Button btSendEta;
-
+    CardView cvInstructionsInfo;
+    LinearLayout llTransportOptions;
     String origin = "";
     String destination = "";
+    String ETA;
+    boolean viewedDirections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_ready);
+        setContentView(R.layout.activity_event_ready1);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         firstOpen = true;
 
+        cvInstructionsInfo = (CardView) findViewById(R.id.cvInstructionsInfo);
         tvDestination = (TextView) findViewById(R.id.tvFinalPlace);
         tvTime = (TextView) findViewById(R.id.tvFinalTime);
         tvDuration = (TextView) findViewById(R.id.tvDurationInfo);
-        tvDepartureTime = (TextView) findViewById(R.id.tvDepartureTimeInfo);
-        tvSummary = (TextView) findViewById(R.id.tvSummaryInfo);
-        rlDirectionsInfo = (RelativeLayout) findViewById(R.id.rlDirectionsInfo);
+        llTransportOptions = (LinearLayout) findViewById(R.id.llTransportOptions);
 
         eventId = getIntent().getStringExtra("eventId");
 
         ParseQuery<ParseObject> query = ParseQuery.getQuery("Event");
-        ParseObject object = null;
         try {
             parseEvent = (Event) query.get(eventId);
             mDestination = new LatLng(parseEvent.getLatitude(), parseEvent.getLongitude());
@@ -150,8 +157,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             e.printStackTrace();
         }
 
-        activity = this;
+        viewedDirections = false;
 
+        activity = this;
         mRequestQueue = VolleyRequest.getInstance(this).getRequestQueue();
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFrag.getMapAsync(this);
@@ -194,9 +202,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                         }
                     }
                 });
-
-        btSendEta = (Button) findViewById(R.id.btGo);
-        btSendEta.setEnabled(false);
     }
 
     @Override
@@ -297,12 +302,13 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             firstOpen = false;
             bounds.include(mDestination);
             bounds.include(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 100)); //TODO: 75 might not work for diff distances
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 300)); //TODO: 75 might not work for diff distances
 
-            getDirections("walking", false);
-            getDirections("driving", false);
-            getDirections("bicycling", false);
-            getDirections("transit", false);
+//            getDirections("walking", false);
+//            getDirections("driving", false);
+//            getDirections("driving", false);
+//            getDirections("bicycling", false);
+//            getDirections("transit", false);
         }
     }
 
@@ -381,32 +387,32 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     public void getWalkingDirections(View view) {
         currentselected = "walking";
         deselectOtherViews();
-        Button bt = (Button) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        ImageView bt = (ImageView) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("walking", true);
     }
 
     public void getDrivingDirections(View view) {
         currentselected = "driving";
         deselectOtherViews();
-        Button bt = (Button) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        ImageView bt = (ImageView) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("driving", true);
     }
 
     public void getTransitDirections(View view) {
         currentselected = "transit";
         deselectOtherViews();
-        Button bt = (Button) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        ImageView bt = (ImageView) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("transit", true);
     }
 
     public void getBikingDirections(View view) {
         deselectOtherViews();
         currentselected = "biking";
-        Button bt = (Button) view;
-        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.selected_gray), PorterDuff.Mode.MULTIPLY);
+        ImageView bt = (ImageView) view;
+        bt.getBackground().setColorFilter(ContextCompat.getColor(this, R.color.black), PorterDuff.Mode.MULTIPLY);
         getDirections("bicycling", true);
     }
 
@@ -563,13 +569,47 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        String instructions = response.toString();
-                        populateInfoFromJson(response, mode);
+                    public void onResponse(final JSONObject response) {
+                        final String instructions = response.toString();
                         if (showOnMap) {
-                            FetchUrl fetchUrl = new FetchUrl();
+                            final FetchUrl fetchUrl = new FetchUrl();
                             fetchUrl.execute(instructions);
-                            rlDirectionsInfo.setVisibility(View.VISIBLE);
+                            //rlDirectionsInfo.setVisibility(View.VISIBLE)
+                            if (viewedDirections) {
+                                Animation animation = new TranslateAnimation(0, 0, 0, 400);
+                                animation.setDuration(500);
+                                animation.setFillAfter(true);
+                                animation.setAnimationListener(new Animation.AnimationListener() {
+                                    @Override
+                                    public void onAnimationStart(Animation animation) {
+                                    }
+
+                                    @Override
+                                    public void onAnimationEnd(Animation animation) {
+                                        populateInfoFromJson(response, mode);
+                                        Animation animation2 = new TranslateAnimation(0, 0, 400, 0);
+                                        animation2.setDuration(750);
+                                        animation2.setFillAfter(true);
+                                        //llTransportOptions.startAnimation(animation);
+                                        cvInstructionsInfo.startAnimation(animation2);
+                                    }
+
+                                    @Override
+                                    public void onAnimationRepeat(Animation animation) {
+                                    }
+                                });
+                                //llTransportOptions.startAnimation(animation);
+                                cvInstructionsInfo.startAnimation(animation);
+                            } else {
+                                populateInfoFromJson(response, mode);
+                                Animation animation = new TranslateAnimation(0, 0, 400, 0);
+                                animation.setDuration(750);
+                                animation.setFillAfter(true);
+                                //llTransportOptions.startAnimation(animation);
+                                cvInstructionsInfo.startAnimation(animation);
+                                cvInstructionsInfo.setVisibility(View.VISIBLE);
+                                viewedDirections = true;
+                            }
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -725,31 +765,32 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
             JSONArray legs = object.getJSONArray("legs");
             JSONObject step = legs.getJSONObject(0);
             String duration = step.getJSONObject("duration").getString("text");
+            ETA = duration;
             if (summary.equals("")) {
                 summary = "Public Transportation";
             }
 
-            if (mode.equals("walking")) {
-                walkTime = duration;
-                Button bt = (Button) findViewById(R.id.ibWalk);
-                bt.setText(walkTime);
-            } else if (mode.equals("driving")) {
-                driveTime = duration;
-                Button bt = (Button) findViewById(R.id.ibDrive);
-                bt.setText(driveTime);
-            } else if (mode.equals("transit")) {
-                transitTime = duration;
-                Button bt = (Button) findViewById(R.id.ibTransit);
-                bt.setText(transitTime);
-            } else {
-                bikeTime = duration;
-                Button bt = (Button) findViewById(R.id.ibBike);
-                bt.setText(bikeTime);
-            }
+//            if (mode.equals("walking")) {
+//                walkTime = duration;
+//                ImageView bt = (ImageView) findViewById(R.id.ibWalk);
+//                bt.setText(walkTime);
+//            } else if (mode.equals("driving")) {
+//                driveTime = duration;
+//                ImageView bt = (ImageView) findViewById(R.id.ibDrive);
+//                bt.setText(driveTime);
+//            } else if (mode.equals("transit")) {
+//                transitTime = duration;
+//                ImageView bt = (ImageView) findViewById(R.id.ibTransit);
+//                bt.setText(transitTime);
+//            } else {
+//                bikeTime = duration;
+//                Button bt = (Button) findViewById(R.id.ibBike);
+//                bt.setText(bikeTime);
+//            }
 
             //rlDirectionsInfo.setVisibility(View.VISIBLE);
             //tvSummary.setText(summary);
-            //tvDuration.setText(duration);
+            tvDuration.setText("Arrival in " + duration);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -758,16 +799,6 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void sendAnEta(View view) {
-        String ETA = "";
-        if (currentselected.equals("walking")) {
-            ETA = walkTime;
-        } else if (currentselected.equals("driving")) {
-            ETA = driveTime;
-        } else if (currentselected.equals("transit")) {
-            ETA = transitTime;
-        } else {
-            ETA = bikeTime;
-        }
         Message m = new Message();
         m.setSenderId("InuSHuTqkn");
         m.setBody(ParseApplication.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
@@ -811,22 +842,21 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                 Marker marker = mGoogleMap.addMarker(markerOptions);
                 markerList.add(marker);
                 i++;
-
             }
         }
     }
 
     public void deselectOtherViews() {
-        Button btWalk = (Button) findViewById(R.id.ibWalk);
+        ImageView btWalk = (ImageView) findViewById(R.id.ibWalk);
         btWalk.getBackground().clearColorFilter();
-        Button btDrive = (Button) findViewById(R.id.ibDrive);
+        ImageView btDrive = (ImageView) findViewById(R.id.ibDrive);
         btDrive.getBackground().clearColorFilter();
-        Button btBike = (Button) findViewById(R.id.ibBike);
+        ImageView btBike = (ImageView) findViewById(R.id.ibBike);
         btBike.getBackground().clearColorFilter();
-        Button btTransit = (Button) findViewById(R.id.ibTransit);
+        ImageView btTransit = (ImageView) findViewById(R.id.ibTransit);
         btTransit.getBackground().clearColorFilter();
 
-        btSendEta.setEnabled(true);
+        //btSendEta.setEnabled(true);
 
     }
 }

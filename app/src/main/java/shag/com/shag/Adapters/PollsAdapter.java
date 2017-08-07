@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -36,7 +35,6 @@ import shag.com.shag.Models.Poll;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-import static com.facebook.FacebookSdk.getApplicationContext;
 import static shag.com.shag.R.id.tv0;
 import static shag.com.shag.R.id.tv1;
 import static shag.com.shag.R.id.tv2;
@@ -219,19 +217,19 @@ public class PollsAdapter extends RecyclerView.Adapter<PollsAdapter.ViewHolder> 
                     switch (index) {
                         case 0: // first button
                             choice[0] = 0;
-                            Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 2: // second button
                             choice[0] = 1;
-                            Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 4: // third button
                             choice[0] = 2;
-                            Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                         case 6: // fourth button
                             choice[0] = 3;
-                            Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), "Selected button number " + index, Toast.LENGTH_LONG).show();
                             break;
                     }
                 }
