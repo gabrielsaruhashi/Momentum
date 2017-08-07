@@ -177,7 +177,7 @@ public class SmsReceiver extends BroadcastReceiver {
         try {
             m.save();
             HashMap<String, String> payload = new HashMap<>();
-            payload.put("customData", senderName + " just joined the chat.");
+            payload.put("customData", "An outside who goes by the name " + senderName + " just joined the chat.");
             payload.put("title", "New message in channel");
             payload.put("channelID", eventId);
             payload.put("senderID", "InuSHuTqkn");

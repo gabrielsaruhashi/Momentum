@@ -24,10 +24,12 @@ import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
 import shag.com.shag.R;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
     Toolbar toolbar;
     MaterialViewPager mViewPager;
     ViewPager viewPager;
+    MaterialViewPager.Listener listener;
+    MainFragmentPagerAdapter adapterViewPager;
 
     private int[] tabIcons = {
             R.drawable.ic_home,
@@ -64,13 +66,8 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         //int position = getIntent().getIntExtra("viewpager_position", 0);
 
-        // Get the ViewPager and set it's PagerAdapter so that it can display items
-        viewPager = mViewPager.getViewPager();
-
-        viewPager.setAdapter(new MainFragmentPagerAdapter(getSupportFragmentManager(),
-                MainActivity.this));
-
-        mViewPager.setMaterialViewPagerListener(new MaterialViewPager.Listener() {
+        // instantiate initial listener
+        listener = new MaterialViewPager.Listener() {
             @Override
             public HeaderDesign getHeaderDesign(int page) {
                 switch (page) {
@@ -82,21 +79,23 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
                         return HeaderDesign.fromColorResAndUrl(
                                 R.color.blue,
                                 "http://www.hdiphonewallpapers.us/phone-wallpapers/540x960-1/540x960-mobile-wallpapers-hd-2218x5ox3.jpg");
-                    case 2:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.cyan,
-                                "http://www.droid-life.com/wp-content/uploads/2014/10/lollipop-wallpapers10.jpg");
-                    case 3:
-                        return HeaderDesign.fromColorResAndUrl(
-                                R.color.red,
-                                "http://www.tothemobile.com/wp-content/uploads/2014/07/original.jpg");
                 }
 
                 //execute others actions if needed (ex : modify your header logo)
 
                 return null;
             }
-        });
+        };
+
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        viewPager = mViewPager.getViewPager();
+
+        // instantiate and attach viewpager adapter
+        adapterViewPager = new MainFragmentPagerAdapter(getSupportFragmentManager(),
+                MainActivity.this);
+        viewPager.setAdapter(adapterViewPager);
+
+        mViewPager.setMaterialViewPagerListener(listener);
 
         mViewPager.getViewPager().setOffscreenPageLimit(mViewPager.getViewPager().getAdapter().getCount());
         mViewPager.getPagerTitleStrip().setViewPager(mViewPager.getViewPager());
@@ -160,8 +159,11 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
-        memoryListFragment.changeCoverPictureUrl(data);
+        if (data != null) {
+            MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+            //MemoryListFragment memoryListFragment = (MemoryListFragment) viewPager.getRegistered;
+            memoryListFragment.changeCoverPictureUrl(data);
+        }
     }
 
     @Override
@@ -205,6 +207,28 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
             }
         }
         return true;
+    }
+
+
+    @Override
+    public void changeMaterialVPListener(final String imageUrl) {
+        final MaterialViewPager.Listener newListener = new MaterialViewPager.Listener() {
+            @Override
+            public HeaderDesign getHeaderDesign(int page) {
+                switch (page) {
+                    case 0:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.green,
+                                "http://phandroid.s3.amazonaws.com/wp-content/uploads/2014/06/android_google_moutain_google_now_1920x1080_wallpaper_Wallpaper-HD_2560x1600_www.paperhi.com_-640x400.jpg");
+                    case 1:
+                        return HeaderDesign.fromColorResAndUrl(
+                                R.color.blue,
+                                imageUrl);
+                }
+                return null;
+            }
+        };
+        mViewPager.setMaterialViewPagerListener(newListener);
     }
 
 }

@@ -40,7 +40,19 @@ public class MemoryListFragment extends Fragment {
     RecyclerView rvMemories;
 
     private final static int REQUEST_OPEN_MEMORIES = 10;
+    private OnMemoryBookPositionChangedListener listener;
 
+    // Store the listener (activity) that will have events fired once the fragment is attached
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnMemoryBookPositionChangedListener) {
+            listener = (OnMemoryBookPositionChangedListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement MyListFragment.OnItemSelectedListener");
+        }
+    }
 
     @Nullable
     @Override
@@ -60,7 +72,7 @@ public class MemoryListFragment extends Fragment {
         // set elements to adapter
         rvMemories.setAdapter(mAdapter);
         // Set layout manager to position the items
-        rvMemories.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+        rvMemories.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
         // instantiate current user
         currentUser = ParseApplication.getCurrentUser();
@@ -160,7 +172,7 @@ public class MemoryListFragment extends Fragment {
 
     }
 
-
+    // method to dynamically change cover picture on back pressed
     public void changeCoverPictureUrl(Intent data) {
         if (data != null) {
             int position = data.getIntExtra("position", 0);
@@ -173,4 +185,11 @@ public class MemoryListFragment extends Fragment {
             Toast.makeText(context, "Your album was updated!", Toast.LENGTH_SHORT).show();
         }
     }
+
+    // interface with main activity to dynamically change header pictures
+    public interface OnMemoryBookPositionChangedListener {
+        // This can be any number of events to be sent to the activity
+        public void changeMaterialVPListener(String imageUrl);
+    }
+
 }
