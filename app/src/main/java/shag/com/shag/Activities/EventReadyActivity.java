@@ -38,7 +38,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.bumptech.glide.request.animation.DrawableCrossFadeViewAnimation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
@@ -569,12 +568,10 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response) {
-                        String instructions = response.toString();
-                        populateInfoFromJson(response, mode);
+                    public void onResponse(final JSONObject response) {
+                        final String instructions = response.toString();
                         if (showOnMap) {
-                            FetchUrl fetchUrl = new FetchUrl();
-                            fetchUrl.execute(instructions);
+                            final FetchUrl fetchUrl = new FetchUrl();
                             //rlDirectionsInfo.setVisibility(View.VISIBLE)
                             if (viewedDirections) {
                                 Animation animation = new TranslateAnimation(0, 0, 0, 400);
@@ -587,6 +584,8 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
 
                                     @Override
                                     public void onAnimationEnd(Animation animation) {
+                                        fetchUrl.execute(instructions);
+                                        populateInfoFromJson(response, mode);
                                         Animation animation2 = new TranslateAnimation(0, 0, 400, 0);
                                         animation2.setDuration(750);
                                         animation2.setFillAfter(true);
@@ -601,7 +600,8 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
                                 //llTransportOptions.startAnimation(animation);
                                 cvInstructionsInfo.startAnimation(animation);
                             } else {
-
+                                populateInfoFromJson(response, mode);
+                                fetchUrl.execute(instructions);
                                 Animation animation = new TranslateAnimation(0, 0, 400, 0);
                                 animation.setDuration(750);
                                 animation.setFillAfter(true);
