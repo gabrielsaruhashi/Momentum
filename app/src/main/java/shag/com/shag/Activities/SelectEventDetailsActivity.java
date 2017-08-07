@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -119,7 +118,7 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 newDate.setTime((new Date()).getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
-                Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(SelectEventDetailsActivity.this, "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
 
             }
         });
@@ -215,7 +214,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
         currentUser.put("categories_tracker", hm);
 
-
         newEvent.setLastMessageSent(new Message());
         newEvent.setTimeOfEvent(new Date());
 
@@ -225,7 +223,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
-        ParseObject currentUser = ParseApplication.getCurrentUser();
 
         //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());

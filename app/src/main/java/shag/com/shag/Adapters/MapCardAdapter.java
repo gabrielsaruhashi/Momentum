@@ -87,6 +87,9 @@ public class MapCardAdapter extends PagerAdapter {
                 i.putExtra("Lat",(Double) data.get("Lat"));
                 i.putExtra("Lng",(Double) data.get("Lng"));
                 i.putExtra("Place Name",(String) data.get("Place Name"));
+                if (data.get("Category").equals("Food")){
+                    i.putExtra("Food Details",(String) data.get("Description"));
+                }
                 context.startActivity(i);
             }
         });

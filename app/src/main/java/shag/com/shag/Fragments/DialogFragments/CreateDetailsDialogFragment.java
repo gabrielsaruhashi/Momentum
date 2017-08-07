@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
@@ -180,7 +179,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
                                 @Override
                                 public void done(ParseException e) {
                                     if(e == null) {
-                                        Toast.makeText(getContext(), "Successfully created event!", Toast.LENGTH_SHORT).show();
+                                        //Toast.makeText(getContext(), "Successfully created event!", Toast.LENGTH_SHORT).show();
 
                                         // send back to pick category dialog after being saved
                                         sendBackResult(newEvent);
@@ -302,7 +301,7 @@ public class CreateDetailsDialogFragment extends DialogFragment  {
             public void onClick(View view) {
                 Date newDate = new Date();
                 newDate.setTime(newDate.getTime() + minToDeadline*MILLISECONDS_IN_MINUTE);
-                Toast.makeText(getContext(), "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(getContext(), "Date: " + newDate.toString(), Toast.LENGTH_LONG).show();
                 //newEvent.deadline = newDate;
                 newEvent.setDeadline(newDate);
             }

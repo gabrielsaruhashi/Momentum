@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.github.florent37.materialviewpager.header.MaterialViewPagerHeaderDecorator;
 import com.parse.FindCallback;
@@ -220,7 +219,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
     //Body commented out because we need the method declaration
     @Override
     public void onFinishCategoryDialog(Event createdEvent) {
-        Toast.makeText(getContext(), "Event created", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Event created", Toast.LENGTH_SHORT).show();
         /*
         events.add(createdEvent);
         //adapter.notifyItemInserted(events.size() - 1);

@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".ChatActivity"
-    >
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ChatActivity">
 
     <item
-    android:id="@+id/miEventReady"
-    android:icon="@drawable/ic_event_ready"
-    android:onClick="onEventReady"
-    android:title="Item"
-    app:showAsAction="always"
-    android:visible="false"/>
+        android:id="@+id/miEventReady"
+        android:icon="@drawable/ic_event_ready"
+        android:onClick="onEventReady"
+        android:title="Item"
+        android:visible="false"
+        app:showAsAction="always"
+        />
 
 
     <item
@@ -18,8 +19,8 @@
         android:icon="@drawable/ic_group_add"
         android:onClick="onInviteFriends"
         android:title="Item"
-        app:showAsAction="always"
-        android:visible="true"/>
+        android:visible="true"
+        app:showAsAction="always" />
 
 
 </menu>

@@ -13,7 +13,6 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -89,7 +88,7 @@ public class PickCategoryDialogFragment extends DialogFragment implements Create
                 /* You must make use of the View v, find the view by id and extract the text as below*/
                 TextView tvCategoryItem= (TextView) v.findViewById(R.id.lblListItem);
                 String category= tvCategoryItem.getText().toString();
-                Toast.makeText(listView.getContext(), "Picked event: " + category, Toast.LENGTH_LONG).show();
+                //Toast.makeText(listView.getContext(), "Picked event: " + category, Toast.LENGTH_LONG).show();
                 showCreateDetailsDialog(category);
                 return true;  // i missed this
             }

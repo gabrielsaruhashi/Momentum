@@ -105,6 +105,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
             setSupportActionBar(myToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
+            myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         }
 
 
@@ -350,6 +351,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
         final Event newEvent = new Event();
         // populate newEvent
         newEvent.setEventOwnerName(currentUser.getString("name"));
+        newEvent.setEventOwnerProfileUrl(currentUser.getString("profile_image_url"));
         newEvent.setDescription(etDescription.getText().toString());
 
         //TODO what is this friends at event for
@@ -434,6 +436,8 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             }
         }
         currentUser.put("categories_tracker", hm);
+        currentUser.saveInBackground();
+
 
 
         newEvent.setLastMessageSent(new Message());

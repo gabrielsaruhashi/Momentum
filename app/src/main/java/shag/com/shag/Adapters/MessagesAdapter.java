@@ -1,6 +1,7 @@
 package shag.com.shag.Adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,14 +11,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shag.com.shag.Models.Message;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 /**
@@ -47,15 +52,91 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
 
-        Message message = mMessages.get(position);
+        final Message message = mMessages.get(position);
+
+
+            holder.myLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+
+                //if no one liked it before
+                if (message.getLikedUsers() == null) {
+                    holder.myLikeNumber.setText("1");
+                    message.setLikedUsers(new ArrayList<String>());
+                    message.updateLikedUsers((ArrayList<String>) message.getLikedUsers(),
+                            ParseApplication.getCurrentUser().getObjectId());
+                    holder.myLike.setColorFilter(Color.RED);
+                    message.saveInBackground();
+
+
+                }
+                //if user hasn't liked it before
+                else if (!message.getLikedUsers().contains(ParseApplication.getCurrentUser().getObjectId())) {
+                    int newNumber = message.getLikedUsers().size()+1;
+                    holder.myLikeNumber.setText(newNumber+"");
+                    message.updateLikedUsers((ArrayList<String>) message.getLikedUsers(),
+                            ParseApplication.getCurrentUser().getObjectId());
+                    holder.myLike.setColorFilter(Color.RED);
+                    message.saveInBackground();
+
+                }
+
+
+            }
+        });
+
+        holder.theirLike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Message");
+
+                //if no one liked it before
+                if (message.getLikedUsers() == null) {
+                    holder.theirLikeNumber.setText("1");
+                    message.setLikedUsers(new ArrayList<String>());
+                    message.updateLikedUsers((ArrayList<String>) message.getLikedUsers(),
+                            ParseApplication.getCurrentUser().getObjectId());
+                    holder.theirLike.setColorFilter(Color.RED);
+                    message.saveInBackground();
+
+
+                }
+                //if user hasn't liked it before
+                else if (!message.getLikedUsers().contains(ParseApplication.getCurrentUser().getObjectId())) {
+                    int newNumber = message.getLikedUsers().size()+1;
+                    holder.theirLikeNumber.setText(newNumber+"");
+                    message.updateLikedUsers((ArrayList<String>) message.getLikedUsers(),
+                            ParseApplication.getCurrentUser().getObjectId());
+                    holder.theirLike.setColorFilter(Color.RED);
+                    message.saveInBackground();
+
+                }
+
+            }
+        });
 
         // TODO alter this logic to use the sender's info pointer, not the id
         final boolean isMe = message.getSenderId() != null && message.getSenderId().equals(mUserId);
         String messageBody = message.getBody();
         if (isMe) {
             holder.theirBody.setVisibility(View.GONE);
+            holder.theirLike.setVisibility(View.GONE);
+            holder.theirLikeNumber.setVisibility(View.GONE);
+            holder.myLike.setVisibility(View.VISIBLE);
+            holder.myLikeNumber.setVisibility(View.VISIBLE);
+            if (message.getLikedUsers()!=null) {
+                holder.myLikeNumber.setText(message.getLikedUsers().size()+"");
+            }
+            //set like to be red if user has liked it before
+            if (message.getLikedUsers() != null && message.getLikedUsers().contains(ParseApplication.getCurrentUser().getObjectId())) {
+                holder.myLike.setColorFilter(Color.RED);
+
+            }
+
+
             holder.myBody.setVisibility(View.VISIBLE);
             holder.myBody.setText(messageBody);
             if (checkDisplayName(message, position)) {
@@ -66,11 +147,25 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
                 //i did send the last message, show no space
                 holder.tvOtherName.setVisibility(View.GONE);
                 holder.imageOther.setVisibility(View.GONE);
+
+
             }
         } else {
             holder.myBody.setVisibility(View.GONE);
             holder.theirBody.setVisibility(View.VISIBLE);
             holder.theirBody.setText(messageBody);
+            holder.myLike.setVisibility(View.GONE);
+            holder.theirLike.setVisibility(View.VISIBLE);
+            holder.myLikeNumber.setVisibility(View.GONE);
+            holder.theirLikeNumber.setVisibility(View.VISIBLE);
+            if (message.getLikedUsers()!=null) {
+                holder.theirLikeNumber.setText(message.getLikedUsers().size()+"");
+            }
+            if (message.getLikedUsers()!=null &&
+                    message.getLikedUsers().contains(ParseApplication.getCurrentUser().getObjectId())) {
+                holder.theirLike.setColorFilter(Color.RED);
+
+            }
 
             if (message.getSenderName() != null) {
                 //check if they sent a message previously
@@ -128,6 +223,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
         TextView theirBody;
         TextView tvOtherName;
         TextView myBody;
+        ImageView myLike;
+        ImageView theirLike;
+        TextView myLikeNumber;
+        TextView theirLikeNumber;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -136,6 +235,12 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
             theirBody = (TextView) itemView.findViewById(R.id.tvTheirBody);
             myBody = (TextView) itemView.findViewById(R.id.tvMyBody);
             tvOtherName = (TextView) itemView.findViewById(R.id.tvOtherName);
+            myLike = (ImageView) itemView.findViewById(R.id.ivMyLike);
+            theirLike = (ImageView) itemView.findViewById(R.id.ivTheirLike);
+            myLikeNumber = (TextView) itemView.findViewById(R.id.tvMyLikeNumber);
+            theirLikeNumber = (TextView) itemView.findViewById(R.id.tvTheirLikeNumber);
+
+
         }
 
     }

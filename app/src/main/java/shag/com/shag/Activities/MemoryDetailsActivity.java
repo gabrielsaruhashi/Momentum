@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -189,8 +190,8 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         myToolbar.setTitle(memory.getMemoryName());
-
 
     }
 
@@ -254,7 +255,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 @Override
                 public void onCompleted(GraphResponse response) {
                     try {
-                        Toast.makeText(MemoryDetailsActivity.this, "Successfully created new album!", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MemoryDetailsActivity.this, "Successfully created new album!", Toast.LENGTH_SHORT).show();
                         long facebookAlbumId = response.getJSONObject().getLong("id");
                         // post all pictures of the album
                         if (pictures != null && pictures.size() > 0) {
@@ -284,7 +285,7 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
                 memory.setIndexOfLastPictureShared(pictures.size());
                 memory.saveInBackground();
             } else {
-                Toast.makeText(MemoryDetailsActivity.this, "No new pictures to be posted", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MemoryDetailsActivity.this, "No new pictures to be posted", Toast.LENGTH_SHORT).show();
             }
         }
     }

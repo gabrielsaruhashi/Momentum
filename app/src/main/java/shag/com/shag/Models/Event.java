@@ -48,6 +48,7 @@ public class Event extends ParseObject implements Parcelable {
     public ParseObject lastMessageSent;
     public ArrayList<String> outsideParticipantsPhoneNumbers;
     public String eventTime;
+    String eventOwnerProfileUrl;
 
 
     //CONSTRUCTORS
@@ -55,6 +56,10 @@ public class Event extends ParseObject implements Parcelable {
         friendsAtEvent = new ArrayList<>();
         participantsFacebookIds = new ArrayList<>();
 
+    }
+
+    public String getEventOwnerProfileUrl() {
+        return getString("event_owner_profile_url");
     }
     // GETTERS
 
@@ -149,7 +154,8 @@ public class Event extends ParseObject implements Parcelable {
         //return User.fromParseObject(getParseObject("event_owner_name"));
         //return getParseUser("User_event_owner");
         try {
-            ParseUser owner = ParseUser.getQuery().get(getEventOwnerId()).fetch();            return owner;
+            ParseUser owner = ParseUser.getQuery().get(getEventOwnerId()).fetch();
+            return owner;
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -267,6 +273,11 @@ public class Event extends ParseObject implements Parcelable {
     public void setParticipantsIds(ArrayList<String> participantsIds) {
         this.participantsIds = participantsIds;
         put("participants_id", participantsIds);
+    }
+
+    public void setEventOwnerProfileUrl(String profileUrl) {
+        this.eventOwnerProfileUrl = profileUrl;
+        put("event_owner_profile_url", profileUrl);
     }
 
     public void setEventOwnerId(String eventOwnerId) {

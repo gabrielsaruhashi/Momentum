@@ -24,33 +24,6 @@
         android:src="@mipmap/ic_launcher"
         android:layout_alignParentRight="true"
         android:visibility="gone"/>!-->
-
-    <TextView
-        android:id="@+id/tvTheirBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvOtherName"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@id/ivProfileOther"
-        android:layout_weight="1"
-        android:background="@drawable/text_bubble1"
-        android:maxWidth="240dp"
-        android:textAlignment="textStart"
-        android:textColor="@color/black"
-        android:autoLink="web"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/tvOtherName"
-        android:layout_width="wrap_content"
-        android:layout_height="16dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:textSize="12sp"
-        android:layout_toRightOf="@id/ivProfileOther"
-        android:text="ShaggyNoName"
-        android:textColor="@color/medium_gray" />
-
     <TextView
         android:id="@+id/tvMyBody"
         android:layout_width="wrap_content"
@@ -66,6 +39,68 @@
         android:autoLink="web|phone|email|map"
         android:textSize="14sp" />
 
+
+    <TextView
+        android:id="@+id/tvTheirBody"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOtherName"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:layout_weight="1"
+        android:background="@drawable/text_bubble1"
+        android:maxWidth="240dp"
+        android:textAlignment="textStart"
+        android:textColor="@color/black"
+        android:autoLink="web|phone|email|map"
+        android:textSize="14sp" />
+
+    <ImageView
+        android:id="@+id/ivMyLike"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignEnd="@+id/tvMyBody"
+        android:layout_below="@+id/tvMyBody"
+        android:contentDescription="@string/profile_other"
+        android:src="@drawable/ic_favorite"
+        android:tint="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/ivTheirLike"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignStart="@+id/tvTheirBody"
+        android:layout_below="@+id/tvTheirBody"
+        android:contentDescription="@string/profile_other"
+        android:src="@drawable/ic_favorite"
+        android:tint="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/tvOtherName"
+        android:layout_width="wrap_content"
+        android:layout_height="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        android:layout_toRightOf="@id/ivProfileOther"
+        android:text="ShaggyNoName"
+        android:textColor="@color/medium_gray" />
+
+    <TextView
+        android:id="@+id/tvTheirLikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ivTheirLike"
+        android:layout_toEndOf="@+id/ivTheirLike"
+        android:text="0" />
+
+    <TextView
+        android:id="@+id/tvMyLikeNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/ivMyLike"
+        android:layout_alignBottom="@+id/ivMyLike"
+        android:text="0" />
 
 
 </RelativeLayout>

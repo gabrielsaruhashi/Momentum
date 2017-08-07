@@ -167,10 +167,9 @@ public class ChatListFragment extends Fragment {
             chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
 
         // get icon url
-        if (event.getEventOwner() != null) {
-            ParseUser eventOwner = event.getEventOwner();
+        if (event.getEventOwnerProfileUrl() != null) {
             // set chat icon to be the owner's image
-            chat.setChatIconUrl(eventOwner.getString("profile_image_url"));
+            chat.setChatIconUrl(event.getEventOwnerProfileUrl());
         }
 
         // get event info
