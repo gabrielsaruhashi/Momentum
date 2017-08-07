@@ -215,7 +215,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         }
         currentUser.put("categories_tracker", hm);
 
-
         newEvent.setLastMessageSent(new Message());
         newEvent.setTimeOfEvent(new Date());
 
@@ -225,7 +224,6 @@ public class SelectEventDetailsActivity extends AppCompatActivity {
         //newEvent.setLongitude(-122.2015);
 
         newEvent.setParticipantsLocations(new HashMap<String, ParseGeoPoint>());
-        ParseObject currentUser = ParseApplication.getCurrentUser();
 
         //newEvent.put("User_event_owner", currentUser);
         Log.i("DEBUG_CREATE", currentUser.getObjectId());
