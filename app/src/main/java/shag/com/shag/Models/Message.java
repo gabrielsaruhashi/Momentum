@@ -3,7 +3,9 @@ package shag.com.shag.Models;
 import com.parse.ParseClassName;
 import com.parse.ParseObject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by gabesaruhashi on 7/14/17.
@@ -21,6 +23,26 @@ public class Message extends ParseObject {
     private String senderId;
     private String eventId;
     private String senderName;
+    private ArrayList<String> likedUsers;
+
+
+    public List<String> getLikedUsers() {
+        return getList("liked_users");
+    }
+
+    public void setLikedUsers(ArrayList<String> likedUsers) {
+        this.likedUsers = likedUsers;
+        put("liked_users", likedUsers);
+
+    }
+
+    public void updateLikedUsers(ArrayList<String> likedUsers, String newUser) {
+        likedUsers.add(newUser);
+        put("liked_users", likedUsers);
+
+    }
+
+
 
     public String getMessageId() {
         return getObjectId();
