@@ -204,7 +204,6 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
             }
         });
 
-
     }
 
     // create category dialog fragment
