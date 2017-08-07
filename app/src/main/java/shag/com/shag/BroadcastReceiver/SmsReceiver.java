@@ -79,6 +79,7 @@ public class SmsReceiver extends BroadcastReceiver {
     // phone code
     public void subscribeAction(final String rawMessage, final String phoneNumber) {
 
+
         final String potentialTextBody;
         final String potentialEventId;
 
@@ -117,9 +118,6 @@ public class SmsReceiver extends BroadcastReceiver {
                         sendJoinedMessage(potentialEventId, getContactName(phoneNumber,mContext));
 
                     }
-                } else {
-                    // notify the user it is not a valid command
-                    sendMessage(phoneNumber, "Sorry, this is not a valid command. Please make sure you enter the right access code if you'd like to join the event");
                 }
             }
         });
@@ -147,6 +145,7 @@ public class SmsReceiver extends BroadcastReceiver {
         // save User pointer
         message.put("outside_sender_phone_number", phoneNumber);
         message.setEventId(eventId);
+        message.saveInBackground();
 
     }
 
