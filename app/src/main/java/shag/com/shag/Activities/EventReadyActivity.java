@@ -136,6 +136,7 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
         setContentView(R.layout.activity_event_ready1);
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         firstOpen = true;
 
         cvInstructionsInfo = (CardView) findViewById(R.id.cvInstructionsInfo);

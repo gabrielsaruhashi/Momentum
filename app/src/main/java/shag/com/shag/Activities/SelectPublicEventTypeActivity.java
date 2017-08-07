@@ -40,7 +40,6 @@ public class SelectPublicEventTypeActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        setSupportActionBar(myToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);

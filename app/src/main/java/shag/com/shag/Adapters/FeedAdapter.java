@@ -103,8 +103,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         holder.tvBody.setText(event.getDescription());
         //TODO getDeadline is returning null
         holder.tvRelativeTime.setText(getTimeRemaining(event.getDeadline()));
-        if (event.getEventOwner() != null) {
-            holder.tvEventOwnerName.setText(event.getEventOwner().getString("name"));
+        if (event.getEventOwnerName() != null) {
+            holder.tvEventOwnerName.setText(event.getEventOwnerName());
         }
 
         //TODO: change categories
@@ -142,8 +142,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // get icon url
         String url = "";
-        if (event.getEventOwner() != null) {
-            url = event.getEventOwner().getString("profile_image_url").replace("_normal", "");
+        if (event.getEventOwnerProfileUrl()!= null) {
+            url = event.getString("event_owner_profile_url").replace("_normal", "");
         }
         // load user profile image using glide
         Glide.with(context)

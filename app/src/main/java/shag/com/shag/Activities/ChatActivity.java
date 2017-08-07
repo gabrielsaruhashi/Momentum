@@ -182,6 +182,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
+        myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 

@@ -34,10 +34,13 @@
         android:layout_alignRight="@+id/map"
         android:layout_centerHorizontal="true"
         android:layout_below="@id/my_toolbar"
-        android:layout_marginTop="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:weightSum="4">
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:weightSum="4"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:padding="16dp">
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -54,7 +57,9 @@
                 android:elevation="16dp"
                 android:onClick="getWalkingDirections"
                 android:src="@drawable/ic_walk"
-                android:tint="@color/dark_gray" />
+                android:tint="@color/dark_gray"
+                android:padding="8dp"
+                />
         </RelativeLayout>
 
         <RelativeLayout
@@ -72,7 +77,8 @@
                 android:elevation="16dp"
                 android:onClick="getDrivingDirections"
                 android:src="@drawable/ic_drive"
-                android:tint="@color/dark_gray" />
+                android:tint="@color/dark_gray"
+                android:padding="8dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -90,7 +96,8 @@
                 android:elevation="16dp"
                 android:onClick="getTransitDirections"
                 android:src="@drawable/ic_transit"
-                android:tint="@color/dark_gray" />
+                android:tint="@color/dark_gray"
+                android:padding="8dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -108,7 +115,8 @@
                 android:elevation="16dp"
                 android:onClick="getBikingDirections"
                 android:src="@drawable/ic_bike"
-                android:tint="@color/dark_gray" />
+                android:tint="@color/dark_gray"
+                android:padding="8dp"/>
         </RelativeLayout>
 
 

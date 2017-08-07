@@ -236,7 +236,7 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
 
         // get the chill coefficient based on the user's profile
         Double chillCoefficient = getChillCoefficient(event.getCategory(), categoriesTracker);
-        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwner().getObjectId(), recentFriendsMap);
+        Double closenessCoefficient = getClosenessCoefficient(event.getEventOwnerId(), recentFriendsMap);
         Double relevanceCoefficient = (chillCoefficient + closenessCoefficient) / 2.0;
         return relevanceCoefficient;
     }
