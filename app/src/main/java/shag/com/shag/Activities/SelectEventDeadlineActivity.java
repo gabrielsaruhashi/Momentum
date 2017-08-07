@@ -434,6 +434,8 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
             }
         }
         currentUser.put("categories_tracker", hm);
+        currentUser.saveInBackground();
+
 
 
         newEvent.setLastMessageSent(new Message());

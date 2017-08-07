@@ -1475,7 +1475,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                         }
                                     }
                                 });
-
+                                mMessages.add(m);
                                 mAdapter.notifyItemInserted(0);
                                 rvChat.smoothScrollToPosition(0);
                             }
