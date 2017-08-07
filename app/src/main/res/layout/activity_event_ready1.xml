@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="shag.com.shag.Activities.EventReadyActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/gradient_bar"
+        android:elevation="@dimen/toolbar_elevation"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        tools:context="com.example.mapwithmarker.MapsMarkerActivity"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="0dp"
+        />
+
+
+    <LinearLayout
+        android:id="@+id/llTransportOptions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/map"
+        android:layout_alignRight="@+id/map"
+        android:layout_above="@+id/cvInstructionsInfo"
+        android:layout_alignBottom="@+id/map"
+        android:layout_marginBottom="8dp"
+        android:weightSum="4">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/ibWalk"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chill_circle"
+                android:backgroundTint="@color/deselected_gray"
+                android:layout_centerInParent="true"
+                android:onClick="getWalkingDirections"
+                android:src="@drawable/ic_walk" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/ibDrive"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chill_circle"
+                android:backgroundTint="@color/deselected_gray"
+                android:onClick="getDrivingDirections"
+                android:src="@drawable/ic_drive" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/ibTransit"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chill_circle"
+                android:backgroundTint="@color/deselected_gray"
+                android:onClick="getTransitDirections"
+                android:src="@drawable/ic_transit" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:id="@+id/ibBike"
+                android:layout_centerInParent="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/chill_circle"
+                android:backgroundTint="@color/deselected_gray"
+                android:onClick="getBikingDirections"
+                android:src="@drawable/ic_bike" />
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:id="@+id/cvInstructionsInfo"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvFinalPlace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_margin="8dp"
+                android:fontFamily="sans-serif-light"
+                android:text="PlaceName"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvFinalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:fontFamily="sans-serif-light"
+                android:layout_margin="8dp"
+                android:text="TBD"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tvDurationInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignBottom="@+id/rlSendEta"
+                android:layout_marginLeft="8dp"
+                android:text="Arrival in "
+                android:textSize="18dp"
+                android:fontFamily="sans-serif-light"/>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:id="@+id/rlSendEta"
+                android:onClick="sendAnEta"
+                android:background="@color/deselected_gray"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/tvFinalTime">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Send ETA"
+                    android:fontFamily="sans-serif-light"
+                    android:id="@+id/tvSendEta"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="4dp"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:srcCompat="@drawable/ic_right_arrow"
+                    android:layout_toRightOf="@id/tvSendEta"/>
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

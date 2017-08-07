@@ -184,9 +184,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-
-        currentUser = ParseApplication.getCurrentUser();
-
         context = this;
 
         //creating custom polls
@@ -1418,7 +1415,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             m.setSenderId("InuSHuTqkn");
             if (favFood == null) {
                 String newAddress = address.substring(0,address.length()-6);
-                m.setBody("Hey! Feel free to start looking for restaurants. Why not try out "
+                m.setBody("Looking for recommendations? Try out "
                         + restaurantName + " @" + address.substring(0,address.length()-6));
             } else {
                 m.setBody("Hey! There seems to be a lot of interest in " + favFood + ". Why not try out "

@@ -149,7 +149,7 @@ public class Event extends ParseObject implements Parcelable {
         //return User.fromParseObject(getParseObject("event_owner_name"));
         //return getParseUser("User_event_owner");
         try {
-            ParseUser owner = ParseUser.getQuery().get(getEventOwnerId());
+            ParseUser owner = ParseUser.getQuery().get(getEventOwnerId()).fetch();
             return owner;
         } catch (ParseException e) {
             e.printStackTrace();

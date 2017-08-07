@@ -97,6 +97,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // populate the views
         Event event = events.get(position);
         if (!event.getIsEventPrivate()) {
+            //TODO: don't comment this out
             //showMap(event, holder);
         }
         holder.tvBody.setText(event.getDescription());
@@ -563,7 +564,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     public void showLastMessage(final Event event, ViewHolder holder) {
-        ArrayList<String> participants = event.getParticipantsIds();
+        final ArrayList<String> participants = event.getParticipantsIds();
         if (!participants.contains(currentUser.getObjectId())) {
             holder.ivDivider.setVisibility(View.GONE);
             holder.rlChatInfo.setVisibility(View.GONE);
@@ -595,7 +596,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             public void onClick(View view) {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("event_id", event.getEventId());
-                intent.putExtra("participants_ids", event.getParticipantsIds());
+                ArrayList<String> participantsIds = event.getParticipantsIds();
+                participantsIds.add("InuSHuTqkn");
+                intent.putExtra("participants_ids", participantsIds);
                 context.startActivity(intent);
             }
         });
