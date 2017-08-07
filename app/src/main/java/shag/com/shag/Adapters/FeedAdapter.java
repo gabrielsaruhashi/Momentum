@@ -337,6 +337,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, R.color.medium_gray));
                     joinStatus.setText("Joined");
 
+                    ArrayList<Event> usersEvents = ParseApplication.getUsersEventsForChat();
+                    if (usersEvents != null) {
+                        usersEvents.add(event);
+                        ParseApplication.setUsersEventsForChat(usersEvents);
+                    }
+
                     // subscribes user to this "channel" for notifications
                     ParsePush.subscribeInBackground(event.getEventId());
 
@@ -383,6 +389,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     hm.put(category, categoryData);
 
                     object.saveInBackground();
+
+                    ArrayList<Event> usersEvents = ParseApplication.getUsersEventsForChat();
+                    if (usersEvents != null) {
+                        usersEvents.remove(event);
+                        ParseApplication.setUsersEventsForChat(usersEvents);
+                    }
 
                     // update UI
                     joinStatus.setBackgroundColor(ContextCompat.getColor(context, findCorrectColor(event)));
