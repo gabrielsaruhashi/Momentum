@@ -29,7 +29,7 @@
                     <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/ivBannerBelow"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="94dp"
                         android:layout_alignParentStart="true"
                         android:background="@color/black"
                         />
@@ -37,7 +37,7 @@
                     <android.support.v7.widget.AppCompatImageView
                         android:id="@+id/ivBanner"
                         android:layout_width="match_parent"
-                        android:layout_height="64dp"
+                        android:layout_height="94dp"
                         android:layout_alignParentStart="true"
                         android:background="@color/black"
                         />
@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="8dp"
                     android:text="Description"
-                    android:textAppearance="@android:style/TextAppearance.Medium" />
+                    android:textAppearance="@android:style/TextAppearance.Small" />
 
                 <Space
                     android:id="@+id/spUnderDescription"
@@ -87,7 +87,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="8dp"
                     android:text="Location"
-                    android:textAppearance="@android:style/TextAppearance.Medium" />
+                    android:textAppearance="@android:style/TextAppearance.Small" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -97,8 +97,8 @@
 
             <Button
                 android:id="@+id/createButton"
-                android:layout_width="109dp"
-                android:layout_height="61dp"
+                android:layout_width="106dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_marginBottom="4dp"
                 android:text="Create"

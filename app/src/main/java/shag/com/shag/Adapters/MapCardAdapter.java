@@ -67,14 +67,30 @@ public class MapCardAdapter extends PagerAdapter {
         cardTitle.setText((String) data.get("Name"));
         cardDescription.setText((String) data.get("Description"));
         cardLocation.setText((String) data.get("Location"));
-        if (data.get("Photo")!=null) {
+        if (position==0){
             titleBackground.setBackgroundResource(R.color.black);
-            Glide.with(context).load(data.get("Photo")).centerCrop().into(titleBackground);
+            Glide.with(context).load("https://lastfm-img2.akamaized.net/i/u/ar0/0dc8da40a25946269096b98b9163634e.jpg").centerCrop().into(titleBackground);
             titleBackground.setAlpha(.7f);
         }
-        else{
-            titleBackground.setBackgroundResource(R.color.colorPrimary);
-            //titleBackground.setBackgroundColor(getResources().getColor(color));
+        else if (position==1) {
+            titleBackground.setBackgroundResource(R.color.black);
+            Glide.with(context).load("http://www.dungen-music.com/wp-content/uploads/2016/10/Dungen-Ken-1.jpg").centerCrop().into(titleBackground);
+            titleBackground.setAlpha(.7f);
+        }
+        else if (position==2) {
+            titleBackground.setBackgroundResource(R.color.black);
+            Glide.with(context).load("http://www.ssgmusic.com/wp-content/uploads/2012/01/GravelRoadHeadshot.jpg").centerCrop().into(titleBackground);
+            titleBackground.setAlpha(.7f);
+        }
+        else {
+            if (data.get("Photo") != null) {
+                titleBackground.setBackgroundResource(R.color.black);
+                Glide.with(context).load(data.get("Photo")).centerCrop().into(titleBackground);
+                titleBackground.setAlpha(.7f);
+            } else {
+                titleBackground.setBackgroundResource(R.color.colorPrimary);
+                //titleBackground.setBackgroundColor(getResources().getColor(color));
+            }
         }
 
         cardCreate.setOnClickListener(new View.OnClickListener() {
