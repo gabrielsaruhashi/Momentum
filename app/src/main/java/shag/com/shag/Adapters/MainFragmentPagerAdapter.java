@@ -5,7 +5,6 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.text.SpannableStringBuilder;
 
 import shag.com.shag.Fragments.FeedFragment;
 import shag.com.shag.Fragments.MemoriesFragment;
@@ -50,32 +49,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
 
-        // generate title based on item postion
-
-//        switch (position) {
-//            case 0:
-//                myDrawable = ContextCompat.getDrawable(context, R.drawable.ic_home);
-//                        //().getDrawable(R.drawable.ic_home);
-//                break;
-//            // return tabTitles[position];
-//            case 1:
-//                myDrawable = ContextCompat.getDrawable(context, R.drawable.ic_movie_roll_tape);
-//                break;
-//            default:
-//                break;
-//        }
-        SpannableStringBuilder sb = new SpannableStringBuilder("   " + tabTitles[position]); // space added before text for convenience
-//        try {
-//            myDrawable.setBounds(0, 0, myDrawable.getIntrinsicWidth(), myDrawable.getIntrinsicHeight());
-//            ImageSpan span = new ImageSpan(myDrawable);
-//            sb.setSpan(span, 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            // TODO: handle exception
-//        }
-        return sb;
-
-        //return tabTitles[position];
+     return tabTitles[position];
     }
 
     private FeedFragment getFeedInstance() {

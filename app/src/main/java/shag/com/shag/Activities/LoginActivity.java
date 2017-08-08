@@ -118,6 +118,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginSuccess() {
         //currently this if statement is never used
         //if we override onPushOpen  we will eventually need this
+        ParseApplication.mOnboardingLoad = true;
 
         if (intent.getAction() == null && intent.getExtras() != null) {
             //Intent i = new Intent(context, MainActivity.class);

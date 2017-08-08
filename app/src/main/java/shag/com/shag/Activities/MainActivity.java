@@ -115,6 +115,7 @@ public class MainActivity extends DrawerActivity implements ViewPager.OnPageChan
         if (isNew) {
             showOnboardingDialog();
             isNewUser = false;
+            ParseApplication.mOnboardingLoad = false;
         }
     }
 

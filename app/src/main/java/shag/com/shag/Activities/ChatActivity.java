@@ -1387,7 +1387,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         Log.d("response", "aww yeah");
                         try {
                             JSONArray restaurantArray = response.getJSONArray("restaurants");
-                            JSONObject restaurant = restaurantArray.getJSONObject(0).getJSONObject("restaurant");
+                            JSONObject restaurant = restaurantArray.getJSONObject(1).getJSONObject("restaurant");
                             String restaurantName = restaurant.getString("name");
                             String address = restaurant.getJSONObject("location").getString("address");
                             callShaggyForResponse("Recommendation", restaurantName, address);
