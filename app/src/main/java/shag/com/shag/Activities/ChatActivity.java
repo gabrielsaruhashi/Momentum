@@ -231,7 +231,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             //if so, user has just opened a push notification, need to query for more info
             if (chatParticipantsIds == null) {
                 openedPush = true;
-                chatParticipantsIds = (ArrayList) eventFromQuery.getList("participants_id");
+                chatParticipantsIds = new ArrayList<>();
+                chatParticipantsIds.addAll((ArrayList) eventFromQuery.getList("participants_id"));
+            }
+            if (!chatParticipantsIds.contains("InuSHuTqkn")) {
                 chatParticipantsIds.add("InuSHuTqkn");  //adding shaggy
             }
 
@@ -323,6 +326,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    Log.i("THREAD_FREEZE", "CURSOR");
                                     //Toast.makeText(getApplicationContext(), "Title: " + cursor.getString(1) + " Start-Time: " + (new Date(cursor.getLong(3))).toString(), Toast.LENGTH_SHORT).show();
                                     CalendarEvent freshCalendarEvent = CalendarEvent.fromCalendarCursor(cursor);
                                     calendarEvents.add(freshCalendarEvent);
@@ -336,7 +340,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 }
             }
         };
-        setupCalendars();
+        // setupCalendars();
 
 
         if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
@@ -387,6 +391,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    Log.i("THREAD", "HERE");
                                     mMessages.add(0, object);
                                     mAdapter.notifyDataSetChanged();
                                     rvChat.scrollToPosition(0);
@@ -421,7 +426,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                         public void run() {
                             pollAdapter.notifyDataSetChanged();
                             rvPolls.scrollToPosition(0);
-
                         }
                     });
                 }
@@ -529,6 +533,9 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         final HashMap<String, Integer> foodCounts = new HashMap<>();
         //TODO use an AsyncTask
         for (String userId : people) {
+            if (userId.equals("InuSHuTqkn")) {
+                continue;
+            }
             ParseQuery<ParseUser> person = ParseUser.getQuery();
             try {
                 ParseUser userX = person.get(userId);
@@ -659,7 +666,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 //TODO pass the entire event object
                 message.setBody(data);
                 // save User pointer
-                message.put("User_sender", currentUser);
+                //message.put("User_sender", currentUser);
                 message.setSenderId(currentUserId);
                 message.setEventId(eventId);
                 message.setSenderProfileImageUrl(currentUser.getString("profile_image_url"));
@@ -691,15 +698,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             etMessage.setText(null);
                             // add message to arraylist
 
+                            mMessages.add(0, message);
+                            mAdapter.notifyItemInserted(0);
+                            rvChat.scrollToPosition(0);
+
                             eventFromQuery.setLastMessageSent(message);
                             eventFromQuery.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
                                     if (e == null) {
                                         Log.i("CHATACTIVITY", "All good");
-                                        mMessages.add(0, message);
-                                        mAdapter.notifyItemInserted(0);
-                                        rvChat.scrollToPosition(0);
 
                                         if (data.equalsIgnoreCase("hi Shaggy")) {
                                             final Message m = new Message();
@@ -729,7 +737,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                             }
 
                                         }
-                                        else if (data.equalsIgnoreCase("get food rec")) {
+                                        else if (data.equalsIgnoreCase("Shaggy, what do you recommend?")) {
                                             recommendRestaurant();
                                         }
                                     } else {
@@ -1143,7 +1151,8 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             Intent intent = new Intent(this, ChatListActivity.class);
             context.startActivity(intent);
         } else {
-            super.onBackPressed(); //otherwise follow regular life cycle
+            super.onBackPressed();
+            finish();//otherwise follow regular life cycle
         }
     }
 
@@ -1163,18 +1172,16 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             choices.set(0, rButton0.getText().toString());
             scores.put(rButton0.getText().toString(), 0);
             //TODO check this, put in different thread
+            /*
             if (conflictsWithCalendarEvent((String) rButton0.getText())) {
                 rButton0.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-            }
+            } */
 
         } else if (btn == 1) {
             RadioButton rButton1 = (RadioButton) timeButtons.get(1);
             rButton1.setText(rButton1.getText() + " @ " + time);
             choices.set(1, rButton1.getText().toString());
             scores.put(rButton1.getText().toString(), 0);
-            if (conflictsWithCalendarEvent((String) rButton1.getText())) {
-                rButton1.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-            }
 
         } else if (btn == 2) {
             RadioButton rButton2 = (RadioButton) timeButtons.get(2);
@@ -1182,19 +1189,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
             choices.set(2, rButton2.getText().toString());
             scores.put(rButton2.getText().toString(), 0);
 
-            if (conflictsWithCalendarEvent((String) rButton2.getText())) {
-                rButton2.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-            }
 
         } else {
             RadioButton rButton3 = (RadioButton) timeButtons.get(3);
             rButton3.setText(rButton3.getText() + " @ " + time);
             choices.set(3, rButton3.getText().toString());
             scores.put(rButton3.getText().toString(), 0);
-
-            if (conflictsWithCalendarEvent((String) rButton3.getText())) {
-                rButton3.setTextColor(ContextCompat.getColor(context, R.color.colorPrimary));
-            }
 
         }
 
@@ -1213,6 +1213,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         });
     }
 
+    /*
     //TODO this might break if calendar events hasnt returned yet
     public boolean conflictsWithCalendarEvent(String timeOption) {
         Date dateTimeOption = convertStringToDate(timeOption);
@@ -1221,14 +1222,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // gets list of all calendar events that conflict with this time option
         for (CalendarEvent calendarEvent : calendarEvents) {
             if (!calendarEvent.getdStart().after(dateTimeOption) && !calendarEvent.getdEnd().before(dateTimeOption)) {
-                /* calendar event start time <= poll option <= calendar event end time */
+               // calendar event start time <= poll option <= calendar event end time
                 conflictingCalendarEvents.add(calendarEvent);
                 // return true to add * to poll option UI
                 hasConflict = true;
             }
         }
         return hasConflict;
-    }
+    } */
 
 
     @Override
@@ -1420,7 +1421,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         if (type.equals("Recommendation")) {
             final String googleUrl = "https://maps.googleapis.com/maps/api/geocode/json?";
             String givenAddress = "address=" + address.replaceAll(" ", "");
-            ;
+
             final String api = "&key=AIzaSyD5ty8DSE8Irio8xdCvCQMltWpuVDioHTI";
 
 
@@ -1480,14 +1481,14 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                                         }
                                     }
                                 });
-                                mMessages.add(m);
-                                mAdapter.notifyItemInserted(0);
-                                rvChat.smoothScrollToPosition(0);
+                                //mMessages.add(0, m);
+                                //mAdapter.notifyItemInserted(0);
+                                //rvChat.smoothScrollToPosition(0);
                             }
                         });
 
-                    refreshMessages();
-                    refreshPolls();
+                    //refreshMessages();
+                    //refreshPolls();
 
 
 
@@ -1523,8 +1524,10 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         conflictingEventsDialogFragment.show(fm, "fragment_conflicting_calendar_events");
     }
 
+
     @Override
     public void setTvConflictVisibility(TextView tvConflict, ArrayList<String> timeOptions) {
+        /*
         for (String timeOption : timeOptions) {
             if (conflictsWithCalendarEvent(timeOption)) {
                 tvConflict.setVisibility(View.VISIBLE);
@@ -1536,7 +1539,7 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                     }
                 });
             }
-        }
+        } */
     }
 
     public void checkIfEventReady() {

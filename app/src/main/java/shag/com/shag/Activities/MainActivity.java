@@ -22,6 +22,7 @@ import com.ramotion.paperonboarding.PaperOnboardingFragment;
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private FragmentManager fragmentManager;
     PaperOnboardingFragment onBoardingFragment;
     static boolean isNewUser;
+    static boolean mFirst;
 
     // The request code used in ActivityCompat.requestPermissions()
     // and returned in the Activity's onRequestPermissionsResult()
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         // if new user, display onboarding
         checkIfNewUser(getIntent().getBooleanExtra("isNew", false));
+        checkIfNewUser(ParseApplication.mOnboardingLoad);
 
         // get reference to material viewpager
         mViewPager = (MaterialViewPager) findViewById(R.id.viewpager);

@@ -478,6 +478,9 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
                                 //Toast.makeText(getContext(), "Successfully created event on Parse",
                                 //Toast.LENGTH_SHORT).show();
                                 notifyRecommendedFriends(newEvent);
+                                ArrayList<Event> usersEvents = ParseApplication.getUsersEventsForChat();
+                                usersEvents.add(newEvent);
+                                ParseApplication.setUsersEventsForChat(usersEvents);
 
                                 final Message m = new Message();
                                 m.setSenderId("InuSHuTqkn");

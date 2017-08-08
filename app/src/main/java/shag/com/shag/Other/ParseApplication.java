@@ -59,6 +59,7 @@ public class ParseApplication extends Application {
     private static ArrayList<Long> facebookFriendsIds;
     private static HashMap recentFriendsMap;
     private static boolean mFirstLoad;
+    public static boolean mOnboardingLoad;
     private static TreeSet facebookPermissionsSet;
     private static ParseUser currentUser;
     public static ArrayList<Event> usersEventsForChat;
@@ -66,6 +67,9 @@ public class ParseApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // instantiate boolean
+        mOnboardingLoad = true;
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
@@ -110,6 +114,7 @@ public class ParseApplication extends Application {
         mFirstLoad = true;
         facebookFriendsIds = new ArrayList<Long>();
         facebookPermissionsSet = new TreeSet();
+        usersEventsForChat = new ArrayList<>();
 
     }
 
@@ -313,12 +318,12 @@ public class ParseApplication extends Application {
 
             // start thread
             thread.start();
-            // wait for the thread to return the request
+            /* wait for the thread to return the request
             try {
                 thread.join(0);
             } catch (InterruptedException i) {
                 i.getMessage();
-            }
+            } */
         }
         // return your fb friends' ids
         return usersEventsForChat;

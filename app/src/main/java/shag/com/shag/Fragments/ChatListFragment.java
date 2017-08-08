@@ -1,5 +1,6 @@
 package shag.com.shag.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,6 +51,7 @@ public class ChatListFragment extends Fragment {
     // listener will the activity instance containing fragment
     private OnChatLoadListener listener;
     ParseUser currentUser;
+    Activity activity;
 
     @Nullable
     @Override
@@ -87,6 +89,7 @@ public class ChatListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        activity = this.getActivity();
         if (context instanceof OnChatLoadListener) {
             listener = (OnChatLoadListener) context;
         } else {
@@ -152,8 +155,9 @@ public class ChatListFragment extends Fragment {
         chat.setChatParticipantsIds(event.getParticipantsIds());
 
         // add shaggy bot
-            chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
-
+        if (!chat.getChatParticipantsIds().contains("InuSHuTqkn")) {
+            chat.addChatParticipantsIds("InuSHuTqkn");
+        }
         // get icon url
         if (event.getEventOwnerProfileUrl() != null) {
             // set chat icon to be the owner's image
@@ -161,7 +165,7 @@ public class ChatListFragment extends Fragment {
         }
 
         // get event info
-        int participantsNumber = event.getParticipantsIds().size();
+        int participantsNumber = chat.getChatParticipantsIds().size();
         String eventOwnerName = event.getEventOwnerName();
         String currentUserName = (String) currentUser.get("name");
 
@@ -220,7 +224,7 @@ public class ChatListFragment extends Fragment {
 
     //execute adapter refresh on ui thread
     public void itemChanged(final int index) {
-        getActivity().runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();

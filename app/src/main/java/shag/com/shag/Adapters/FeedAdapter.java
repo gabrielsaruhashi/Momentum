@@ -391,8 +391,16 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                     object.saveInBackground();
 
                     ArrayList<Event> usersEvents = ParseApplication.getUsersEventsForChat();
-                    if (usersEvents != null) {
-                        usersEvents.remove(event);
+                    if (usersEvents != null && usersEvents.size() > 0) {
+                        int i = 0;
+                        int j = 0;
+                        for (Event userEvent : usersEvents) {
+                            if (userEvent.getObjectId().equals(event.getObjectId())) {
+                                j = i;
+                            }
+                            i++;
+                        }
+                        usersEvents.remove(j);
                         ParseApplication.setUsersEventsForChat(usersEvents);
                     }
 
@@ -579,7 +587,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra("event_id", event.getEventId());
                 ArrayList<String> participantsIds = event.getParticipantsIds();
-                participantsIds.add("InuSHuTqkn");
                 intent.putExtra("participants_ids", participantsIds);
                 context.startActivity(intent);
             }

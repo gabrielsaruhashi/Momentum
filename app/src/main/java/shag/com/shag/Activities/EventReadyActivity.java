@@ -802,6 +802,9 @@ public class EventReadyActivity extends AppCompatActivity implements OnMapReadyC
     }
 
     public void sendAnEta(View view) {
+        RelativeLayout rlSendEta = (RelativeLayout) view;
+        rlSendEta.setBackgroundColor(ContextCompat.getColor(this, R.color.selected_gray));
+        Toast.makeText(this, "ETA sent!", Toast.LENGTH_SHORT).show();
         Message m = new Message();
         m.setSenderId("InuSHuTqkn");
         m.setBody(ParseApplication.getCurrentUser().get("name") + " is on the way! ETA = " + ETA);
