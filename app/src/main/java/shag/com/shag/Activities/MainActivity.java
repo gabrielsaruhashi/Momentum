@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +24,7 @@ import shag.com.shag.Fragments.MemoryListFragment;
 import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
-public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
+public class MainActivity extends DrawerActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
     Toolbar toolbar;
     MaterialViewPager mViewPager;
     ViewPager viewPager;
