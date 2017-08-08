@@ -29,7 +29,7 @@
             <RelativeLayout
                 android:id="@+id/colorColumn"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="280dp"
                 android:layout_weight="20"
                 android:background="@color/white"
                 android:gravity="center_horizontal"
@@ -47,25 +47,28 @@
                 <ImageView
                     android:id="@+id/ivTransparencyBackground"
                     android:layout_width="350dp"
-                    android:layout_height="350dp"
+                    android:layout_height="280dp"
                     app:srcCompat="@color/black" />
 
                 <ImageView
                     android:id="@+id/ivCoverPicture"
                     android:layout_width="350dp"
-                    android:layout_height="350dp"
+                    android:layout_height="280dp"
                     android:layout_centerHorizontal="true"
                     android:alpha="0.7"
                     android:transitionName="memoryDetail" />
 
                 <TextView
                     android:id="@+id/tvMemoryName"
+                    android:textAlignment="center"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
                     android:layout_centerInParent="true"
                     android:fontFamily="sans-serif-black"
                     android:lines="2"
-                    android:text="Memory Name"
+                    android:text="Great moments I had in Berlin with friends"
                     android:textColor="@color/white"
                     android:textSize="32dp" />
 

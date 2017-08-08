@@ -7,9 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="shag.com.shag.Activities.SelectEventDeadlineActivity"
-    android:weightSum="1"
-
-    >
+    android:weightSum="1">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -37,37 +35,54 @@
             />
     </android.support.v7.widget.Toolbar>
 
+    <!-- Main -->
+
+    <TextView
+        android:id="@+id/questionBadge"
+        android:layout_width="wrap_content"
+        android:fontFamily="sans-serif-condensed"
+        android:textColor="@color/black"
+        android:layout_marginTop="24dp"
+        android:layout_height="wrap_content"
+        android:textSize="24dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="16dp"
+        android:layout_below="@+id/my_toolbar"
+        android:text="Hey! What's up?" />
+
     <EditText
+        android:layout_centerInParent="true"
+        android:layout_below="@id/questionBadge"
+        android:layout_marginTop="16dp"
+        android:layout_alignStart="@id/questionBadge"
         android:id="@+id/tvDescriptionInput"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
-        android:background="@null"
+        android:layout_height="wrap_content"
         android:gravity="top"
-        android:hint="Required: What do ya wanna do?"
+        android:hint="e.g Play basketball"
         android:inputType="textMultiLine"
-        android:padding="8dp"
-        android:textAppearance="@android:style/TextAppearance.Small"
-        android:textSize="16dp"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="53dp"
-        android:layout_below="@+id/my_toolbar"
-        android:layout_alignParentStart="true" />
-
-
+        android:textSize="18dp"
+        />
 
     <Button
         android:id="@+id/btMakeEvent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:elevation="2dp"
-        android:text="Create Event"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/button_states"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Post"
         android:textAlignment="center"
-        tools:layout_editor_absoluteX="280dp"
-        tools:layout_editor_absoluteY="460dp" />
+ />
 
     <LinearLayout
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_centerInParent="true"
         android:id="@+id/btRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -84,10 +99,12 @@
         <!--android:text="30 M" />-->
 
         <Button
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             android:id="@+id/bt30"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".2290"
+            android:layout_weight=".1800"
             android:textColor="@color/white"
             style="@style/AppTheme.Button"
             android:text="30 M" />
@@ -99,7 +116,9 @@
             android:id="@+id/bt1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1367"
+            android:layout_weight=".1800"
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="1 Hr"/>
@@ -108,10 +127,12 @@
             android:layout_height="match_parent" />
 
         <Button
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             android:id="@+id/bt2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1367"
+            android:layout_weight=".1800"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="2 Hr" />
@@ -119,10 +140,12 @@
             android:layout_width=".3dp"
             android:layout_height="match_parent" />
         <Button
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             android:id="@+id/bt3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1367"
+            android:layout_weight=".1800"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="3 Hr"/>
@@ -130,10 +153,12 @@
             android:layout_width=".3dp"
             android:layout_height="match_parent" />
         <Button
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             android:id="@+id/bt6"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1367"
+            android:layout_weight=".1800"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="6 Hr"/>
@@ -141,10 +166,12 @@
             android:layout_width=".3dp"
             android:layout_height="match_parent" />
         <Button
+            android:fontFamily="sans-serif-condensed"
+            android:textSize="14sp"
             android:id="@+id/bt12"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight=".1367"
+            android:layout_weight=".1800"
             style="@style/AppTheme.Button"
             android:textColor="@color/white"
             android:text="12 Hr"/>
@@ -154,16 +181,17 @@
         android:id="@+id/tvDeadlineToJoin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Deadline To Join"
-        android:textAllCaps="true"
-        android:textAlignment="center"
+        android:text="Deadline To Join:"
+        android:fontFamily="sans-serif-condensed"
         android:textSize="16sp"
         android:textStyle="bold"
         android:layout_above="@id/btRow"
-        android:layout_alignParentStart="true" />
+        android:layout_marginBottom="4dp"
+        android:layout_alignLeft="@id/btRow" />
     <android.support.v4.widget.Space
         android:layout_width="match_parent"
         android:layout_height="2dp" />
+
 
 
 
