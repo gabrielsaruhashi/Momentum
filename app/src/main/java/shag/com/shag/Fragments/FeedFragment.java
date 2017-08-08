@@ -24,6 +24,7 @@ import com.parse.SubscriptionHandling;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -183,9 +184,9 @@ public class FeedFragment extends Fragment implements PickCategoryDialogFragment
                     // calculate the relevance of each event before adding to arraylist
                     for (Event event : eventsList) {
 
-                        //if (event.getDeadline().getTime() > (new Date()).getTime()) {
+                        if (event.getDeadline().getTime() > (new Date()).getTime()) {
                             events.add(event);
-                        //}
+                        }
                         event.setRelevance(calculateEventRelevance(event, currentUser));
                         Log.i("FEED_RELEVANCE", event.getDescription() + " has relevance: " + event.getRelevance());
                     }
