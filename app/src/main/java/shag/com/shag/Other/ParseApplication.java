@@ -23,6 +23,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
@@ -57,12 +59,17 @@ public class ParseApplication extends Application {
     private static ArrayList<Long> facebookFriendsIds;
     private static HashMap recentFriendsMap;
     private static boolean mFirstLoad;
+    public static boolean mOnboardingLoad;
     private static TreeSet facebookPermissionsSet;
     private static ParseUser currentUser;
+    public static ArrayList<Event> usersEventsForChat;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        // instantiate boolean
+        mOnboardingLoad = true;
 
         // Use for troubleshooting -- remove this line for production
         Parse.setLogLevel(Parse.LOG_LEVEL_DEBUG);
@@ -107,6 +114,7 @@ public class ParseApplication extends Application {
         mFirstLoad = true;
         facebookFriendsIds = new ArrayList<Long>();
         facebookPermissionsSet = new TreeSet();
+        usersEventsForChat = new ArrayList<>();
 
     }
 
@@ -259,6 +267,68 @@ public class ParseApplication extends Application {
         return facebookPermissionsSet;
     }
 
+    public static ArrayList<Event> getUsersEventsForChat() {
+        if (mFirstLoad) {
+            // start a new thread to execute the runnable codeblock
+            Thread thread = new Thread( ) {
+                @Override
+                public void run() {
+                    // the code to execute when the runnable is processed by a thread
+                    ParseQuery<Event> query = new ParseQuery("Event");
+                    List list = new ArrayList();
+                    list.add(currentUser.getObjectId());
+                    query.whereContainedIn("participants_id", list);
+                    //query.include("User_event_owner");
+                    query.include("last_message_sent");
+                    query.findInBackground(new FindCallback<Event>() {
+                        @Override
+                        public void done(List<Event> eventsList, ParseException e) {
+                            if (e == null) {
+                                Collections.sort(eventsList, new Comparator<Event>() {
+                                    @Override
+                                    public int compare(Event event, Event t1) {
+                                        if (event.getLastMessageSent() == null && t1.getLastMessageSent() != null) {
+                                            return 1;
+                                        }
+
+                                        if (event.getLastMessageSent() != null && t1.getLastMessageSent() == null) {
+                                            return -1;
+                                        }
+
+                                        if (event.getLastMessageSent() == null && t1.getLastMessageSent() == null) {
+                                            return 0;
+                                        }
+
+                                        ParseObject first = event.getLastMessageSent();
+                                        ParseObject second = t1.getLastMessageSent();
+                                        return -1 *first.getCreatedAt().compareTo(second.getCreatedAt());
+                                    }
+                                });
+
+                                usersEventsForChat = (ArrayList) eventsList;
+
+                            } else { // if there is an error
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                }
+            };
+
+            // start thread
+            thread.start();
+            /* wait for the thread to return the request
+            try {
+                thread.join(0);
+            } catch (InterruptedException i) {
+                i.getMessage();
+            } */
+        }
+        // return your fb friends' ids
+        return usersEventsForChat;
+    }
+
     public static ParseUser getCurrentUser() {
         if (currentUser == null) {
             currentUser = ParseUser.getCurrentUser();
@@ -267,4 +337,7 @@ public class ParseApplication extends Application {
         return currentUser;
     }
 
+    public static void setUsersEventsForChat(ArrayList<Event> events) {
+        usersEventsForChat = events;
+    }
 }

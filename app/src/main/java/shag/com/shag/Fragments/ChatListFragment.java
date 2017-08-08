@@ -1,5 +1,6 @@
 package shag.com.shag.Fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -50,6 +51,7 @@ public class ChatListFragment extends Fragment {
     // listener will the activity instance containing fragment
     private OnChatLoadListener listener;
     ParseUser currentUser;
+    Activity activity;
 
     @Nullable
     @Override
@@ -87,6 +89,7 @@ public class ChatListFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        activity = this.getActivity();
         if (context instanceof OnChatLoadListener) {
             listener = (OnChatLoadListener) context;
         } else {
@@ -97,59 +100,47 @@ public class ChatListFragment extends Fragment {
 
 
     public void populateChatList(String userId) {
+        ArrayList<Event> events = ParseApplication.getUsersEventsForChat();
+        if (events == null) {
+            events = queryForEvents();
+        }
 
-        ParseQuery<Event> query = new ParseQuery("Event");
-        List list = new ArrayList();
-        list.add(userId);
-        query.whereContainedIn("participants_id", list);
-        //query.include("User_event_owner");
-        query.include("last_message_sent");
-        query.findInBackground(new FindCallback<Event>() {
+        Collections.sort(events, new Comparator<Event>() {
             @Override
-            public void done(List<Event> eventsList, ParseException e) {
-                if (e == null) {
-                    Collections.sort(eventsList, new Comparator<Event>() {
-                        @Override
-                        public int compare(Event event, Event t1) {
-                            if (event.getLastMessageSent() == null && t1.getLastMessageSent() != null) {
-                                return 1;
-                            }
-
-                            if (event.getLastMessageSent() != null && t1.getLastMessageSent() == null) {
-                                return -1;
-                            }
-
-                            if (event.getLastMessageSent() == null && t1.getLastMessageSent() == null) {
-                                return 0;
-                            }
-
-                            ParseObject first = event.getLastMessageSent();
-                            ParseObject second = t1.getLastMessageSent();
-                            return -1 *first.getCreatedAt().compareTo(second.getCreatedAt());
-                        }
-                    });
-
-                    for (Event event : eventsList) {
-
-                        // get chat's info to later populate view
-                        Chat eventChat = getChatInfoFromEvent(event);
-
-                        //add event to list to be displayed
-                        chats.add(eventChat);
-                        eventIds.add(event.getEventId());
-                        adapter.notifyItemInserted(chats.size() - 1);
-                        rvChats.smoothScrollToPosition(0);
-
-
-                    }
-                    // upon chat load finish, call listener method
-                    listener.OnChatLoad(chats.size());
-
-                } else { // if there is an error
-                    e.printStackTrace();
+            public int compare(Event event, Event t1) {
+                if (event.getLastMessageSent() == null && t1.getLastMessageSent() != null) {
+                    return 1;
                 }
+
+                if (event.getLastMessageSent() != null && t1.getLastMessageSent() == null) {
+                    return -1;
+                }
+
+                if (event.getLastMessageSent() == null && t1.getLastMessageSent() == null) {
+                    return 0;
+                }
+
+                ParseObject first = event.getLastMessageSent();
+                ParseObject second = t1.getLastMessageSent();
+                return -1 *first.getCreatedAt().compareTo(second.getCreatedAt());
             }
         });
+
+        for (Event event : events) {
+
+            // get chat's info to later populate view
+            Chat eventChat = getChatInfoFromEvent(event);
+
+            //add event to list to be displayed
+            chats.add(eventChat);
+            eventIds.add(event.getEventId());
+            adapter.notifyItemInserted(chats.size() - 1);
+            rvChats.smoothScrollToPosition(0);
+
+
+        }
+        // upon chat load finish, call listener method
+        listener.OnChatLoad(chats.size());
     }
     // for each event, return the chat information
     public Chat getChatInfoFromEvent(Event event) {
@@ -164,8 +155,9 @@ public class ChatListFragment extends Fragment {
         chat.setChatParticipantsIds(event.getParticipantsIds());
 
         // add shaggy bot
-            chat.addChatParticipantsIds((String) getText(R.string.shaggy_bot_id));
-
+        if (!chat.getChatParticipantsIds().contains("InuSHuTqkn")) {
+            chat.addChatParticipantsIds("InuSHuTqkn");
+        }
         // get icon url
         if (event.getEventOwnerProfileUrl() != null) {
             // set chat icon to be the owner's image
@@ -173,7 +165,7 @@ public class ChatListFragment extends Fragment {
         }
 
         // get event info
-        int participantsNumber = event.getParticipantsIds().size();
+        int participantsNumber = chat.getChatParticipantsIds().size();
         String eventOwnerName = event.getEventOwnerName();
         String currentUserName = (String) currentUser.get("name");
 
@@ -232,7 +224,7 @@ public class ChatListFragment extends Fragment {
 
     //execute adapter refresh on ui thread
     public void itemChanged(final int index) {
-        getActivity().runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 adapter.notifyDataSetChanged();
@@ -244,6 +236,28 @@ public class ChatListFragment extends Fragment {
     public interface OnChatLoadListener {
         // This can be any number of events to be sent to the activity
         public void OnChatLoad(int chatSize);
+    }
+
+    public ArrayList<Event> queryForEvents() {
+        ParseQuery<Event> query = new ParseQuery("Event");
+        List list = new ArrayList();
+        list.add(currentUserId);
+        query.whereContainedIn("participants_id", list);
+        //query.include("User_event_owner");
+        query.include("last_message_sent");
+        final ArrayList<Event> events = new ArrayList<>();
+        query.findInBackground(new FindCallback<Event>() {
+            @Override
+            public void done(List<Event> eventsList, ParseException e) {
+                if (e == null) {
+                    events.addAll(eventsList);
+                } else { // if there is an error
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        return events;
     }
 
 

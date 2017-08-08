@@ -254,6 +254,10 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ViewHo
 
         //if the message right before this came from the same user, don't show name
         Message previous = mMessages.get(position + 1);
+        if (previous.getSenderId() == null) {
+            return true;
+        }
+
         if (previous.getSenderId().equals(message.getSenderId())) {
             return false;
         }

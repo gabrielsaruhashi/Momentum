@@ -8,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -23,6 +22,7 @@ import com.ramotion.paperonboarding.PaperOnboardingFragment;
 import shag.com.shag.Adapters.MainFragmentPagerAdapter;
 import shag.com.shag.Fragments.DialogFragments.OnboardingDialogFragment;
 import shag.com.shag.Fragments.MemoryListFragment;
+import shag.com.shag.Other.ParseApplication;
 import shag.com.shag.R;
 
 public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener, MemoryListFragment.OnMemoryBookPositionChangedListener {
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     private FragmentManager fragmentManager;
     PaperOnboardingFragment onBoardingFragment;
     static boolean isNewUser;
+    static boolean mFirst;
 
     // The request code used in ActivityCompat.requestPermissions()
     // and returned in the Activity's onRequestPermissionsResult()
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
 
         // if new user, display onboarding
         checkIfNewUser(getIntent().getBooleanExtra("isNew", false));
+        checkIfNewUser(ParseApplication.mOnboardingLoad);
 
         // get reference to material viewpager
         mViewPager = (MaterialViewPager) findViewById(R.id.viewpager);
@@ -64,7 +66,6 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
-
         //int position = getIntent().getIntExtra("viewpager_position", 0);
 
         // instantiate initial listener
