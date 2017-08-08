@@ -26,13 +26,18 @@
             android:paddingRight="24dp"
             android:paddingTop="56dp">
 
-            <ImageView
-                android:id="@+id/logo"
-                android:layout_width="wrap_content"
-                android:layout_height="72dp"
+            <TextView
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="24dp"
-                android:src="@drawable/logo_shaggy" />
+                android:src="@drawable/logo_shaggy"
+                android:id="@+id/logo_name"
+                android:layout_width="wrap_content"
+                android:layout_height="72dp"
+                android:text="Momentum"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@color/white"
+                android:elevation="3dp"
+                android:textSize="45sp"/>
 
 
             <!-- Email Label -->
@@ -44,6 +49,7 @@
 
                 <EditText
                     android:id="@+id/input_email"
+                    android:textColor="@color/white"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Email"
@@ -58,6 +64,7 @@
                 android:layout_marginTop="8dp">
 
                 <EditText
+                    android:textColor="@color/white"
                     android:id="@+id/input_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,6 +96,7 @@
                 android:id="@+id/btContacts"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 android:text="Button" />
         </LinearLayout>
     </FrameLayout>

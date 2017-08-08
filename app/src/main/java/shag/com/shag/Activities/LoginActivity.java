@@ -2,11 +2,14 @@ package shag.com.shag.Activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -47,6 +50,8 @@ public class LoginActivity extends AppCompatActivity {
     Intent intent;
     boolean isNew;
     ImageView rocket;
+    EditText inputEmail;
+    EditText inputPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +62,13 @@ public class LoginActivity extends AppCompatActivity {
         //myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         context = this;
         intent = getIntent();
+
+        // instantiate
+        inputEmail = (EditText) findViewById(R.id.input_email);
+        inputPassword = (EditText) findViewById(R.id.input_password);
+
+        inputEmail.getBackground().mutate().setColorFilter(ContextCompat.getColor(context, R.color.white), PorterDuff.Mode.SRC_ATOP);
+        inputPassword.getBackground().mutate().setColorFilter(ContextCompat.getColor(context, R.color.white), PorterDuff.Mode.SRC_ATOP);
 
         rocket = (ImageView) findViewById(R.id.rocket);
         Glide.with(context).load("https://cdn.dribbble.com/users/23310/screenshots/2151952/zap_rocket_animation.gif")
