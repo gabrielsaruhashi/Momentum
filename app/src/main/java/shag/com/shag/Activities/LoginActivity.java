@@ -7,7 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.widget.LoginButton;
@@ -44,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     String email;
     Intent intent;
     boolean isNew;
+    ImageView rocket;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
         //myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         context = this;
         intent = getIntent();
+
+        rocket = (ImageView) findViewById(R.id.rocket);
+        Glide.with(context).load("https://cdn.dribbble.com/users/23310/screenshots/2151952/zap_rocket_animation.gif")
+                .centerCrop().into(rocket);
 
         // create permissions
         permissions = Arrays.asList("user_friends", "user_friends");

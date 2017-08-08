@@ -8,6 +8,7 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -15,8 +16,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
@@ -58,8 +60,8 @@ import shag.com.shag.R;
 
 public class MemoryDetailsActivity extends AppCompatActivity implements ImageAdapter.ImageZoomAdapterCallback{
     //@BindView(R.id.tvMemoryName) TextView tvMemoryName;
-    @BindView(R.id.btAddPicture) Button btAddPicture;
-    @BindView(R.id.btFacebookShare) Button btFacebookShare;
+    @BindView(R.id.myFAB) FloatingActionButton btAddPicture;
+//    @BindView(R.id.btFacebookShare) Button btFacebookShare;
     // @BindView(R.id.ivMemoryBannerPicture) ImageView ivMemoryBannerPicture;
     GridView gridView;
     // adapters and arraylist
@@ -175,24 +177,36 @@ public class MemoryDetailsActivity extends AppCompatActivity implements ImageAda
 
         //TODO if album already exists, just add photo
         // add listener to facebook share
-        btFacebookShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                // instantiate arraylist of participants facebook id
-                participantsFacebookIds = memory.getParticipantsFacebookIds();
-
-                createFacebookAlbum();
-
-            }
-        });
+//        btFacebookShare.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//
+//                // instantiate arraylist of participants facebook id
+//                participantsFacebookIds = memory.getParticipantsFacebookIds();
+//
+//                createFacebookAlbum();
+//
+//            }
+//        });
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
         myToolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
         myToolbar.setTitle(memory.getMemoryName());
 
+    }
+
+    public void onShareAlbum(MenuItem menuItem){
+        participantsFacebookIds = memory.getParticipantsFacebookIds();
+        createFacebookAlbum();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_memory, menu);
+        return true;
     }
 
     public void setupLiveQuery() {
