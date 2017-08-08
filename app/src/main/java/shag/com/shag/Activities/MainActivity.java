@@ -159,15 +159,16 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (data != null) {
-            MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
+            //MemoryListFragment memoryListFragment = (MemoryListFragment) getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.viewpager + ":" + viewPager.getCurrentItem());
             //MemoryListFragment memoryListFragment = (MemoryListFragment) viewPager.getRegistered;
-            memoryListFragment.changeCoverPictureUrl(data);
+            //memoryListFragment.changeCoverPictureUrl(data);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        finish();
         LoginManager.getInstance().logOut();
     }
 
