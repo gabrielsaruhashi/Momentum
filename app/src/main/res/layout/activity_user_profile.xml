@@ -49,4 +49,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="@dimen/activity_items_margin"/>
+
 </RelativeLayout>
