@@ -441,7 +441,7 @@ public class SelectEventDeadlineActivity extends AppCompatActivity {
 
 
         newEvent.setLastMessageSent(new Message());
-        newEvent.setTimeOfEvent(new Date());
+        newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000));
 
         //newEvent.setTimeOfEvent(new Date((new Date()).getTime() + 24 * 60 * 60 * 1000)); //TODO: PUT REAL INFO IN HERE (after polls)
         //newEvent.setParseGeoPoint(new ParseGeoPoint(47.6101, -122.2015)); //TODO: PUT REAL INFO HERE TOO

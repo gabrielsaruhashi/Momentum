@@ -22,7 +22,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         app:srcCompat="@color/black"
-        android:alpha="1"/>
+        android:alpha=".65"/>
 
     <ImageView
         android:id="@+id/ivCategory"

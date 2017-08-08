@@ -87,27 +87,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         userFacebookId = (String) facebookData.get("id");
 
         // create the view using the item_feed layout
-        switch (viewType) {
-            case TYPE_HEADER: {
-                feedView = inflater
-                        .inflate(R.layout.item_feed_big_card, parent, false);
+        feedView = inflater
+                .inflate(R.layout.item_feed_big_card, parent, false);
 
-                // Return a new holder instance
-                FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
+        // Return a new holder instance
+        FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
 
-                return viewHolder;
-            }
-            default: {
-                feedView = inflater
-                        .inflate(R.layout.item_feed, parent, false);
-
-                // Return a new holder instance
-                FeedAdapter.ViewHolder viewHolder = new FeedAdapter.ViewHolder(feedView);
-
-                return viewHolder;
-            }
-
-        }
+        return viewHolder;
 
 
     }
@@ -115,6 +101,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     // associates an inflated view to a new item / binds the values based on the position of the element
     @Override
     public void onBindViewHolder(FeedAdapter.ViewHolder holder, int position) {
+        if (position == 0) {
+            holder.ivFire.setVisibility(View.VISIBLE);
+            holder.tvRecommended.setVisibility(View.VISIBLE);
+        } else {
+            holder.ivFire.setVisibility(View.INVISIBLE);
+            holder.tvRecommended.setVisibility(View.INVISIBLE);
+        }
         // populate the views
         Event event = events.get(position);
         if (!event.getIsEventPrivate()) {
@@ -163,7 +156,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // get icon url
         String url = "";
-        if (event.getEventOwnerProfileUrl()!= null) {
+        if (event.getEventOwnerProfileUrl() != null) {
             url = event.getString("event_owner_profile_url").replace("_normal", "");
         }
         // load user profile image using glide
@@ -236,9 +229,12 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         TextView tvLastMessage;
         @BindView(R.id.icRightArrow)
         ImageView icRightArrow;
-        @BindView(R.id.ivDivider) ImageView ivDivider;
+        @BindView(R.id.ivDivider)
+        ImageView ivDivider;
         @BindView(R.id.rlChatInfo)
         RelativeLayout rlChatInfo;
+        @BindView(R.id.ivFire) ImageView ivFire;
+        @BindView(R.id.tvRecommended) TextView tvRecommended;
 
         public ViewHolder(View itemView) {
             super(itemView);
