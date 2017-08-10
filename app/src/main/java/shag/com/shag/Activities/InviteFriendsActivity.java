@@ -202,9 +202,10 @@ public class InviteFriendsActivity extends AppCompatActivity {
                 }
             }
         }, new IntentFilter(SMS_DELIVERED));
-        String messageBody = "Hey " + contact.name + " ! " +
+        /*String messageBody = "Hey " + contact.name + " ! " +
                 eventOwnerName + " wants to know if you're down to " + eventDescription +
-                ". If'd like to join, reply this text with the following code " + eventId;
+                ". If'd like to join, reply this text with the following code " + eventId; */
+        String messageBody = "Reply with code:" + eventId;
 
         try {
             SmsManager.getDefault().sendTextMessage(contact.numbers.get(0).number, null, messageBody, sentPendingIntent, deliveredPendingIntent);

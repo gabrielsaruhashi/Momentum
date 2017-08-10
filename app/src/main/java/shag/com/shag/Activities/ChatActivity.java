@@ -343,26 +343,26 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
         // setupCalendars();
 
 
-        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
-                && isEventPrivate == true) {
-            //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
-            if (new Date().after(eventFromQuery.getDate("deadline")) && isRecommendationMade == false
-                    && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
-                isRecommendationMade = true;
-                ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
-                eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
-                    public void done(ParseObject eventDb, ParseException e) {
-                        if (e == null) {
-                            eventDb.put("is_recommendation_made", isRecommendationMade);
-                            eventDb.saveInBackground();
-                        }
-                    }
-                });
-                recommendRestaurant();
-            }
-
-
-        }
+//        if (currentUserId.equals(eventFromQuery.getString("event_owner_id")) && isRecommendationMade == false
+//                && isEventPrivate == true) {
+//            //if no recommendation has been made yet, if event i==food/private, and if everyone has joined
+//            if (new Date().after(eventFromQuery.getDate("deadline")) && isRecommendationMade == false
+//                    && isEventPrivate == true && eventFromQuery.getString("category").equals("Food")) {
+//                isRecommendationMade = true;
+//                ParseQuery<ParseObject> eventQuery = ParseQuery.getQuery("Event");
+//                eventQuery.getInBackground(eventId, new GetCallback<ParseObject>() {
+//                    public void done(ParseObject eventDb, ParseException e) {
+//                        if (e == null) {
+//                            eventDb.put("is_recommendation_made", isRecommendationMade);
+//                            eventDb.saveInBackground();
+//                        }
+//                    }
+//                });
+//                recommendRestaurant();
+//            }
+//
+//
+//        }
     }
 
     private void setupLiveQueires() {
@@ -672,6 +672,13 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                 message.setSenderProfileImageUrl(currentUser.getString("profile_image_url"));
                 message.setSenderName(currentUser.getString("name"));
 
+                etMessage.setText(null);
+                // add message to arraylist
+
+                mMessages.add(0, message);
+                mAdapter.notifyItemInserted(0);
+                rvChat.scrollToPosition(0);
+
                 message.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -694,13 +701,6 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
                             payload.put("token", token);
 
                             ParseCloud.callFunctionInBackground("pushChannelTest", payload);
-
-                            etMessage.setText(null);
-                            // add message to arraylist
-
-                            mMessages.add(0, message);
-                            mAdapter.notifyItemInserted(0);
-                            rvChat.scrollToPosition(0);
 
                             eventFromQuery.setLastMessageSent(message);
                             eventFromQuery.saveInBackground(new SaveCallback() {
@@ -1142,6 +1142,12 @@ public class ChatActivity extends AppCompatActivity implements CreatePollDialogF
 
         // return or query
         return ParseQuery.or(queries);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        finish();
     }
 
     @Override
